@@ -145,8 +145,9 @@ Managed by the `manage-agents` skill; validated by `bin/harness-check`.
 - Handoff template mismatch → rejected by completion-check → orchestrator re-dispatches the
   same agent once with the validation error → second failure → `ESCALATE` to human.
 - Tests cannot run (env down) → agent stops, records `GATE: <NAME> blocked` with the exact
-  error; orchestrator may run `docker compose up -d` + migrations once, then retry once;
-  still failing → `ESCALATE`. Agents never "fix" the environment silently.
+  error; orchestrator may run `docker compose up -d --build` then
+  `docker compose exec app php bin/console doctrine:migrations:migrate -n` once, then retry
+  once; still failing → `ESCALATE`. Agents never "fix" the environment silently.
 - Scope violation → write blocked by `scope-guard.sh`, logged to the audit log; the agent
   MUST hand off to the owning agent instead of retrying the write.
 - 3 failed RED→GREEN attempts → `ESCALATE` with hypothesis list (AGT-006).

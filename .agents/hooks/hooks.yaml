@@ -1,0 +1,65 @@
+version: 1
+conventions:
+  exit_codes:
+    pass: 0
+    blocked: 1
+    usage_error: 2
+  output_format: "[HOOK:<name>] <file>:<line> — <RULE-ID> <message>"
+  file_input: "argv paths, else git diff --name-only HEAD / --cached / working tree"
+  scripts_dir: .agents/hooks
+
+hooks:
+  scope-guard:
+    script: scope-guard.sh
+    phase: [before_write, before_commit]
+    rules: [AGT-001, AGT-004]
+    args: [agent_id, changed_files]
+    blocking: true
+    description: "Reject writes outside the agent's declared globs (orchestrator: state/audit only)."
+  tdd-gate:
+    script: tdd-gate.sh
+    phase: [before_write]
+    rules: [TDD-001, TDD-002]
+    match: ["src/**", "tests/**"]
+    env: [TASK_ID]
+    blocking: true
+    description: "Require a task state file with a recorded RED before touching src/**."
+  post-edit:
+    script: post-edit.sh
+    phase: [after_write]
+    rules: [NAM-001, LSP-002]
+    match: ["**/*.php"]
+    auto_fix: true
+    blocking: true
+    description: "Run php-cs-fixer (fix) and phpstan raw on edited PHP files."
+  guard-domain-imports:
+    script: guard-domain-imports.sh
+    phase: [before_commit, before_finish]
+    rules: [LAY-001, LAY-002]
+    blocking: true
+    description: "Domain must not import framework/infrastructure; Application must not import Infrastructure/HTTP."
+  guard-cqrs:
+    script: guard-cqrs.sh
+    phase: [before_commit, before_finish]
+    rules: [CMD-002, CMD-003, QRY-001, QRY-003, ECO-001, ECO-004, DIP-002, OCP-002, ERR-003, TDD-005, TDD-006, TDD-008]
+    blocking: true
+    description: "CQRS/DDD anti-pattern gate for commands, handlers, read models, and tests."
+  guard-secrets:
+    script: guard-secrets.sh
+    phase: [before_commit, before_finish]
+    rules: [SEC-001, SEC-005]
+    blocking: true
+    description: "Block PAN/CVV, committed env/key files, and hardcoded credentials."
+  completion-check:
+    script: completion-check.sh
+    phase: [on_completion]
+    rules: [AGT-002, AGT-003, AGT-005]
+    args: [agent_id, handoff_file_or_stdin]
+    blocking: true
+    description: "Validate handoff template, gate enum, finding lines, and artifact scope."
+  pre-finish:
+    script: pre-finish.sh
+    phase: [before_finish]
+    rules: [LSP-001, LSP-002, LAY-004, TDD-010]
+    blocking: true
+    description: "Run phpstan, deptrac, all PHPUnit suites, and infection before final validation."
