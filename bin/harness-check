@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null || true)
+if [ -n "$repo_root" ]; then
+  cd "$repo_root"
+fi
+
+status=0
+fail() {
+  printf 'harness-check: %s\n' "$1" >&2
+  status=1
+}
+
+expected_agents=17
+expected_skills=13
+expected_rule_files=14
+expected_hook_scripts=8
+expected_hooks_yaml=8
+expected_phpstan_rules=5
+expected_superpowers_skills=14
+
+agents_dir=".agents/agents"
+skills_dir=".agents/skills"
+superpowers_dir=".agents/skills/superpowers"
+rules_dir=".agents/rules"
+hooks_dir=".agents/hooks"
+phpstan_dir=".agents/phpstan"
+
+agent_count=$(find "$agents_dir" -maxdepth 1 -name '*.md' ! -path '*/_retired/*' 2>/dev/null | wc -l | tr -d ' ')
+if [ "$agent_count" -ne "$expected_agents" ]; then
+  fail "agent count ${agent_count}, expected ${expected_agents}"
+fi
+
+skill_count=$(find "$skills_dir" -maxdepth 1 -name '*.md' ! -name 'README.md' 2>/dev/null | wc -l | tr -d ' ')
+if [ "$skill_count" -ne "$expected_skills" ]; then
+  fail "skill count ${skill_count}, expected ${expected_skills}"
+fi
+
+rule_count=$(find "$rules_dir" -maxdepth 1 -name '*.md' 2>/dev/null | wc -l | tr -d ' ')
+if [ "$rule_count" -ne "$expected_rule_files" ]; then
+  fail "rule file count ${rule_count}, expected ${expected_rule_files}"
+fi
+
+hook_script_count=$(find "$hooks_dir" -maxdepth 1 -name '*.sh' 2>/dev/null | wc -l | tr -d ' ')
+if [ "$hook_script_count" -ne "$expected_hook_scripts" ]; then
+  fail "hook script count ${hook_script_count}, expected ${expected_hook_scripts}"
+fi
+
+for script in "$hooks_dir"/*.sh; do
+  if ! bash -n "$script"; then
+    fail "bash -n failed: ${script}"
+  fi
+done
+
+if [ ! -f "$hooks_dir/hooks.yaml" ]; then
+  fail "missing ${hooks_dir}/hooks.yaml"
+else
+  if command -v python3 >/dev/null 2>&1; then
+    yaml_hooks=$(python3 - <<'PY'
+import yaml
+from pathlib import Path
+data = yaml.safe_load(Path(".agents/hooks/hooks.yaml").read_text())
+print(len(data.get("hooks", {})))
+PY
+)
+    if [ "$yaml_hooks" != "$expected_hooks_yaml" ]; then
+      fail "hooks.yaml defines ${yaml_hooks} hooks, expected ${expected_hooks_yaml}"
+    fi
+  else
+    fail "python3 required to validate hooks.yaml"
+  fi
+fi
+
+phpstan_rules=(
+  HandlerReturnVoidRule.php
+  NoWriteInQueryHandlerRule.php
+  NoEventBusInCommandHandlerRule.php
+  NoFloatInDomainRule.php
+  NoInfrastructureInHandlerRule.php
+)
+for rule in "${phpstan_rules[@]}"; do
+  if [ ! -f "${phpstan_dir}/${rule}" ]; then
+    fail "missing PHPStan rule ${phpstan_dir}/${rule}"
+  fi
+done
+if [ "$(find "$phpstan_dir" -maxdepth 1 -name '*.php' | wc -l | tr -d ' ')" -ne "$expected_phpstan_rules" ]; then
+  fail "PHPStan rule file count mismatch in ${phpstan_dir}"
+fi
+
+required_skills=(
+  tdd-cycle add-command add-query add-domain-event add-read-model-projection
+  process-manager-saga choose-pattern solid-review code-review investigate
+  mutation-triage write-adr manage-agents
+)
+for skill in "${required_skills[@]}"; do
+  if [ ! -f "${skills_dir}/${skill}.md" ]; then
+    fail "missing skill ${skills_dir}/${skill}.md"
+  fi
+done
+
+superpowers_count=$(find "$superpowers_dir" -mindepth 2 -maxdepth 2 -name SKILL.md 2>/dev/null | wc -l | tr -d ' ')
+if [ "$superpowers_count" -ne "$expected_superpowers_skills" ]; then
+  fail "superpowers skill count ${superpowers_count}, expected ${expected_superpowers_skills} under ${superpowers_dir}"
+fi
+
+for agent_file in "$agents_dir"/*.md; do
+  base=$(basename "$agent_file" .md)
+  agent_id=$(sed -nE 's/^id:[[:space:]]*//p' "$agent_file" | head -1 | tr -d '\r')
+  if [ -z "$agent_id" ]; then
+    fail "missing id: in ${agent_file}"
+  elif [ "$agent_id" != "$base" ]; then
+    fail "agent id '${agent_id}' != filename '${base}' in ${agent_file}"
+  fi
+  if ! grep -qE '^writes:' "$agent_file"; then
+    fail "missing writes: in ${agent_file}"
+  fi
+done
+
+if ! grep -qF ' — ' "$hooks_dir/hooks.yaml"; then
+  fail "hooks.yaml output_format must use em-dash (U+2014)"
+fi
+
+for script in "$hooks_dir"/*.sh; do
+  if ! grep -qF ' — ' "$script"; then
+    fail "hook missing em-dash in report_line: ${script}"
+  fi
+done
+
+roster_rows=$(awk '/^## Agent roster/,/^## Routing/ { if ($0 ~ /^\| [a-z]/) c++ } END { print c+0 }' AGENTS.md)
+if [ "$roster_rows" -ne "$expected_agents" ]; then
+  fail "AGENTS.md roster rows ${roster_rows}, expected ${expected_agents}"
+fi
+
+if [ "$status" -eq 0 ]; then
+  printf 'harness-check: ok — %s agents, %s domain skills + %s superpowers, %s rule files, %s hook scripts + hooks.yaml, %s PHPStan rules\n' \
+    "$expected_agents" "$expected_skills" "$expected_superpowers_skills" "$expected_rule_files" "$expected_hook_scripts" "$expected_phpstan_rules"
+fi
+
+exit "$status"

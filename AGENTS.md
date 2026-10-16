@@ -1,6 +1,8 @@
 # AGENTS.md — E-commerce CQRS Harness
 
-Load on every task. Rules, agents, skills, hooks are linked, never repeated here.
+Project: **ecommerce-core** (Composer: `ecommerce/ecommerce-core`, Symfony 8.1)
+
+Bootstrap: [docs/PROJECT-START-SPEC.md](docs/PROJECT-START-SPEC.md). Load on every task. Rules, agents, skills, hooks are linked, never repeated here.
 
 ## Architecture (10 lines)
 1. Modular monolith, 8 bounded contexts: Catalog, Cart, Ordering, Payment, Inventory,
@@ -20,6 +22,13 @@ Load on every task. Rules, agents, skills, hooks are linked, never repeated here
 10. Layers per context: `Domain ← Application ← Infrastructure`; cross-context only via
     events or an anti-corruption layer — enforced by Deptrac.
 
+## Stack
+- Runtime: FrankenPHP in worker mode (integrated Caddy) — never php-fpm, nginx, Apache or `symfony serve` (INF-003).
+- Database: PostgreSQL 16 for dev, test and prod — never MySQL/MariaDB or SQLite, even in tests (INF-001).
+- Execution: Docker Compose only — every PHP/Composer/vendor command runs as `docker compose exec app …` on the host (INF-002).
+- Search: Meilisearch projection for storefront catalog search (ECO-008).
+- Details: [.agents/rules/infrastructure.md](.agents/rules/infrastructure.md), [docs/adr/ADR-0002-postgresql-docker-frankenphp.md](docs/adr/ADR-0002-postgresql-docker-frankenphp.md).
+
 ## Directory layout
     src/<Context>/{Domain,Application,Infrastructure}/
       Domain/{Model,Event,Repository,Service}              # ports (interfaces) live here
@@ -29,7 +38,8 @@ Load on every task. Rules, agents, skills, hooks are linked, never repeated here
     tests/{Unit,Integration,Projection,Functional,Contract}/<Context>/...
     tests/Architecture/                                    # naming/structure tests
     docs/adr/                                              # one short ADR per design decision
-    .agents/{rules,agents,skills,hooks,state,audit,phpstan}
+    .agents/{rules,agents,skills,superpowers/*,hooks,state,audit,phpstan}
+    .agents/skills/*.md                                     # 13 domain skills; superpowers/ = vendored plugin library
     .agents/state/<task-id>.md                             # task state, updated at every gate
 
 ## Commands (repo root)

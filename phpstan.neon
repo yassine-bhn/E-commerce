@@ -1,0 +1,29 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+services:
+    -
+        class: Agents\PhpStan\HandlerReturnVoidRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\NoWriteInQueryHandlerRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\NoEventBusInCommandHandlerRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\NoFloatInDomainRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\NoInfrastructureInHandlerRule
+        tags:
+            - phpstan.rules.rule

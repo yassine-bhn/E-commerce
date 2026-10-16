@@ -1,0 +1,82 @@
+# DIP-001 / LAY-003 — Domain is not a service layer; HTTP under */Infrastructure/Http (SRP-002).
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Kernel.php'
+            - '../src/**/Domain/**'
+            - '../src/**/Application/Command/**'
+            - '../src/**/Application/Query/**'
+
+    App\Shared\Infrastructure\:
+        resource: '../src/Shared/Infrastructure/'
+
+    App\Catalog\Infrastructure\:
+        resource: '../src/Catalog/Infrastructure/'
+    App\Cart\Infrastructure\:
+        resource: '../src/Cart/Infrastructure/'
+    App\Ordering\Infrastructure\:
+        resource: '../src/Ordering/Infrastructure/'
+    App\Payment\Infrastructure\:
+        resource: '../src/Payment/Infrastructure/'
+    App\Inventory\Infrastructure\:
+        resource: '../src/Inventory/Infrastructure/'
+    App\Shipping\Infrastructure\:
+        resource: '../src/Shipping/Infrastructure/'
+    App\Identity\Infrastructure\:
+        resource: '../src/Identity/Infrastructure/'
+    App\Promotions\Infrastructure\:
+        resource: '../src/Promotions/Infrastructure/'
+
+    App\Shared\Application\:
+        resource: '../src/Shared/Application/'
+        exclude:
+            - '../src/Shared/Application/Command/**'
+            - '../src/Shared/Application/Query/**'
+
+    App\Catalog\Application\:
+        resource: '../src/Catalog/Application/'
+        exclude:
+            - '../src/Catalog/Application/Command/**'
+            - '../src/Catalog/Application/Query/**'
+    App\Cart\Application\:
+        resource: '../src/Cart/Application/'
+        exclude:
+            - '../src/Cart/Application/Command/**'
+            - '../src/Cart/Application/Query/**'
+    App\Ordering\Application\:
+        resource: '../src/Ordering/Application/'
+        exclude:
+            - '../src/Ordering/Application/Command/**'
+            - '../src/Ordering/Application/Query/**'
+    App\Payment\Application\:
+        resource: '../src/Payment/Application/'
+        exclude:
+            - '../src/Payment/Application/Command/**'
+            - '../src/Payment/Application/Query/**'
+    App\Inventory\Application\:
+        resource: '../src/Inventory/Application/'
+        exclude:
+            - '../src/Inventory/Application/Command/**'
+            - '../src/Inventory/Application/Query/**'
+    App\Shipping\Application\:
+        resource: '../src/Shipping/Application/'
+        exclude:
+            - '../src/Shipping/Application/Command/**'
+            - '../src/Shipping/Application/Query/**'
+    App\Identity\Application\:
+        resource: '../src/Identity/Application/'
+        exclude:
+            - '../src/Identity/Application/Command/**'
+            - '../src/Identity/Application/Query/**'
+    App\Promotions\Application\:
+        resource: '../src/Promotions/Application/'
+        exclude:
+            - '../src/Promotions/Application/Command/**'
+            - '../src/Promotions/Application/Query/**'

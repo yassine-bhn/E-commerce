@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# Regression smoke for .agents/hooks (24 cases). Run from repo root or any cwd.
+set -u
+
+HOOKS=${HOOKS:-$(cd "$(dirname "$0")/.." && pwd)/.agents/hooks}
+REPO=${SMOKE_REPO:-/tmp/opencode/smoke-repo}
+SMOKE=${SMOKE_FIXTURES:-/tmp/opencode/smoke}
+
+status=0
+cases=0
+failures=0
+
+run_case() {
+  local id=$1 expected_exit=$2
+  shift 2
+  cases=$((cases + 1))
+  local out err rc
+  err=$(mktemp)
+  out=$( "$@" 2>"$err" ) || true
+  rc=$?
+  if [ "$rc" -ne "$expected_exit" ]; then
+    printf 'FAIL %s: exit %s expected %s\n' "$id" "$rc" "$expected_exit" >&2
+    printf '  stdout: %s\n' "$out" >&2
+    printf '  stderr: %s\n' "$(cat "$err")" >&2
+    failures=$((failures + 1))
+    status=1
+  else
+    printf 'OK   %s (exit %s)\n' "$id" "$rc"
+  fi
+  rm -f "$err"
+  if [ -n "$out" ]; then
+    printf '%s\n' "$out"
+  fi
+}
+
+# scope-guard ×6
+( cd "$REPO" && run_case scope-1 1 bash "$HOOKS/scope-guard.sh" nosuchagent src/foo.php )
+( cd "$REPO" && run_case scope-2 1 bash "$HOOKS/scope-guard.sh" code-reviewer src/Catalog/Domain/Product.php )
+( cd "$REPO" && run_case scope-3 0 bash "$HOOKS/scope-guard.sh" unit-test-writer tests/Unit/ProductTest.php )
+( cd "$REPO" && run_case scope-4 1 bash "$HOOKS/scope-guard.sh" unit-test-writer src/Catalog/Domain/Product.php )
+( cd "$REPO" && run_case scope-5 0 bash "$HOOKS/scope-guard.sh" orchestrator .agents/state/smoke.md )
+( cd "$REPO" && run_case scope-6 1 bash "$HOOKS/scope-guard.sh" orchestrator src/Catalog/Domain/Product.php )
+
+# tdd-gate ×4
+( cd "$REPO" && run_case tdd-1 1 bash "$HOOKS/tdd-gate.sh" src/Catalog/Domain/Product.php )
+( cd "$REPO" && run_case tdd-2 1 bash "$HOOKS/tdd-gate.sh" TASK_ID=missing src/Catalog/Domain/Product.php )
+( cd "$REPO" && run_case tdd-3 0 bash "$HOOKS/tdd-gate.sh" TASK_ID=smoke src/Catalog/Domain/Product.php )
+( cd "$REPO" && run_case tdd-4 0 bash "$HOOKS/tdd-gate.sh" tests/Unit/ProductTest.php )
+
+# completion-check ×4
+( cd "$REPO" && run_case comp-1 0 bash "$HOOKS/completion-check.sh" e2e-contract-test-agent handoff-valid.md )
+( cd "$REPO" && run_case comp-2 1 bash "$HOOKS/completion-check.sh" e2e-contract-test-agent handoff-bad.md )
+( cd "$REPO" && run_case comp-3 1 bash "$HOOKS/completion-check.sh" ghost-agent handoff-valid.md )
+( cd "$REPO" && run_case comp-4 0 bash "$HOOKS/completion-check.sh" e2e-contract-test-agent - <<'EOF'
+## Handoff
+- Task: T-smoke
+- Agent: e2e-contract-test-agent
+- Gate: DONE ok
+- Summary: stdin smoke
+- Artifacts:
+- tests/Functional/Catalog/ProductPageTest.php (read)
+- Rules applied: [TDD-001]
+- Rules violated: [] (expected: none)
+- Commands run:
+- `true` → pass — ok
+- Open questions: none
+- Next agent: done
+EOF
+)
+
+# guard-domain-imports
+( cd "$REPO" && run_case guard-domain 1 bash "$HOOKS/guard-domain-imports.sh" src/Catalog/Domain/Product.php )
+
+# guard-secrets ×5
+run_case secrets-1 1 bash "$HOOKS/guard-secrets.sh" "$SMOKE/PanFixture.php"
+run_case secrets-2 1 bash "$HOOKS/guard-secrets.sh" "$SMOKE/.env"
+run_case secrets-3 0 bash "$HOOKS/guard-secrets.sh" "$SMOKE/config.yaml"
+run_case secrets-4 1 bash "$HOOKS/guard-secrets.sh" "$SMOKE/bad.yaml"
+( cd "$REPO" && run_case secrets-5 0 bash "$HOOKS/guard-secrets.sh" tests/Unit/ProductTest.php )
+
+# post-edit ×2
+( cd "$REPO" && run_case post-1 0 bash "$HOOKS/post-edit.sh" src/Catalog/Domain/Product.php )
+run_case post-2 0 bash "$HOOKS/post-edit.sh" "$SMOKE/Edit.php"
+
+# pre-finish
+run_case pre-finish 1 bash "$HOOKS/pre-finish.sh"
+
+# guard-cqrs
+( cd "$REPO" && run_case guard-cqrs 1 bash "$HOOKS/guard-cqrs.sh" \
+  src/Catalog/Domain/Product.php \
+  src/Catalog/Application/Command/DoItCommand.php \
+  src/Catalog/Application/CommandHandler/DoItHandler.php \
+  src/Catalog/Application/QueryHandler/GetProductHandler.php \
+  src/Catalog/Infrastructure/ReadModel/ProductReadModel.php \
+  tests/Unit/ProductTest.php )
+
+printf '\nhook-smoke: %s cases, %s failures\n' "$cases" "$failures"
+exit "$status"

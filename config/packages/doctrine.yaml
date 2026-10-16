@@ -1,0 +1,76 @@
+# ORM write model: aggregates live in src/<Context>/Domain/Model (AGENTS.md) — never src/Entity (INF-001: PostgreSQL only via DATABASE_URL).
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        server_version: '16'
+        profiling_collect_backtrace: '%kernel.debug%'
+    orm:
+        validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        identity_generation_preferences:
+            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+        auto_mapping: false
+        mappings:
+            Catalog:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Catalog/Domain/Model'
+                prefix: 'App\Catalog\Domain\Model'
+            Cart:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Cart/Domain/Model'
+                prefix: 'App\Cart\Domain\Model'
+            Ordering:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ordering/Domain/Model'
+                prefix: 'App\Ordering\Domain\Model'
+            Payment:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Payment/Domain/Model'
+                prefix: 'App\Payment\Domain\Model'
+            Inventory:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Inventory/Domain/Model'
+                prefix: 'App\Inventory\Domain\Model'
+            Shipping:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Shipping/Domain/Model'
+                prefix: 'App\Shipping\Domain\Model'
+            Identity:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Identity/Domain/Model'
+                prefix: 'App\Identity\Domain\Model'
+            Promotions:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Promotions/Domain/Model'
+                prefix: 'App\Promotions\Domain\Model'
+
+when@test:
+    doctrine:
+        dbal:
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+when@prod:
+    doctrine:
+        orm:
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

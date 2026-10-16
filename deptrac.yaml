@@ -1,0 +1,107 @@
+deptrac:
+  paths:
+    - ./src
+  exclude_files:
+    - '#.*Kernel\.php#'
+
+  layers:
+    - name: Domain
+      collectors:
+        - type: directory
+          value: src/.+/Domain/.*
+    - name: Application
+      collectors:
+        - type: directory
+          value: src/.+/Application/.*
+    - name: Infrastructure
+      collectors:
+        - type: directory
+          value: src/.+/Infrastructure/.*
+    - name: SharedDomain
+      collectors:
+        - type: directory
+          value: src/Shared/Domain/.*
+    - name: SharedApplication
+      collectors:
+        - type: directory
+          value: src/Shared/Application/.*
+    - name: SharedInfrastructure
+      collectors:
+        - type: directory
+          value: src/Shared/Infrastructure/.*
+    - name: Catalog
+      collectors:
+        - type: directory
+          value: src/Catalog/.*
+    - name: Cart
+      collectors:
+        - type: directory
+          value: src/Cart/.*
+    - name: Ordering
+      collectors:
+        - type: directory
+          value: src/Ordering/.*
+    - name: Payment
+      collectors:
+        - type: directory
+          value: src/Payment/.*
+    - name: Inventory
+      collectors:
+        - type: directory
+          value: src/Inventory/.*
+    - name: Shipping
+      collectors:
+        - type: directory
+          value: src/Shipping/.*
+    - name: Identity
+      collectors:
+        - type: directory
+          value: src/Identity/.*
+    - name: Promotions
+      collectors:
+        - type: directory
+          value: src/Promotions/.*
+    - name: Shared
+      collectors:
+        - type: directory
+          value: src/Shared/.*
+
+  ruleset:
+    Domain:
+      - SharedDomain
+    Application:
+      - Domain
+      - SharedDomain
+      - SharedApplication
+    Infrastructure:
+      - Domain
+      - Application
+      - SharedDomain
+      - SharedApplication
+      - SharedInfrastructure
+    SharedDomain: []
+    SharedApplication:
+      - SharedDomain
+    SharedInfrastructure:
+      - SharedDomain
+      - SharedApplication
+    Catalog:
+      - Shared
+    Cart:
+      - Shared
+    Ordering:
+      - Shared
+    Payment:
+      - Shared
+    Inventory:
+      - Shared
+    Shipping:
+      - Shared
+    Identity:
+      - Shared
+    Promotions:
+      - Shared
+    Shared:
+      - SharedDomain
+      - SharedApplication
+      - SharedInfrastructure
