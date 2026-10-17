@@ -1,0 +1,33 @@
+nelmio_api_doc:
+    documentation:
+        openapi: 3.0.0
+        info:
+            title: Groupe Zidane — E-Commerce API
+            description: |
+                Plateforme e-commerce modulaire pour le Groupe Zidane.
+                - **Storefront** : Catalogue, Recherche Meilisearch, Panier dynamique, Devis, Avis et Commandes client.
+                - **Administration** : Commandes proxy Téléphone/WhatsApp, Transition d'états avec verrouillage optimiste (OCC), Gestion des catégories et gouvernance clients.
+                - **Sécurité & Protection** : Système de Rate Limiting anti-abus et traçabilité d'audit.
+            version: 1.0.0
+            contact:
+                name: Groupe Zidane
+                url: http://localhost:8081
+                email: contact@zidane.tn
+        servers:
+            - url: http://localhost:8000
+              description: Serveur de développement local
+        components:
+            securitySchemes:
+                CustomerIdAuth:
+                    type: apiKey
+                    in: header
+                    name: X-Customer-Id
+                    description: UUID du client authentifié pour les opérations Storefront
+                AdminIdAuth:
+                    type: apiKey
+                    in: header
+                    name: X-Admin-Id
+                    description: Identifiant de l'administrateur pour les opérations de gestion
+    areas:
+        path_patterns:
+            - ^/api(?!/doc)

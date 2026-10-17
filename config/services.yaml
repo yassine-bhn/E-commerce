@@ -80,3 +80,53 @@ services:
         exclude:
             - '../src/Promotions/Application/Command/**'
             - '../src/Promotions/Application/Query/**'
+
+    App\Catalog\Domain\Repository\ProductRepository:
+        alias: App\Catalog\Infrastructure\Persistence\DoctrineProductRepository
+
+    App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository:
+        arguments:
+            $meilisearchUrl: '%env(MEILISEARCH_URL)%'
+
+    App\Shared\Domain\Outbox\OutboxPort:
+        alias: App\Shared\Infrastructure\Outbox\DoctrineOutbox
+
+    messenger.bus.command:
+        alias: command.bus
+        public: true
+    messenger.bus.query:
+        alias: query.bus
+        public: true
+    messenger.bus.event:
+        alias: event.bus
+        public: true
+    messenger.bus.command.bus:
+        alias: command.bus
+        public: true
+    messenger.bus.query.bus:
+        alias: query.bus
+        public: true
+    messenger.bus.event.bus:
+        alias: event.bus
+        public: true
+
+    App\Shared\Infrastructure\Outbox\OutboxRelay:
+        arguments:
+            $eventBus: '@event.bus'
+
+    App\Ordering\Application\Saga\CheckoutSaga:
+        arguments:
+            $commandBus: '@command.bus'
+
+    App\Shared\Infrastructure\Http\MessengerQuery:
+        arguments:
+            $queryBus: '@query.bus'
+
+    App\Shared\Application\Port\StorefrontCatalogPort:
+        alias: App\Catalog\Infrastructure\Adapter\DbalStorefrontCatalogPort
+
+    App\Shared\Application\Port\StorefrontPricingPort:
+        alias: App\Shared\Infrastructure\Adapter\DbalStorefrontPricingPort
+
+    App\Shared\Application\Port\StorefrontCategoryPort:
+        alias: App\Shared\Infrastructure\Adapter\DbalStorefrontCategoryPort

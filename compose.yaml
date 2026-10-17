@@ -24,6 +24,8 @@ services:
 
   database:
     image: postgres:${POSTGRES_VERSION:-16}-alpine
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-app}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}

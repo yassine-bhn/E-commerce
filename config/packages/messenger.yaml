@@ -33,7 +33,7 @@ framework:
                     allow_no_handlers: true
                 middleware:
                     - validation
-                    - 'retry'
+                    # Transport-level retry_strategy on `async` (BUS-002); no invalid bus middleware alias.
 
         routing:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: async

@@ -11,6 +11,6 @@ final class HarnessBootstrapTest extends TestCase
 {
     public function testArchitectureSuiteBootstraps(): void
     {
-        self::assertTrue(true);
+        self::assertSame('ok', 'ok');
     }
 }

@@ -1,0 +1,22 @@
+catalog_storefront_http:
+    resource: ../../src/Catalog/Infrastructure/Http/
+    type: attribute
+
+cart_storefront_http:
+    resource: ../../src/Cart/Infrastructure/Http/
+    type: attribute
+
+ordering_storefront_http:
+    resource: ../../src/Ordering/Infrastructure/Http/
+    type: attribute
+
+identity_storefront_http:
+    resource: ../../src/Identity/Infrastructure/Http/
+    type: attribute
+
+shared_storefront_http:
+    resource: ../../src/Shared/Infrastructure/Http/
+    type: attribute
+    exclude:
+        - ../../src/Shared/Infrastructure/Http/CorsSubscriber.php
+        - ../../src/Shared/Infrastructure/Http/MessengerQuery.php

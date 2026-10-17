@@ -9,3 +9,6 @@
 
 controllers:
     resource: routing.controllers
+
+storefront_api:
+    resource: routes/storefront_api.yaml

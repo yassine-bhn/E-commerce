@@ -1,0 +1,23 @@
+framework:
+    rate_limiter:
+        enabled: true
+        limiters:
+            order_creation:
+                policy: 'token_bucket'
+                limit: 10
+                rate: { interval: '1 minute', amount: 5 }
+
+            contact_submission:
+                policy: 'fixed_window'
+                limit: 5
+                interval: '1 minute'
+
+            catalog_search:
+                policy: 'sliding_window'
+                limit: 60
+                interval: '1 minute'
+
+            admin_actions:
+                policy: 'fixed_window'
+                limit: 30
+                interval: '1 minute'
