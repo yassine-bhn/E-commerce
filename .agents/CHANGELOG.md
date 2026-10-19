@@ -9,3 +9,5 @@ Format: `<ISO> <agent|skill|hook|rule|harness> <added|changed|retired> <version>
 2026-10-17 rule added 1.2.0 — infrastructure.md (INF-001..003) linked from AGENTS.md stack section.
 2026-10-17 skill added 1.2.1 — vendored Cursor Superpowers library (14 skills) under .agents/skills/superpowers/.
 2026-10-17 harness changed 1.3.0 — merged Symfony 8.1 ecommerce-core skeleton; FrankenPHP compose, bounded-context dirs, PROJECT-START-SPEC.md.
+2026-10-19 skill added 1.3.1 — spec-driven-agents domain skill + `.cursor/skills/spec-driven-agents/SKILL.md` (3 analysts → synthesizer → workers pipeline).
+2026-10-19 skill changed 1.3.2 — spec-driven-agents Stage 5 harness handoff; orchestrator `/spec` and `/spec-from`; workflow spec-then-feature; gate SPEC.

@@ -105,7 +105,8 @@ investigate | investigator
 mutation-triage | mutation-test-agent
 write-adr | pattern-selector, orchestrator
 manage-agents | orchestrator
+spec-driven-agents | orchestrator
 
 ## Superpowers (vendored under `.agents/skills/superpowers/`)
 
-Process skills from the Cursor Superpowers plugin; not counted in the 13 domain skills above. See `.agents/skills/README.md`. Used alongside domain skills (e.g. `test-driven-development` + `tdd-cycle`, `verification-before-completion` + pre-finish hook).
+Process skills from the Cursor Superpowers plugin; not counted in the 14 domain skills above. See `.agents/skills/README.md`. Used alongside domain skills (e.g. `test-driven-development` + `tdd-cycle`, `verification-before-completion` + pre-finish hook).

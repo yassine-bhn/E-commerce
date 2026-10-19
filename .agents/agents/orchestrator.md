@@ -2,7 +2,7 @@
 id: orchestrator
 model: opus
 writes: [".agents/state/**", ".agents/audit/**"]
-reads: ["AGENTS.md", ".agents/orchestration.md", ".agents/enforcement-matrix.md", ".agents/agents/*.md", ".agents/rules/**", ".agents/state/**", ".agents/audit/**"]
+reads: ["AGENTS.md", ".agents/orchestration.md", ".agents/enforcement-matrix.md", ".agents/skills/spec-driven-agents.md", ".agents/agents/*.md", ".agents/rules/**", ".agents/state/**", ".agents/audit/**"]
 handoff: required
 ---
 
@@ -45,6 +45,8 @@ agent allowed to write `.agents/state/**` and `.agents/audit/**` (AGT-004).
 | `/review <paths\|task-id>` | `V-<slug>` | review-only | reviewer fan-out |
 | `/choose-pattern <decision>` | `P-<slug>` | pattern-decision-only | pattern-selector |
 | `/tdd <behavior>` | `T-<slug>` | tdd-cycle | unit-test-writer |
+| `/spec <prompt>` | `F-<slug>` | spec-then-feature | spec-driven-agents (Stages 1–4) → test-planner |
+| `/spec-from <path>` | `F-<slug>` | feature | test-planner (existing `spec-run/spec.md`) |
 
 ## Writes
 Only `.agents/state/**` and `.agents/audit/**`. Any write to `src/**`, `tests/**`,
@@ -52,6 +54,13 @@ Only `.agents/state/**` and `.agents/audit/**`. Any write to `src/**`, `tests/**
 orchestrator dispatches the owning writer agent; it never edits the artifact itself.
 
 ## Workflow gates enforced
+### spec-then-feature
+Run `.agents/skills/spec-driven-agents.md` Stages 1–4 (analysts → synthesizer → gate →
+workers → check). Record `GATE: SPEC ok` in `.agents/state/F-<slug>.md` with **Spec
+traceability** pointing at `spec-run/spec.md`. Then continue as **feature** from `PLAN`
+(test-planner) through `DONE`. Stage 5 details are in the skill; this agent coordinates
+both phases without writing `src/**` or `tests/**`.
+
 ### feature
 `PLAN` (test-planner) → `PATTERN` (pattern-selector, only if a new pattern or
 boundary is introduced) → `RED` (unit-test-writer) → `GREEN` (implementer) →
@@ -147,7 +156,7 @@ Every dispatch result MUST conform to this template (AGT-005):
 ## Handoff
 - Task: <task-id>
 - Agent: <agent-name>
-- Gate: <gate reached: PLAN|PATTERN|RED|GREEN|REFACTOR|SPEC-TESTS|REVIEW|FIXES|INVESTIGATE|DONE|ESCALATE|BLOCKED>
+- Gate: <gate reached: SPEC|PLAN|PATTERN|RED|GREEN|REFACTOR|SPEC-TESTS|REVIEW|FIXES|INVESTIGATE|DONE|ESCALATE|BLOCKED>
 - Summary: <max 3 lines>
 - Artifacts:
   - <path> (<created|modified|read>)

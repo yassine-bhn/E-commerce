@@ -39,7 +39,7 @@ Bootstrap: [docs/PROJECT-START-SPEC.md](docs/PROJECT-START-SPEC.md). Load on eve
     tests/Architecture/                                    # naming/structure tests
     docs/adr/                                              # one short ADR per design decision
     .agents/{rules,agents,skills,superpowers/*,hooks,state,audit,phpstan}
-    .agents/skills/*.md                                     # 13 domain skills; superpowers/ = vendored plugin library
+    .agents/skills/*.md                                     # 14 domain skills; superpowers/ = vendored plugin library
     .agents/state/<task-id>.md                             # task state, updated at every gate
 
 ## Commands (repo root)
@@ -92,6 +92,8 @@ REFACTOR: suite stays green. One behavior per cycle.
 | review only | review-only | orchestrator → reviewers in parallel | /review |
 | design decision | pattern-decision-only | pattern-selector | /choose-pattern |
 | single TDD cycle | tdd-cycle | unit-test-writer | /tdd |
+| spec then CQRS delivery | spec-then-feature | spec-driven-agents → test-planner | /spec |
+| implement from existing spec | feature | test-planner | /spec-from |
 
 ## Handoff (full contract: [.agents/orchestration.md](.agents/orchestration.md))
 Every agent returns the handoff template: task id, summary, artifacts (paths), rule IDs

@@ -13,7 +13,7 @@ fail() {
 }
 
 expected_agents=17
-expected_skills=13
+expected_skills=14
 expected_rule_files=14
 expected_hook_scripts=8
 expected_hooks_yaml=8
@@ -91,7 +91,7 @@ fi
 required_skills=(
   tdd-cycle add-command add-query add-domain-event add-read-model-projection
   process-manager-saga choose-pattern solid-review code-review investigate
-  mutation-triage write-adr manage-agents
+  mutation-triage write-adr manage-agents spec-driven-agents
 )
 for skill in "${required_skills[@]}"; do
   if [ ! -f "${skills_dir}/${skill}.md" ]; then

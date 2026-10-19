@@ -10,7 +10,7 @@ Every agent MUST end its run with this template (AGT-005):
 ## Handoff
 - Task: <task-id>
 - Agent: <agent-name>
-- Gate: <gate reached: PLAN|PATTERN|RED|GREEN|REFACTOR|SPEC-TESTS|REVIEW|FIXES|INVESTIGATE|DONE|ESCALATE|BLOCKED>
+- Gate: <gate reached: SPEC|PLAN|PATTERN|RED|GREEN|REFACTOR|SPEC-TESTS|REVIEW|FIXES|INVESTIGATE|DONE|ESCALATE|BLOCKED>
 - Summary: <max 3 lines>
 - Artifacts:
   - <path> (<created|modified|read>)
@@ -57,6 +57,12 @@ APPROVED: <subject> — <name> — <ISO-8601>
 - Audit: every dispatch, gate and blocked write is appended to `.agents/audit/<task-id>.log`.
 
 ## Workflows (state machines with gates)
+
+### spec-then-feature
+`SPEC` (orchestrator runs `.agents/skills/spec-driven-agents.md` Stages 1–4; artifacts under
+`spec-run/`; state file gets **Spec traceability** + `GATE: SPEC ok`) → then the same gates as
+**feature** from `PLAN` (test-planner) through `DONE`. Opt out of harness continuation with
+`spec-only` / `no harness` on the initial prompt.
 
 ### feature
 `PLAN` (test-planner) → `PATTERN` (pattern-selector, only if a new pattern/boundary is
@@ -127,6 +133,8 @@ Never the whole repo. Model per agent (effort maps to model choice):
 - `/review <paths|task-id>` — creates `V-<slug>`, workflow=review-only, reviewers in parallel.
 - `/choose-pattern <decision>` — creates `P-<slug>`, workflow=pattern-decision-only, first agent: pattern-selector.
 - `/tdd <behavior>` — creates `F-tdd-<slug>`, single tdd-cycle (RED→GREEN→REFACTOR only), first agent: unit-test-writer.
+- `/spec <prompt>` — creates `F-<slug>`, workflow=spec-then-feature; runs spec-driven Stages 1–4 then feature workflow from test-planner.
+- `/spec-from <path-to-spec.md>` — creates `F-<slug>`, workflow=feature; skips Stages 1–4; test-planner uses the given spec (must include Requirements R*).
 
 ## Agent lifecycle
 

@@ -2,9 +2,13 @@
 
 ## Domain skills (CQRS / e-commerce)
 
-Thirteen flat `*.md` files at this directory root — mapped in `.agents/enforcement-matrix.md` and validated by `bin/harness-check`.
+Fourteen flat `*.md` files at this directory root — mapped in `.agents/enforcement-matrix.md` and validated by `bin/harness-check`.
 
-Use these for bounded-context work: commands, queries, sagas, ADRs, reviews, and agent lifecycle.
+Use these for bounded-context work: commands, queries, sagas, ADRs, reviews, agent lifecycle, and spec-driven multi-agent pipelines (`spec-driven-agents.md`).
+
+**Spec → harness:** Stages 1–4 produce `spec-run/spec.md`; **Stage 5** (default in this repo) continues with CQRS agents (`test-planner` → … → DONE). Entry: `/spec <prompt>` or `Use skill: spec-driven-agents`. Opt out: `spec-only`. Resume from an existing spec: `/spec-from spec-run/spec.md`.
+
+Cursor also loads `.cursor/skills/spec-driven-agents/SKILL.md` for the same workflow in the IDE.
 
 ## Superpowers (Cursor plugin bundle)
 
