@@ -9,6 +9,7 @@ use App\Identity\Application\Command\DeleteCustomerWithAnonymization;
 use App\Identity\Application\Command\UnbanCustomer;
 use App\Identity\Domain\Model\CannotBanAdminException;
 use App\Identity\Domain\Model\LastSuperAdminCannotBeRemovedException;
+use App\Identity\Infrastructure\Security\CustomerUser;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Uuid;
 
 #[Route('/api/v1/admin/customers')]
@@ -28,7 +31,7 @@ final class AdminCustomerController
     }
 
     #[Route('/{id}/ban', name: 'admin_customers_ban', methods: ['POST'])]
-    public function ban(string $id, Request $request): JsonResponse
+    public function ban(string $id, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if (!Uuid::isValid($id)) {
             return new JsonResponse(['error' => 'Invalid customer UUID'], Response::HTTP_BAD_REQUEST);
@@ -42,7 +45,7 @@ final class AdminCustomerController
             return new JsonResponse(['error' => 'A valid non-empty reason is required to ban a customer'], Response::HTTP_BAD_REQUEST);
         }
 
-        $adminId = (string) ($request->headers->get('X-Admin-Id') ?? $body['adminId'] ?? 'admin-operator');
+        $adminId = $admin->getId();
 
         try {
             $this->commandBus->dispatch(new BanCustomer(
@@ -62,7 +65,7 @@ final class AdminCustomerController
     }
 
     #[Route('/{id}/unban', name: 'admin_customers_unban', methods: ['POST'])]
-    public function unban(string $id, Request $request): JsonResponse
+    public function unban(string $id, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if (!Uuid::isValid($id)) {
             return new JsonResponse(['error' => 'Invalid customer UUID'], Response::HTTP_BAD_REQUEST);
@@ -72,7 +75,7 @@ final class AdminCustomerController
         $body = json_decode($request->getContent(), true) ?? [];
 
         $reason = trim((string) ($body['reason'] ?? 'Administrative review completed'));
-        $adminId = (string) ($request->headers->get('X-Admin-Id') ?? $body['adminId'] ?? 'admin-operator');
+        $adminId = $admin->getId();
 
         $this->commandBus->dispatch(new UnbanCustomer(
             customerId: $id,
@@ -84,7 +87,8 @@ final class AdminCustomerController
     }
 
     #[Route('/{id}', name: 'admin_customers_delete', methods: ['DELETE'])]
-    public function delete(string $id, Request $request): JsonResponse
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function delete(string $id, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if (!Uuid::isValid($id)) {
             return new JsonResponse(['error' => 'Invalid customer UUID'], Response::HTTP_BAD_REQUEST);
@@ -92,7 +96,7 @@ final class AdminCustomerController
 
         /** @var array<string, mixed> $body */
         $body = json_decode($request->getContent(), true) ?? [];
-        $adminId = (string) ($request->headers->get('X-Admin-Id') ?? $body['adminId'] ?? 'admin-operator');
+        $adminId = $admin->getId();
         $reason = isset($body['reason']) ? (string) $body['reason'] : null;
 
         try {

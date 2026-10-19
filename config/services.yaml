@@ -13,6 +13,7 @@ services:
             - '../src/**/Domain/**'
             - '../src/**/Application/Command/**'
             - '../src/**/Application/Query/**'
+            - '../src/Identity/Infrastructure/Security/CustomerUser.php'
 
     App\Shared\Infrastructure\:
         resource: '../src/Shared/Infrastructure/'
@@ -31,6 +32,8 @@ services:
         resource: '../src/Shipping/Infrastructure/'
     App\Identity\Infrastructure\:
         resource: '../src/Identity/Infrastructure/'
+        exclude:
+            - '../src/Identity/Infrastructure/Security/CustomerUser.php'
     App\Promotions\Infrastructure\:
         resource: '../src/Promotions/Infrastructure/'
 

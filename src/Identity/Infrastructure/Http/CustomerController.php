@@ -9,12 +9,14 @@ use App\Identity\Application\Command\SaveCustomerAddress;
 use App\Identity\Application\Command\UpdateCustomerProfile;
 use App\Identity\Application\Query\GetCustomerProfile;
 use App\Identity\Application\Query\ListCustomerAddresses;
+use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Uid\Uuid;
 
 #[Route('/api/v1/storefront/customer')]
@@ -27,32 +29,26 @@ final class CustomerController
     }
 
     #[Route('/profile', name: 'storefront_customer_profile_get', methods: ['GET'])]
-    public function getProfile(Request $request): JsonResponse
+    public function getProfile(#[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        if (!is_string($customerId) || !Uuid::isValid($customerId)) {
-            return new JsonResponse(['error' => 'Valid X-Customer-Id header required'], Response::HTTP_BAD_REQUEST);
-        }
+        $customerId = $user->getId();
 
         /** @var array<string, mixed>|null $profile */
         $profile = $this->queries->dispatch(new GetCustomerProfile($customerId));
 
-        return new JsonResponse($profile ?? ['id' => $customerId, 'name' => '', 'email' => '', 'phone' => '', 'type' => 'particulier']);
+        return new JsonResponse($profile ?? ['id' => $customerId, 'name' => '', 'email' => $user->getUserIdentifier(), 'phone' => '', 'type' => 'particulier']);
     }
 
     #[Route('/profile', name: 'storefront_customer_profile_update', methods: ['PUT', 'POST'])]
-    public function updateProfile(Request $request): JsonResponse
+    public function updateProfile(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        if (!is_string($customerId) || !Uuid::isValid($customerId)) {
-            return new JsonResponse(['error' => 'Valid X-Customer-Id header required'], Response::HTTP_BAD_REQUEST);
-        }
+        $customerId = $user->getId();
 
         /** @var array<string, mixed> $body */
         $body = json_decode($request->getContent(), true) ?? [];
 
         $name = is_string($body['name'] ?? null) ? trim($body['name']) : '';
-        $email = is_string($body['email'] ?? null) ? trim($body['email']) : '';
+        $email = is_string($body['email'] ?? null) ? trim($body['email']) : $user->getUserIdentifier();
         $phone = is_string($body['phone'] ?? null) ? trim($body['phone']) : '';
         $type = in_array($body['type'] ?? '', ['particulier', 'pro'], true) ? (string) $body['type'] : 'particulier';
         $company = is_string($body['company'] ?? null) && '' !== trim($body['company']) ? trim($body['company']) : null;
@@ -72,12 +68,9 @@ final class CustomerController
     }
 
     #[Route('/addresses', name: 'storefront_customer_addresses_list', methods: ['GET'])]
-    public function listAddresses(Request $request): JsonResponse
+    public function listAddresses(#[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        if (!is_string($customerId) || !Uuid::isValid($customerId)) {
-            return new JsonResponse(['error' => 'Valid X-Customer-Id header required'], Response::HTTP_BAD_REQUEST);
-        }
+        $customerId = $user->getId();
 
         /** @var list<array<string, mixed>> $addresses */
         $addresses = $this->queries->dispatch(new ListCustomerAddresses($customerId));
@@ -86,12 +79,9 @@ final class CustomerController
     }
 
     #[Route('/addresses', name: 'storefront_customer_addresses_save', methods: ['POST'])]
-    public function saveAddress(Request $request): JsonResponse
+    public function saveAddress(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        if (!is_string($customerId) || !Uuid::isValid($customerId)) {
-            return new JsonResponse(['error' => 'Valid X-Customer-Id header required'], Response::HTTP_BAD_REQUEST);
-        }
+        $customerId = $user->getId();
 
         /** @var array<string, mixed> $body */
         $body = json_decode($request->getContent(), true) ?? [];
@@ -131,12 +121,9 @@ final class CustomerController
     }
 
     #[Route('/addresses/{id}', name: 'storefront_customer_addresses_delete', methods: ['DELETE'])]
-    public function deleteAddress(string $id, Request $request): JsonResponse
+    public function deleteAddress(string $id, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        if (!is_string($customerId) || !Uuid::isValid($customerId)) {
-            return new JsonResponse(['error' => 'Valid X-Customer-Id header required'], Response::HTTP_BAD_REQUEST);
-        }
+        $customerId = $user->getId();
 
         $this->commandBus->dispatch(new DeleteCustomerAddress($id, $customerId));
 

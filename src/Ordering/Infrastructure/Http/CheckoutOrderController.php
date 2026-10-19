@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ordering\Infrastructure\Http;
 
+use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Ordering\Application\Command\PlaceOrder;
 use App\Ordering\Application\Query\ListOrdersForCustomer;
 use App\Ordering\Application\Saga\CheckoutSaga;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Uid\Uuid;
 
 #[Route('/api/v1/storefront/orders')]
@@ -30,12 +32,9 @@ final class CheckoutOrderController
     }
 
     #[Route('', name: 'storefront_orders_create', methods: ['POST'])]
-    public function create(Request $request): JsonResponse
+    public function create(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        if (!is_string($customerId) || !Uuid::isValid($customerId)) {
-            return new JsonResponse(['error' => 'X-Customer-Id header required (UUID)'], Response::HTTP_BAD_REQUEST);
-        }
+        $customerId = $user->getId();
 
         if ($limitResponse = $this->rateLimitChecker->check($this->orderCreationLimiter, $request, $customerId)) {
             return $limitResponse;
@@ -90,12 +89,9 @@ final class CheckoutOrderController
     }
 
     #[Route('', name: 'storefront_orders_list', methods: ['GET'])]
-    public function list(Request $request): JsonResponse
+    public function list(#[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        if (!is_string($customerId) || !Uuid::isValid($customerId)) {
-            return new JsonResponse(['error' => 'X-Customer-Id header required (UUID)'], Response::HTTP_BAD_REQUEST);
-        }
+        $customerId = $user->getId();
 
         /** @var list<array<string, mixed>> $orders */
         $orders = $this->queries->dispatch(new ListOrdersForCustomer($customerId));
@@ -116,10 +112,9 @@ final class CheckoutOrderController
     }
 
     #[Route('/{idOrNumber}', name: 'storefront_orders_show', methods: ['GET'])]
-    public function show(string $idOrNumber, Request $request): JsonResponse
+    public function show(string $idOrNumber, #[CurrentUser] ?CustomerUser $user): JsonResponse
     {
-        $customerId = $request->headers->get('X-Customer-Id');
-        $customerUuid = is_string($customerId) && Uuid::isValid($customerId) ? $customerId : null;
+        $customerUuid = $user?->getId();
 
         /** @var array<string, mixed>|null $order */
         $order = $this->queries->dispatch(new \App\Ordering\Application\Query\GetStorefrontOrder($idOrNumber, $customerUuid));

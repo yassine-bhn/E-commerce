@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ordering\Infrastructure\Http;
 
+use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Ordering\Application\Command\CreateAdminProxyOrder;
 use App\Ordering\Application\Command\TransitionOrderStatus;
 use App\Ordering\Domain\Model\IllegalOrderStateTransitionException;
@@ -20,6 +21,7 @@ use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Uid\Uuid;
 
 #[Route('/api/v1/admin/orders')]
@@ -35,7 +37,7 @@ final class AdminOrderController
     }
 
     #[Route('/proxy', name: 'admin_orders_create_proxy', methods: ['POST'])]
-    public function createProxy(Request $request): JsonResponse
+    public function createProxy(Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if ($limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
             return $limitResponse;
@@ -72,7 +74,7 @@ final class AdminOrderController
         $orderId = Uuid::v7()->toRfc4122();
         $prefix = OrderSource::WHATSAPP === $orderSource ? 'ZG-WA-' : 'ZG-TEL-';
         $orderNumber = $prefix.random_int(100000, 999999);
-        $createdByAdminId = (string) ($request->headers->get('X-Admin-Id') ?? $body['adminId'] ?? 'admin-operator');
+        $createdByAdminId = $admin->getId();
 
         $command = new CreateAdminProxyOrder(
             orderId: $orderId,
@@ -102,7 +104,7 @@ final class AdminOrderController
     }
 
     #[Route('/{id}/status', name: 'admin_orders_transition_status', methods: ['PATCH'])]
-    public function transitionStatus(string $id, Request $request): JsonResponse
+    public function transitionStatus(string $id, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if (!Uuid::isValid($id)) {
             return new JsonResponse(['error' => 'Invalid order UUID'], Response::HTTP_BAD_REQUEST);
@@ -132,7 +134,7 @@ final class AdminOrderController
             return new JsonResponse(['error' => 'A non-empty reason is required for order status transition'], Response::HTTP_BAD_REQUEST);
         }
 
-        $changedBy = (string) ($request->headers->get('X-Admin-Id') ?? $body['changedBy'] ?? 'admin-system');
+        $changedBy = $admin->getId();
 
         $command = new TransitionOrderStatus(
             orderId: $id,

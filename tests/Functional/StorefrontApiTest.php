@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Identity\Infrastructure\Security\CustomerUser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -141,6 +142,8 @@ final class StorefrontApiTest extends WebTestCase
     {
         $client = static::createClient();
         $customerId = '01929312-7000-7000-8000-000000000001';
+        $user = new CustomerUser($customerId, 'm.zidane@example.com', null, 'ROLE_USER', 'active');
+        $client->loginUser($user);
 
         // Update Profile
         $client->request(
@@ -148,7 +151,7 @@ final class StorefrontApiTest extends WebTestCase
             '/api/v1/storefront/customer/profile',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_X_CUSTOMER_ID' => $customerId],
+            ['CONTENT_TYPE' => 'application/json'],
             json_encode([
                 'name' => 'Mohamed Zidane',
                 'email' => 'm.zidane@example.com',
@@ -161,7 +164,7 @@ final class StorefrontApiTest extends WebTestCase
         self::assertResponseIsSuccessful();
 
         // Get Profile
-        $client->request('GET', '/api/v1/storefront/customer/profile', [], [], ['HTTP_X_CUSTOMER_ID' => $customerId]);
+        $client->request('GET', '/api/v1/storefront/customer/profile');
         self::assertResponseIsSuccessful();
         /** @var array<string, mixed> $profile */
         $profile = json_decode((string) $client->getResponse()->getContent(), true);
@@ -173,7 +176,7 @@ final class StorefrontApiTest extends WebTestCase
             '/api/v1/storefront/customer/addresses',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_X_CUSTOMER_ID' => $customerId],
+            ['CONTENT_TYPE' => 'application/json'],
             json_encode([
                 'name' => 'Showroom Tunis',
                 'phone' => '+21622334455',
@@ -189,11 +192,11 @@ final class StorefrontApiTest extends WebTestCase
         $addressId = (string) $addr['id'];
 
         // List Addresses
-        $client->request('GET', '/api/v1/storefront/customer/addresses', [], [], ['HTTP_X_CUSTOMER_ID' => $customerId]);
+        $client->request('GET', '/api/v1/storefront/customer/addresses');
         self::assertResponseIsSuccessful();
 
         // Delete Address
-        $client->request('DELETE', '/api/v1/storefront/customer/addresses/'.$addressId, [], [], ['HTTP_X_CUSTOMER_ID' => $customerId]);
+        $client->request('DELETE', '/api/v1/storefront/customer/addresses/'.$addressId);
         self::assertResponseIsSuccessful();
     }
 
@@ -201,6 +204,8 @@ final class StorefrontApiTest extends WebTestCase
     {
         $client = static::createClient();
         $customerId = '01929312-7000-7000-8000-000000000001';
+        $user = new CustomerUser($customerId, 'm.zidane@example.com', null, 'ROLE_USER', 'active');
+        $client->loginUser($user);
 
         // Place Order
         $client->request(
@@ -208,7 +213,7 @@ final class StorefrontApiTest extends WebTestCase
             '/api/v1/storefront/orders',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_X_CUSTOMER_ID' => $customerId],
+            ['CONTENT_TYPE' => 'application/json'],
             json_encode([
                 'lines' => [['slug' => 'baignoire-d-code', 'qty' => 1]],
                 'deliveryMethod' => 'home',
@@ -230,7 +235,7 @@ final class StorefrontApiTest extends WebTestCase
         self::assertSame('En préparation', $order['status']);
 
         // List Orders for customer
-        $client->request('GET', '/api/v1/storefront/orders', [], [], ['HTTP_X_CUSTOMER_ID' => $customerId]);
+        $client->request('GET', '/api/v1/storefront/orders');
         self::assertResponseIsSuccessful();
     }
 }
