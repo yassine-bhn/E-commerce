@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Identity\Infrastructure\Security;
 
-use LogicException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +20,7 @@ final class LoginAuthenticator extends AbstractAuthenticator implements Authenti
 {
     public function supports(Request $request): bool
     {
-        return $request->isMethod('POST') && $request->getPathInfo() === '/api/v1/auth/login';
+        return $request->isMethod('POST') && '/api/v1/auth/login' === $request->getPathInfo();
     }
 
     public function authenticate(Request $request): Passport
@@ -35,7 +34,7 @@ final class LoginAuthenticator extends AbstractAuthenticator implements Authenti
         $email = $payload['email'] ?? null;
         $password = $payload['password'] ?? null;
 
-        if (!is_string($email) || $email === '' || !is_string($password) || $password === '') {
+        if (!is_string($email) || '' === $email || !is_string($password) || '' === $password) {
             throw new BadRequestHttpException('Email and password are required.');
         }
 
@@ -47,7 +46,7 @@ final class LoginAuthenticator extends AbstractAuthenticator implements Authenti
         $user = $token->getUser();
 
         if (!$user instanceof CustomerUser) {
-            throw new LogicException('Authenticated user must be a customer.');
+            throw new \LogicException('Authenticated user must be a customer.');
         }
 
         return new JsonResponse([

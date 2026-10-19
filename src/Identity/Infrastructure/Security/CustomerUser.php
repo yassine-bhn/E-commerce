@@ -47,7 +47,7 @@ final class CustomerUser implements UserInterface, PasswordAuthenticatedUserInte
      */
     public function getUserIdentifier(): string
     {
-        return $this->email !== '' ? $this->email : 'user@unknown';
+        return '' !== $this->email ? $this->email : 'user@unknown';
     }
 
     public function getPassword(): ?string

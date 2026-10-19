@@ -7,7 +7,6 @@ namespace App\Tests\Functional;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Uid\Uuid;
@@ -54,7 +53,7 @@ final class AuthenticationTest extends WebTestCase
             'id' => $id,
             'name' => 'Test User '.$role,
             'email' => $email,
-            'password_hash' => $password !== null ? password_hash($password, PASSWORD_BCRYPT) : null,
+            'password_hash' => null !== $password ? password_hash($password, PASSWORD_BCRYPT) : null,
             'role' => $role,
             'status' => $status,
         ]);
