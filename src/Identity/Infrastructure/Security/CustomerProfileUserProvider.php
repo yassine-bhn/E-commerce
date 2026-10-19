@@ -35,7 +35,7 @@ final readonly class CustomerProfileUserProvider implements UserProviderInterfac
 
     public function supportsClass(string $class): bool
     {
-        return $class === CustomerUser::class || is_subclass_of($class, CustomerUser::class);
+        return CustomerUser::class === $class || is_subclass_of($class, CustomerUser::class);
     }
 
     private function loadUser(string $identifier): CustomerUser
@@ -45,7 +45,7 @@ final readonly class CustomerProfileUserProvider implements UserProviderInterfac
             ['email' => $identifier],
         );
 
-        if ($row === false || ($row['status'] ?? '') === 'banned') {
+        if (false === $row || ($row['status'] ?? '') === 'banned') {
             throw new UserNotFoundException(sprintf('Customer "%s" was not found.', $identifier));
         }
 

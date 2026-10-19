@@ -1,0 +1,11 @@
+# Test-only service overrides.
+#
+# Keeping GoogleOAuthClient public prevents the container from inlining it, so
+# functional tests can replace it with a stub through static::getContainer()->set().
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Identity\Infrastructure\Security\GoogleOAuthClient:
+        public: true

@@ -63,7 +63,9 @@ final class StorefrontReferenceRepository
         );
     }
 
-    /** @return list<array{slug: string, label: string, subs: list<string>}> */
+    /**
+     * @return list<array{slug: string, label: string, subs: list<array{label: string, children?: list<array<string, mixed>>}>}>
+     */
     public function categories(): array
     {
         $rows = $this->connection->fetchAllAssociative(
@@ -71,15 +73,49 @@ final class StorefrontReferenceRepository
         );
 
         return array_map(static function (array $row): array {
-            /** @var list<string> $subs */
-            $subs = json_decode((string) $row['subcategories'], true, 512, JSON_THROW_ON_ERROR);
+            /** @var list<mixed> $decoded */
+            $decoded = json_decode((string) $row['subcategories'], true, 512, JSON_THROW_ON_ERROR);
 
             return [
                 'slug' => (string) $row['slug'],
                 'label' => (string) $row['label'],
-                'subs' => $subs,
+                'subs' => self::normalizeSubs($decoded),
             ];
         }, $rows);
+    }
+
+    /**
+     * Normalizes the stored subcategory tree into the hierarchical shape expected
+     * by the storefront: `list<array{label: string, children?: list<...>}>`.
+     *
+     * A plain string entry (legacy flat format) is converted to `{label: <string>}`.
+     *
+     * @param list<mixed> $subs
+     *
+     * @return list<array{label: string, children?: list<array<string, mixed>>}>
+     */
+    private static function normalizeSubs(array $subs): array
+    {
+        $nodes = [];
+        foreach ($subs as $node) {
+            if (is_string($node)) {
+                $nodes[] = ['label' => $node];
+                continue;
+            }
+
+            if (!is_array($node) || !isset($node['label'])) {
+                continue;
+            }
+
+            $entry = ['label' => (string) $node['label']];
+            if (isset($node['children']) && is_array($node['children'])) {
+                $entry['children'] = self::normalizeSubs(array_values($node['children']));
+            }
+
+            $nodes[] = $entry;
+        }
+
+        return $nodes;
     }
 
     /** @return list<string> */

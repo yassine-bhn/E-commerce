@@ -1,3 +1,15 @@
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
+
+when@dev:
+    framework:
+        mailer:
+            # Send emails synchronously in dev: there is no Messenger consumer and
+            # the `async` transport would require the messenger_messages table.
+            message_bus: false
+
+when@test:
+    framework:
+        mailer:
+            message_bus: false

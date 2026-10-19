@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Http;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -12,6 +14,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class CorsSubscriber implements EventSubscriberInterface
 {
+    public function __construct(
+        #[Autowire('%env(STOREFRONT_CORS_ORIGIN)%')]
+        private readonly string $allowedOrigins,
+    ) {
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -36,7 +44,7 @@ final class CorsSubscriber implements EventSubscriberInterface
         }
 
         $response = new Response('', Response::HTTP_NO_CONTENT);
-        $this->applyHeaders($response);
+        $this->applyHeaders($response, $request);
         $event->setResponse($response);
     }
 
@@ -50,13 +58,32 @@ final class CorsSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->applyHeaders($event->getResponse());
+        $this->applyHeaders($event->getResponse(), $event->getRequest());
     }
 
-    private function applyHeaders(Response $response): void
+    private function applyHeaders(Response $response, Request $request): void
     {
-        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $origin = trim((string) $request->headers->get('Origin', ''));
+
+        $response->headers->set('Vary', 'Origin');
+
+        if ('' !== $origin && $this->isAllowedOrigin($origin)) {
+            $response->headers->set('Access-Control-Allow-Origin', $origin);
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        }
+
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Customer-Id, Idempotency-Key');
+    }
+
+    private function isAllowedOrigin(string $origin): bool
+    {
+        foreach (explode(',', $this->allowedOrigins) as $allowed) {
+            if (trim($allowed) === $origin) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
