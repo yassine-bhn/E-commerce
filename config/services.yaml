@@ -87,6 +87,12 @@ services:
     App\Catalog\Domain\Repository\ProductRepository:
         alias: App\Catalog\Infrastructure\Persistence\DoctrineProductRepository
 
+    App\Cart\Domain\Repository\CartRepository:
+        alias: App\Cart\Infrastructure\Persistence\DbalCartRepository
+
+    App\Ordering\Domain\Repository\OrderRepository:
+        alias: App\Ordering\Infrastructure\Persistence\DoctrineOrderRepository
+
     App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository:
         arguments:
             $meilisearchUrl: '%env(MEILISEARCH_URL)%'

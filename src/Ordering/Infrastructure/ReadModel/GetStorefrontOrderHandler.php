@@ -44,7 +44,7 @@ final class GetStorefrontOrderHandler
             'id' => (string) $order['order_number'],
             'orderId' => (string) $order['id'],
             'date' => substr((string) $order['placed_at'], 0, 10),
-            'status' => (string) $order['status'],
+            'status' => StorefrontOrderStatus::label((string) $order['status']),
             'subtotal' => (int) $order['subtotal_minor'],
             'discount' => (int) $order['discount_minor'],
             'delivery' => (int) $order['delivery_minor'],

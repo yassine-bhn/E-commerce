@@ -5,7 +5,13 @@ declare(strict_types=1);
 namespace App\Ordering\Application\CommandHandler;
 
 use App\Ordering\Application\Command\PlaceOrder;
+use App\Ordering\Domain\Model\Order;
+use App\Ordering\Domain\Model\OrderId;
+use App\Ordering\Domain\Model\OrderLine;
+use App\Ordering\Domain\Repository\OrderRepository;
 use App\Shared\Application\Service\StorefrontQuoteService;
+use App\Shared\Domain\Money;
+use App\Shared\Domain\Outbox\OutboxPort;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
@@ -16,6 +22,8 @@ final class PlaceOrderHandler
     public function __construct(
         private Connection $connection,
         private StorefrontQuoteService $quotes,
+        private OrderRepository $orders,
+        private OutboxPort $outbox,
     ) {
     }
 
@@ -30,47 +38,36 @@ final class PlaceOrderHandler
         }
 
         $quote = $this->quotes->quote($command->lines, $command->promoCode, $command->deliveryMethod);
+        $currency = $quote['total']->currency();
 
-        $this->connection->executeStatement(
-            'INSERT INTO ordering_orders (
-                id, customer_id, status, order_number, subtotal_minor, discount_minor, delivery_minor, total_minor,
-                currency, delivery_method, payment_method, promo_code, placed_at
-            ) VALUES (
-                :id, :customer_id, :status, :order_number, :subtotal_minor, :discount_minor, :delivery_minor, :total_minor,
-                :currency, :delivery_method, :payment_method, :promo_code, :placed_at
-            ) ON CONFLICT (id) DO NOTHING',
-            [
-                'id' => $command->orderId,
-                'customer_id' => $command->customerId,
-                'status' => 'En préparation',
-                'order_number' => $command->orderNumber,
-                'subtotal_minor' => $quote['subtotal']->minorUnits(),
-                'discount_minor' => $quote['discount']->minorUnits(),
-                'delivery_minor' => $quote['delivery']->minorUnits(),
-                'total_minor' => $quote['total']->minorUnits(),
-                'currency' => $quote['total']->currency()->value,
-                'delivery_method' => $command->deliveryMethod,
-                'payment_method' => $command->paymentMethod,
-                'promo_code' => $command->promoCode,
-                'placed_at' => (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP'),
-            ],
+        $lines = array_map(
+            static fn (array $line): OrderLine => OrderLine::snapshot(
+                Uuid::v7()->toRfc4122(),
+                $line['slug'],
+                $line['name'],
+                $line['variant'],
+                Money::ofMinor($line['unitPriceMinor'], $currency),
+                $line['quantity'],
+            ),
+            $quote['pricedLines'],
         );
 
-        foreach ($quote['pricedLines'] as $line) {
-            $this->connection->executeStatement(
-                'INSERT INTO ordering_order_lines (id, order_id, product_slug, product_name, variant_label, unit_price_minor, currency, quantity)
-                 VALUES (:id, :order_id, :slug, :name, :variant, :price, :currency, :qty)',
-                [
-                    'id' => Uuid::v7()->toRfc4122(),
-                    'order_id' => $command->orderId,
-                    'slug' => $line['slug'],
-                    'name' => $line['name'],
-                    'variant' => $line['variant'],
-                    'price' => $line['unitPriceMinor'],
-                    'currency' => $quote['total']->currency()->value,
-                    'qty' => $line['quantity'],
-                ],
-            );
-        }
+        $order = Order::placeOnline(
+            new OrderId($command->orderId),
+            $command->customerId,
+            $command->orderNumber,
+            $quote['subtotal'],
+            $quote['discount'],
+            $quote['delivery'],
+            $quote['total'],
+            $command->deliveryMethod,
+            $command->paymentMethod,
+            $command->promoCode,
+            $lines,
+            new \DateTimeImmutable(),
+        );
+
+        $this->orders->save($order);
+        $this->outbox->append(Order::class, $command->orderId, $order->releaseEvents());
     }
 }

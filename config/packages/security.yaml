@@ -40,6 +40,8 @@ security:
         - { path: ^/api/v1/storefront/orders, methods: [GET, POST], roles: ROLE_USER }
         - { path: ^/api/v1/storefront/quote-requests$, methods: [GET], roles: ROLE_USER }
         - { path: ^/api/v1/storefront/quote-requests$, methods: [POST], roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/storefront/cart/quote, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/storefront/cart, roles: ROLE_USER }
         - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS }
 
 when@test:

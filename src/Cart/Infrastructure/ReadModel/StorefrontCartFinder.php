@@ -34,7 +34,7 @@ final class StorefrontCartFinder
         }
 
         $rows = $this->connection->fetchAllAssociative(
-            'SELECT i.id, i.product_slug, i.variant_label, i.quantity, i.unit_price_minor, i.currency, p.*
+            'SELECT i.id AS cart_item_id, i.product_slug, i.variant_label, i.quantity, i.unit_price_minor, i.currency, p.*
              FROM storefront_cart_item i
              LEFT JOIN storefront_product_view p ON p.slug = i.product_slug
              WHERE i.cart_id = :cart
@@ -52,7 +52,7 @@ final class StorefrontCartFinder
                 : null;
             $unitPrice = (int) $row['unit_price_minor'];
             $item = [
-                'id' => (string) $row['id'],
+                'id' => (string) $row['cart_item_id'],
                 'slug' => (string) $row['product_slug'],
                 'variant' => $variant,
                 'quantity' => $qty,

@@ -11,7 +11,7 @@ use App\Cart\Application\Command\UpdateCartItem;
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\CartLineId;
 use App\Cart\Domain\Repository\CartRepository;
-use App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository;
+use App\Shared\Application\Port\StorefrontCatalogPort;
 use App\Shared\Application\Service\StorefrontQuoteService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
@@ -20,7 +20,7 @@ final class CartCommandHandler
 {
     public function __construct(
         private CartRepository $carts,
-        private StorefrontProductRepository $products,
+        private StorefrontCatalogPort $catalog,
         private StorefrontQuoteService $quotes,
     ) {
     }
@@ -28,7 +28,7 @@ final class CartCommandHandler
     #[AsMessageHandler(bus: 'command.bus')]
     public function handleAddCartItem(AddCartItem $command): void
     {
-        if (null === $this->products->bySlug($command->productSlug)) {
+        if (null === $this->catalog->getBySlug($command->productSlug)) {
             throw new \InvalidArgumentException('Product not found');
         }
 
