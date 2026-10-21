@@ -64,24 +64,66 @@ final class StorefrontReferenceRepository
     }
 
     /**
+     * The storefront navigation taxonomy (spec R3/R6): one entry per visible category, each
+     * carrying its own `subcategories` JSON tree in the exact `slug`/`label`/`subs` shape the
+     * live frontend already consumes.
+     *
+     * A hidden category is dropped together with its whole subtree — the nodes of its own
+     * JSON tree go with it, and so does every legacy `parent_slug` descendant. Hiding is a
+     * read-side concern only: the row and its products stay in place and stay reachable.
+     *
      * @return list<array{slug: string, label: string, subs: list<array{label: string, children?: list<array<string, mixed>>}>}>
      */
     public function categories(): array
     {
         $rows = $this->connection->fetchAllAssociative(
-            'SELECT slug, label, subcategories FROM storefront_category ORDER BY sort_order ASC',
+            'SELECT slug, label, subcategories, hidden, parent_slug FROM storefront_category ORDER BY sort_order ASC, slug ASC',
         );
 
-        return array_map(static function (array $row): array {
-            /** @var list<mixed> $decoded */
-            $decoded = json_decode((string) $row['subcategories'], true, 512, JSON_THROW_ON_ERROR);
+        $bySlug = [];
+        foreach ($rows as $row) {
+            $bySlug[(string) $row['slug']] = $row;
+        }
 
-            return [
-                'slug' => (string) $row['slug'],
-                'label' => (string) $row['label'],
-                'subs' => self::normalizeSubs($decoded),
-            ];
-        }, $rows);
+        return array_values(array_map(
+            static function (array $row): array {
+                /** @var list<mixed> $decoded */
+                $decoded = json_decode((string) $row['subcategories'], true, 512, JSON_THROW_ON_ERROR);
+
+                return [
+                    'slug' => (string) $row['slug'],
+                    'label' => (string) $row['label'],
+                    'subs' => self::normalizeSubs($decoded),
+                ];
+            },
+            array_filter($rows, static fn (array $row): bool => !self::isObscured($row, $bySlug)),
+        ));
+    }
+
+    /**
+     * Is this row hidden itself, or a descendant of a hidden row?
+     *
+     * The ancestor walk is guarded so a malformed `parent_slug` cycle can never turn the
+     * storefront read into an endless loop.
+     *
+     * @param array<string, mixed>                $row
+     * @param array<string, array<string, mixed>> $rowsBySlug
+     * @param array<string, bool>                 $visited
+     */
+    private static function isObscured(array $row, array $rowsBySlug, array $visited = []): bool
+    {
+        if (filter_var($row['hidden'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            return true;
+        }
+
+        $parent = isset($row['parent_slug']) ? trim((string) $row['parent_slug']) : '';
+        if ('' === $parent || isset($visited[$parent]) || !isset($rowsBySlug[$parent])) {
+            return false;
+        }
+
+        $visited[$parent] = true;
+
+        return self::isObscured($rowsBySlug[$parent], $rowsBySlug, $visited);
     }
 
     /**
