@@ -6,9 +6,12 @@ namespace App\Ordering\Infrastructure\Http;
 
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Ordering\Application\Query\ListOrdersForAdminRequestedCustomer;
-use App\Ordering\Infrastructure\ReadModel\AdminCustomerOrderView;
+use App\Shared\Application\Pagination\CursorPage;
+use App\Shared\Application\Pagination\InvalidCursorException;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
@@ -23,8 +26,8 @@ use Symfony\Component\Uid\Uuid;
  * touches the WP3 user-administration routes on the same path family.
  *
  * Thin by design (ADR-0007): decode → build the query with the requester identity → dispatch on
- * the query bus → map the view DTOs to the {items: [...]} envelope the admin surface uses.
- * The authorization decision itself lives in the read model (QRY-004), not here.
+ * the query bus → answer the cursor envelope `{items, meta}`. The authorization decision itself
+ * lives in the read model (QRY-004), not here.
  */
 #[Route('/api/v1/admin/customers')]
 #[IsGranted('ROLE_ADMIN')]
@@ -37,7 +40,7 @@ final class AdminCustomerOrderController
     }
 
     #[Route('/{id}/orders', name: 'admin_customers_list_orders', methods: ['GET'])]
-    public function list(string $id, #[CurrentUser] CustomerUser $admin): JsonResponse
+    public function list(string $id, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if (false === Uuid::isValid($id)) {
             return new JsonResponse(['error' => 'Invalid customer UUID'], Response::HTTP_BAD_REQUEST);
@@ -46,14 +49,23 @@ final class AdminCustomerOrderController
         $requesterIsAdmin = [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles());
 
         try {
-            /** @var list<AdminCustomerOrderView> $orders */
-            $orders = $this->queries->dispatch(new ListOrdersForAdminRequestedCustomer(
+            /** @var CursorPage $page */
+            $page = $this->queries->dispatch(new ListOrdersForAdminRequestedCustomer(
                 requesterId: $admin->getId(),
                 requesterIsAdmin: $requesterIsAdmin,
                 customerId: $id,
+                cursor: ListQueryParams::cursor($request, ListOrdersForAdminRequestedCustomer::DEFAULT_LIMIT, ListOrdersForAdminRequestedCustomer::MAX_LIMIT),
+                status: ListQueryParams::text($request, 'status'),
+                dateFrom: ListQueryParams::dateOrNull($request, 'dateFrom'),
+                dateTo: ListQueryParams::dateOrNull($request, 'dateTo'),
+                q: ListQueryParams::text($request),
             ));
         } catch (HandlerFailedException $exception) {
             $previous = $exception->getPrevious();
+
+            if ($previous instanceof InvalidCursorException) {
+                return new JsonResponse(['error' => 'Invalid cursor'], Response::HTTP_BAD_REQUEST);
+            }
 
             if ($previous instanceof NotFoundHttpException) {
                 return new JsonResponse(['error' => 'Customer not found'], Response::HTTP_NOT_FOUND);
@@ -66,8 +78,6 @@ final class AdminCustomerOrderController
             throw $exception;
         }
 
-        return new JsonResponse([
-            'items' => array_map(static fn (AdminCustomerOrderView $order): array => $order->toArray(), $orders),
-        ]);
+        return new JsonResponse($page->toArray());
     }
 }

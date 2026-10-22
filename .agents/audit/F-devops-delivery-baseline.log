@@ -1,0 +1,13 @@
+2026-10-22T16:05:00+01:00 gate orchestrator — GATE: SPEC ok, spec-run-4/spec.md v1 (R1–R36, WP1–WP8)
+2026-10-22T16:10:00+01:00 gate test-planner — GATE: PLAN ok, 6 ordered behaviors mapped to R23–R25
+2026-10-22T16:12:00+01:00 dispatch implementer — WP1 prod image (docker/Dockerfile base/prod/dev)
+2026-10-22T16:18:00+01:00 gate implementer — prod image serves /healthz 200 and /readyz 200 as uid 33
+2026-10-22T16:25:00+01:00 dispatch implementer — WP2 Makefile + compose worker/outbox + README ops
+2026-10-22T16:31:00+01:00 gate implementer — make help/up/ps/urls/harness/test-unit green; outbox relays every 5 s
+2026-10-22T16:34:00+01:00 escalate orchestrator — PHPStan reported [OK] from a stale result cache; clear-result-cache required before trusting the gate
+2026-10-22T16:38:00+01:00 blocked orchestrator — working tree edited concurrently by task implement-list-filters-search-pagination (src/Catalog + tests/Contract)
+2026-10-22T16:40:00+01:00 gate orchestrator — infection baseline 21/21 killed, MSI 100%, covered MSI 100% on the unit-covered health classes
+2026-10-22T16:41:00+01:00 gate orchestrator — backup 56 KB dump + 1.8 MB uploads tar; pg_restore into scratch DB exit 0, 30 tables both sides
+2026-10-22T16:45:00+01:00 gate orchestrator — GATE: VERIFY, 33 pass / 2 partial (R5, R7) / 1 not attributable (R34)
+2026-10-22T16:46:00+01:00 escalate orchestrator — R34 red on PHPStan 5 + Contract 1 + Functional 4, every one in the concurrent feature's files; HEAD baseline is 1 error and it is fixed
+2026-10-22T16:47:00+01:00 gate orchestrator — GATE: DONE withheld pending a quiet working tree

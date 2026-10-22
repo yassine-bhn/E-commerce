@@ -7,10 +7,14 @@ namespace App\Identity\Infrastructure\Http;
 use App\Identity\Application\Command\SubmitQuoteRequest;
 use App\Identity\Application\Query\ListQuoteRequestsForUser;
 use App\Identity\Infrastructure\Security\CustomerUser;
+use App\Shared\Application\Pagination\CursorPage;
+use App\Shared\Application\Pagination\InvalidCursorException;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -62,13 +66,26 @@ final class QuoteRequestController
     }
 
     #[Route('', name: 'storefront_quote_requests_list', methods: ['GET'])]
-    public function list(#[CurrentUser] CustomerUser $user): JsonResponse
+    public function list(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $user->getId();
+        try {
+            /** @var CursorPage $page */
+            $page = $this->queries->dispatch(new ListQuoteRequestsForUser(
+                userId: $user->getId(),
+                cursor: ListQueryParams::cursor($request, ListQuoteRequestsForUser::DEFAULT_LIMIT, ListQuoteRequestsForUser::MAX_LIMIT),
+                status: ListQueryParams::text($request, 'status'),
+                dateFrom: ListQueryParams::dateOrNull($request, 'dateFrom'),
+                dateTo: ListQueryParams::dateOrNull($request, 'dateTo'),
+                q: ListQueryParams::text($request),
+            ));
+        } catch (HandlerFailedException $e) {
+            if ($e->getPrevious() instanceof InvalidCursorException) {
+                return new JsonResponse(['error' => 'Invalid cursor'], Response::HTTP_BAD_REQUEST);
+            }
 
-        /** @var list<array<string, mixed>> $items */
-        $items = $this->queries->dispatch(new ListQuoteRequestsForUser($customerId));
+            throw $e;
+        }
 
-        return new JsonResponse(['items' => $items]);
+        return new JsonResponse($page->toArray());
     }
 }

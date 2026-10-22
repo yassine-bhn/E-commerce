@@ -22,4 +22,20 @@ final class StorefrontOrderStatus
             null => $status,
         };
     }
+
+    /**
+     * The persisted statuses behind one filter slug; `[]` for an unknown slug so the caller can
+     * answer an empty page instead of leaking rows.
+     *
+     * @return list<string>
+     */
+    public static function valuesFor(string $slug): array
+    {
+        return match ($slug) {
+            'en_preparation' => [OrderStatus::PENDING->value, OrderStatus::PAID->value],
+            'expediee' => [OrderStatus::SHIPPED->value],
+            'annulee' => [OrderStatus::CANCELLED->value, OrderStatus::FAILED->value, OrderStatus::REFUNDED->value],
+            default => [],
+        };
+    }
 }

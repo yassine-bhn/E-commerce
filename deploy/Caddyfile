@@ -1,0 +1,21 @@
+# Edge proxy (R14, D1). Caddy terminates TLS with ACME and is the only published service.
+# APP_DOMAIN, STOREFRONT_DOMAIN and EDGE_EMAIL come from .env.prod through compose.prod.yaml.
+{
+	email {$EDGE_EMAIL}
+	servers {
+		protocols h1 h2 h3
+	}
+}
+
+{$APP_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:8080 {
+		# Caddy sets X-Forwarded-For/-Proto/-Host; the backend trusts these ranges (TRUSTED_PROXIES).
+		header_up X-Forwarded-Host {host}
+	}
+}
+
+{$STOREFRONT_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy storefront:3000
+}

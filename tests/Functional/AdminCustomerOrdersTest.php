@@ -25,7 +25,11 @@ final class AdminCustomerOrdersTest extends WebTestCase
     private const EMPTY_EMAIL = 'wp4.empty@example.com';
     private const PLAIN_EMAIL = 'wp4.plain@example.com';
 
-    private const FIXTURE_ORDER_NUMBERS = ['ZG-FUNC-OLD', 'ZG-FUNC-NEW', 'ZG-FUNC-OTHER', 'ZG-FUNC-PROXY'];
+    private const FIXTURE_ORDER_NUMBERS = [
+        'ZG-FUNC-OLD', 'ZG-FUNC-NEW', 'ZG-FUNC-OTHER', 'ZG-FUNC-PROXY',
+        'ZG-PAGE-001', 'ZG-PAGE-002', 'ZG-PAGE-003',
+        'ZG-FILTER-001', 'ZG-FILTER-002', 'ZG-FILTER-003',
+    ];
 
     /** @var list<string> */
     private array $orderIds = [];
@@ -86,7 +90,9 @@ final class AdminCustomerOrdersTest extends WebTestCase
 
         $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders');
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertSame(['items' => []], $this->json($client));
+        $payload = $this->json($client);
+        self::assertSame([], $payload['items']);
+        self::assertSame(['limit' => 20, 'hasMore' => false, 'nextCursor' => null], $payload['meta']);
     }
 
     public function testAnUnknownCustomerIdIsNotFound(): void
@@ -179,6 +185,102 @@ final class AdminCustomerOrdersTest extends WebTestCase
         $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders');
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertSame(['ZG-FUNC-NEW'], array_column($this->json($client)['items'], 'orderNumber'));
+    }
+
+    public function testTheOrdersAreCursorPaginatedNewestFirstAndEveryPageIsWalkedExactlyOnce(): void
+    {
+        $client = $this->browser();
+        $client->loginUser($this->createAuthenticatedUser(self::ADMIN_EMAIL, 'Dashboard Admin', 'ROLE_SUPER_ADMIN'));
+
+        $customerId = $this->createProfile(self::CUSTOMER_EMAIL, 'Ordering Customer', 'ROLE_USER');
+        $this->seedOrder($customerId, 'ZG-PAGE-001', '2026-05-01 10:00:00+01', 1_000, 0, 0, 1_000);
+        $this->seedOrder($customerId, 'ZG-PAGE-002', '2026-05-02 10:00:00+01', 2_000, 0, 0, 2_000);
+        $this->seedOrder($customerId, 'ZG-PAGE-003', '2026-05-03 10:00:00+01', 3_000, 0, 0, 3_000);
+        $this->seedOrder($customerId, 'ZG-FUNC-OLD', '2026-05-04 10:00:00+01', 4_000, 0, 0, 4_000);
+        $this->seedOrder($customerId, 'ZG-FUNC-NEW', '2026-05-05 10:00:00+01', 5_000, 0, 0, 5_000);
+
+        $collected = [];
+        $cursor = null;
+
+        do {
+            $url = '/api/v1/admin/customers/'.$customerId.'/orders?limit=2';
+            if (null !== $cursor) {
+                $url .= '&cursor='.rawurlencode($cursor);
+            }
+
+            $client->request('GET', $url);
+            self::assertResponseIsSuccessful();
+            $payload = $this->json($client);
+
+            self::assertSame(2, $payload['meta']['limit']);
+            self::assertSame($payload['meta']['hasMore'], null !== $payload['meta']['nextCursor'], 'nextCursor is null exactly when hasMore is false');
+
+            foreach ($payload['items'] as $item) {
+                $collected[] = $item['orderNumber'];
+            }
+
+            $cursor = $payload['meta']['nextCursor'];
+        } while (null !== $cursor);
+
+        self::assertSame(
+            ['ZG-FUNC-NEW', 'ZG-FUNC-OLD', 'ZG-PAGE-003', 'ZG-PAGE-002', 'ZG-PAGE-001'],
+            $collected,
+            'pages are contiguous and nothing is skipped or duplicated',
+        );
+    }
+
+    public function testTheStatusDateAndNumberFiltersAreAppliedToThatCustomersOrders(): void
+    {
+        $client = $this->browser();
+        $client->loginUser($this->createAuthenticatedUser(self::ADMIN_EMAIL, 'Dashboard Admin', 'ROLE_SUPER_ADMIN'));
+
+        $customerId = $this->createProfile(self::CUSTOMER_EMAIL, 'Ordering Customer', 'ROLE_USER');
+        $this->seedOrder($customerId, 'ZG-FILTER-001', '2026-06-01 10:00:00+01', 1_000, 0, 0, 1_000, '待支付');
+        $this->seedOrder($customerId, 'ZG-FILTER-002', '2026-06-02 10:00:00+01', 2_000, 0, 0, 2_000, '已支付');
+        $this->seedOrder($customerId, 'ZG-FILTER-003', '2026-06-03 10:00:00+01', 3_000, 0, 0, 3_000, '已发货');
+
+        $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders?status=en_preparation');
+        self::assertResponseIsSuccessful();
+        self::assertSame(['ZG-FILTER-002', 'ZG-FILTER-001'], array_column($this->json($client)['items'], 'orderNumber'), 'pending and paid are both "En préparation"');
+
+        $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders?status=expediee');
+        self::assertResponseIsSuccessful();
+        self::assertSame(['ZG-FILTER-003'], array_column($this->json($client)['items'], 'orderNumber'));
+
+        $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders?dateFrom=2026-06-02&dateTo=2026-06-03');
+        self::assertResponseIsSuccessful();
+        self::assertSame(['ZG-FILTER-003', 'ZG-FILTER-002'], array_column($this->json($client)['items'], 'orderNumber'), 'dateTo includes the whole day');
+
+        $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders?q=FILTER-003');
+        self::assertResponseIsSuccessful();
+        self::assertSame(['ZG-FILTER-003'], array_column($this->json($client)['items'], 'orderNumber'));
+    }
+
+    public function testAnInvalidCursorIsABadRequest(): void
+    {
+        $client = $this->browser();
+        $client->loginUser($this->createAuthenticatedUser(self::ADMIN_EMAIL, 'Dashboard Admin', 'ROLE_SUPER_ADMIN'));
+        $customerId = $this->createProfile(self::CUSTOMER_EMAIL, 'Ordering Customer', 'ROLE_USER');
+
+        $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders?cursor=not-base64');
+
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        self::assertSame(['error' => 'Invalid cursor'], $this->json($client));
+    }
+
+    public function testTheLimitIsClampedInsteadOfRejected(): void
+    {
+        $client = $this->browser();
+        $client->loginUser($this->createAuthenticatedUser(self::ADMIN_EMAIL, 'Dashboard Admin', 'ROLE_SUPER_ADMIN'));
+        $customerId = $this->createProfile(self::CUSTOMER_EMAIL, 'Ordering Customer', 'ROLE_USER');
+        $this->seedOrder($customerId, 'ZG-FUNC-OLD', '2026-05-01 10:00:00+01', 1_000, 0, 0, 1_000);
+        $this->seedOrder($customerId, 'ZG-FUNC-NEW', '2026-05-02 10:00:00+01', 2_000, 0, 0, 2_000);
+
+        $client->request('GET', '/api/v1/admin/customers/'.$customerId.'/orders?limit=0');
+        self::assertResponseIsSuccessful();
+        $payload = $this->json($client);
+        self::assertSame(1, $payload['meta']['limit']);
+        self::assertCount(1, $payload['items']);
     }
 
     private function browser(): KernelBrowser
@@ -274,7 +376,7 @@ final class AdminCustomerOrdersTest extends WebTestCase
         return (string) $customer;
     }
 
-    private function seedOrder(string $customerId, string $orderNumber, string $placedAt, int $subtotal, int $discount, int $delivery, int $total): string
+    private function seedOrder(string $customerId, string $orderNumber, string $placedAt, int $subtotal, int $discount, int $delivery, int $total, string $status = '待支付'): string
     {
         $id = Uuid::v7()->toRfc4122();
         $this->orderIds[] = $id;
@@ -282,7 +384,7 @@ final class AdminCustomerOrdersTest extends WebTestCase
         $this->connection()->insert('ordering_orders', [
             'id' => $id,
             'customer_id' => $customerId,
-            'status' => '待支付',
+            'status' => $status,
             'version' => 1,
             'order_number' => $orderNumber,
             'order_source' => 'ONLINE',

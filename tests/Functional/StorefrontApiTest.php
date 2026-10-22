@@ -5,11 +5,40 @@ declare(strict_types=1);
 namespace App\Tests\Functional;
 
 use App\Identity\Infrastructure\Security\CustomerUser;
+use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 final class StorefrontApiTest extends WebTestCase
 {
+    private const CUSTOMER_ID = '01929312-7000-7000-8000-000000000001';
+    private const CUSTOMER_EMAIL = 'm.zidane@example.com';
+
+    /**
+     * The session token is refreshed through CustomerProfileUserProvider on every request, so the
+     * profile row must exist or loginUser() is dropped and the request answers 401.
+     */
+    private function signIn(): CustomerUser
+    {
+        $connection = static::getContainer()->get(Connection::class);
+        assert($connection instanceof Connection);
+
+        $connection->executeStatement(
+            'INSERT INTO customer_profile (id, name, email, role, status)
+             VALUES (:id, :name, :email, :role, :status)
+             ON CONFLICT DO NOTHING',
+            [
+                'id' => self::CUSTOMER_ID,
+                'name' => 'Mohamed Zidane',
+                'email' => self::CUSTOMER_EMAIL,
+                'role' => 'ROLE_USER',
+                'status' => 'active',
+            ],
+        );
+
+        return new CustomerUser(self::CUSTOMER_ID, self::CUSTOMER_EMAIL, null, 'ROLE_USER', 'active');
+    }
+
     public function testStorefrontReferenceEndpoint(): void
     {
         $client = static::createClient();
@@ -141,9 +170,7 @@ final class StorefrontApiTest extends WebTestCase
     public function testCustomerProfileAndAddresses(): void
     {
         $client = static::createClient();
-        $customerId = '01929312-7000-7000-8000-000000000001';
-        $user = new CustomerUser($customerId, 'm.zidane@example.com', null, 'ROLE_USER', 'active');
-        $client->loginUser($user);
+        $client->loginUser($this->signIn());
 
         // Update Profile
         $client->request(
@@ -203,9 +230,7 @@ final class StorefrontApiTest extends WebTestCase
     public function testOrderCreationAndTracking(): void
     {
         $client = static::createClient();
-        $customerId = '01929312-7000-7000-8000-000000000001';
-        $user = new CustomerUser($customerId, 'm.zidane@example.com', null, 'ROLE_USER', 'active');
-        $client->loginUser($user);
+        $client->loginUser($this->signIn());
 
         // Place Order
         $client->request(

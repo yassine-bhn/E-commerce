@@ -30,6 +30,9 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
+        # Kubernetes/Docker probes must never be challenged (WP3, R25).
+        - { path: ^/healthz$, roles: PUBLIC_ACCESS }
+        - { path: ^/readyz$, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/auth/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/auth/logout, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/auth/google, roles: PUBLIC_ACCESS }

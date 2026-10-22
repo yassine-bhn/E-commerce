@@ -176,7 +176,9 @@ final class StorefrontCartController
             }
         }
 
-        return $items[array_key_last($items)] ?? null;
+        $lastKey = array_key_last($items);
+
+        return null === $lastKey ? null : $items[$lastKey];
     }
 
     /**

@@ -15,6 +15,8 @@ use App\Catalog\Domain\Model\CategoryNotEmptyException;
 use App\Catalog\Domain\Model\CategoryNotFoundException;
 use App\Catalog\Domain\Model\CategorySublevelException;
 use App\Catalog\Infrastructure\ReadModel\CategoryView;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Application\Pagination\PageRequest;
 use App\Shared\Infrastructure\ReadModel\StorefrontReferenceRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
@@ -273,13 +275,17 @@ final class CategoryManagementTest extends KernelTestCase
         $envelope = $queryBus->dispatch(new ListCategories(
             requesterId: $isAdmin ? 'integration-admin' : 'integration-customer',
             isAdmin: $isAdmin,
+            page: new PageRequest(1, ListCategories::MAX_SIZE, ListCategories::MAX_SIZE),
         ));
 
         $handled = $envelope->last(HandledStamp::class);
         self::assertNotNull($handled);
 
+        $page = $handled->getResult();
+        self::assertInstanceOf(Page::class, $page, 'QRY-002 — the category list is a page DTO');
+
         /** @var list<CategoryView> $views */
-        $views = $handled->getResult();
+        $views = $page->items;
 
         return $views;
     }

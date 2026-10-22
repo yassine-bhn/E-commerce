@@ -1,0 +1,63 @@
+name: Uptime check
+
+# Probes the production readiness endpoint on a schedule. The URL is optional: with no
+# HEALTHCHECK_URL secret the job reports "not configured" and succeeds, so a repository
+# that has not been wired to a deployment never goes red every 15 minutes.
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uptime-check
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Probe /readyz
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check configuration
+        id: config
+        env:
+          URL: ${{ secrets.HEALTHCHECK_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${URL:-}" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Uptime check not configured::Set the HEALTHCHECK_URL repository secret (e.g. https://api.example.tn) to enable this workflow."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Probe readiness
+        if: steps.config.outputs.configured == 'true'
+        env:
+          URL: ${{ secrets.HEALTHCHECK_URL }}
+        run: |
+          set -uo pipefail
+          endpoint="${URL%/}/readyz"
+          body="$(mktemp)"
+          code="000"
+          # Three attempts with a pause between them: one dropped packet is not an outage.
+          for attempt in 1 2 3; do
+            code="$(curl -sS -o "$body" -w '%{http_code}' --max-time 10 "$endpoint" || echo '000')"
+            echo "attempt ${attempt}: HTTP ${code}"
+            [ "$code" = "200" ] && break
+            [ "$attempt" -lt 3 ] && sleep 5
+          done
+
+          if [ "$code" != "200" ]; then
+            echo "::error title=Readiness probe failed::${endpoint} answered HTTP ${code}"
+            echo "--- body ---"
+            cat "$body" || true
+            exit 1
+          fi
+
+          echo "--- body ---"
+          cat "$body"

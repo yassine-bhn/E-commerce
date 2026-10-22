@@ -1,0 +1,69 @@
+name: Tests
+
+# Runs every PHPUnit suite even when an earlier one fails, then publishes the
+# complete list of failing tests (job summary + ::error annotations + JUnit
+# artifact). ci.yml stays the fail-fast quality gate; this pipeline answers
+# "what exactly is broken?" for a red build.
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Keeps container names stable and avoids collisions with a developer stack on a self-hosted runner.
+  COMPOSE_PROJECT_NAME: ecommerce-ci
+
+jobs:
+  phpunit:
+    name: PHPUnit — every suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Build the dev image
+        run: docker compose build
+
+      - name: Start PostgreSQL 16, Meilisearch and the app
+        run: docker compose up -d --wait app database meilisearch
+
+      - name: Composer install
+        run: docker compose exec -T app composer install --no-interaction --prefer-dist
+
+      - name: Migrate the dev and test databases
+        run: |
+          docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration
+          docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+
+      # One script instead of six steps: it records each suite's exit code and
+      # keeps going, so the report below always covers all six suites.
+      - name: Run all suites and report every failing test
+        run: ./scripts/run-tests.sh
+
+      - name: Upload the JUnit reports and suite logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-reports
+          path: var/test-reports/
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Container logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail=200

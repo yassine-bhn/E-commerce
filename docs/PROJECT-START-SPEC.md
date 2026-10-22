@@ -5,7 +5,7 @@ Symfony **8.1** modular monolith merged into this repository. Runtime and workfl
 | Item | Value |
 |------|--------|
 | Composer name | `ecommerce/ecommerce-core` |
-| PHP | ≥ 8.4 (FrankenPHP image) |
+| PHP | ≥ 8.5 (FrankenPHP image) |
 | Database | PostgreSQL **16** only (INF-001) |
 | HTTP | FrankenPHP worker + Caddy (INF-003) — **never** `symfony serve`, php-fpm, nginx, Apache |
 | Execution | **Docker Compose**; host runs `docker` + `git` only (INF-002) |

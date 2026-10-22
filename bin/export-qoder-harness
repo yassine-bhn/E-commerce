@@ -1,0 +1,425 @@
+#!/usr/bin/env bash
+# export-qoder-harness — generate the Qoder-native layer for the E-commerce CQRS harness.
+#
+# Reads (never writes):
+#   AGENTS.md, .agents/skills/**, .agents/agents/**, .cursor/skills/spec-driven-agents/SKILL.md
+# Writes (fully regenerated on every run):
+#   <workspace>/.qoder/skills/<name>/SKILL.md
+#   <workspace>/.qoder/agents/<id>.md
+#   <workspace>/.qoder/README.md
+#
+# Usage: bin/export-qoder-harness
+# Re-run after changing a harness skill, an agent definition, a rule or the spec pipeline.
+
+set -euo pipefail
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+harness_root=$(dirname "$script_dir")
+workspace_root=$(dirname "$harness_root")
+out="$workspace_root/.qoder"
+rel="E-commerce"
+
+die() { printf 'export-qoder-harness: %s\n' "$1" >&2; exit 1; }
+note() { printf 'export-qoder-harness: %s\n' "$1"; }
+
+[ -f "$harness_root/AGENTS.md" ] || die "missing $harness_root/AGENTS.md"
+[ -d "$harness_root/.agents/skills" ] || die "missing $harness_root/.agents/skills"
+[ -d "$harness_root/.agents/agents" ] || die "missing $harness_root/.agents/agents"
+[ "$out" = "$workspace_root/.qoder" ] || die "unexpected output path: $out"
+[ "$workspace_root" != "/" ] || die "refusing to operate at the filesystem root"
+
+rm -rf "$out/skills" "$out/agents"
+mkdir -p "$out/skills" "$out/agents"
+
+yaml_escape() { printf '%s' "$1" | sed 's/"/'"'"'/g'; }
+
+new_skill() { # <name> <description> -> prints the new SKILL.md path
+  local name="$1" desc="$2"
+  [[ "$name" =~ ^[a-z0-9][a-z0-9-]*$ ]] || die "invalid skill name: $name"
+  mkdir -p "$out/skills/$name"
+  {
+    printf -- '---\n'
+    printf 'name: %s\n' "$name"
+    printf 'description: "%s"\n' "$(yaml_escape "$desc")"
+    printf -- '---\n'
+  } > "$out/skills/$name/SKILL.md"
+  printf '%s' "$out/skills/$name/SKILL.md"
+}
+
+entry_preamble() { # <workflow> <first-agent> <task-id-prefix>
+  cat <<EOF
+
+## Qoder entry point
+
+All relative paths resolve under \`$rel/\`. Run commands from \`$rel/\` and through Docker:
+\`docker compose exec app …\` (INF-002).
+
+### Load, in this order
+1. \`$rel/AGENTS.md\`
+2. \`$rel/.agents/orchestration.md\`
+3. \`$rel/.agents/agents/orchestrator.md\`
+4. The first agent definition under \`$rel/.agents/agents/\` named under Route
+5. \`$rel/.agents/state/<task-id>.md\` (create it if absent) and the rule files in
+   \`$rel/.agents/rules/\` scoped to the paths in play
+
+### Route
+- Workflow: **$1**
+- First agent: **$2**
+- Task id prefix: \`$3\` (for example \`$3-<slug>\`)
+- Gates and handoffs: exactly as in \`$rel/.agents/orchestration.md\`. Never reorder, skip or
+  merge a gate.
+
+### Non-negotiable
+- The orchestrator writes only \`.agents/state/**\` and \`.agents/audit/**\` (AGT-004). Dispatch a
+  writer agent instead of editing \`src/**\` or \`tests/**\`.
+- No \`src/**\` change without a recorded \`RED:\` line in the state file (TDD-001).
+- Stop for human approval before an ADR that moves a bus, aggregate or bounded-context
+  boundary, before a migration commit (MIG-001), before a new dependency, and before any
+  change under \`src/Payment/**\` (SEC-001).
+- Every result ends with the AGT-005 handoff template. Reject a non-conforming handoff once,
+  then escalate.
+
+### Dispatching agents
+Project subagents live in \`.qoder/agents/<name>.md\`; once loaded, dispatch them by name with
+the Agent tool. If they are unavailable in this session, adopt the role yourself: read
+\`$rel/.agents/agents/<name>.md\` in full, obey its \`writes:\` scope, and still produce the
+AGT-005 handoff. Never play two roles inside one gated step.
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# 1. Superpowers skills — copied verbatim, namespace prefix stripped
+# ---------------------------------------------------------------------------
+for src in "$harness_root"/.agents/skills/superpowers/*/SKILL.md; do
+  [ -f "$src" ] || die "no superpowers skills found"
+  name=$(sed -nE 's/^name:[[:space:]]*//p' "$src" | head -1 | tr -d '\r')
+  [ -n "$name" ] || die "missing name: in $src"
+  mkdir -p "$out/skills/$name"
+  sed 's/superpowers://g' "$src" > "$out/skills/$name/SKILL.md"
+  while IFS= read -r extra; do
+    cp -R "$extra" "$out/skills/$name/"
+  done < <(find "$(dirname "$src")" -mindepth 1 -maxdepth 1 ! -name SKILL.md)
+  find "$out/skills/$name" -name '*.md' -exec sed -i 's/superpowers://g' {} +
+done
+
+# ---------------------------------------------------------------------------
+# 2. Domain skills — thin pointers to the authoritative harness files
+#    Skipped: investigate, choose-pattern (folded into the entry wrappers)
+#             spec-driven-agents (/spec supersedes it)
+# ---------------------------------------------------------------------------
+for src in "$harness_root"/.agents/skills/*.md; do
+  base=$(basename "$src" .md)
+  [ "$base" = "README" ] && continue
+  case " investigate choose-pattern spec-driven-agents " in
+    *" $base "*) continue ;;
+  esac
+  id=$(sed -nE 's/^id:[[:space:]]*//p' "$src" | head -1 | tr -d '\r')
+  [ -n "$id" ] || id="$base"
+  used=$(sed -nE 's/^used_by:[[:space:]]*//p' "$src" | head -1 | tr -d '\r')
+  when=$(awk '/^## When/{f=1;next} f&&NF{sub(/^[[:space:]]*/,"");print;exit}' "$src")
+  [ -n "$when" ] || when="apply when the orchestrator routes to this skill."
+  path=$(new_skill "$id" "E-commerce CQRS harness skill $id — $when")
+  cat >> "$path" <<EOF
+
+# $id (E-commerce harness)
+
+Authoritative source: \`$rel/.agents/skills/$id.md\`. Read that file in full before acting and
+follow it verbatim; this skill only routes you there.
+
+- Working root: \`$rel/\` — every relative path in the source resolves there.
+- Invoked by: ${used:-the orchestrator}
+- Rules that still apply: \`$rel/.agents/rules/**\` for the paths you touch, plus the Hard
+  NEVERs in \`$rel/AGENTS.md\`.
+- Commands run through Docker: \`docker compose exec app …\` (INF-002).
+EOF
+done
+
+# ---------------------------------------------------------------------------
+# 3. Entry-point skills — /spec, /spec-from and the seven orchestration commands
+# ---------------------------------------------------------------------------
+spec_src="$harness_root/.cursor/skills/spec-driven-agents/SKILL.md"
+[ -f "$spec_src" ] || die "missing $spec_src"
+path=$(new_skill "spec" "Run the E-commerce spec pipeline: a prompt becomes spec-run/spec.md through three independent analysts and a synthesizer, then worker packages, a coverage check, and the CQRS harness gates (Stage 5). Use for /spec, spec-driven agents or multi-agent spec synthesis. E-commerce CQRS harness entry point.")
+{
+  cat <<EOF
+# Spec pipeline (Qoder)
+
+> **Qoder context.** Treat \`$rel/\` as the working root: create and read \`$rel/spec-run/\`,
+> \`$rel/.agents/state/\` and \`$rel/.agents/audit/\`. Harness files are referenced relative to
+> \`$rel/\`.
+>
+> - Stages 1-4 run sequentially in this session, one analyst at a time, each output written to
+>   disk before the next starts. Do not let a later analyst read an earlier analyst's file.
+> - Stage 5 is the harness handoff. Dispatch the project subagents in \`.qoder/agents/\` by name
+>   when they are loaded; otherwise adopt each role yourself, read
+>   \`$rel/.agents/agents/<name>.md\` in full, obey its \`writes:\` scope and still produce the
+>   AGT-005 handoff.
+> - Cross-skill references were rewritten from \`superpowers:<name>\` to plain \`<name>\`; the
+>   domain skills live in \`$rel/.agents/skills/<name>.md\`.
+> - The orchestrator writes only \`.agents/state/**\` and \`.agents/audit/**\` (AGT-004).
+
+EOF
+  tail -n +12 "$spec_src" | sed 's/superpowers://g'
+} >> "$path"
+
+path=$(new_skill "spec-from" "Start the E-commerce feature workflow from an existing spec file that already carries R* requirements, skipping Stages 1-4 of the spec pipeline. Use for /spec-from. E-commerce CQRS harness entry point.")
+{
+  printf '# Start from an existing spec\n'
+  entry_preamble "feature (from an existing spec)" "test-planner" "F"
+  cat <<EOF
+
+### Before the first dispatch
+- The argument is a spec path; default \`$rel/spec-run/spec.md\`. Read it in full.
+- Require a Requirements table with stable \`R*\` ids. If it is missing, stop and ask for the
+  spec to be completed instead of inventing requirements.
+- Record \`GATE: SPEC ok\` in the state file with **Spec traceability** pointing at the spec and
+  its prompt archive, then start the feature workflow at \`PLAN\`.
+- Map every \`R*\` to at least one behavior in \`PLAN\` and to a test before \`DONE\`.
+EOF
+} >> "$path"
+
+path=$(new_skill "feature" "Plan and deliver a new E-commerce behavior through the full gate workflow: test-planner, optional pattern ADR, RED, GREEN, REFACTOR, spec tests, parallel reviews, fixes, DONE. Use for /feature. E-commerce CQRS harness entry point.")
+{
+  printf '# Feature workflow\n'
+  entry_preamble "feature" "test-planner" "F"
+  cat <<EOF
+
+### Gate order
+\`PLAN\` (test-planner) → \`PATTERN\` (pattern-selector, only when a new pattern or boundary is
+introduced; the ADR needs human approval) → \`RED\` (unit-test-writer) → \`GREEN\` (implementer) →
+\`REFACTOR\` (refactorer) → \`SPEC-TESTS\` (integration-test-agent, projection-test-agent,
+e2e-contract-test-agent, parallel only on disjoint paths) → \`REVIEW\` (code-reviewer,
+architecture-reviewer, security-reviewer, performance-reviewer, test-reviewer, parallel) →
+\`FIXES\` (implementer, one dispatch per finding cluster) → \`REVIEW\` re-run → \`DONE\`.
+
+One behavior per RED→GREEN cycle (TDD-003). At \`ATTEMPTS: 3\` stop and escalate (AGT-006).
+EOF
+} >> "$path"
+
+path=$(new_skill "bugfix" "Root-cause and fix an E-commerce defect: investigator, reproducing RED test, GREEN, REFACTOR, reviews, DONE. Use for /bugfix. E-commerce CQRS harness entry point.")
+{
+  printf '# Bugfix workflow\n'
+  entry_preamble "bugfix" "investigator" "B"
+  cat <<EOF
+
+### Gate order
+\`INVESTIGATE\` (investigator: hypothesis-driven root cause plus a reproducing-test proposal,
+no fix) → \`RED\` (unit-test-writer writes exactly that reproducing test) → \`GREEN\`
+(implementer, smallest production change) → \`REFACTOR\` → \`REVIEW\` (parallel) → \`DONE\`.
+
+Never skip \`INVESTIGATE\`: a fix without a recorded root cause is rejected.
+EOF
+} >> "$path"
+
+path=$(new_skill "investigate" "Root-cause an E-commerce bug or answer a behavior question without changing code, and propose a reproducing test. Use for /investigate. E-commerce CQRS harness entry point.")
+{
+  printf '# Investigation only\n'
+  entry_preamble "investigation-only" "investigator" "I"
+  cat <<EOF
+
+### Also load
+- \`$rel/.agents/skills/investigate.md\` — the harness skill for this workflow.
+
+### Bounds
+- No production code, no tests, no documentation changes. The deliverable is a report: root
+  cause, evidence, affected paths, and a reproducing-test proposal for a later \`RED\` gate.
+- Finish with \`GATE: INVESTIGATE\` and \`Next agent: human\` (or a new bugfix task id).
+EOF
+} >> "$path"
+
+path=$(new_skill "review" "Fan out the five read-only reviewers (code, architecture, security, performance, tests) over the given paths or task id and return a findings report only. Use for /review. E-commerce CQRS harness entry point.")
+{
+  printf '# Review only\n'
+  entry_preamble "review-only" "orchestrator, then code-reviewer, architecture-reviewer, security-reviewer, performance-reviewer and test-reviewer in parallel" "V"
+  cat <<EOF
+
+### Bounds
+- The argument is a path set or a task id. Default to the current uncommitted change when the
+  argument is empty, and say so in the state file.
+- Reviewers are read-only (they have no Write/Edit/Bash). Findings use
+  \`[SEVERITY][RULE-ID] file:line — finding\`.
+- Consolidate with precedence security > correctness > architecture > performance > style. A
+  finding that cites a Hard NEVER always wins; two contradictory rule ids escalate to a human.
+- Fixes are never applied inline: route them as a new feature or bugfix task.
+- Finish with \`GATE: REVIEW\` and \`Next agent: human\`.
+EOF
+} >> "$path"
+
+path=$(new_skill "tdd" "Run exactly one TDD cycle (RED to GREEN to REFACTOR) for a single behavior, with the harness gates. Use for /tdd. E-commerce CQRS harness entry point.")
+{
+  printf '# Single TDD cycle\n'
+  entry_preamble "tdd-cycle" "unit-test-writer" "T"
+  cat <<EOF
+
+### Also load
+- \`$rel/.agents/skills/tdd-cycle.md\` and the \`test-driven-development\` skill.
+
+### Gate order
+\`RED\` (one failing test, failure recorded as a \`RED:\` line) → \`GREEN\` (smallest production
+change, tests never edited) → \`REFACTOR\` (suite stays green) → \`DONE\`.
+
+Exactly one behavior. Anything else discovered on the way becomes a separate task.
+EOF
+} >> "$path"
+
+path=$(new_skill "choose-pattern" "Produce an ADR with rejected alternatives for one E-commerce design decision and stop at the human approval gate. Use for /choose-pattern. E-commerce CQRS harness entry point.")
+{
+  printf '# Pattern decision only\n'
+  entry_preamble "pattern-decision-only" "pattern-selector" "P"
+  cat <<EOF
+
+### Also load
+- \`$rel/.agents/skills/choose-pattern.md\` and \`$rel/.agents/skills/write-adr.md\`.
+
+### Bounds
+- Deliver the ADR text in the handoff with its rejected alternatives and consequences. Do not
+  write \`docs/adr/\` yourself: the human approval gate commits it.
+- Any decision that creates or changes a bus, an aggregate boundary or a bounded-context
+  boundary stops for approval before anything else happens.
+- Finish with \`GATE: PATTERN\` and \`Next agent: human\`.
+EOF
+} >> "$path"
+
+# ---------------------------------------------------------------------------
+# 4. Subagents — one file per harness agent, tool boundary derived from writes:
+# ---------------------------------------------------------------------------
+for src in "$harness_root"/.agents/agents/*.md; do
+  id=$(sed -nE 's/^id:[[:space:]]*//p' "$src" | head -1 | tr -d '\r')
+  [ -n "$id" ] || die "missing id: in $src"
+  base=$(basename "$src" .md)
+  [ "$id" = "$base" ] || die "agent id '$id' does not match filename '$base'"
+  writes=$(sed -nE 's/^writes:[[:space:]]*//p' "$src" | head -1 | tr -d '\r')
+  [ -n "$writes" ] || die "missing writes: in $src"
+  title=$(sed -nE 's/^# (.*)$/\1/p' "$src" | head -1 | tr -d '\r')
+  [ -n "$title" ] || title="$id"
+  role=$(awk '/^## Role/{f=1;next} f&&/^## /{exit} f{sub(/^[[:space:]]*/,"");printf "%s ",$0}' "$src" | sed -E 's/[[:space:]]+/ /g; s/^ +//; s/ +$//')
+  desc=$(printf '%s' "$role" | sed -E 's/^([^.]*\.).*/\1/')
+  if [ "${#desc}" -lt 10 ]; then desc="$role"; fi
+  if [ "${#desc}" -gt 220 ]; then desc="${desc:0:217}..."; fi
+
+  if [ "$writes" = "[]" ]; then
+    scope="none — this agent is read-only"
+  else
+    scope="$writes"
+  fi
+
+  case "$id" in
+    orchestrator)
+      tools="Read, Grep, Glob, Bash, Write, Edit, Agent"; disallowed=""; turns=80 ;;
+    unit-test-writer|implementer|refactorer|integration-test-agent|projection-test-agent|e2e-contract-test-agent)
+      tools="Read, Grep, Glob, Bash, Write, Edit"; disallowed="Agent"; turns=40 ;;
+    test-planner)
+      tools="Read, Grep, Glob"; disallowed="Write, Edit, Agent, Bash"; turns=30 ;;
+    investigator|mutation-test-agent)
+      tools="Read, Grep, Glob, Bash, WebSearch"; disallowed="Write, Edit, Agent"; turns=40 ;;
+    pattern-selector)
+      tools="Read, Grep, Glob, WebSearch"; disallowed="Write, Edit, Agent, Bash"; turns=25 ;;
+    *)
+      tools="Read, Grep, Glob"; disallowed="Write, Edit, Agent, Bash"; turns=25 ;;
+  esac
+
+  {
+    printf -- '---\n'
+    printf 'name: %s\n' "$id"
+    printf 'description: "%s E-commerce CQRS harness agent %s."\n' "$(yaml_escape "$desc")" "$id"
+    printf 'tools: [%s]\n' "$tools"
+    if [ -n "$disallowed" ]; then
+      printf 'disallowedTools: [%s]\n' "$disallowed"
+    fi
+    printf 'permissionMode: default\n'
+    printf 'model: inherit\n'
+    printf 'maxTurns: %s\n' "$turns"
+    printf -- '---\n\n'
+    cat <<EOF
+# $title
+
+You are the \`$id\` agent of the E-commerce CQRS harness: Symfony 8.1, PHP 8.5, PostgreSQL 16,
+Meilisearch, FrankenPHP in Docker.
+
+## Load before acting
+1. \`$rel/AGENTS.md\` — architecture, stack, TDD law, Hard NEVERs.
+2. \`$rel/.agents/orchestration.md\` — handoff contract, gates, human approvals.
+3. \`$rel/.agents/agents/$id.md\` — authoritative definition of your role, responsibilities,
+   gates and handoff. It wins over this summary.
+4. The task state file \`$rel/.agents/state/<task-id>.md\` and the rule files under
+   \`$rel/.agents/rules/\` scoped to the paths you touch.
+
+## Boundaries
+- Write scope (AGT-001): $scope
+- Never write outside it. When a change belongs to another path, hand off to the owning agent
+  (AGT-003) instead of editing it.
+- Hard NEVERs: no float for money (ECO-001), no persist/flush/dispatch in a query handler
+  (QRY-001), no card data stored or logged (SEC-001), no read-then-write stock (ECO-004), no
+  production code without a recorded RED (TDD-001), no editing tests to reach GREEN (TDD-002),
+  no domain event outside the outbox (EVT-002), no order recalculation from the current catalog
+  (ECO-006).
+- Commands run from \`$rel/\` through Docker: \`docker compose exec app …\` (INF-002). Never
+  php-fpm, nginx, Apache or \`symfony serve\` (INF-003).
+
+## Context discipline
+Load only what the incoming handoff names plus the files above. Never read the whole repository.
+
+## Output
+End with the AGT-005 handoff template copied from \`$rel/.agents/agents/$id.md\`: task id, agent,
+gate reached, artifacts, rules applied/violated, commands run, open questions, next agent.
+EOF
+  } > "$out/agents/$id.md"
+done
+
+# ---------------------------------------------------------------------------
+# 5. README for the generated layer
+# ---------------------------------------------------------------------------
+skills=$(find "$out/skills" -name SKILL.md | wc -l | tr -d ' ')
+agents=$(find "$out/agents" -maxdepth 1 -name '*.md' | wc -l | tr -d ' ')
+{
+  cat <<EOF
+# .qoder — generated Qoder layer for the E-commerce harness
+
+Everything here is generated by \`$rel/bin/export-qoder-harness\` from the sources under
+\`$rel/.agents/\` and \`$rel/.cursor/skills/\`. Do not edit these files by hand: the next export
+overwrites \`.qoder/skills/\` and \`.qoder/agents/\` completely.
+
+Re-sync after changing a harness skill, an agent definition, a rule or the spec pipeline:
+
+\`\`\`sh
+$rel/bin/export-qoder-harness
+\`\`\`
+
+Current output: $skills skills, $agents subagents.
+
+## Sources
+
+| Generated | Source |
+|---|---|
+| \`.qoder/skills/<name>/SKILL.md\` (Superpowers) | \`$rel/.agents/skills/superpowers/<name>/SKILL.md\`, copied with the \`superpowers:\` prefix stripped |
+| \`.qoder/skills/<id>/SKILL.md\` (domain) | \`$rel/.agents/skills/<id>.md\` — the skill is a pointer, the source stays authoritative |
+| \`.qoder/skills/spec/SKILL.md\` | \`$rel/.cursor/skills/spec-driven-agents/SKILL.md\` plus the Qoder execution notes |
+| \`.qoder/skills/<entry>/SKILL.md\` | hand-written wrappers generated by the script, mirroring \`$rel/.agents/orchestration.md\` |
+| \`.qoder/agents/<id>.md\` | \`$rel/.agents/agents/<id>.md\` — frontmatter derived, definition authoritative |
+
+Domain skills \`investigate\` and \`choose-pattern\` are folded into their entry wrappers, and
+\`spec-driven-agents\` is superseded by \`/spec\`, so none of the three is emitted twice.
+
+## Invocation
+
+| Command | Workflow | First agent |
+|---|---|---|
+| \`/spec <prompt>\` | spec-then-feature | three analysts → synthesizer → workers → test-planner |
+| \`/spec-from <path>\` | feature from an existing spec | test-planner |
+| \`/feature <requirement>\` | feature | test-planner |
+| \`/bugfix <symptom>\` | bugfix | investigator |
+| \`/investigate <question>\` | investigation-only | investigator |
+| \`/review <paths\\|task-id>\` | review-only | five reviewers in parallel |
+| \`/tdd <behavior>\` | tdd-cycle | unit-test-writer |
+| \`/choose-pattern <decision>\` | pattern-decision-only | pattern-selector |
+
+Subagents are dispatched by name (\`@orchestrator …\`, "use the implementer subagent to …") when
+the IDE loads \`.qoder/agents/\`. Otherwise the entry skills adopt each role in-session from its
+authoritative definition, with the same write scope.
+
+Skills and agents are discovered at startup: restart the IDE, or run \`/agents reload\` for the
+subagent definitions.
+EOF
+} > "$out/README.md"
+
+note "generated $skills skills and $agents subagents under $out"

@@ -262,7 +262,14 @@ final class HttpApiContractTest extends WebTestCase
         self::assertResponseIsSuccessful();
 
         $data = $this->decode($client);
-        $this->assertShape(['items' => 'array'], $data);
+        $this->assertShape(['items' => 'array', 'meta' => 'array', 'facets' => '?array'], $data);
+        $this->assertShape([
+            'page' => 'int',
+            'size' => 'int',
+            'total' => 'int',
+            'totalPages' => 'int',
+            'hasMore' => 'bool',
+        ], $data['meta']);
 
         $items = $data['items'];
         self::assertIsArray($items);

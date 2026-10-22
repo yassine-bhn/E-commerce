@@ -1,40 +1,48 @@
 # Groupe Zidane — E-Commerce Core API
 
-Plateforme backend modulaire e-commerce conçue en architecture **CQRS**, avec **Symfony 8.1**, **PHP 8.4**, **PostgreSQL 16**, **Meilisearch**, **Rate Limiting** et **Swagger UI**.
+Plateforme backend modulaire e-commerce conçue en architecture **CQRS**, avec **Symfony 8.1**, **PHP 8.5**, **PostgreSQL 16**, **Meilisearch**, **Rate Limiting** et **Swagger UI**.
 
 ---
 
 ## 🚀 Démarrage Rapide
 
 ### 1. Prérequis
-- **PHP** : >= 8.4
-- **Composer** : >= 2.7
-- **Base de données** : PostgreSQL 16
-- **Moteur de recherche** : Meilisearch (port 7700)
+- **Docker Engine** + **Docker Compose v2** (INF-002 : aucun PHP, Composer ou `vendor/bin` sur l'hôte)
+- **Make**
 
-### 2. Installation & Migrations
+### 2. Démarrage
 
 ```bash
-# Installation des dépendances
-composer install
-
-# Exécution des migrations de base de données
-php bin/console doctrine:migrations:migrate -n
-php bin/console doctrine:migrations:migrate -n --env=test
-
-# Lancement du serveur de développement local
-php -S 127.0.0.1:8000 -t public
+make up            # construit l'image dev et démarre app, worker, outbox, database, meilisearch
+make migrate       # applique les migrations à la base de dev
+make migrate-test  # applique les migrations à la base de test
+make urls          # API, Swagger UI, OpenAPI JSON, Meilisearch
 ```
+
+L'API répond sur `http://localhost:8081` (surchargeable via `APP_PORT` dans `.env`).
+
+### 3. Opérations courantes
+
+| Commande | Effet |
+|---|---|
+| `make help` | liste des cibles disponibles |
+| `make ps` / `make logs` / `make logs ARGS="worker outbox"` | état et journaux des services |
+| `make sh` | shell dans le conteneur `app` |
+| `make composer ARGS="…"` / `make console ARGS="…"` | Composer / `bin/console` dans `app` |
+| `make down` | arrêt de la pile (volumes nommés conservés) |
+| `make db-backup` / `make db-restore ARGS="backups/db-<horodatage>.dump --yes"` | sauvegarde / restauration (PostgreSQL + uploads) |
+
+Les services `worker` (transports `async` et `failed`) et `outbox` (`app:outbox:relay` toutes les 5 secondes) traitent les événements en local. `/healthz` (sans dépendance) et `/readyz` (base + migrations) exposent l'état du service.
 
 ---
 
 ## 📖 Documentation Interactive Swagger UI (OpenAPI 3.0)
 
-Une fois le serveur démarré sur le port `8000` :
+Une fois la pile démarrée (`make up`) :
 
-- **Swagger UI** : [http://localhost:8000/api/doc](http://localhost:8000/api/doc)
-- **Raccourci** : [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Spécification OpenAPI JSON** : [http://localhost:8000/api/doc.json](http://localhost:8000/api/doc.json)
+- **Swagger UI** : [http://localhost:8081/api/doc](http://localhost:8081/api/doc)
+- **Raccourci** : [http://localhost:8081/docs](http://localhost:8081/docs)
+- **Spécification OpenAPI JSON** : [http://localhost:8081/api/doc.json](http://localhost:8081/api/doc.json)
 
 ---
 
@@ -58,12 +66,13 @@ Le projet est structuré selon les principes DDD / CQRS en 8 contextes délimit�
 ## 🧪 Tests & Qualité de Code
 
 ```bash
-# Lancement de tous les tests unitaires et fonctionnels (100% verts)
-vendor/bin/phpunit
+make test              # les six suites PHPUnit (Unit, Integration, Projection, Functional, Contract, Architecture)
+make test-unit         # une seule suite : test-integration, test-projection, test-functional, test-contract, test-architecture
 
-# Analyse statique PHPStan (Level max - 0 erreur)
-vendor/bin/phpstan analyse
-
-# Vérification du style de code
-vendor/bin/php-cs-fixer fix --dry-run --diff
+make cs                # style (php-cs-fixer --dry-run) ; make cs-fix pour appliquer
+make phpstan           # analyse statique (level 8)
+make deptrac           # frontières entre contextes
+make infection         # mutation testing (nécessite un driver de couverture)
+make harness           # intégrité du harness .agents
+make ci                # même séquence que le pipeline CI
 ```

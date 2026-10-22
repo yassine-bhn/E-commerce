@@ -9,7 +9,7 @@ use App\Catalog\Domain\Model\Category;
 /**
  * One row of the admin category list (spec R8) — a read DTO, never an ORM entity.
  */
-final readonly class CategoryView
+final readonly class CategoryView implements \JsonSerializable
 {
     /**
      * @param array<array-key, mixed> $subcategories
@@ -70,5 +70,16 @@ final readonly class CategoryView
             'productCount' => $this->productCount,
             'sortOrder' => $this->sortOrder,
         ];
+    }
+
+    /**
+     * Same payload inside the `{items, meta}` page envelope: the list keeps the exact shape
+     * the dashboard already consumes.
+     *
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toApi();
     }
 }

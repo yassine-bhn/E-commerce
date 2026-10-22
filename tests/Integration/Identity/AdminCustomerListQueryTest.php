@@ -8,8 +8,9 @@ use App\Identity\Application\Command\ChangeCustomerRole;
 use App\Identity\Application\Query\ListAdminCustomers;
 use App\Identity\Domain\Model\AdminAccessRequiredException;
 use App\Identity\Infrastructure\ReadModel\AdminCustomerFinder;
-use App\Identity\Infrastructure\ReadModel\AdminCustomersPageView;
 use App\Identity\Infrastructure\ReadModel\AdminCustomerView;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Application\Pagination\PageRequest;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -81,18 +82,28 @@ final class AdminCustomerListQueryTest extends KernelTestCase
         return $bus;
     }
 
-    private function insertUser(string $role, string $status = 'active'): string
-    {
+    private function insertUser(
+        string $role,
+        string $status = 'active',
+        ?string $name = null,
+        ?string $phone = null,
+        ?string $createdAt = null,
+    ): string {
         $id = Uuid::v4()->toRfc4122();
-        self::connection()->insert('customer_profile', [
+        $row = [
             'id' => $id,
-            'name' => 'ListUser '.substr($id, 0, 8),
+            'name' => $name ?? 'ListUser '.substr($id, 0, 8),
             'email' => sprintf('wp3-list-%s@example.com', substr($id, 0, 12)),
-            'phone' => '+216 20 00 00 01',
+            'phone' => $phone ?? '+216 20 00 00 01',
             'password_hash' => password_hash('Integration!Secret42', PASSWORD_BCRYPT),
             'role' => $role,
             'status' => $status,
-        ]);
+        ];
+        if (null !== $createdAt) {
+            $row['created_at'] = $createdAt;
+        }
+
+        self::connection()->insert('customer_profile', $row);
         $this->createdUserIds[] = $id;
 
         return $id;
@@ -112,14 +123,14 @@ final class AdminCustomerListQueryTest extends KernelTestCase
         $this->createdOrderIds[] = $id;
     }
 
-    private function dispatch(ListAdminCustomers $query): AdminCustomersPageView
+    private function dispatch(ListAdminCustomers $query): Page
     {
         $envelope = $this->queryBus()->dispatch($query);
         $handled = $envelope->last(HandledStamp::class);
         self::assertNotNull($handled, 'the query must be handled on query.bus');
 
         $result = $handled->getResult();
-        self::assertInstanceOf(AdminCustomersPageView::class, $result, 'QRY-002 — a view DTO, never an entity');
+        self::assertInstanceOf(Page::class, $result, 'QRY-002 — one page DTO, never an entity');
 
         return $result;
     }
@@ -137,11 +148,10 @@ final class AdminCustomerListQueryTest extends KernelTestCase
         $page = $this->dispatch(new ListAdminCustomers(
             requesterId: $admin,
             requesterIsAdmin: true,
-            page: 1,
-            limit: 500,
+            page: new PageRequest(1, 500, ListAdminCustomers::MAX_SIZE),
         ));
 
-        self::assertSame(50, $page->limit, 'Q11 — the cap is enforced whatever the caller asks for');
+        self::assertSame(50, $page->size, 'Q11 — the cap is enforced whatever the caller asks for');
         self::assertGreaterThanOrEqual(2, $page->total);
 
         $byId = [];
@@ -174,10 +184,10 @@ final class AdminCustomerListQueryTest extends KernelTestCase
         $admin = $this->insertUser('ROLE_ADMIN');
         $intruder = $this->insertUser('ROLE_USER');
 
-        $legitimate = $this->dispatch(new ListAdminCustomers($admin, true, 1, 50));
+        $legitimate = $this->dispatch(new ListAdminCustomers($admin, true, new PageRequest(1, 50)));
         self::assertNotEmpty($legitimate->items, 'an admin row does unlock the list');
 
-        $forged = $this->dispatch(new ListAdminCustomers($intruder, true, 1, 50));
+        $forged = $this->dispatch(new ListAdminCustomers($intruder, true, new PageRequest(1, 50)));
         self::assertSame([], $forged->items, 'SEC-002 — the SQL itself rejects a non-admin requester');
         self::assertSame(0, $forged->total);
     }
@@ -187,7 +197,7 @@ final class AdminCustomerListQueryTest extends KernelTestCase
         $admin = $this->insertUser('ROLE_SUPER_ADMIN');
 
         try {
-            $this->dispatch(new ListAdminCustomers($admin, false, 1, 50));
+            $this->dispatch(new ListAdminCustomers($admin, false, new PageRequest(1, 50)));
             self::fail('the finder must refuse a requester without the admin flag');
         } catch (HandlerFailedException $e) {
             self::assertInstanceOf(AdminAccessRequiredException::class, $e->getPrevious());
@@ -202,7 +212,7 @@ final class AdminCustomerListQueryTest extends KernelTestCase
 
         $seen = [];
         for ($page = 1; $page <= 40; ++$page) {
-            $view = $this->dispatch(new ListAdminCustomers($admin, true, $page, 1));
+            $view = $this->dispatch(new ListAdminCustomers($admin, true, new PageRequest($page, 1)));
             if ([] === $view->items) {
                 break;
             }
@@ -212,6 +222,74 @@ final class AdminCustomerListQueryTest extends KernelTestCase
         self::assertSame($seen, array_values(array_unique($seen)), 'the ORDER BY tie-break is deterministic');
         self::assertContains($first, $seen);
         self::assertContains($second, $seen);
+    }
+
+    public function testQRoleAndStatusFiltersCombineAndTheTotalReflectsThem(): void
+    {
+        $admin = $this->insertUser('ROLE_SUPER_ADMIN');
+        $token = 'Amira'.substr(bin2hex(random_bytes(3)), 0, 6);
+        $hit = $this->insertUser('ROLE_USER', 'active', $token.' Active');
+        $this->insertUser('ROLE_USER', 'banned', $token.' Banned');
+        $this->insertUser('ROLE_ADMIN', 'active', $token.' Admin');
+
+        $filtered = $this->dispatch(new ListAdminCustomers(
+            requesterId: $admin,
+            requesterIsAdmin: true,
+            page: new PageRequest(1, 50),
+            q: $token,
+            role: 'ROLE_USER',
+            status: 'active',
+        ));
+
+        self::assertSame(1, $filtered->total, 'the total counts the filtered rows only');
+        self::assertSame([$hit], array_map(static fn (AdminCustomerView $item): string => $item->id, $filtered->items));
+
+        $byText = $this->dispatch(new ListAdminCustomers(
+            requesterId: $admin,
+            requesterIsAdmin: true,
+            page: new PageRequest(1, 50),
+            q: $token,
+        ));
+        self::assertSame(3, $byText->total, 'q alone matches name, email or phone');
+    }
+
+    public function testTheDocumentedSortsOrderTheFilteredList(): void
+    {
+        $admin = $this->insertUser('ROLE_SUPER_ADMIN');
+        $token = 'Sort'.substr(bin2hex(random_bytes(3)), 0, 6);
+        $oldest = $this->insertUser('ROLE_USER', 'active', $token.' A', null, '2026-01-01 09:00:00+00');
+        $middle = $this->insertUser('ROLE_USER', 'active', $token.' B', null, '2026-02-01 09:00:00+00');
+        $newest = $this->insertUser('ROLE_USER', 'active', $token.' C', null, '2026-03-01 09:00:00+00');
+
+        $this->insertOrderFor($middle);
+        $this->insertOrderFor($middle);
+        $this->insertOrderFor($newest);
+
+        $ids = static fn (Page $page): array => array_map(
+            static fn (AdminCustomerView $item): string => $item->id,
+            $page->items,
+        );
+
+        $byName = $this->dispatch(new ListAdminCustomers($admin, true, new PageRequest(1, 50), q: $token));
+        self::assertSame([$oldest, $middle, $newest], $ids($byName), 'name is the default sort');
+
+        $byCreation = $this->dispatch(new ListAdminCustomers(
+            requesterId: $admin,
+            requesterIsAdmin: true,
+            page: new PageRequest(1, 50),
+            q: $token,
+            sort: 'createdAt',
+        ));
+        self::assertSame([$newest, $middle, $oldest], $ids($byCreation), 'createdAt sorts newest first');
+
+        $byOrders = $this->dispatch(new ListAdminCustomers(
+            requesterId: $admin,
+            requesterIsAdmin: true,
+            page: new PageRequest(1, 50),
+            q: $token,
+            sort: 'orderCount',
+        ));
+        self::assertSame([$middle, $newest, $oldest], $ids($byOrders), 'orderCount sorts by the aggregate desc');
     }
 
     public function testTheWriteAndReadSidesEachHaveExactlyOneEntryClass(): void

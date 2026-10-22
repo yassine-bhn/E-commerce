@@ -9,11 +9,12 @@ namespace App\Ordering\Infrastructure\ReadModel;
  *
  * Totals and line prices are integer minor units with their currency — never floats (ECO-001) —
  * and are the values snapshotted when the order was placed, never recomputed from the live
- * catalog (ECO-006).
+ * catalog (ECO-006). Serializing through `toArray()` keeps the cursor envelope's `items` in the
+ * same shape as before pagination was added.
  *
  * @param list<AdminCustomerOrderLineView> $lines
  */
-final readonly class AdminCustomerOrderView
+final readonly class AdminCustomerOrderView implements \JsonSerializable
 {
     /**
      * @param list<AdminCustomerOrderLineView> $lines
@@ -84,5 +85,11 @@ final readonly class AdminCustomerOrderView
             'promoCode' => $this->promoCode,
             'lines' => array_map(static fn (AdminCustomerOrderLineView $line): array => $line->toArray(), $this->lines),
         ];
+    }
+
+    /** @return array<string, mixed> */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

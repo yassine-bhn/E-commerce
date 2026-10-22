@@ -10,6 +10,8 @@ use App\Identity\Application\Command\UpdateCustomerProfile;
 use App\Identity\Application\Query\GetCustomerProfile;
 use App\Identity\Application\Query\ListCustomerAddresses;
 use App\Identity\Infrastructure\Security\CustomerUser;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,14 +70,16 @@ final class CustomerController
     }
 
     #[Route('/addresses', name: 'storefront_customer_addresses_list', methods: ['GET'])]
-    public function listAddresses(#[CurrentUser] CustomerUser $user): JsonResponse
+    public function listAddresses(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $user->getId();
+        /** @var Page $page */
+        $page = $this->queries->dispatch(new ListCustomerAddresses(
+            $user->getId(),
+            ListQueryParams::page($request, ListCustomerAddresses::DEFAULT_SIZE, ListCustomerAddresses::MAX_SIZE),
+            ListQueryParams::text($request),
+        ));
 
-        /** @var list<array<string, mixed>> $addresses */
-        $addresses = $this->queries->dispatch(new ListCustomerAddresses($customerId));
-
-        return new JsonResponse(['items' => $addresses]);
+        return new JsonResponse($page->toArray());
     }
 
     #[Route('/addresses', name: 'storefront_customer_addresses_save', methods: ['POST'])]

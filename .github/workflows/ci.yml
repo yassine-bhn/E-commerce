@@ -1,0 +1,219 @@
+name: CI
+
+# Backend quality pipeline (R1–R6). Everything PHP runs inside the compose image (INF-002);
+# the runner only provides Docker Compose v2, git and python3.
+# tests.yml is the non-fail-fast companion: it runs every suite and lists the failing tests.
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Keeps container names stable and avoids collisions with a developer stack on a self-hosted runner.
+  COMPOSE_PROJECT_NAME: ecommerce-ci
+
+jobs:
+  quality:
+    name: Quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Build the dev image
+        run: docker compose build
+
+      - name: Start PostgreSQL 16, Meilisearch and the app
+        run: docker compose up -d --wait app database meilisearch
+
+      - name: Validate composer.json
+        run: docker compose exec -T app composer validate --no-check-publish
+
+      - name: Composer install
+        run: docker compose exec -T app composer install --no-interaction --prefer-dist
+
+      - name: Code style (php-cs-fixer dry run)
+        run: docker compose exec -T app vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
+
+      - name: PHPStan
+        run: docker compose exec -T app vendor/bin/phpstan analyse --no-progress
+
+      - name: Deptrac
+        run: docker compose exec -T app vendor/bin/deptrac analyse --no-progress
+
+      - name: Migrate the dev database
+        run: docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration
+
+      - name: Migrate the test database
+        run: docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+
+      # One step per suite: Integration resets the schema, so it must never race Functional (R3).
+      - name: PHPUnit — Unit
+        run: docker compose exec -T app vendor/bin/phpunit --testsuite Unit
+
+      - name: PHPUnit — Integration
+        run: docker compose exec -T app vendor/bin/phpunit --testsuite Integration
+
+      - name: PHPUnit — Projection
+        run: docker compose exec -T app vendor/bin/phpunit --testsuite Projection
+
+      - name: PHPUnit — Functional
+        run: docker compose exec -T app vendor/bin/phpunit --testsuite Functional
+
+      - name: PHPUnit — Contract
+        run: docker compose exec -T app vendor/bin/phpunit --testsuite Contract
+
+      - name: PHPUnit — Architecture
+        run: docker compose exec -T app vendor/bin/phpunit --testsuite Architecture
+
+      # bin/harness-check is bash + python3/PyYAML and reads the checkout, so it runs on the runner (R4).
+      - name: Install PyYAML for bin/harness-check
+        run: sudo apt-get update && sudo apt-get install -y python3-yaml
+
+      - name: Harness integrity
+        run: bin/harness-check
+
+      - name: Container logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail=200
+
+  infection:
+    name: Mutation testing (changed src files)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # The filter keeps the job meaningful without mutating the whole bounded-context tree (D7).
+      - name: Collect the changed src/ PHP files
+        id: changed
+        run: |
+          set -euo pipefail
+          range=""
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+            range="origin/${{ github.base_ref }}...HEAD"
+          else
+            before="${{ github.event.before }}"
+            if [ -n "$before" ] && [ "$before" != "0000000000000000000000000000000000000000" ] && git cat-file -e "$before^{commit}" 2>/dev/null; then
+              range="$before...HEAD"
+            elif git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+              range="HEAD~1"
+            fi
+          fi
+          files=""
+          if [ -n "$range" ]; then
+            files=$(git diff --name-only --diff-filter=AM "$range" -- src | grep -E '\.php$' | paste -sd, - || true)
+          fi
+          echo "files=${files}" >> "$GITHUB_OUTPUT"
+          if [ -z "$files" ]; then
+            echo "No src/ PHP file changed — infection is skipped."
+          else
+            echo "Mutating: ${files}"
+          fi
+
+      - name: Build the image with a coverage driver
+        if: steps.changed.outputs.files != ''
+        run: docker compose build --build-arg INSTALL_XDEBUG=true
+
+      - name: Start the services
+        if: steps.changed.outputs.files != ''
+        run: docker compose up -d --wait app database meilisearch
+
+      - name: Migrate the dev and test databases
+        if: steps.changed.outputs.files != ''
+        run: |
+          docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration
+          docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+
+      - name: Infection (thresholds from infection.json.dist)
+        if: steps.changed.outputs.files != ''
+        run: docker compose exec -T app vendor/bin/infection --no-progress --filter="${{ steps.changed.outputs.files }}"
+
+      - name: Skip notice
+        if: steps.changed.outputs.files == ''
+        run: echo "infection skipped — no src/ PHP file changed in this push/PR."
+
+  prod-image:
+    name: Production image smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the prod target (no bind mount)
+        run: docker build -f docker/Dockerfile --target prod -t ecommerce-core:prod .
+
+      - name: Start PostgreSQL 16 on a dedicated network
+        run: |
+          set -euo pipefail
+          docker network create smoke
+          docker run -d --name smoke-db --network smoke \
+            -e POSTGRES_DB=app -e POSTGRES_USER=app -e POSTGRES_PASSWORD=app \
+            postgres:16-alpine
+          for attempt in $(seq 1 60); do
+            if docker exec smoke-db pg_isready -d app -U app >/dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          echo "PostgreSQL did not become ready" >&2
+          exit 1
+
+      - name: Run the migrations in a one-off container
+        run: |
+          docker run --rm --network smoke \
+            -e APP_ENV=prod -e APP_DEBUG=0 -e APP_SECRET=smoke-only \
+            -e 'DATABASE_URL=postgresql://app:app@smoke-db:5432/app?serverVersion=16&charset=utf8' \
+            -e 'MESSENGER_TRANSPORT_DSN=doctrine://default?queue_name=async' \
+            -e 'MEILISEARCH_URL=http://meilisearch-not-started:7700' \
+            ecommerce-core:prod php bin/console doctrine:migrations:migrate -n --allow-no-migration
+
+      - name: Assert /healthz and /readyz from the prod image
+        run: |
+          set -euo pipefail
+          docker run -d --name smoke-app --network smoke -p 18080:8080 \
+            -e APP_ENV=prod -e APP_DEBUG=0 -e APP_SECRET=smoke-only \
+            -e 'DATABASE_URL=postgresql://app:app@smoke-db:5432/app?serverVersion=16&charset=utf8' \
+            -e 'MESSENGER_TRANSPORT_DSN=doctrine://default?queue_name=async' \
+            -e 'MEILISEARCH_URL=http://meilisearch-not-started:7700' \
+            ecommerce-core:prod
+          code=000
+          for attempt in $(seq 1 30); do
+            code=$(curl -s -o /tmp/readyz.json -w '%{http_code}' http://127.0.0.1:18080/readyz || true)
+            if [ "$code" = "200" ]; then break; fi
+            sleep 2
+          done
+          cat /tmp/readyz.json
+          [ "$code" = "200" ]
+          curl -fsS http://127.0.0.1:18080/healthz | grep -q '"status":"ok"'
+          python3 - <<'PY'
+          import json
+          body = json.load(open('/tmp/readyz.json'))
+          assert body['status'] == 'ok', body
+          assert body['checks']['database'] == 'ok', body
+          assert body['checks']['migrations'] == 'ok', body
+          assert body['checks']['search'] in ('ok', 'degraded'), body
+          print('readiness contract ok:', body)
+          PY
+          if docker exec smoke-app id -u | grep -qx 0; then
+            echo "prod image must not run as root" >&2
+            exit 1
+          fi
+
+      - name: Logs on failure
+        if: failure()
+        run: docker logs --tail=100 smoke-app || true

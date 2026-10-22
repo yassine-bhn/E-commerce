@@ -15,8 +15,9 @@ use App\Identity\Domain\Model\CannotBanAdminException;
 use App\Identity\Domain\Model\LastSuperAdminCannotBeDemotedException;
 use App\Identity\Domain\Model\LastSuperAdminCannotBeRemovedException;
 use App\Identity\Domain\Model\RoleNotAssignableException;
-use App\Identity\Infrastructure\ReadModel\AdminCustomersPageView;
 use App\Identity\Infrastructure\Security\CustomerUser;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,12 +47,15 @@ final class AdminCustomerController
     public function list(Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         try {
-            /** @var AdminCustomersPageView $page */
+            /** @var Page $page */
             $page = $this->queries->dispatch(new ListAdminCustomers(
                 requesterId: $admin->getId(),
                 requesterIsAdmin: [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles()),
-                page: $request->query->getInt('page', 1),
-                limit: $request->query->getInt('limit', ListAdminCustomers::DEFAULT_LIMIT),
+                page: ListQueryParams::page($request, ListAdminCustomers::DEFAULT_SIZE, ListAdminCustomers::MAX_SIZE),
+                q: ListQueryParams::text($request),
+                role: ListQueryParams::text($request, 'role'),
+                status: ListQueryParams::text($request, 'status'),
+                sort: ListQueryParams::text($request, 'sort'),
             ));
         } catch (HandlerFailedException $e) {
             $previous = $e->getPrevious();
