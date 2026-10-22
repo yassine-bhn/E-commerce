@@ -77,7 +77,6 @@ final class BannerRulesTest extends TestCase
 
     private function rules(): BannerRules
     {
-        /** @var Connection $connection */
         $connection = $this->createStub(Connection::class);
 
         return new BannerRules($connection);

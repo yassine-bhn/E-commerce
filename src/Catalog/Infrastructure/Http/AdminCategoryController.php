@@ -21,7 +21,11 @@ use App\Catalog\Domain\Model\CategoryNotFoundException;
 use App\Catalog\Domain\Model\CategorySublevelInUseException;
 use App\Catalog\Domain\Model\ProductHasOrdersCannotBeDeletedException;
 use App\Catalog\Infrastructure\ReadModel\CategoryView;
+use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Application\Pagination\PageRequest;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -55,6 +59,7 @@ final class AdminCategoryController
         private Connection $connection,
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
+        private StorefrontProductSearchIndexer $searchIndex,
     ) {
     }
 
@@ -87,13 +92,24 @@ final class AdminCategoryController
     }
 
     /**
-     * R8: the whole taxonomy the dashboard edits, hidden rows included.
+     * R8/R10: one bounded page of the taxonomy the dashboard edits, hidden rows included.
      */
     #[Route('/categories', name: 'admin_catalog_list_categories', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function listCategories(#[CurrentUser] CustomerUser $admin): JsonResponse
+    public function listCategories(Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
-        return new JsonResponse(['items' => $this->categories($admin)]);
+        /** @var Page $page */
+        $page = $this->queries->dispatch(new ListCategories(
+            requesterId: $admin->getId(),
+            isAdmin: [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles()),
+            page: ListQueryParams::page($request, ListCategories::DEFAULT_SIZE, ListCategories::MAX_SIZE),
+            q: ListQueryParams::text($request),
+            hidden: ListQueryParams::boolOrNull($request, 'hidden'),
+            parent: ListQueryParams::text($request, 'parent'),
+            sort: ListQueryParams::text($request, 'sort'),
+        ));
+
+        return new JsonResponse($page->toArray());
     }
 
     /**
@@ -296,6 +312,9 @@ final class AdminCategoryController
             ['slug' => $slug],
         );
 
+        // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
+        $this->searchIndex->forget($slug);
+
         return new JsonResponse(['success' => true, 'slug' => $slug, 'message' => 'Product deleted successfully']);
     }
 
@@ -352,9 +371,9 @@ final class AdminCategoryController
      */
     private function respond(string $slug, CustomerUser $admin, int $created = Response::HTTP_OK): JsonResponse
     {
-        foreach ($this->categories($admin) as $item) {
-            if ($item['slug'] === $slug) {
-                return new JsonResponse($item, $created);
+        foreach ($this->categories($admin, $slug) as $view) {
+            if ($view->slug === $slug) {
+                return new JsonResponse($view->toApi(), $created);
             }
         }
 
@@ -362,17 +381,25 @@ final class AdminCategoryController
     }
 
     /**
-     * @return list<array<string, mixed>>
+     * The admin rows for one free-text term (none means every row), read through the same
+     * bounded query the list endpoint uses.
+     *
+     * @return list<CategoryView>
      */
-    private function categories(CustomerUser $admin): array
+    private function categories(CustomerUser $admin, ?string $q = null): array
     {
-        /** @var list<CategoryView> $views */
-        $views = $this->queries->dispatch(new ListCategories(
+        /** @var Page $page */
+        $page = $this->queries->dispatch(new ListCategories(
             requesterId: $admin->getId(),
             isAdmin: [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles()),
+            page: new PageRequest(1, ListCategories::MAX_SIZE, ListCategories::MAX_SIZE),
+            q: $q,
         ));
 
-        return array_map(static fn (CategoryView $view): array => $view->toApi(), $views);
+        /** @var list<CategoryView> $views */
+        $views = $page->items;
+
+        return $views;
     }
 
     /** @return array<string, mixed>|null */

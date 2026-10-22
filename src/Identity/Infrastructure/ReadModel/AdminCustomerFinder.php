@@ -6,6 +6,7 @@ namespace App\Identity\Infrastructure\ReadModel;
 
 use App\Identity\Application\Query\ListAdminCustomers;
 use App\Identity\Domain\Model\AdminAccessRequiredException;
+use App\Shared\Application\Pagination\Page;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -31,40 +32,65 @@ final class AdminCustomerFinder
               AND requester_account.status != \'banned\'
         )';
 
-    private const COUNT_SQL = 'SELECT COUNT(*) FROM customer_profile profile
-        WHERE '.self::REQUESTER_GUARD;
-
-    private const ROWS_SQL = 'SELECT profile.id, profile.name, profile.email, profile.phone,
-                     profile.role, profile.status,
-                     (SELECT COUNT(*) FROM ordering_orders orders WHERE orders.customer_id = profile.id) AS order_count
-        FROM customer_profile profile
-        WHERE '.self::REQUESTER_GUARD.'
-        ORDER BY profile.name ASC, profile.id ASC
-        LIMIT :limit OFFSET :offset';
+    /** Sort whitelist: deterministic ORDER BY, always ending on the primary key. */
+    private const array ORDER_BY = [
+        'name' => 'profile.name ASC, profile.id ASC',
+        'createdAt' => 'profile.created_at DESC, profile.id ASC',
+        'orderCount' => 'order_count DESC, profile.name ASC, profile.id ASC',
+    ];
 
     public function __construct(private Connection $connection)
     {
     }
 
-    public function __invoke(ListAdminCustomers $query): AdminCustomersPageView
+    public function __invoke(ListAdminCustomers $query): Page
     {
         if (!$query->requesterIsAdmin) {
             throw AdminAccessRequiredException::create();
         }
 
-        /** @var array<string, ParameterType> $types */
-        $types = ['limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER];
-        $params = [
-            'requester' => $query->requesterId,
-            'limit' => $query->effectiveLimit(),
-            'offset' => $query->effectiveOffset(),
-        ];
+        $conditions = [self::REQUESTER_GUARD];
+        $params = ['requester' => $query->requesterId];
 
-        $total = (int) $this->connection->fetchOne(self::COUNT_SQL, ['requester' => $query->requesterId]);
-        $rows = $this->connection->fetchAllAssociative(self::ROWS_SQL, $params, $types);
+        if (null !== $query->q) {
+            $conditions[] = "(profile.name ILIKE :q ESCAPE '\\' OR profile.email ILIKE :q ESCAPE '\\' OR profile.phone ILIKE :q ESCAPE '\\')";
+            $params['q'] = '%'.self::escapeLike($query->q).'%';
+        }
 
-        return new AdminCustomersPageView(
-            items: array_map(
+        if (null !== $query->role) {
+            $conditions[] = 'profile.role = :role';
+            $params['role'] = $query->role;
+        }
+
+        if (null !== $query->status) {
+            $conditions[] = 'profile.status = :status';
+            $params['status'] = $query->status;
+        }
+
+        $where = implode(' AND ', $conditions);
+
+        $total = (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM customer_profile profile WHERE '.$where,
+            $params,
+        );
+
+        $rows = $this->connection->fetchAllAssociative(
+            'SELECT profile.id, profile.name, profile.email, profile.phone,
+                     profile.role, profile.status,
+                     (SELECT COUNT(*) FROM ordering_orders orders WHERE orders.customer_id = profile.id) AS order_count
+             FROM customer_profile profile
+             WHERE '.$where.'
+             ORDER BY '.self::ORDER_BY[$query->effectiveSort()].'
+             LIMIT :limit OFFSET :offset',
+            $params + [
+                'limit' => $query->page->effectiveSize(),
+                'offset' => $query->page->effectiveOffset(),
+            ],
+            ['limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER],
+        );
+
+        return new Page(
+            array_map(
                 static fn (array $row): AdminCustomerView => new AdminCustomerView(
                     id: (string) $row['id'],
                     name: (string) $row['name'],
@@ -76,9 +102,14 @@ final class AdminCustomerFinder
                 ),
                 $rows,
             ),
-            page: $query->effectivePage(),
-            limit: $query->effectiveLimit(),
-            total: $total,
+            $query->page->effectivePage(),
+            $query->page->effectiveSize(),
+            $total,
         );
+    }
+
+    private static function escapeLike(string $term): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $term);
     }
 }

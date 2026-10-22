@@ -14,18 +14,8 @@ final class ListStorefrontProductsHandler
     {
     }
 
-    /** @return list<StorefrontProductView> */
-    public function __invoke(ListStorefrontProducts $query): array
+    public function __invoke(ListStorefrontProducts $query): StorefrontProductPage
     {
-        return $this->products->list(
-            $query->categorySlug,
-            $query->subcategory,
-            $query->promotionsOnly,
-            $query->brand,
-            $query->isNew,
-            $query->isBest,
-            $query->limit,
-            $query->sort,
-        );
+        return $this->products->browse($query->filters, $query->page);
     }
 }

@@ -9,6 +9,8 @@ use App\Identity\Application\Command\AddWishlistItem;
 use App\Identity\Application\Command\RemoveWishlistItem;
 use App\Identity\Application\Query\ListWishlistItems;
 use App\Identity\Infrastructure\Security\CustomerUser;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,12 +30,17 @@ final class WishlistController
     }
 
     #[Route('', name: 'storefront_wishlist_list', methods: ['GET'])]
-    public function list(#[CurrentUser] CustomerUser $user): JsonResponse
+    public function list(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        /** @var list<array<string, mixed>> $items */
-        $items = $this->queries->dispatch(new ListWishlistItems($user->getId()));
+        /** @var Page $page */
+        $page = $this->queries->dispatch(new ListWishlistItems(
+            $user->getId(),
+            ListQueryParams::page($request, ListWishlistItems::DEFAULT_SIZE, ListWishlistItems::MAX_SIZE),
+            ListQueryParams::text($request),
+            ListQueryParams::text($request, 'sort'),
+        ));
 
-        return new JsonResponse(['items' => $items]);
+        return new JsonResponse($page->toArray());
     }
 
     #[Route('', name: 'storefront_wishlist_add', methods: ['POST'])]

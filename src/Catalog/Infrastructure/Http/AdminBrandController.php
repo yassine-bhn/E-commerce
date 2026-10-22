@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Http;
 
+use App\Catalog\Application\Query\ListAdminBrands;
+use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Infrastructure\Http\ListQueryParams;
+use App\Shared\Infrastructure\Http\MessengerQuery;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,27 +25,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_SUPER_ADMIN')]
 final class AdminBrandController
 {
-    public function __construct(private Connection $connection)
-    {
+    public function __construct(
+        private Connection $connection,
+        private StorefrontProductSearchIndexer $searchIndex,
+        private MessengerQuery $queries,
+    ) {
     }
 
+    /**
+     * R11: one bounded page of the brand list with its per-brand product count.
+     */
     #[Route('', name: 'admin_catalog_list_brands', methods: ['GET'])]
-    public function list(): JsonResponse
+    public function list(Request $request): JsonResponse
     {
-        $rows = $this->connection->fetchAllAssociative(
-            'SELECT b.name, COUNT(p.id) AS product_count
-             FROM storefront_brand b
-             LEFT JOIN storefront_product_view p ON p.brand = b.name
-             GROUP BY b.name
-             ORDER BY b.name ASC',
-        );
+        /** @var Page $page */
+        $page = $this->queries->dispatch(new ListAdminBrands(
+            page: ListQueryParams::page($request, ListAdminBrands::DEFAULT_SIZE, ListAdminBrands::MAX_SIZE),
+            q: ListQueryParams::text($request),
+            sort: ListQueryParams::text($request, 'sort'),
+        ));
 
-        return new JsonResponse([
-            'items' => array_map(static fn (array $row): array => [
-                'name' => (string) $row['name'],
-                'productCount' => (int) $row['product_count'],
-            ], $rows),
-        ]);
+        return new JsonResponse($page->toArray());
     }
 
     #[Route('', name: 'admin_catalog_create_brand', methods: ['POST'])]
@@ -88,6 +93,12 @@ final class AdminBrandController
         } catch (\Throwable $exception) {
             $this->connection->rollBack();
             throw $exception;
+        }
+
+        // The brand travels inside every product document: re-index the renamed products (ECO-008).
+        $slugs = $this->connection->fetchFirstColumn('SELECT slug FROM storefront_product_view WHERE brand = :name', ['name' => $newName]);
+        foreach ($slugs as $slug) {
+            $this->searchIndex->sync((string) $slug);
         }
 
         return new JsonResponse(['name' => $newName]);

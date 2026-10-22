@@ -6,6 +6,10 @@ services:
         autowire: true
         autoconfigure: true
 
+    _instanceof:
+        App\Shared\Application\Port\HealthProbe:
+            tags: ['app.health_probe']
+
     App\:
         resource: '../src/'
         exclude:
@@ -93,9 +97,10 @@ services:
     App\Ordering\Domain\Repository\OrderRepository:
         alias: App\Ordering\Infrastructure\Persistence\DoctrineOrderRepository
 
-    App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository:
+    # ADR-0005: one client for the storefront search index (read finder + indexer).
+    Meilisearch\Client:
         arguments:
-            $meilisearchUrl: '%env(MEILISEARCH_URL)%'
+            $url: '%env(MEILISEARCH_URL)%'
 
     App\Shared\Domain\Outbox\OutboxPort:
         alias: App\Shared\Infrastructure\Outbox\DoctrineOutbox
@@ -139,3 +144,12 @@ services:
 
     App\Shared\Application\Port\StorefrontCategoryPort:
         alias: App\Shared\Infrastructure\Adapter\DbalStorefrontCategoryPort
+
+    # Health probes are collected by tag; see src/Shared/Infrastructure/Health (WP3, R23-R25).
+    App\Shared\Application\Service\ReadinessService:
+        arguments:
+            $probes: !tagged_iterator app.health_probe
+
+    App\Shared\Infrastructure\Health\MigrationsHealthProbe:
+        arguments:
+            $dependencyFactory: '@doctrine.migrations.dependency_factory'

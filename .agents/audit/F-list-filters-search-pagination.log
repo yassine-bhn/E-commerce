@@ -1,0 +1,3 @@
+GATE: SPEC ok — 2026-10-22T00:00:00Z — orchestrator — spec v1 authored, Tasks 1, 2, 12 already complete
+TASK 11 done — 2026-10-22T16:40:00+01:00 — orchestrator — admin categories/brands/promo-codes offset pagination, filters and sorts; Unit 3/3, Integration 4/4, Functional 23/23
+GATE: DONE — 2026-10-22T17:02:17+01:00 — orchestrator — 430 tests / 2672 assertions OK; phpstan 0 errors; php-cs-fixer 0/343; deptrac Errors 0; 16/16 classification rows walked live (56/56 checks); migrations up/down/up verified in dev and test

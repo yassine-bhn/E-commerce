@@ -1,0 +1,140 @@
+# Production stack (R11–R15, D1): one Docker host, `edge` Caddy is the only published service.
+# Usage: docker compose --env-file .env.prod -f compose.prod.yaml up -d
+# The release procedure lives in deploy/release.sh and docs/runbook-deployment.md.
+
+name: ecommerce-prod
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-app-environment: &app-environment
+  APP_ENV: prod
+  APP_DEBUG: "0"
+  APP_SECRET: ${APP_SECRET:?set APP_SECRET in .env.prod}
+  DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DB:?}?serverVersion=16&charset=utf8
+  MESSENGER_TRANSPORT_DSN: doctrine://default?queue_name=async
+  MEILISEARCH_URL: http://meilisearch:7700
+  MAILER_DSN: ${MAILER_DSN:?set MAILER_DSN in .env.prod}
+  STOREFRONT_CORS_ORIGIN: ${STOREFRONT_CORS_ORIGIN:?set STOREFRONT_CORS_ORIGIN in .env.prod}
+  STOREFRONT_APP_URL: ${STOREFRONT_APP_URL:?set STOREFRONT_APP_URL in .env.prod}
+  GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
+  GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET:-}
+  GOOGLE_OAUTH_REDIRECT_URI: ${GOOGLE_OAUTH_REDIRECT_URI:-}
+  # Caddy adds X-Forwarded-*; Symfony only trusts them for these proxy ranges (R14).
+  SYMFONY_TRUSTED_PROXIES: ${TRUSTED_PROXIES:-172.16.0.0/12,10.0.0.0/8}
+
+x-backend: &backend
+  image: ${BACKEND_IMAGE:?set BACKEND_IMAGE in .env.prod}:${IMAGE_TAG:?set IMAGE_TAG in .env.prod}
+  environment: *app-environment
+  restart: unless-stopped
+  logging: *logging
+  depends_on:
+    database:
+      condition: service_healthy
+
+services:
+  app:
+    <<: *backend
+    volumes:
+      - uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  worker:
+    <<: *backend
+    command: php bin/console messenger:consume async failed --time-limit=3600 --memory-limit=256M
+    volumes:
+      - uploads:/app/public/uploads
+    # The inherited image healthcheck probes Caddy's admin API, which this CLI process does not run.
+    healthcheck:
+      disable: true
+
+  outbox:
+    <<: *backend
+    entrypoint: ["/bin/sh", "-c", "while true; do php bin/console app:outbox:relay --no-interaction; sleep 5; done"]
+    healthcheck:
+      disable: true
+
+  storefront:
+    image: ${STOREFRONT_IMAGE:?set STOREFRONT_IMAGE in .env.prod}:${IMAGE_TAG:?set IMAGE_TAG in .env.prod}
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?}
+      POSTGRES_USER: ${POSTGRES_USER:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.11
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      MEILI_ENV: production
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?set MEILI_MASTER_KEY in .env.prod}
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:7700/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  edge:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    logging: *logging
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?set APP_DOMAIN in .env.prod}
+      STOREFRONT_DOMAIN: ${STOREFRONT_DOMAIN:?set STOREFRONT_DOMAIN in .env.prod}
+      EDGE_EMAIL: ${EDGE_EMAIL:?set EDGE_EMAIL in .env.prod}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+      storefront:
+        condition: service_healthy
+
+volumes:
+  database_data:
+  meilisearch_data:
+  uploads:
+  caddy_data:
+  caddy_config:

@@ -6,6 +6,7 @@ namespace App\Catalog\Infrastructure\Http;
 
 use App\Catalog\Application\Service\SubcategoryTree;
 use App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository;
+use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ParameterType;
@@ -32,6 +33,7 @@ final class AdminProductController
     public function __construct(
         private Connection $connection,
         private StorefrontProductRepository $products,
+        private StorefrontProductSearchIndexer $searchIndex,
     ) {
     }
 
@@ -64,6 +66,9 @@ final class AdminProductController
             return new JsonResponse(['error' => 'A product with this slug already exists.'], Response::HTTP_CONFLICT);
         }
 
+        // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
+        $this->searchIndex->sync($product['slug']);
+
         return new JsonResponse($this->products->bySlug($product['slug'])?->toApi(), Response::HTTP_CREATED);
     }
 
@@ -94,6 +99,9 @@ final class AdminProductController
         if (0 === $affected) {
             return new JsonResponse(['error' => 'Product not found.'], Response::HTTP_NOT_FOUND);
         }
+
+        // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
+        $this->searchIndex->sync($slug);
 
         return new JsonResponse($this->products->bySlug($slug)?->toApi());
     }

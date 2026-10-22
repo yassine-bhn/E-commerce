@@ -8,7 +8,7 @@ namespace App\Identity\Infrastructure\ReadModel;
  * R15 / QRY-002 — one dashboard user row. Deliberately only the fields the dashboard is allowed to
  * see: no password hash, no OAuth id, no ban internals (ban_reason/banned_by/banned_at).
  */
-final readonly class AdminCustomerView
+final readonly class AdminCustomerView implements \JsonSerializable
 {
     public function __construct(
         public string $id,
@@ -33,5 +33,11 @@ final readonly class AdminCustomerView
             'status' => $this->status,
             'orderCount' => $this->orderCount,
         ];
+    }
+
+    /** @return array<string, mixed> */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Promotions\Infrastructure\Http;
 
+use App\Promotions\Application\Query\ListAdminPromoCodes;
+use App\Shared\Application\Pagination\Page;
+use App\Shared\Infrastructure\Http\ListQueryParams;
+use App\Shared\Infrastructure\Http\MessengerQuery;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,24 +24,26 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_SUPER_ADMIN')]
 final class AdminPromoCodeController
 {
-    public function __construct(private Connection $connection)
-    {
+    public function __construct(
+        private Connection $connection,
+        private MessengerQuery $queries,
+    ) {
     }
 
+    /**
+     * R12: one bounded page of the promo-code list, filtered in SQL.
+     */
     #[Route('', name: 'admin_promo_codes_list', methods: ['GET'])]
-    public function list(): JsonResponse
+    public function list(Request $request): JsonResponse
     {
-        $rows = $this->connection->fetchAllAssociative(
-            'SELECT code, discount_basis_points, active FROM storefront_promo_code ORDER BY code ASC',
-        );
+        /** @var Page $page */
+        $page = $this->queries->dispatch(new ListAdminPromoCodes(
+            page: ListQueryParams::page($request, ListAdminPromoCodes::DEFAULT_SIZE, ListAdminPromoCodes::MAX_SIZE),
+            q: ListQueryParams::text($request),
+            active: ListQueryParams::boolOrNull($request, 'active'),
+        ));
 
-        return new JsonResponse([
-            'items' => array_map(static fn (array $row): array => [
-                'code' => (string) $row['code'],
-                'discountBasisPoints' => (int) $row['discount_basis_points'],
-                'active' => (bool) $row['active'],
-            ], $rows),
-        ]);
+        return new JsonResponse($page->toArray());
     }
 
     #[Route('', name: 'admin_promo_codes_create', methods: ['POST'])]

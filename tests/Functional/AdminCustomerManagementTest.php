@@ -69,13 +69,18 @@ final class AdminCustomerManagementTest extends WebTestCase
         return $connection;
     }
 
-    private function createUser(string $role = 'ROLE_USER', string $status = 'active', ?string $password = null): CustomerUser
-    {
+    private function createUser(
+        string $role = 'ROLE_USER',
+        string $status = 'active',
+        ?string $password = null,
+        ?string $name = null,
+        ?string $createdAt = null,
+    ): CustomerUser {
         $id = Uuid::v4()->toRfc4122();
         $email = sprintf('wp3.%s.%s@example.com', strtolower(str_replace('ROLE_', '', $role)), substr($id, 0, 8));
-        $name = 'WP3 '.ucwords(strtolower(str_replace('_', ' ', str_replace('ROLE_', '', $role)))).' User';
+        $name ??= 'WP3 '.ucwords(strtolower(str_replace('_', ' ', str_replace('ROLE_', '', $role)))).' User';
 
-        $this->connection()->insert('customer_profile', [
+        $row = [
             'id' => $id,
             'name' => $name,
             'email' => $email,
@@ -83,7 +88,12 @@ final class AdminCustomerManagementTest extends WebTestCase
             'password_hash' => null !== $password ? password_hash($password, PASSWORD_BCRYPT) : null,
             'role' => $role,
             'status' => $status,
-        ]);
+        ];
+        if (null !== $createdAt) {
+            $row['created_at'] = $createdAt;
+        }
+
+        $this->connection()->insert('customer_profile', $row);
 
         $this->createdUserIds[] = $id;
 
@@ -174,7 +184,7 @@ final class AdminCustomerManagementTest extends WebTestCase
         $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$promoted->getId().'/role', ['role' => 'ROLE_SUPER_ADMIN']);
         self::assertResponseIsSuccessful();
         // R15 — the change is visible in the dashboard list
-        $client->request('GET', '/api/v1/admin/customers?limit=50');
+        $client->request('GET', '/api/v1/admin/customers?size=50');
         self::assertResponseIsSuccessful();
         $items = $this->decode($client->getResponse())['items'] ?? [];
         self::assertIsArray($items);
@@ -320,14 +330,17 @@ final class AdminCustomerManagementTest extends WebTestCase
 
         $client->loginUser($admin);
 
-        $client->request('GET', '/api/v1/admin/customers?limit=500&page=-3');
+        $client->request('GET', '/api/v1/admin/customers?size=500&page=-3');
         self::assertResponseIsSuccessful();
         $payload = $this->decode($client->getResponse());
 
-        self::assertSame(50, $payload['limit'], 'Q11 — limit is capped at 50');
-        self::assertSame(1, $payload['page'], 'page never falls below 1');
-        self::assertIsInt($payload['total']);
-        self::assertGreaterThanOrEqual(2, $payload['total']);
+        self::assertSame(50, $payload['meta']['size'], 'Q11 — size is capped at 50');
+        self::assertSame(1, $payload['meta']['page'], 'page never falls below 1');
+        self::assertIsInt($payload['meta']['total']);
+        self::assertGreaterThanOrEqual(2, $payload['meta']['total']);
+        self::assertArrayHasKey('totalPages', $payload['meta']);
+        self::assertArrayHasKey('hasMore', $payload['meta']);
+        self::assertArrayNotHasKey('limit', $payload, 'the old limit key is gone');
 
         $rows = [];
         foreach ((array) $payload['items'] as $item) {
@@ -356,18 +369,69 @@ final class AdminCustomerManagementTest extends WebTestCase
         $client->loginUser($admin);
 
         $seen = [];
-        for ($page = 1; $page <= 3; ++$page) {
-            $client->request('GET', sprintf('/api/v1/admin/customers?limit=1&page=%d', $page));
+        $pages = 1;
+        // The table is shared with every other test: walk the whole result set instead of assuming
+        // the two new rows land on the first three pages of a database that may already have rows.
+        for ($page = 1; $page <= $pages && $page <= 200; ++$page) {
+            $client->request('GET', sprintf('/api/v1/admin/customers?size=1&page=%d', $page));
             self::assertResponseIsSuccessful();
             $payload = $this->decode($client->getResponse());
             $items = (array) $payload['items'];
-            self::assertCount(1, $items, 'a limit of 1 returns exactly one row');
+            self::assertCount(1, $items, 'a size of 1 returns exactly one row');
             $seen[] = (string) $items[0]['id'];
+            $pages = (int) $payload['meta']['total'];
         }
 
         self::assertSame($seen, array_unique($seen), 'pages never overlap: order is deterministic');
         self::assertContains($first->getId(), $seen);
         self::assertContains($second->getId(), $seen);
+    }
+
+    public function testUserListFiltersAndSortsThroughTheOffsetEnvelope(): void
+    {
+        $client = static::createClient();
+        $admin = $this->createUser('ROLE_ADMIN');
+        $token = 'Flux'.substr(bin2hex(random_bytes(4)), 0, 8);
+
+        $oldest = $this->createUser('ROLE_USER', 'active', null, $token.' Alpha', '2026-01-01 09:00:00+00');
+        $middle = $this->createUser('ROLE_USER', 'active', null, $token.' Beta', '2026-02-01 09:00:00+00');
+        $newest = $this->createUser('ROLE_USER', 'active', null, $token.' Gamma', '2026-03-01 09:00:00+00');
+        $this->createUser('ROLE_USER', 'banned', null, $token.' Banned', '2026-04-01 09:00:00+00');
+        $this->createUser('ROLE_ADMIN', 'active', null, $token.' Admin', '2026-05-01 09:00:00+00');
+
+        $client->loginUser($admin);
+
+        $client->request('GET', '/api/v1/admin/customers?'.http_build_query([
+            'q' => $token,
+            'role' => 'ROLE_USER',
+            'status' => 'active',
+            'sort' => 'createdAt',
+            'page' => 1,
+            'size' => 2,
+        ]));
+        self::assertResponseIsSuccessful();
+        $first = $this->decode($client->getResponse());
+
+        self::assertSame(
+            ['page' => 1, 'size' => 2, 'total' => 3, 'totalPages' => 2, 'hasMore' => true],
+            $first['meta'],
+            'meta.total reflects the filtered count only',
+        );
+        self::assertSame([$newest->getId(), $middle->getId()], array_column($first['items'], 'id'));
+
+        $client->request('GET', '/api/v1/admin/customers?'.http_build_query([
+            'q' => $token,
+            'role' => 'ROLE_USER',
+            'status' => 'active',
+            'sort' => 'createdAt',
+            'page' => 2,
+            'size' => 2,
+        ]));
+        self::assertResponseIsSuccessful();
+        $second = $this->decode($client->getResponse());
+
+        self::assertSame(['page' => 2, 'size' => 2, 'total' => 3, 'totalPages' => 2, 'hasMore' => false], $second['meta']);
+        self::assertSame([$oldest->getId()], array_column($second['items'], 'id'));
     }
 
     public function testExistingDeleteUserContractIsUnchanged(): void

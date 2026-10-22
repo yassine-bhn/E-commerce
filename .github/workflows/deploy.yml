@@ -1,0 +1,61 @@
+name: Deploy
+
+# Publishes the production image to GHCR (R19, D2). It never runs on pull requests.
+# The release itself runs on the host: deploy/release.sh (see docs/runbook-deployment.md).
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish the backend image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR with GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build and push the prod target
+        run: |
+          set -euo pipefail
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker build -f docker/Dockerfile --target prod -t "${image}:${GITHUB_SHA}" -t "${image}:latest" .
+          docker push "${image}:${GITHUB_SHA}"
+          docker push "${image}:latest"
+          printf '### Published `%s:%s`\n' "$image" "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+
+  # Optional: only runs when the repository variable DEPLOY_ENABLED is set to "true" (D2).
+  # Required configuration: secrets.DEPLOY_SSH_KEY; variables.DEPLOY_HOST, DEPLOY_USER, DEPLOY_PATH.
+  deploy:
+    name: Release on the host
+    needs: publish
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    steps:
+      - name: Configure SSH
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ vars.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Run deploy/release.sh with this commit
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }}" \
+            "cd '${{ vars.DEPLOY_PATH }}' && ./deploy/release.sh '${{ github.sha }}'"

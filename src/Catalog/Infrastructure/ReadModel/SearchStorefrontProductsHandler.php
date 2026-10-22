@@ -14,9 +14,8 @@ final class SearchStorefrontProductsHandler
     {
     }
 
-    /** @return list<StorefrontProductView> */
-    public function __invoke(SearchStorefrontProducts $query): array
+    public function __invoke(SearchStorefrontProducts $query): StorefrontProductPage
     {
-        return $this->products->search($query->query, $query->limit);
+        return $this->products->search($query->filters, $query->page);
     }
 }

@@ -6,19 +6,23 @@ namespace App\Catalog\Infrastructure\Projection;
 
 use App\Catalog\Domain\Event\ProductPriceChanged;
 use App\Catalog\Domain\Event\ProductRegistered;
+use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use Doctrine\DBAL\Connection;
-use Meilisearch\Client;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-/** ECO-008 — Meilisearch catalog search projection. */
+/**
+ * ECO-008 — the catalog write model feeds the storefront search index.
+ *
+ * The event only carries the product id; the storefront document is read from the
+ * `storefront_product_view` read model by that id, so the projection stays a pure
+ * read-model → index copy (PRF-003) and never touches Meilisearch inline in a command.
+ */
 #[AsMessageHandler(bus: 'event.bus')]
 final class IndexCatalogSearchDocument
 {
     public function __construct(
         private Connection $connection,
-        #[Autowire(env: 'MEILISEARCH_URL')]
-        private string $meilisearchUrl,
+        private StorefrontProductSearchIndexer $indexer,
     ) {
     }
 
@@ -28,27 +32,16 @@ final class IndexCatalogSearchDocument
             return;
         }
 
-        $row = $this->connection->fetchAssociative(
-            'SELECT id, name, price_minor, currency FROM catalog_product_view WHERE id = :id',
+        $slug = $this->connection->fetchOne(
+            'SELECT slug FROM storefront_product_view WHERE id = :id',
             ['id' => $event->productId],
         );
-        if (false === $row) {
+        if (!is_string($slug) || '' === $slug) {
             return;
         }
 
-        try {
-            $client = new Client($this->meilisearchUrl);
-            $client->index('catalog_products')->addDocuments([
-                [
-                    'id' => $row['id'],
-                    'name' => $row['name'],
-                    'price_minor' => (int) $row['price_minor'],
-                    'currency' => $row['currency'],
-                ],
-            ], 'id');
-        } catch (\Throwable) {
-            // Meilisearch indexing optional/best-effort
-        }
+        // Best-effort: a Meilisearch outage never fails the consumer.
+        $this->indexer->sync($slug);
     }
 
     private function claim(string $eventId): bool

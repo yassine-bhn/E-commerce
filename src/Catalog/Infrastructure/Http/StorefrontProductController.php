@@ -7,7 +7,10 @@ namespace App\Catalog\Infrastructure\Http;
 use App\Catalog\Application\Query\GetStorefrontProductBySlug;
 use App\Catalog\Application\Query\ListStorefrontProducts;
 use App\Catalog\Application\Query\SearchStorefrontProducts;
+use App\Catalog\Application\Query\StorefrontProductFilters;
+use App\Catalog\Infrastructure\ReadModel\StorefrontProductPage;
 use App\Catalog\Infrastructure\ReadModel\StorefrontProductView;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use App\Shared\Infrastructure\Http\RateLimitChecker;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -31,30 +34,13 @@ final class StorefrontProductController
     #[Route('', name: 'storefront_products_list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
-        $category = $request->query->getString('category') ?: null;
-        $sub = $request->query->getString('sub') ?: null;
-        $promotions = $request->query->getBoolean('promotions');
-        $brand = $request->query->getString('brand') ?: null;
-        $isNew = $request->query->has('new') ? $request->query->getBoolean('new') : null;
-        $isBest = $request->query->has('best') ? $request->query->getBoolean('best') : null;
-        $limit = $request->query->has('limit') ? $request->query->getInt('limit') : null;
-        $sort = $request->query->getString('sort') ?: null;
-
-        /** @var list<StorefrontProductView> $products */
-        $products = $this->queries->dispatch(new ListStorefrontProducts(
-            $category,
-            $sub,
-            $promotions,
-            $brand,
-            $isNew,
-            $isBest,
-            $limit,
-            $sort,
+        /** @var StorefrontProductPage $page */
+        $page = $this->queries->dispatch(new ListStorefrontProducts(
+            $this->filters($request),
+            ListQueryParams::page($request, ListStorefrontProducts::DEFAULT_SIZE, ListStorefrontProducts::MAX_SIZE),
         ));
 
-        return new JsonResponse([
-            'items' => array_map(static fn (StorefrontProductView $p): array => $p->toApi(), $products),
-        ]);
+        return new JsonResponse($page->toArray(static fn (StorefrontProductView $p): array => $p->toApi()));
     }
 
     #[Route('/search', name: 'storefront_products_search', methods: ['GET'])]
@@ -64,14 +50,20 @@ final class StorefrontProductController
             return $limitResponse;
         }
 
-        $q = $request->query->getString('q');
-        /** @var list<StorefrontProductView> $products */
-        $products = $this->queries->dispatch(new SearchStorefrontProducts($q));
+        $q = ListQueryParams::text($request);
+        if (null === $q) {
+            return new JsonResponse(['error' => 'The q parameter is required.'], Response::HTTP_BAD_REQUEST);
+        }
 
-        return new JsonResponse([
-            'query' => $q,
-            'items' => array_map(static fn (StorefrontProductView $p): array => $p->toApi(), $products),
-        ]);
+        /** @var StorefrontProductPage $page */
+        $page = $this->queries->dispatch(new SearchStorefrontProducts(
+            $this->filters($request),
+            ListQueryParams::page($request, SearchStorefrontProducts::DEFAULT_SIZE, SearchStorefrontProducts::MAX_SIZE),
+        ));
+
+        return new JsonResponse(
+            ['query' => $q] + $page->toArray(static fn (StorefrontProductView $p): array => $p->toApi()),
+        );
     }
 
     #[Route('/{slug}', name: 'storefront_products_show', methods: ['GET'])]
@@ -84,5 +76,25 @@ final class StorefrontProductController
         }
 
         return new JsonResponse($product->toApi());
+    }
+
+    private function filters(Request $request): StorefrontProductFilters
+    {
+        $stock = ListQueryParams::text($request, 'stock');
+
+        return new StorefrontProductFilters(
+            q: ListQueryParams::text($request),
+            categorySlug: ListQueryParams::text($request, 'category'),
+            subcategory: ListQueryParams::text($request, 'sub'),
+            promotionsOnly: ListQueryParams::boolOrNull($request, 'promotions') ?? false,
+            brand: ListQueryParams::text($request, 'brand'),
+            isNew: ListQueryParams::boolOrNull($request, 'new'),
+            isBest: ListQueryParams::boolOrNull($request, 'best'),
+            priceMin: ListQueryParams::intOrNull($request, 'priceMin'),
+            priceMax: ListQueryParams::intOrNull($request, 'priceMax'),
+            material: ListQueryParams::text($request, 'material'),
+            stock: in_array($stock, StorefrontProductFilters::STOCKS, true) ? $stock : null,
+            sort: ListQueryParams::text($request, 'sort'),
+        );
     }
 }

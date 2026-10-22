@@ -1,0 +1,23 @@
+# Keep the build context small and free of secrets/artifacts (SEC-005, R9).
+.git
+.gitignore
+.github
+.idea
+.agents
+.cursor
+.env.local
+.env.*.local
+vendor
+var
+node_modules
+public/uploads
+public/bundles
+.phpunit.cache
+.php-cs-fixer.cache
+.deptrac.cache
+phpunit.xml
+backups
+spec-run*
+tests
+docs
+*.md

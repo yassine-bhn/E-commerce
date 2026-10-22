@@ -27,3 +27,11 @@
 /.deptrac.cache
 
 /.idea/
+
+###> production stack (WP5) ###
+/.env.prod
+/backups/
+###< production stack (WP5) ###
+
+# Bytecode left behind by scripts/test-report.py
+__pycache__/

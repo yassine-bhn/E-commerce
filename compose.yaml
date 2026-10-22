@@ -1,26 +1,59 @@
 # ecommerce-core — INF-001 PostgreSQL 16, INF-002 Docker boundary, INF-003 FrankenPHP (ADR-0002)
 # Host runs: docker compose … and git only. PHP/Composer/vendor/bin → docker compose exec app …
+# All routine operations are wrapped by the Makefile (WP2).
+
+x-app-environment: &app-environment
+  SERVER_NAME: ":80"
+  APP_ENV: ${APP_ENV:-dev}
+  APP_SECRET: ${APP_SECRET:-change-me-in-env-local}
+  DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@database:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
+  MESSENGER_TRANSPORT_DSN: doctrine://default?queue_name=async
+  MEILISEARCH_URL: http://meilisearch:7700
+
+x-app-base: &app-base
+  image: ecommerce-core:dev
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+    target: dev
+  volumes:
+    - .:/app
+  depends_on:
+    database:
+      condition: service_healthy
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+    <<: *app-base
     ports:
-      - "${APP_PORT:-8080}:80"
-    volumes:
-      - .:/app
-    environment:
-      SERVER_NAME: ":80"
-      APP_ENV: ${APP_ENV:-dev}
-      APP_SECRET: ${APP_SECRET:-change-me-in-env-local}
-      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@database:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
-      MESSENGER_TRANSPORT_DSN: doctrine://default?queue_name=async
-      MEILISEARCH_URL: http://meilisearch:7700
-    depends_on:
-      database:
-        condition: service_healthy
+      - "${APP_PORT:-8081}:80"
+    environment: *app-environment
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     tty: true
+
+  # Consumes the async transport so queued events are actually handled locally (R21).
+  worker:
+    <<: *app-base
+    command: php bin/console messenger:consume async failed --time-limit=3600 --memory-limit=256M -vv
+    environment: *app-environment
+    # The FrankenPHP base image healthchecks Caddy's admin API; this container runs a CLI loop.
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+  # Publishes outbox rows to event.bus every 5 seconds (EVT-002), replacing a cron entry.
+  outbox:
+    <<: *app-base
+    entrypoint: ["/bin/sh", "-c", "while true; do php bin/console app:outbox:relay --no-interaction; sleep 5; done"]
+    environment: *app-environment
+    healthcheck:
+      disable: true
+    restart: unless-stopped
 
   database:
     image: postgres:16-alpine
@@ -45,6 +78,11 @@ services:
       MEILI_ENV: development
     ports:
       - "${MEILI_PORT:-7700}:7700"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:7700/health"]
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     volumes:
       - meilisearch_data:/meili_data
 

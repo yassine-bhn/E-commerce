@@ -8,12 +8,16 @@ use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Ordering\Application\Command\PlaceOrder;
 use App\Ordering\Application\Query\ListOrdersForCustomer;
 use App\Ordering\Application\Saga\CheckoutSaga;
+use App\Shared\Application\Pagination\CursorPage;
+use App\Shared\Application\Pagination\InvalidCursorException;
+use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use App\Shared\Infrastructure\Http\RateLimitChecker;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -89,14 +93,27 @@ final class CheckoutOrderController
     }
 
     #[Route('', name: 'storefront_orders_list', methods: ['GET'])]
-    public function list(#[CurrentUser] CustomerUser $user): JsonResponse
+    public function list(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
     {
-        $customerId = $user->getId();
+        try {
+            /** @var CursorPage $page */
+            $page = $this->queries->dispatch(new ListOrdersForCustomer(
+                customerId: $user->getId(),
+                cursor: ListQueryParams::cursor($request, ListOrdersForCustomer::DEFAULT_LIMIT, ListOrdersForCustomer::MAX_LIMIT),
+                status: ListQueryParams::text($request, 'status'),
+                dateFrom: ListQueryParams::dateOrNull($request, 'dateFrom'),
+                dateTo: ListQueryParams::dateOrNull($request, 'dateTo'),
+                q: ListQueryParams::text($request),
+            ));
+        } catch (HandlerFailedException $e) {
+            if ($e->getPrevious() instanceof InvalidCursorException) {
+                return new JsonResponse(['error' => 'Invalid cursor'], Response::HTTP_BAD_REQUEST);
+            }
 
-        /** @var list<array<string, mixed>> $orders */
-        $orders = $this->queries->dispatch(new ListOrdersForCustomer($customerId));
+            throw $e;
+        }
 
-        return new JsonResponse(['items' => $orders]);
+        return new JsonResponse($page->toArray());
     }
 
     #[Route('/track/{orderNumber}', name: 'storefront_orders_track', methods: ['GET'])]
