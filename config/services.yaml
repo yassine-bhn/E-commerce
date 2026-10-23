@@ -1,5 +1,9 @@
 # DIP-001 / LAY-003 — Domain is not a service layer; HTTP under */Infrastructure/Http (SRP-002).
 parameters:
+    # The remember-me cookie name, shared by the firewall (config/packages/security.yaml) and the
+    # request-input guard that drops malformed payloads before the firewall reads it, so both always
+    # address the same cookie.
+    remember_me_cookie_name: 'REMEMBERME'
 
 services:
     _defaults:
@@ -108,6 +112,11 @@ services:
 
     App\Shared\Domain\Outbox\OutboxPort:
         alias: App\Shared\Infrastructure\Outbox\DoctrineOutbox
+
+    # ADR-0011: the malformed-cookie guard must read the same cookie name the firewall writes.
+    App\Identity\Infrastructure\Security\MalformedRememberMeCookieSubscriber:
+        arguments:
+            $cookieName: '%remember_me_cookie_name%'
 
     messenger.bus.command:
         alias: command.bus

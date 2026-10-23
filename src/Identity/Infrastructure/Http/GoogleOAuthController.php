@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 
 #[Route('/api/v1/auth/google')]
 final class GoogleOAuthController
@@ -75,7 +76,13 @@ final class GoogleOAuthController
 
             $customer = $this->userProvider->loadUserByIdentifier($user['email']);
 
-            $this->security->login($customer, LoginAuthenticator::class);
+            // R13: a Google login is session-only. The badge must state that preference itself,
+            // because CheckRememberMeConditionsListener falls back to the request's `_remember_me`
+            // parameter when the badge has none — and a caller appending `?_remember_me=1` to this
+            // GET callback would otherwise turn the OAuth login into a 14-day persistent one.
+            // Pinning `_remember_me => false` keeps the badge disabled for any request input, and
+            // RememberMeListener still clears a cookie an earlier password login left behind.
+            $this->security->login($customer, LoginAuthenticator::class, null, [new RememberMeBadge(['_remember_me' => false])]);
         } catch (GoogleOAuthException) {
             return new RedirectResponse($this->storefrontAppUrl.'/connexion?oauth=error');
         }

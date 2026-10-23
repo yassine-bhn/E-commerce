@@ -1,0 +1,22 @@
+2026-10-23T14:11:56+01:00 F-remember-me dispatch orchestrator — spec pipeline stages 1–4 complete, artifacts in spec-run-7/
+2026-10-23T14:11:56+01:00 F-remember-me GATE SPEC ok orchestrator — spec-run-7/spec.md v1, R1–R15
+2026-10-23T14:11:56+01:00 F-remember-me RED recorded orchestrator — tests/Functional/RememberMeTest.php, 6 failures before the firewall/authenticator change
+2026-10-23T14:11:56+01:00 F-remember-me GATE GREEN ok orchestrator — same filter, 10/10 pass; full Functional suite 214 tests OK
+2026-10-23T14:24:00+01:00 F-remember-me GATE PLAN ok test-planner — 26 behaviors mapped, 10 additions planned
+2026-10-23T14:40:00+01:00 F-remember-me GATE SPEC-TESTS fail e2e-contract-test-agent — malformed REMEMBERME -> 500 TypeError (R8), recorded as RED
+2026-10-23T14:40:00+01:00 F-remember-me GATE SPEC-TESTS ok integration-test-agent — tests/Integration/Identity/RememberMeCookiePolicyTest.php (R10 prod)
+2026-10-23T14:58:00+01:00 F-remember-me GATE GREEN ok implementer — src/Identity/Infrastructure/Security/MalformedRememberMeCookieSubscriber.php, all suites green
+2026-10-23T15:10:00+01:00 F-remember-me GATE REFACTOR ok refactorer — helpers extracted, spec defect R15 escalated
+2026-10-23T15:16:00+01:00 F-remember-me GATE SPEC v2 orchestrator — R15 reworded to rolling expiry after measured SignatureRememberMeHandler rotation
+2026-10-23T15:26:00+01:00 F-remember-me GATE FIXES ok e2e-contract-test-agent+implementer — R15 assertion reworked, dangling WF-001 citation removed
+2026-10-23T15:26:00+01:00 F-remember-me boundary grant orchestrator — implementer authorised for config/packages/security.yaml comment fix (dispatch named the boundary)
+2026-10-23T15:52:00+01:00 F-remember-me GATE REVIEW ok code-reviewer+architecture-reviewer+security-reviewer+performance-reviewer+test-reviewer — 0 high, 6 med, 11 low; no scope creep
+2026-10-23T15:54:00+01:00 F-remember-me GATE SPEC v3 orchestrator — R13 clear-on-OAuth, R2 strict boolean, WP1 ownership, 3 Decision rows
+2026-10-23T16:02:00+01:00 F-remember-me RED recorded orchestrator — array-valued cookie 400, OAuth stale cookie, non-boolean remember_me accepted
+2026-10-23T16:20:00+01:00 F-remember-me GATE GREEN ok implementer — guard delegates to RememberMeDetails::fromRawCookie(), remember_me_cookie_name parameter, strict boolean, OAuth disabled badge, compose.prod REMEMBER_ME_LIFETIME
+2026-10-23T16:20:00+01:00 F-remember-me PATTERN ok pattern-selector — ADR-0011-remember-me-credential.md committed by implementer (pattern-selector is read-only); no human approval gate, no bus/aggregate/boundary change
+2026-10-23T16:20:00+01:00 F-remember-me boundary grant orchestrator — implementer authorised for docs/adr/, config/services.yaml, compose.prod.yaml, GoogleOAuthController.php (dispatch named each path)
+2026-10-23T16:34:00+01:00 F-remember-me GATE REVIEW re-run code-reviewer — 1 medium introduced by the fix: bare RememberMeBadge() let ?_remember_me=1 enable the OAuth badge
+2026-10-23T16:41:00+01:00 F-remember-me RED recorded orchestrator — testCallbackCannotBeForcedToIssueARememberMeCookieByARequestParameter (2 issued cookies where 0 expected)
+2026-10-23T16:47:00+01:00 F-remember-me GATE GREEN ok implementer+unit-test-writer — RememberMeBadge(['_remember_me' => false]), docblock trade-off clause, mock→stub, 2 extra guard cases
+2026-10-23T17:05:00+01:00 F-remember-me GATE DONE orchestrator — Unit 209 / Integration 59 / Functional 229 / Contract 16 / Projection 14 / Architecture 3 all OK; phpstan, php-cs-fixer, deptrac, harness-check clean; R1-R15 pass in spec-run-7/coverage.md

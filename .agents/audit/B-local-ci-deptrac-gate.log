@@ -1,0 +1,19 @@
+2026-10-23T08:38:00Z dispatch orchestrator — workflow=bugfix, first agent=investigator, symptom=./ci-local.sh and --quick fail the deptrac step of the quality phase (spec-run-6/spec.md v1)
+2026-10-23T08:38:00Z gate SPEC ok — spec-run-6/spec.md v1, R1–R14, blocking question D1 resolved in the spec (repair the config, not the code)
+2026-10-23T13:56:00Z gate RED ok — ./ci-local.sh --quick exit 1: quality stops at dc exec -T app vendor/bin/deptrac analyse (Violations 3658, Warnings 177); log spec-run-6/ci-quick.log
+2026-10-23T13:57:00Z gate RED ok — ./ci-local.sh exit 1: same step; start ok, tests ok, harness ok, infection ok, prod-image ok; log spec-run-6/ci-full-baseline.log
+2026-10-23T13:01:00Z gate INVESTIGATE ok — root cause deptrac.yaml: tier layers and context layers overlap by construction, context layer allows only Shared, so every dependency is reported twice
+2026-10-23T13:02:00Z gate GREEN ok — deptrac.yaml rewritten as 27 disjoint (context, tier) layers; deptrac analyse exit 0, Violations 0, Warnings 0, same 285 classes; log spec-run-6/deptrac-fixed.log
+2026-10-23T13:03:00Z gate VERIFY (1/3) — ./ci-local.sh --quick: start/quality/tests/harness ok, exit 0; log spec-run-6/verify-quick.log
+2026-10-23T13:07:00Z gate VERIFY (2/3) — ./ci-local.sh: six phases ok, exit 0; log spec-run-6/verify-full-1.log
+2026-10-23T14:10:00Z gate RED ok — ./ci-local.sh second consecutive run exit 1: quality at php-cs-fixer and tests+infection at RememberMeTest (files of the concurrent F-remember-me task), infection also fails StorefrontCatalogBrowseTest 14 ≠ 13; log spec-run-6/verify-full-2.log
+2026-10-23T14:23:00Z gate RED ok — deterministic reproduction of the browse failure: 14 rows in storefront_product_view + HEAD version of the test → Tests 9, Failures 2
+2026-10-23T14:25:00Z gate GREEN ok — tests/Functional/StorefrontCatalogBrowseTest.php asserts the envelope against the projection (SELECT count(*) FROM storefront_product_view) instead of a fixed 13; same 14 rows → OK (9 tests, 67 assertions)
+2026-10-23T14:20:00Z gate REVIEW ok — architecture-reviewer + code-reviewer dispatched in parallel (read-only); Shared.Infrastructure dead cross-context permissions removed; vendor-layer gap, ACL layer and the parser-skip caveat reported, not silently accepted
+2026-10-23T14:26:00Z note concurrent task F-remember-me (spec-run-7/) started in the same checkout at 14:04; its in-flight files are excluded from this task's fix boundary and reported as residual reds
+2026-10-23T13:57:00Z note interference — ./ci-local.sh --quick executed while F-remember-me's PHPUnit was live on the same ecommerce-ci/app_test failed AdminCustomerManagementTest::testUserListPaginatesWithoutRepeatingRows; the filter and the whole Functional suite pass standalone on the untouched tree (failures.md §V4), no test edited
+2026-10-23T14:34:47Z gate VERIFY (1/2) — ./ci-local.sh 6/6 phases ok, exit 0; deptrac Violations 0 Warnings 0, 51 src files mutated; log spec-run-6/verify-full-final-1.log
+2026-10-23T14:42:56Z gate VERIFY (2/2) — ./ci-local.sh again 6/6 phases ok, exit 0 on a byte-identical tree (same git status + git diff sha256); Unit 199, Integration 59, Projection 14, Functional 223, Contract 16, Architecture 3; log spec-run-6/verify-full-final-2.log
+2026-10-23T14:45:44Z gate VERIFY ok — ./ci-local.sh --quick 4/4 phases ok exit 0 and ./ci-local.sh --help exit 0 on the same tree; logs spec-run-6/verify-quick-final2.log, spec-run-6/ci-help-final.log
+2026-10-23T14:47:00Z gate DONE ok — write set deptrac.yaml + tests/Functional/StorefrontCatalogBrowseTest.php, nothing staged or committed (HEAD still df5dc84); residual reds hand off to F-remember-me
+

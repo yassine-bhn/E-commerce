@@ -1,0 +1,51 @@
+# ADR-0011 — Remember-me credential
+
+Status: accepted. Relies on: SEC-005, ADR-0001, ADR-0010, spec R3/R4/R5/R9/R10/R11/R12/R13/R15 (`spec-run-7/spec.md` v3).
+
+## Context
+
+The storefront is a Next.js SPA served from `STOREFRONT_DOMAIN`; the API answers on `APP_DOMAIN`. `deploy/Caddyfile` proxies the two hostnames separately, and `.env.prod.example` keeps them as independent configuration values. Authentication is cookie/session based: the `main` firewall (`config/packages/security.yaml`) uses the custom JSON `LoginAuthenticator` (`src/Identity/Infrastructure/Security/LoginAuthenticator.php`). Identity has no `Customer` aggregate: `CustomerProfileUserProvider` reads `customer_profile` through DBAL (`src/Identity/Infrastructure/Security/CustomerProfileUserProvider.php`), and `CustomerUser` exposes the stored `role` plus `ROLE_USER` (`src/Identity/Infrastructure/Security/CustomerUser.php`).
+
+The requirement is to keep a customer signed in after a browser restart when the login form's "Se souvenir de moi" box is ticked, while an unticked login remains session-only (`spec-run-7/spec.md` R3/R4/R5/R9/R10/R13/R15). Production already sets the session cookie to `SameSite=None; Secure` (`config/packages/framework.yaml`), so the new credential must fit the existing cross-origin posture rather than create a new one.
+
+## Decision
+
+Use Symfony's firewall-level `remember_me` on the `main` firewall with the `signature` handler.
+
+- **Handler and key.** `config/packages/security.yaml` sets `secret: '%kernel.secret%'` and no `service`/`token_provider`; `RememberMeFactory` therefore wires `SignatureRememberMeHandler` (`vendor/symfony/security-bundle/DependencyInjection/Security/Factory/RememberMeFactory.php`). The handler signs a SHA-256 HMAC with that secret (`vendor/symfony/security-core/Signature/SignatureHasher.php`); `%kernel.secret%` resolves to `APP_SECRET` (`config/packages/framework.yaml`).
+- **Lifetime.** `lifetime: '%env(int:REMEMBER_ME_LIFETIME)%'` (`config/packages/security.yaml`). The default is `1209600` seconds (14 days), documented in `.env` and `.env.prod.example`.
+- **Cookie attributes.** `REMEMBERME`, `HttpOnly`, `Path=/`, no `Domain` (the handler default is `null`, `vendor/symfony/security-http/RememberMe/AbstractRememberMeHandler.php`). Outside production: `SameSite=Lax`, `Secure=false`. Under `when@prod`: `SameSite=None`, `Secure=true`, mirroring `framework.session.cookie_samesite`/`cookie_secure` (`config/packages/framework.yaml`).
+- **Issuance.** `LoginAuthenticator` attaches `RememberMeBadge(['_remember_me' => …])` to every login passport and reads the flag from the JSON body (`src/Identity/Infrastructure/Security/LoginAuthenticator.php`); `CheckRememberMeConditionsListener` enables the badge only when `_remember_me` is truthy (`vendor/symfony/security-http/EventListener/CheckRememberMeConditionsListener.php`).
+- **Clearing.** The Google OAuth callback and the post-registration login present the same badge in its disabled state, so an older cookie is cleared before the badge is checked (`vendor/symfony/security-http/EventListener/RememberMeListener.php`). On the OAuth callback the disabled badge is passed through `Security::login()` (`src/Identity/Infrastructure/Http/GoogleOAuthController.php`), whose fourth argument accepts badges (`vendor/symfony/security-bundle/Security.php`); the post-registration login goes through `LoginAuthenticator` without `remember_me`. Logout clears on `LogoutEvent`.
+- **Identity.** The cookie is a bearer credential, not a server-side record: `RememberMeDetails` carries the user identifier, expiry and signature (`vendor/symfony/security-http/RememberMe/RememberMeDetails.php`). No table is created and no migration is required.
+
+The malformed-cookie guard (`src/Identity/Infrastructure/Security/MalformedRememberMeCookieSubscriber.php`) is a separate request-input workaround, not part of this credential design; its removal condition is recorded below.
+
+## Rejected alternatives
+
+- **Persistent token table (`persistent` handler).** This would add a `rememberme_token` table (`vendor/symfony/doctrine-bridge/Security/RememberMe/DoctrineTokenProvider.php`) managed by `PersistentRememberMeHandler` (`vendor/symfony/security-http/RememberMe/PersistentRememberMeHandler.php`) and a migration. Rejected because the spec requires no per-device revocation or device list, so the table, cleanup and migration buy nothing; the signature handler already invalidates on password change without a table.
+- **Long-lived session cookie.** Rejected because it extends the session instead of adding a second credential: the unticked login would no longer be session-only (spec R4 and assumption 3), and "remember me" would be indistinguishable from a normal session. The session configuration sets no `cookie_lifetime` (`config/packages/framework.yaml`), so a long-lived session cookie would change the default for every login, not just the ticked one.
+- **JWT or another token in `localStorage`.** Rejected because it puts a bearer secret in JavaScript-readable storage, contradicts the current `HttpOnly` cookie posture, and violates spec R12's "no remember-me secret in `localStorage`/`sessionStorage`". It would also add a separate validation/refresh path outside the firewall.
+
+## Accepted trade-offs (non-properties)
+
+This credential deliberately does **not** provide:
+
+- **Server-side revocation.** No issued cookie is recorded, so an individual device cannot be signed out. The account-level levers are the password hash (the default `signature_properties` is `['password']`, `RememberMeFactory.php`) and `APP_SECRET` (the HMAC key); rotating `APP_SECRET` invalidates every remembered device at once. Deleting or banning the customer also stops resolution because the provider is consulted on every use (`vendor/symfony/security-http/RememberMe/AbstractRememberMeHandler.php`, `CustomerProfileUserProvider.php`), but that is account-level, not credential-level.
+- **A fixed expiry.** Every successful cookie-based login reissues a fresh cookie for `time() + lifetime` (`vendor/symfony/security-http/RememberMe/SignatureRememberMeHandler.php`), so the credential slides: a customer who returns at least once per 14 days is never logged out. The same property means a stolen cookie can be kept alive by repeated use until the password or `APP_SECRET` changes.
+- **A storefront-only scope.** `remember_me` is configured on the `main` firewall (`config/packages/security.yaml`), which also protects `/api/v1/admin`. The cookie therefore authenticates an admin too. There is no privilege escalation: the signature carries no roles, and `AbstractRememberMeHandler` reloads the user through `CustomerProfileUserProvider`, whose role comes from `customer_profile.role` (`CustomerProfileUserProvider.php`, `CustomerUser.php`). The blast radius of a stolen admin cookie is nevertheless admin-wide until the password/secret changes (or, without use, until the 14-day window lapses).
+- **Confidentiality of the identifier.** The vendor handler writes the user identifier as URL-safe `base64(email)` in the cookie (`RememberMeDetails.php`). It is signed, not encrypted: `HttpOnly` keeps it away from JavaScript, but it remains readable to the device and to any TLS-terminating proxy. The cookie contains no password hash, but it does disclose the account email.
+- **Password-hash independence.** With the default `signature_properties: ['password']` (`RememberMeFactory.php`), the signature is recomputed from `CustomerUser::getPassword()` (`CustomerUser.php`). Any password-hash change — including a rehash migration that does not change the plaintext — invalidates every remembered device at its next use (`SignatureRememberMeHandler.php`, `SignatureHasher.php`).
+
+## Consequences and follow-ups
+
+- **Positive:** no schema, migration or dependency; the credential is one `HttpOnly` cookie; unticked and OAuth/register logins keep session-only behavior while clearing an older cookie; password change invalidates remembered devices for free.
+- **Negative:** no revocation UI or per-device control; a stolen cookie is a bearer credential for its lifetime; the identifier is visible in the cookie; the signing key is shared with `%kernel.secret%`.
+- **If** product decides that admins must not receive a 14-day credential, then add a `LoginSuccessEvent` subscriber that disables the badge for `ROLE_ADMIN`, or split an admin firewall; a product decision is required first because the current `main` firewall is shared.
+- **If** the credential key must rotate independently of sessions/CSRF, then introduce a dedicated `REMEMBER_ME_SECRET` and point `remember_me.secret` at it; today it is `%kernel.secret%` (`config/packages/security.yaml`, `config/packages/framework.yaml`), which is also the framework's signing secret. Assert the value's entropy at deploy time (the existing `APP_SECRET` comment already asks for 32+ random characters, `.env.prod.example`).
+- **If** the production `shop.` and `api.` hosts share a registrable domain, then `SameSite=Lax` is sufficient and stricter than `None`; confirm the real topology before changing the policy, because `.env.prod.example` only shows placeholders and `deploy/Caddyfile` only proves two separate hostnames, not their registrable domain.
+- **When** the `lower(email)` lookup is next migrated, add a `lower(email)` expression index on `customer_profile`; the provider filters on `lower(email)` (`src/Identity/Infrastructure/Security/CustomerProfileUserProvider.php`) while the only email index is on `email` (`migrations/Version20261022000000.php`). This is its own migration task under MIG-001.
+
+## Removal condition
+
+`MalformedRememberMeCookieSubscriber` exists only because `RememberMeDetails::fromRawCookie()` passes the expiry segment to the `int $expires` constructor argument without validating it (`vendor/symfony/security-http/RememberMe/RememberMeDetails.php`), so a four-segment cookie with a non-integer expiry raises a `TypeError` and becomes a 500 instead of an authentication failure. Delete the subscriber once the vendor validates that segment before constructing the value object (i.e. rejects it with `AuthenticationException`). Keep the R8 regression test (`tests/Functional/RememberMeTest.php::testMalformedExpirySegmentIsRejectedWithJson401`) as the condition's proof.

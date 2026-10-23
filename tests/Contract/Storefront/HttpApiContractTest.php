@@ -20,6 +20,7 @@ use Symfony\Component\Uid\Uuid;
 final class HttpApiContractTest extends WebTestCase
 {
     private const PRODUCT_SLUG = 'baignoire-d-code';
+    private const PASSWORD = 'Contract!234';
 
     /** @var list<string> */
     private array $createdUserIds = [];
@@ -98,6 +99,43 @@ final class HttpApiContractTest extends WebTestCase
         $this->createdIdempotencyKeys = [];
 
         parent::tearDown();
+    }
+
+    // --- Shape contract: authentication ---------------------------------------
+
+    public function testLoginWithRememberMeFlagReturnsTheIdentityShape(): void
+    {
+        $client = static::createClient();
+        $customer = $this->createCustomer();
+
+        $client->jsonRequest('POST', '/api/v1/auth/login', [
+            'email' => $customer->getEmail(),
+            'password' => self::PASSWORD,
+            'remember_me' => true,
+        ]);
+        self::assertResponseIsSuccessful();
+
+        $data = $this->decode($client);
+        $this->assertShape($this->identityShape(), $data);
+
+        self::assertSame($customer->getId(), $data['id']);
+        self::assertSame($customer->getEmail(), $data['email']);
+        self::assertSame(['ROLE_USER'], $data['roles']);
+    }
+
+    public function testLoginWithoutRememberMeFlagReturnsTheIdentityShape(): void
+    {
+        $client = static::createClient();
+        $customer = $this->createCustomer();
+
+        $client->jsonRequest('POST', '/api/v1/auth/login', [
+            'email' => $customer->getEmail(),
+            'password' => self::PASSWORD,
+        ]);
+        self::assertResponseIsSuccessful();
+
+        $data = $this->decode($client);
+        $this->assertShape($this->identityShape(), $data);
     }
 
     // --- Shape contract: cart -------------------------------------------------
@@ -480,6 +518,16 @@ final class HttpApiContractTest extends WebTestCase
     }
 
     /** @return array<string, string> */
+    private function identityShape(): array
+    {
+        return [
+            'id' => 'string',
+            'email' => 'string',
+            'roles' => 'array',
+        ];
+    }
+
+    /** @return array<string, string> */
     private function cartShape(): array
     {
         return [
@@ -575,7 +623,7 @@ final class HttpApiContractTest extends WebTestCase
             'id' => $id,
             'name' => 'Contract Tester',
             'email' => $email,
-            'password_hash' => password_hash('Contract!234', PASSWORD_BCRYPT),
+            'password_hash' => password_hash(self::PASSWORD, PASSWORD_BCRYPT),
             'role' => 'ROLE_USER',
             'status' => 'active',
         ]);

@@ -25,6 +25,23 @@ security:
             access_denied_handler: App\Identity\Infrastructure\Security\JsonAccessDeniedHandler
             custom_authenticators:
                 - App\Identity\Infrastructure\Security\LoginAuthenticator
+            # "Remember me" (spec-run-7/spec.md, R3/R4/R10; docs/adr/ADR-0011): a ticked login
+            # issues a persistent cookie so the storefront is still signed in after the browser
+            # restarts. The secret is the app secret, so the credential is invalidated
+            # whenever the app secret or the customer password changes.
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: '%env(int:REMEMBER_ME_LIFETIME)%'
+                # Shared with MalformedRememberMeCookieSubscriber through one parameter, so the
+                # guard can never watch a different cookie than the firewall writes.
+                name: '%remember_me_cookie_name%'
+                path: /
+                httponly: true
+                # Mirrors framework.session cookie flags: plain HTTP locally, and
+                # SameSite=None + Secure in production where the storefront is a
+                # separate origin (see deploy/Caddyfile).
+                samesite: lax
+                secure: false
             logout:
                 path: identity_logout
 
@@ -46,6 +63,17 @@ security:
         - { path: ^/api/v1/storefront/cart/quote, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/storefront/cart, roles: ROLE_USER }
         - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS }
+
+when@prod:
+    security:
+        firewalls:
+            main:
+                # The storefront lives on STOREFRONT_DOMAIN while the API answers on
+                # APP_DOMAIN (deploy/Caddyfile), so the cookie crosses sites: same
+                # policy as framework.session.cookie_* in the production block there.
+                remember_me:
+                    samesite: none
+                    secure: true
 
 when@test:
     security:
