@@ -31,10 +31,16 @@ final readonly class StorefrontProductView
         public bool $headrest,
         public string $description,
         public array $variants,
+        public ?int $stockQuantity = null,
     ) {
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * A3 — the `stock` label is the storefront display. The numeric quantity stays internal
+     * (oversell invariant, quote guard) and is deliberately absent from the public payload.
+     *
+     * @return array<string, mixed>
+     */
     public function toApi(): array
     {
         return [
@@ -60,6 +66,19 @@ final readonly class StorefrontProductView
             'best' => $this->isBest,
             'description' => $this->description,
         ];
+    }
+
+    /**
+     * Admin projection: the storefront fields plus the numeric quantity operators edit (O-01).
+     *
+     * @return array<string, mixed>
+     */
+    public function toAdminApi(): array
+    {
+        $payload = $this->toApi();
+        $payload['stockQuantity'] = $this->stockQuantity;
+
+        return $payload;
     }
 
     /** @param array<string, mixed> $row */
@@ -90,6 +109,7 @@ final readonly class StorefrontProductView
             (bool) $row['headrest'],
             (string) $row['description'],
             $variants,
+            isset($row['stock_quantity']) ? (int) $row['stock_quantity'] : null,
         );
     }
 }

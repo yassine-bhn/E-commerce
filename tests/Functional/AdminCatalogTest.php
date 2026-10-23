@@ -168,6 +168,51 @@ final class AdminCatalogTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
+    public function testAdminCannotSetNegativeStockQuantity(): void
+    {
+        $client = static::createClient();
+        $client->loginUser($this->createUser('ROLE_SUPER_ADMIN'));
+
+        $slug = 'test-stock-negative-'.substr(Uuid::v4()->toRfc4122(), 0, 8);
+        $this->productSlugs[] = $slug;
+
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $this->productPayload($slug));
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $update = $this->productPayload($slug);
+        $update['stockQuantity'] = -1;
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function testAdminCanSetStockQuantity(): void
+    {
+        $client = static::createClient();
+        $client->loginUser($this->createUser('ROLE_SUPER_ADMIN'));
+
+        $slug = 'test-stock-quantity-'.substr(Uuid::v4()->toRfc4122(), 0, 8);
+        $this->productSlugs[] = $slug;
+
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $this->productPayload($slug));
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $update = $this->productPayload($slug);
+        $update['stockQuantity'] = 7;
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
+        self::assertResponseIsSuccessful();
+
+        $payload = $this->json($client);
+        self::assertArrayHasKey('stockQuantity', $payload);
+        self::assertSame(7, $payload['stockQuantity']);
+
+        /** @var Connection $connection */
+        $connection = static::getContainer()->get(Connection::class);
+        self::assertSame(7, (int) $connection->fetchOne(
+            'SELECT stock_quantity FROM storefront_product_view WHERE slug = :slug',
+            ['slug' => $slug],
+        ));
+    }
+
     public function testProductValidationRejectsBadInput(): void
     {
         $client = static::createClient();

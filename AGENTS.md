@@ -71,7 +71,7 @@ REFACTOR: suite stays green. One behavior per cycle.
 | solid-guardian | read-only | SOLID review citing SOLID-* rule IDs |
 | test-planner | read-only | requirement → ordered behavior list |
 | unit-test-writer | tests/Unit/** | RED: one failing test at a time |
-| implementer | src/** (never tests/**) | GREEN: minimal passing change |
+| implementer | src/** (never tests/**); infra files (ci-local.sh, compose*.yaml, docker/**, scripts/**, bin/**, Makefile, .github/workflows/**) only when the fix boundary names them | GREEN: minimal passing change |
 | refactorer | src/**, tests/** | behavior-preserving cleanup, suite green |
 | integration-test-agent | tests/Integration/** | Doctrine, Messenger, outbox, concurrency |
 | projection-test-agent | tests/Projection/** | read models, idempotent/replayable projections |

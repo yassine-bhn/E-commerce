@@ -16,6 +16,7 @@ final readonly class StorefrontProductSnapshot
         public int $priceMinor,
         public string $stock,
         public array $variants,
+        public ?int $stockQuantity = null,
     ) {
     }
 }

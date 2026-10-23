@@ -54,10 +54,10 @@ final class AdminProductController
             $this->connection->executeStatement(
                 'INSERT INTO storefront_product_view (
                     id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
-                    stock, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
+                    stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
                 ) VALUES (
                     :id, :slug, :name, :brand, :ref, :category, :sub, :price, :old_price, \'TND\',
-                    :stock, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants
+                    :stock, :stock_quantity, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants
                 )',
                 ['id' => Uuid::v7()->toRfc4122()] + $this->parameters($product),
                 $this->types(),
@@ -69,7 +69,7 @@ final class AdminProductController
         // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
         $this->searchIndex->sync($product['slug']);
 
-        return new JsonResponse($this->products->bySlug($product['slug'])?->toApi(), Response::HTTP_CREATED);
+        return new JsonResponse($this->products->bySlug($product['slug'])?->toAdminApi(), Response::HTTP_CREATED);
     }
 
     #[Route('/{slug}', name: 'admin_catalog_update_product', methods: ['PUT'])]
@@ -88,7 +88,8 @@ final class AdminProductController
         $affected = $this->connection->executeStatement(
             'UPDATE storefront_product_view SET
                 name = :name, brand = :brand, ref = :ref, category_slug = :category, subcategory = :sub,
-                price_minor = :price, old_price_minor = :old_price, stock = :stock, material = :material,
+                price_minor = :price, old_price_minor = :old_price, stock = :stock,
+                stock_quantity = COALESCE(:stock_quantity, stock_quantity), material = :material,
                 dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
                 description = :description, variants = :variants
              WHERE slug = :slug',
@@ -103,7 +104,7 @@ final class AdminProductController
         // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
         $this->searchIndex->sync($slug);
 
-        return new JsonResponse($this->products->bySlug($slug)?->toApi());
+        return new JsonResponse($this->products->bySlug($slug)?->toAdminApi());
     }
 
     /** @return array<string, mixed>|null */
@@ -122,7 +123,7 @@ final class AdminProductController
      *
      * @param array<string, mixed> $body
      *
-     * @return array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>}|string
+     * @return array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>}|string
      */
     private function validate(array $body, ?string $fixedSlug): array|string
     {
@@ -188,6 +189,14 @@ final class AdminProductController
             return sprintf('The stock must be one of: %s.', implode(', ', self::STOCKS));
         }
 
+        $stockQuantity = null;
+        if (isset($body['stockQuantity'])) {
+            if (!is_int($body['stockQuantity']) || $body['stockQuantity'] < 0) {
+                return 'The stock quantity must be a non-negative integer.';
+            }
+            $stockQuantity = $body['stockQuantity'];
+        }
+
         $material = $this->text($body['material'] ?? null);
         $dims = $this->text($body['dims'] ?? null);
         if (mb_strlen($material) > 128 || mb_strlen($dims) > 128) {
@@ -214,6 +223,7 @@ final class AdminProductController
             'price' => $price,
             'oldPrice' => $oldPrice,
             'stock' => $stock,
+            'stockQuantity' => $stockQuantity,
             'material' => $material,
             'dims' => $dims,
             'image' => $image,
@@ -291,7 +301,7 @@ final class AdminProductController
     }
 
     /**
-     * @param array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>} $product
+     * @param array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>} $product
      *
      * @return array<string, mixed>
      */
@@ -307,6 +317,7 @@ final class AdminProductController
             'price' => $product['price'],
             'old_price' => $product['oldPrice'],
             'stock' => $product['stock'],
+            'stock_quantity' => $product['stockQuantity'],
             'material' => $product['material'],
             'dims' => $product['dims'],
             'image' => $product['image'],
@@ -324,6 +335,7 @@ final class AdminProductController
         return [
             'price' => ParameterType::INTEGER,
             'old_price' => ParameterType::INTEGER,
+            'stock_quantity' => ParameterType::INTEGER,
             'is_new' => ParameterType::BOOLEAN,
             'is_best' => ParameterType::BOOLEAN,
             'headrest' => ParameterType::BOOLEAN,

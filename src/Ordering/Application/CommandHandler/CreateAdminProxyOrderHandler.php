@@ -6,6 +6,8 @@ namespace App\Ordering\Application\CommandHandler;
 
 use App\Ordering\Application\Command\CreateAdminProxyOrder;
 use App\Ordering\Domain\Model\OrderStatus;
+use App\Shared\Application\Port\PaymentInitiationPort;
+use App\Shared\Application\Port\StockReservationPort;
 use App\Shared\Application\Service\StorefrontQuoteService;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -17,12 +19,25 @@ final class CreateAdminProxyOrderHandler
     public function __construct(
         private Connection $connection,
         private StorefrontQuoteService $quotes,
+        private StockReservationPort $stock,
+        private PaymentInitiationPort $payments,
     ) {
     }
 
     public function __invoke(CreateAdminProxyOrder $command): void
     {
         $quote = $this->quotes->quote($command->lines, $command->promoCode, $command->deliveryMethod);
+
+        $this->stock->reserve(
+            $command->orderId,
+            array_map(
+                static fn (array $line): array => [
+                    'slug' => (string) $line['slug'],
+                    'quantity' => (int) $line['quantity'],
+                ],
+                $quote['pricedLines'],
+            ),
+        );
 
         $now = (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP');
 
@@ -94,6 +109,14 @@ final class CreateAdminProxyOrderHandler
                 'reason' => 'Proxy order created via '.$command->orderSource->value,
                 'created_at' => $now,
             ],
+        );
+
+        $this->payments->open(
+            $command->orderId,
+            $command->paymentMethod,
+            $quote['total']->minorUnits(),
+            $quote['total']->currency()->value,
+            $command->createdByAdminId,
         );
     }
 }

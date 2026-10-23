@@ -327,7 +327,8 @@ for src in "$harness_root"/.agents/agents/*.md; do
       printf 'disallowedTools: [%s]\n' "$disallowed"
     fi
     printf 'permissionMode: default\n'
-    printf 'model: inherit\n'
+    # No `model:` line: Qoder rejects `model: inherit` (40506, unknown model), and an
+    # omitted model already means "inherit the session model".
     printf 'maxTurns: %s\n' "$turns"
     printf -- '---\n\n'
     cat <<EOF

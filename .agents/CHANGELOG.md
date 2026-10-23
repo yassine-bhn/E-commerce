@@ -11,3 +11,5 @@ Format: `<ISO> <agent|skill|hook|rule|harness> <added|changed|retired> <version>
 2026-10-17 harness changed 1.3.0 — merged Symfony 8.1 ecommerce-core skeleton; FrankenPHP compose, bounded-context dirs, PROJECT-START-SPEC.md.
 2026-10-19 skill added 1.3.1 — spec-driven-agents domain skill + `.cursor/skills/spec-driven-agents/SKILL.md` (3 analysts → synthesizer → workers pipeline).
 2026-10-19 skill changed 1.3.2 — spec-driven-agents Stage 5 harness handoff; orchestrator `/spec` and `/spec-from`; workflow spec-then-feature; gate SPEC.
+2026-10-22 agent changed 1.4.0 — implementer 1.1.0: `writes:` gains the infrastructure paths (`ci-local.sh`, `compose*.yaml`, `docker/**`, `scripts/**`, `bin/**`, `Makefile`, `.github/workflows/**`) because no harness agent could legally fix a compose/CI defect; infra GREEN is proven by the reproduced command instead of a PHP test.
+2026-10-22 harness changed 1.4.1 — `bin/export-qoder-harness` stops emitting `model: inherit`; Qoder rejects it with `40506 model inherit not found or has been deprecated`, which made every harness subagent undispatchable. An omitted `model:` already inherits the session model.

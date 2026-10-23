@@ -9,8 +9,22 @@ use Doctrine\DBAL\Connection;
 
 final class StorefrontReferenceRepository
 {
-    public function __construct(private Connection $connection)
+    public function __construct(
+        private Connection $connection,
+        private PlatformSettingsRepository $platformSettings,
+    ) {
+    }
+
+    /**
+     * I-15 — the shop's reachable channels as the storefront labels them.
+     *
+     * @return array{phone: string, whatsapp: string}
+     */
+    public function contactChannels(): array
     {
+        $settings = $this->platformSettings->get();
+
+        return ['phone' => $settings['contactPhone'], 'whatsapp' => $settings['contactWhatsapp']];
     }
 
     public function deliveryPolicy(): DeliveryPolicy

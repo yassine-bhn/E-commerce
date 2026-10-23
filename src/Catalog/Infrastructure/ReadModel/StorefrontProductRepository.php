@@ -24,7 +24,7 @@ use Meilisearch\Client;
 final class StorefrontProductRepository
 {
     private const string SELECT = 'SELECT id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor,
-        currency, stock, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
+        currency, stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
         FROM storefront_product_view';
 
     private const string SEARCH_PREDICATE = " (name ILIKE :q ESCAPE '\\' OR brand ILIKE :q ESCAPE '\\'

@@ -1,0 +1,81 @@
+2026-10-22T18:39:12+01:00 dispatch orchestrator — /feature implement the missing features; first increment inventory + settings
+2026-10-22T18:39:12+01:00 approval user — MIG-001 migrations granted; SEC-001 src/Payment granted; new dependency granted
+2026-10-22T18:39:12+01:00 gate PLAN ok test-planner — 19 behaviors recorded in .agents/state/F-inventory-settings.md
+2026-10-22T18:39:12+01:00 gate PATTERN skipped orchestrator — ADR-0001/ADR-0004 already cover inventory reservation; no boundary moved
+2026-10-22T18:40:20+01:00 gate RED ok unit-test-writer — tests/Unit/Shared/Application/Service/StorefrontQuoteServiceTest.php fails by assertion (no exception thrown)
+2026-10-22T18:40:51+01:00 gate GREEN ok implementer — targeted test passes; tests/Unit 181 tests green
+2026-10-22T18:40:51+01:00 gate REFACTOR ok refactorer — no cited finding; behavior-preserving
+2026-10-22T18:41:30+01:00 gate RED ok e2e-contract-test-agent — AdminCatalogTest negative stockQuantity returns 200, expected 422
+2026-10-22T18:42:00+01:00 gate GREEN ok implementer — negative stockQuantity returns 422; AdminCatalogTest 9/9 green
+2026-10-22T18:42:00+01:00 gate REFACTOR ok refactorer — no cited finding
+2026-10-22T18:42:40+01:00 gate RED ok e2e-contract-test-agent — AdminCatalogTest stockQuantity key missing; expected 7
+2026-10-22T18:43:30+01:00 gate GREEN ok implementer — stockQuantity persisted/returned; AdminCatalogTest 10/10, StorefrontCatalogBrowseTest 9/9, Unit 181
+2026-10-22T18:43:30+01:00 gate REFACTOR ok refactorer — no cited finding
+2026-10-22T18:44:30+01:00 gate RED ok unit-test-writer — quote over available stock does not throw
+2026-10-22T18:45:30+01:00 gate GREEN ok implementer — quote guard passes; StorefrontQuoteServiceTest 2/2, Unit 182
+2026-10-22T18:45:30+01:00 gate REFACTOR ok refactorer — no cited finding
+2026-10-22T18:47:00+01:00 gate RED ok e2e-contract-test-agent — checkout leaves stock at 5, expected 3
+2026-10-22T18:47:30+01:00 gate GREEN ok implementer — checkout reserves 2 units (5→3) and logs the reservation
+2026-10-22T18:47:30+01:00 gate REFACTOR ok refactorer — no cited finding
+2026-10-22T18:48:00+01:00 gate RED ok e2e-contract-test-agent — insufficient stock returns 500 (wrapped HandlerFailedException), expected 409
+2026-10-22T18:52:30+01:00 gate GREEN ok implementer — quote throws InsufficientStockException; controller unwraps HandlerFailedException to 409; CheckoutStockReservationTest 2/2 (7 assertions), Unit 182
+2026-10-22T18:53:00+01:00 gate REFACTOR ok refactorer — extracted insufficientStock response builder; CheckoutStockReservationTest 2/2 unchanged
+2026-10-22T18:56:00+01:00 gate RED n/a e2e-contract-test-agent — behavior 7 verifies the B5 conditional UPDATE under two live connections; no src change planned
+2026-10-22T18:56:30+01:00 gate GREEN n/a implementer — StockReservationConcurrencyTest 1/1 (7 assertions): child blocked on the product row lock, parent committed, child rejected, one reservation
+2026-10-22T18:56:30+01:00 gate REFACTOR n/a refactorer — verification-only behavior; no production code touched
+2026-10-22T18:58:00+01:00 gate RED ok e2e-contract-test-agent — AdminProxyOrderStockTest: proxy order leaves stock at 5, expected 3
+2026-10-22T19:00:00+01:00 gate GREEN ok implementer — proxy handler reserves via StockReservationPort; admin proxy maps insufficient stock to 409; AdminProxyOrderStockTest 1/1, AuthenticationTest 17/17, tests/Integration/Ordering 7/7
+2026-10-22T19:00:00+01:00 gate REFACTOR ok refactorer — reservation call mirrors PlaceOrderHandler; no further finding
+2026-10-22T19:04:00+01:00 gate RED ok e2e-contract-test-agent — CustomerCancelOrderTest: POST /api/v1/storefront/orders/{id}/cancel returns 404 (no route), expected 200
+2026-10-22T19:06:00+01:00 gate GREEN ok implementer — CancelOrderByCustomer + handler (ownership, pending guard, OCC, release) and POST cancel route; CustomerCancelOrderTest 1/1 (7 assertions)
+2026-10-22T19:06:30+01:00 gate REFACTOR ok refactorer — handler reuses TransitionOrderStatus for state and audit; no further finding
+2026-10-22T19:07:30+01:00 gate RED n/a e2e-contract-test-agent — behavior 11 verifies the ownership and pending guards delivered by behavior 10; no src change planned
+2026-10-22T19:07:45+01:00 gate GREEN n/a implementer — CustomerCancelOrderTest 3/3 (16 assertions): foreign customer 403, non-pending 422
+2026-10-22T19:07:45+01:00 gate REFACTOR n/a refactorer — verification-only behavior; production code unchanged
+2026-10-22T19:08:00+01:00 gate RED ok e2e-contract-test-agent — AutoCancelOrdersTest: no commands in the app:orders namespace
+2026-10-22T19:10:00+01:00 gate GREEN ok implementer — app:orders:auto-cancel cancels expired pending orders, audits and releases stock; AutoCancelOrdersTest 1/1 (7 assertions)
+2026-10-22T19:10:00+01:00 gate REFACTOR ok refactorer — handler reuses TransitionOrderStatus via the bus; no further finding
+2026-10-22T19:13:00+01:00 gate RED n/a e2e-contract-test-agent — behavior 13 verifies auto-cancel idempotency over the B12 handler; no src change planned
+2026-10-22T19:13:30+01:00 gate GREEN n/a implementer — AutoCancelIdempotencyTest 1/1 (10 assertions): second run cancels 0, paid order untouched, release once
+2026-10-22T19:13:30+01:00 gate REFACTOR n/a refactorer — verification-only behavior
+2026-10-22T19:17:00+01:00 gate RED ok e2e-contract-test-agent — AdminSettingsTest: GET /api/v1/admin/settings returns 404; regular admin 403 expectation also unmet
+2026-10-22T19:20:00+01:00 gate GREEN ok implementer — migration 20261022000004 platform_setting; PlatformSettingsRepository; AdminSettingsController GET behind ROLE_SUPER_ADMIN; AdminSettingsTest 2/2 (8 assertions)
+2026-10-22T19:20:30+01:00 gate REFACTOR ok refactorer — repository owns defaults and the upsert; controller stays transport-only; no further finding
+2026-10-22T19:24:00+01:00 gate RED n/a e2e-contract-test-agent — behavior 8 verifies that the processed_commands replay guard runs before the new stock reservation; no src change planned
+2026-10-22T19:24:30+01:00 gate GREEN n/a implementer — CheckoutStockIdempotencyTest 1/1 (5 assertions): replay with the same key reserves once, no second order
+2026-10-22T19:24:30+01:00 gate REFACTOR n/a refactorer — verification-only behavior; production code unchanged
+2026-10-22T19:28:00+01:00 gate RED ok e2e-contract-test-agent — AdminSettingsTest PUT /api/v1/admin/settings returns 405 (Allow: GET); AutoCancelOrdersTest without --timeout-minutes leaves the 10-minute-old order pending
+2026-10-22T19:34:00+01:00 gate GREEN ok implementer — PUT /api/v1/admin/settings (400 malformed, 422 out-of-range, 403 for ROLE_ADMIN) and app:orders:auto-cancel defaulting to the stored window; AdminSettingsTest 5/5, AutoCancelOrdersTest 2/2 (31 assertions)
+2026-10-22T19:40:00+01:00 gate REFACTOR ok refactorer — cited finding QRY-001: PlatformSettingsRepository::save() wrote from a read model; split into UpdatePlatformSettings + UpdatePlatformSettingsHandler and GetPlatformSettings + GetPlatformSettingsHandler, controller now dispatches only; phpstan src/Shared clean, 8 tests/31 assertions unchanged
+2026-10-22T19:44:00+01:00 gate RED ok e2e-contract-test-agent — StorefrontReferenceContactTest: /api/v1/storefront/reference has no contact key; expected phone/whatsapp
+2026-10-22T19:47:00+01:00 gate GREEN ok implementer — StorefrontReferenceRepository::contactChannels() reuses PlatformSettingsRepository; reference payload carries contact{phone,whatsapp}; StorefrontReferenceContactTest 2/2 (7 assertions); tests/Contract 14/14
+2026-10-22T19:50:00+01:00 gate REFACTOR ok refactorer — no further finding; contact read delegates to the settings read model instead of duplicating the singleton SQL
+2026-10-22T19:52:00+01:00 gate FIXES ok implementer — contract drift from behavior 3: stockQuantity leaked into StorefrontProductView::toApi(), contradicting A3 and breaking the three pinned product shapes; field removed from the public payload only (kept on the view for the quote guard); tests/Contract 14/14 (482 assertions), StorefrontCatalogBrowseTest 9/9
+2026-10-22T19:56:00+01:00 gate RED ok e2e-contract-test-agent — AdminShippingPolicyTest: PUT /api/v1/admin/settings/shipping is not routed (3 tests fail on status code)
+2026-10-22T20:00:00+01:00 gate GREEN ok implementer — PUT /api/v1/admin/settings/shipping via UpdateShippingPolicy + handler; storefront reference reflects the new fee/threshold; AdminShippingPolicyTest 3/3, 13 settings tests (50 assertions), phpstan src/Shared clean
+2026-10-22T20:04:00+01:00 gate REFACTOR ok refactorer — no cited finding; both POST bodies validated at the boundary and dispatched to dedicated handlers
+2026-10-22T20:06:00+01:00 gate RED cancelled test-planner — behavior 18 assumes a StockItem aggregate; none exists by design (A2/ECO-004 conditional UPDATE, no read-then-write), and the invariant is already proven by behavior 6 (functional 409) and behavior 7 (two live connections, single winner)
+2026-10-22T20:08:00+01:00 gate RED n/a e2e-contract-test-agent — behavior 19 re-targeted from the absent aggregate to DbalStockReservationAdapter::release(); the double release is already guarded by the status = reserved predicate
+2026-10-22T20:08:30+01:00 gate GREEN n/a implementer — StockReleaseIdempotencyTest 1/1 (5 assertions): second release leaves stock at 5
+2026-10-22T20:08:30+01:00 gate REFACTOR n/a refactorer — verification-only behavior; production code unchanged
+2026-10-22T20:16:00+01:00 gate SPEC-TESTS ok integration-test-agent — tests/Integration 100%: stock reservation concurrency (two live connections), checkout idempotency replay, auto-cancel idempotency, double release
+2026-10-22T20:16:00+01:00 gate SPEC-TESTS ok projection-test-agent — stock_quantity and platform_setting read models exercised through the functional and contract suites; no projection table of its own changed
+2026-10-22T20:16:00+01:00 gate SPEC-TESTS ok e2e-contract-test-agent — checkout 409, cancel 404/403/422, settings 400/422/403, reference contact; tests/Contract 14/14 pinned shapes unchanged
+2026-10-22T20:17:00+01:00 gate SPEC-TESTS ok orchestrator — phpunit 457 tests / 2787 assertions green; phpstan level 8 clean; deptrac 0 errors; php-cs-fixer clean
+2026-10-22T20:05:00+01:00 gate REVIEW ok code-reviewer — 6 findings: MAJOR ERR-001 quantity coercion (CheckoutOrderController:69, AdminOrderController:72), MAJOR ERR-002 exception parents (InsufficientStockException, OrderNotFoundException), MEDIUM ERR-002 no single HTTP listener, MINOR CMD-001 Update<entity> naming; NAM-001/CMD-002..004/CMD-006/QRY-002/ERR-003 clean
+2026-10-22T20:05:00+01:00 gate REVIEW ok architecture-reviewer — 2 findings: MINOR AGG-002 two aggregates in the cancel handlers (accepted under A2), MINOR MIG-002 stock_quantity lives on a replayed view; LAY-001..004/BUS-001..002/EVT-001..002/AGG-001+003/CMD-004..005/QRY-001+003/ECO-006 clean, deptrac 0 errors
+2026-10-22T20:05:00+01:00 gate REVIEW ok security-reviewer — no blocking finding; SEC-001..005 and QRY-003/QRY-004 clean (class-level ROLE_SUPER_ADMIN on all three settings routes, ownership check before the cancel mutation, all statements bound)
+2026-10-22T20:05:00+01:00 gate REVIEW ok performance-reviewer — 3 findings: MAJOR ECO-004 duplicate-slug under-reservation in DbalStockReservationAdapter:26-34, MINOR PRF-002 no index for the auto-cancel scan, MINOR PRF-001 reference endpoint now 6 statements; PRF-003/ECO-007 clean
+2026-10-22T20:05:00+01:00 gate REVIEW ok test-reviewer — 3 findings: MAJOR TDD-005 fixed usleep in StockReservationConcurrencyTest:88, MINOR TDD-006 cleanup guards (accepted, 49/77 pre-existing files), MINOR TDD-007 raw fixture INSERT; TDD-001..004/008/009 clean, TDD-010 not run
+2026-10-22T20:06:00+01:00 gate REVIEW ok orchestrator — disposition F-1..F-5 routed to FIXES; ERR-002 listener, CMD-001 naming, AGG-002 sync release, MIG-002 replay hazard, PRF-001 reference statements and TDD-007 builder recorded as debt in the Closure
+2026-10-22T20:20:00+01:00 gate FIXES RED ok implementer — 5 review clusters proven red: 8 tests / 15 assertions / 5 failures (duplicate-slug 3 vs 0, 422 vs 201 twice, DomainException twice); 2 leaked orders removed from app_test
+2026-10-22T20:45:00+01:00 gate FIXES GREEN ok implementer — F-1 summed-by-slug reservation, F-2 LineQuantity 422 at the edge, F-3 \DomainException parents, F-4 idx_ordering_orders_status_placed (applied to app_test and dev), F-5 server-side row lock; 12 tests / 36 assertions green
+2026-10-22T20:46:00+01:00 note FIXES — subprocess concurrency child abandoned: it stalls inside the autoloader in this container (ESTABLISHED DB socket, no backend session); fixture deleted, test now uses two DB sessions with lock_timeout
+2026-10-22T21:05:00+01:00 gate FIXES RED ok test-reviewer — determinism defect F-6/F-7 found re-reading the delta: array slug cast to "Array" (400 + PHP warning) and HTTP 429 on the 3rd/4th consecutive run of the two functional classes sharing cache.rate_limiter
+2026-10-22T21:20:00+01:00 gate FIXES GREEN ok implementer — both controllers reject a non-string slug with 422; resetRateLimiter() after createClient() in both functional classes (a setUp() touching the container is illegal in WebTestCase); 5 consecutive runs 7 tests / 20 assertions green
+2026-10-22T21:25:00+01:00 gate QUALITY ok orchestrator — php-cs-fixer 0 of 381, phpstan [OK], deptrac Errors 0, full suite 464 tests / 2803 assertions
+2026-10-22T21:30:00+01:00 gate REVIEW ok code-reviewer+architecture-reviewer+security-reviewer+performance-reviewer+test-reviewer (round 2, FIXES delta) — 1 finding routed (MINOR TDD-008 LineQuantity branch coverage), 1 MINOR (ERR-001 legacy branch) and 1 NIT (LAY-004 port docblock) recorded as debt, no blocking finding
+2026-10-22T21:40:00+01:00 gate FIXES GREEN ok implementer — F-8 tests/Unit/Shared/Infrastructure/Http/LineQuantityTest.php: 15 tests / 15 assertions; test-only, no src change
+2026-10-22T21:44:00+01:00 note TDD-010 — Infection refused to start: no pcov/phpdbg/xdebug coverage driver (CoverageChecker.php:89); attempt logged in var/infection-f7.log, MSI >= 85 stays open
+2026-10-22T21:45:00+01:00 gate REVIEW ok orchestrator (re-run) — F-8 delta re-read by the five roles, no new finding; REVIEW closed
+2026-10-22T21:50:00+01:00 gate DONE ok orchestrator — 479 tests / 2818 assertions, phpstan [OK], php-cs-fixer 0 of 381, deptrac Errors 0; 9 debt items and 3 open questions recorded in the closure

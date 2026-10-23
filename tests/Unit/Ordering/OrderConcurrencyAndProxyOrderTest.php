@@ -12,6 +12,8 @@ use App\Ordering\Domain\Model\IllegalOrderStateTransitionException;
 use App\Ordering\Domain\Model\OptimisticLockException;
 use App\Ordering\Domain\Model\OrderSource;
 use App\Ordering\Domain\Model\OrderStatus;
+use App\Shared\Application\Port\PaymentInitiationPort;
+use App\Shared\Application\Port\StockReservationPort;
 use App\Shared\Application\Service\StorefrontQuoteService;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
@@ -54,7 +56,12 @@ final class OrderConcurrencyAndProxyOrderTest extends TestCase
                 return 1;
             });
 
-        $handler = new CreateAdminProxyOrderHandler($connection, $quoteService);
+        $handler = new CreateAdminProxyOrderHandler(
+            $connection,
+            $quoteService,
+            $this->createStub(StockReservationPort::class),
+            $this->createStub(PaymentInitiationPort::class),
+        );
         $command = new CreateAdminProxyOrder(
             orderId: '01926b00-0000-7000-8000-000000000001',
             orderNumber: 'ZG-WA-20261017-001',

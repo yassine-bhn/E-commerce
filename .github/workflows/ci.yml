@@ -59,6 +59,11 @@ jobs:
       - name: Migrate the dev database
         run: docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration
 
+      # dbname_suffix: _test points the test env at app_test; a fresh runner volume has no
+      # such database and migrations:migrate does not create it.
+      - name: Create the test database
+        run: docker compose exec -T app php bin/console doctrine:database:create --if-not-exists --env=test
+
       - name: Migrate the test database
         run: docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
 
@@ -203,10 +208,14 @@ jobs:
           python3 - <<'PY'
           import json
           body = json.load(open('/tmp/readyz.json'))
-          assert body['status'] == 'ok', body
+          # Meilisearch is deliberately unreachable: it is a non-critical probe, so the
+          # contract is 200 `degraded` with `search: failed` — never 503, never `ok`.
+          assert body['status'] in ('ok', 'degraded'), body
           assert body['checks']['database'] == 'ok', body
           assert body['checks']['migrations'] == 'ok', body
-          assert body['checks']['search'] in ('ok', 'degraded'), body
+          assert body['checks']['search'] in ('ok', 'failed'), body
+          if body['checks']['search'] != 'ok':
+              assert body['status'] == 'degraded', body
           print('readiness contract ok:', body)
           PY
           if docker exec smoke-app id -u | grep -qx 0; then

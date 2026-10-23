@@ -1,0 +1,11 @@
+2026-10-22T17:59:07Z dispatch orchestrator — workflow=bugfix, first agent=investigator, symptom=./ci-local.sh aborts on host port collisions (5432/8081/18080) and `app: unbound variable`
+2026-10-22T18:06:12Z dispatch investigator — BLOCKED 40506 model inherit not found (generated agent definition); role adopted in-session per bugfix SKILL §Dispatching agents
+2026-10-22T18:07:00Z gate INVESTIGATE ok — H1..H7, root cause confined to ci-local.sh + compose port publishing + missing app_test
+2026-10-22T18:09:00Z gate RED ok — 3 reproducing commands recorded (bind 5432, trap unbound variable, app_test missing)
+2026-10-22T18:31:40Z amend implementer 1.1.0 — writes gained infra paths (no agent could legally fix a compose/CI defect); harness-check ok
+2026-10-22T18:33:02Z amend bin/export-qoder-harness — drop `model: inherit` from generated subagents (Qoder 40506)
+2026-10-22T19:41:00Z gate GREEN ok — compose.ci.yaml !reset overlay, literal cleanup names, ephemeral smoke port, step() fail-fast, test DB creation in ci-local.sh/ci.yml/tests.yml/Makefile
+2026-10-22T19:47:00Z gate REFACTOR ok — step() replaces every inline fail path; bash -n ci-local.sh ok
+2026-10-22T20:12:00Z gate VERIFY ok — ./ci-local.sh --no-build --skip-infection: stack ok, harness ok, prod-image ok (port 32769, degraded/search:failed), quality+tests red only on F-inventory-settings files
+2026-10-22T20:15:00Z gate REVIEW ok — read-only diff pass, no finding open
+2026-10-22T20:16:00Z gate DONE ok — 4 reported defects gone; residual reds handed to F-inventory-settings

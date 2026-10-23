@@ -64,11 +64,31 @@ The `prod-image` job never mounts the working tree. It:
 1. builds `docker build -f docker/Dockerfile --target prod`;
 2. starts `postgres:16-alpine` on a dedicated Docker network and polls `pg_isready` (bounded, no sleep-only wait);
 3. runs `doctrine:migrations:migrate` in a one-off container;
-4. starts the image and retries `/readyz` until it answers `200`, then asserts the JSON contract
-   (`database` and `migrations` are `ok`, `search` is `ok` or `degraded`) and that the process is not root.
+4. starts the image on an ephemeral loopback port (`-p 127.0.0.1::8080`, read back with `docker port`) and
+   retries `/readyz` until it answers `200`, then asserts the JSON contract (`database` and
+   `migrations` are `ok`, `search` is `ok` or `failed`) and that the process is not root.
 
-Meilisearch is intentionally absent: readiness must stay `200` while reporting `search: degraded`
-(decision D4). A `503` here means either the database is unreachable or a migration is pending.
+Meilisearch is intentionally absent: readiness must stay `200` while reporting `status: degraded` and
+`search: failed` (decision D4). A `503` here means either the database is unreachable or a migration is
+pending. The smoke asserts that exact pair, so a `degraded` body with `search: ok` or an `ok` body with
+`search: failed` is rejected.
+
+## Running the pipelines locally
+
+`../ci-local.sh` (workspace root) replays `ci.yml` and `tests.yml` on the developer host. Two details
+make it safe next to a running dev stack:
+
+- it adds the `compose.ci.yaml` overlay, which clears every published host port (`app`, `database`,
+  `meilisearch`). `COMPOSE_PROJECT_NAME` isolates container names, not host ports, so without the overlay
+  the CI stack cannot start while `docker compose up -d` already serves `8081`/`5432`/`7700`. No phase
+  needs a host port: everything runs through `docker compose exec` and `up --wait` relies on the
+  in-container healthchecks. Set `CI_COMPOSE_FILE=` to opt out.
+- the prod smoke publishes an ephemeral loopback port unless `PROD_SMOKE_PORT` is set, so an unrelated
+  container on `18080` can neither fail the gate nor answer the readiness probe in its place.
+
+Both pipelines create the test database first (`doctrine:database:create --if-not-exists --env=test`):
+`dbname_suffix: _test` points the test env at `app_test`, and a fresh volume (local CI or a GitHub
+runner) has no such database.
 
 ## Runner requirements
 

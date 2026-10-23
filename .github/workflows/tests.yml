@@ -48,6 +48,7 @@ jobs:
       - name: Migrate the dev and test databases
         run: |
           docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration
+          docker compose exec -T app php bin/console doctrine:database:create --if-not-exists --env=test
           docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
 
       # One script instead of six steps: it records each suite's exit code and

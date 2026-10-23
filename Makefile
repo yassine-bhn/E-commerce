@@ -59,6 +59,7 @@ migrate: up ## Apply the migrations to the dev database
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration
 
 migrate-test: up ## Apply the migrations to the test database
+	$(EXEC) php bin/console doctrine:database:create --if-not-exists --env=test
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
 
 test: up ## Run every PHPUnit suite
@@ -112,6 +113,7 @@ ci: build up ## Reproduce the CI quality job locally, same order
 	$(EXEC) vendor/bin/phpstan analyse --no-progress
 	$(EXEC) vendor/bin/deptrac analyse --no-progress
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration
+	$(EXEC) php bin/console doctrine:database:create --if-not-exists --env=test
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
 	$(EXEC) vendor/bin/phpunit --testsuite Unit
 	$(EXEC) vendor/bin/phpunit --testsuite Integration

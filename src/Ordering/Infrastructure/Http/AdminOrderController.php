@@ -11,6 +11,8 @@ use App\Ordering\Domain\Model\IllegalOrderStateTransitionException;
 use App\Ordering\Domain\Model\OptimisticLockException;
 use App\Ordering\Domain\Model\OrderSource;
 use App\Ordering\Domain\Model\OrderStatus;
+use App\Shared\Domain\Inventory\InsufficientStockException;
+use App\Shared\Infrastructure\Http\LineQuantity;
 use App\Shared\Infrastructure\Http\RateLimitChecker;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -65,11 +67,27 @@ final class AdminOrderController
         }
 
         /** @var list<array{slug: string, variant?: string|null, quantity: int}> $normalizedLines */
-        $normalizedLines = array_values(array_map(static fn (array $l): array => [
-            'slug' => (string) ($l['slug'] ?? ''),
-            'variant' => isset($l['variant']) && is_string($l['variant']) ? $l['variant'] : null,
-            'quantity' => max(1, (int) ($l['quantity'] ?? $l['qty'] ?? 1)),
-        ], array_filter($lines, 'is_array')));
+        $normalizedLines = [];
+        foreach ($lines as $line) {
+            if (!is_array($line)) {
+                return new JsonResponse(['error' => 'each line must be an object'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $slug = $line['slug'] ?? null;
+            $quantity = LineQuantity::of($line);
+            if (!is_string($slug) || '' === $slug || null === $quantity) {
+                return new JsonResponse(
+                    ['error' => 'each line requires a slug and a positive integer quantity'],
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                );
+            }
+
+            $normalizedLines[] = [
+                'slug' => $slug,
+                'variant' => isset($line['variant']) && is_string($line['variant']) ? $line['variant'] : null,
+                'quantity' => $quantity,
+            ];
+        }
 
         $orderId = Uuid::v7()->toRfc4122();
         $prefix = OrderSource::WHATSAPP === $orderSource ? 'ZG-WA-' : 'ZG-TEL-';
@@ -91,7 +109,19 @@ final class AdminOrderController
             promoCode: isset($body['promoCode']) ? (string) $body['promoCode'] : null,
         );
 
-        $this->commandBus->dispatch($command);
+        try {
+            $this->commandBus->dispatch($command);
+        } catch (HandlerFailedException $e) {
+            $cause = $e->getPrevious();
+            if ($cause instanceof InsufficientStockException) {
+                return new JsonResponse(['error' => 'insufficient-stock', 'message' => $cause->getMessage()], Response::HTTP_CONFLICT);
+            }
+            if ($cause instanceof \InvalidArgumentException) {
+                return new JsonResponse(['error' => $cause->getMessage()], Response::HTTP_BAD_REQUEST);
+            }
+
+            throw $e;
+        }
 
         return new JsonResponse([
             'success' => true,

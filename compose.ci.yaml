@@ -1,0 +1,18 @@
+# ci-local.sh overlay — lets the local CI stack run beside a dev stack (INF-002).
+#
+# COMPOSE_PROJECT_NAME isolates container names, not host ports: with the base
+# mappings (`${APP_PORT:-8081}:80`, `5432:5432`, `${MEILI_PORT:-7700}:7700`, plus
+# the `5432:5432` repeat in compose.override.yaml) a second project cannot start
+# while `docker compose up -d` already serves them.
+#
+# No CI phase needs a host port: `up --wait` is satisfied by the in-container
+# healthchecks, and every PHP command goes through `docker compose exec`. So this
+# overlay clears every published mapping. `ports` is merged by appending, therefore
+# `!reset` is the only way to drop a mapping (Compose >= 2.24; v2.40 here).
+services:
+  app:
+    ports: !reset []
+  database:
+    ports: !reset []
+  meilisearch:
+    ports: !reset []

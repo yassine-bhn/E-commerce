@@ -97,6 +97,10 @@ services:
     App\Ordering\Domain\Repository\OrderRepository:
         alias: App\Ordering\Infrastructure\Persistence\DoctrineOrderRepository
 
+    # ADR-0001 — the payment row and its ledger move together, through one guarded write.
+    App\Payment\Domain\Model\PaymentLedger:
+        alias: App\Payment\Infrastructure\Persistence\DbalPaymentLedger
+
     # ADR-0005: one client for the storefront search index (read finder + indexer).
     Meilisearch\Client:
         arguments:
