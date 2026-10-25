@@ -188,8 +188,9 @@ path=$(new_skill "feature" "Plan and deliver a new E-commerce behavior through t
 \`PLAN\` (test-planner) → \`PATTERN\` (pattern-selector, only when a new pattern or boundary is
 introduced; the ADR needs human approval) → \`RED\` (unit-test-writer) → \`GREEN\` (implementer) →
 \`REFACTOR\` (refactorer) → \`SPEC-TESTS\` (integration-test-agent, projection-test-agent,
-e2e-contract-test-agent, parallel only on disjoint paths) → \`REVIEW\` (code-reviewer,
-architecture-reviewer, security-reviewer, performance-reviewer, test-reviewer, parallel) →
+e2e-contract-test-agent, parallel only on disjoint paths) → \`REVIEW\` (the review fan-out:
+code-reviewer, architecture-reviewer, security-reviewer, performance-reviewer, test-reviewer
+in parallel, plus solid-guardian when the diff is design-bearing) →
 \`FIXES\` (implementer, one dispatch per finding cluster) → \`REVIEW\` re-run → \`DONE\`.
 
 One behavior per RED→GREEN cycle (TDD-003). At \`ATTEMPTS: 3\` stop and escalate (AGT-006).
@@ -205,7 +206,8 @@ path=$(new_skill "bugfix" "Root-cause and fix an E-commerce defect: investigator
 ### Gate order
 \`INVESTIGATE\` (investigator: hypothesis-driven root cause plus a reproducing-test proposal,
 no fix) → \`RED\` (unit-test-writer writes exactly that reproducing test) → \`GREEN\`
-(implementer, smallest production change) → \`REFACTOR\` → \`REVIEW\` (parallel) → \`DONE\`.
+(implementer, smallest production change) → \`REFACTOR\` → \`REVIEW\` (the review fan-out;
+solid-guardian joins when the fix is design-bearing) → \`DONE\`.
 
 Never skip \`INVESTIGATE\`: a fix without a recorded root cause is rejected.
 EOF
@@ -227,11 +229,20 @@ path=$(new_skill "investigate" "Root-cause an E-commerce bug or answer a behavio
 EOF
 } >> "$path"
 
-path=$(new_skill "review" "Fan out the five read-only reviewers (code, architecture, security, performance, tests) over the given paths or task id and return a findings report only. Use for /review. E-commerce CQRS harness entry point.")
+path=$(new_skill "review" "Fan out the read-only reviewers (code, architecture, security, performance, tests) plus solid-guardian on design-bearing diffs over the given paths or task id and return a findings report only. Use for /review. E-commerce CQRS harness entry point.")
 {
   printf '# Review only\n'
-  entry_preamble "review-only" "orchestrator, then code-reviewer, architecture-reviewer, security-reviewer, performance-reviewer and test-reviewer in parallel" "V"
+  entry_preamble "review-only" "orchestrator, then code-reviewer, architecture-reviewer, security-reviewer, performance-reviewer and test-reviewer in parallel, plus solid-guardian when the change is design-bearing" "V"
   cat <<EOF
+
+### Review fan-out
+- Always: code-reviewer, architecture-reviewer, security-reviewer, performance-reviewer,
+  test-reviewer.
+- Additionally, when the change is design-bearing (a new Domain or Application class, a new or
+  changed port, a new bus handler or subscriber, a new tagged strategy): solid-guardian. Small
+  mechanical fixes skip it.
+- solid-guardian owns the SOLID verdicts only (\`$rel/.agents/rules/solid.md\`); it never
+  re-reports behavior, naming, error handling or layering.
 
 ### Bounds
 - The argument is a path set or a task id. Default to the current uncommitted change when the
@@ -293,7 +304,11 @@ for src in "$harness_root"/.agents/agents/*.md; do
   title=$(sed -nE 's/^# (.*)$/\1/p' "$src" | head -1 | tr -d '\r')
   [ -n "$title" ] || title="$id"
   role=$(awk '/^## Role/{f=1;next} f&&/^## /{exit} f{sub(/^[[:space:]]*/,"");printf "%s ",$0}' "$src" | sed -E 's/[[:space:]]+/ /g; s/^ +//; s/ +$//')
-  desc=$(printf '%s' "$role" | sed -E 's/^([^.]*\.).*/\1/')
+  # Cut at the first sentence boundary ('.' followed by a space), never at the first
+  # dot: a role citing a dotted path (e.g. `.agents/rules/solid.md`) would otherwise
+  # be truncated mid-path into a meaningless description.
+  desc="${role%%. *}"
+  if [ "$desc" != "$role" ]; then desc="$desc."; fi
   if [ "${#desc}" -lt 10 ]; then desc="$role"; fi
   if [ "${#desc}" -gt 220 ]; then desc="${desc:0:217}..."; fi
 
@@ -327,7 +342,8 @@ for src in "$harness_root"/.agents/agents/*.md; do
       printf 'disallowedTools: [%s]\n' "$disallowed"
     fi
     printf 'permissionMode: default\n'
-    printf 'model: inherit\n'
+    # No `model:` line: Qoder rejects `model: inherit` (40506, unknown model), and an
+    # omitted model already means "inherit the session model".
     printf 'maxTurns: %s\n' "$turns"
     printf -- '---\n\n'
     cat <<EOF
@@ -409,7 +425,7 @@ Domain skills \`investigate\` and \`choose-pattern\` are folded into their entry
 | \`/feature <requirement>\` | feature | test-planner |
 | \`/bugfix <symptom>\` | bugfix | investigator |
 | \`/investigate <question>\` | investigation-only | investigator |
-| \`/review <paths\\|task-id>\` | review-only | five reviewers in parallel |
+| \`/review <paths\\|task-id>\` | review-only | five reviewers in parallel, plus solid-guardian on design-bearing diffs |
 | \`/tdd <behavior>\` | tdd-cycle | unit-test-writer |
 | \`/choose-pattern <decision>\` | pattern-decision-only | pattern-selector |
 

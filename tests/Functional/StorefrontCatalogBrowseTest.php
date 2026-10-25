@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Catalog\Infrastructure\ReadModel\CatalogVisibility;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
+use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,10 +56,16 @@ final class StorefrontCatalogBrowseTest extends WebTestCase
 
         self::assertSame(1, $data['meta']['page']);
         self::assertSame(24, $data['meta']['size'], 'the browse default size is 24');
-        self::assertSame(13, $data['meta']['total']);
-        self::assertSame(1, $data['meta']['totalPages']);
-        self::assertFalse($data['meta']['hasMore']);
-        self::assertCount(13, $data['items']);
+
+        // The storefront catalog is never assumed to hold a fixed number of rows: another
+        // Functional test may have created a product for the length of its own test, and
+        // Infection runs this suite in a random order. `meta.total` must equal the visible
+        // catalog, whatever its size, and the envelope must be derived from that number.
+        $total = self::storefrontProductTotal();
+        self::assertSame($total, $data['meta']['total'], 'meta.total counts every visible product');
+        self::assertSame((int) ceil($total / 24), $data['meta']['totalPages']);
+        self::assertSame($total > 24, $data['meta']['hasMore']);
+        self::assertCount(min(24, $total), $data['items']);
 
         /** @var array<string, mixed> $facets */
         $facets = $data['facets'];
@@ -76,17 +84,18 @@ final class StorefrontCatalogBrowseTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $second = $this->json($client);
 
+        $total = self::storefrontProductTotal();
         self::assertSame(2, $second['meta']['page']);
         self::assertSame(5, $second['meta']['size']);
-        self::assertSame(13, $second['meta']['total'], 'meta.total is the filtered total, not the page size');
-        self::assertSame(3, $second['meta']['totalPages']);
-        self::assertTrue($second['meta']['hasMore']);
+        self::assertSame($total, $second['meta']['total'], 'meta.total is the filtered total, not the page size');
+        self::assertSame((int) ceil($total / 5), $second['meta']['totalPages']);
+        self::assertSame($total > 10, $second['meta']['hasMore']);
 
         $firstSlugs = array_column($first['items'], 'slug');
         $secondSlugs = array_column($second['items'], 'slug');
 
         self::assertCount(5, $firstSlugs);
-        self::assertCount(5, $secondSlugs);
+        self::assertCount(max(0, min(5, $total - 5)), $secondSlugs);
         self::assertSame([], array_intersect($firstSlugs, $secondSlugs), 'page 2 must not repeat page 1');
     }
 
@@ -216,5 +225,16 @@ final class StorefrontCatalogBrowseTest extends WebTestCase
     private function json(KernelBrowser $client): array
     {
         return json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    /** The catalog the endpoint must report, read from the projection it serves. */
+    private static function storefrontProductTotal(): int
+    {
+        /** @var Connection $connection */
+        $connection = static::getContainer()->get(Connection::class);
+
+        // spec-run-8 R32 — the browse total counts the same public rows the endpoint serves, so a
+        // pending submission left behind by another test no longer shifts this expectation.
+        return (int) $connection->fetchOne('SELECT count(*) FROM storefront_product_view WHERE'.CatalogVisibility::PRODUCT_PUBLIC);
     }
 }

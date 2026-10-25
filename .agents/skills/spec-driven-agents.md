@@ -130,7 +130,7 @@ After Stage 4, become the **CQRS orchestrator** (`.agents/agents/orchestrator.md
 |----------------|----------|-------------|
 | New behavior, feature, API, model | feature | test-planner |
 | Bug, broken, regression | bugfix | investigator |
-| Review / audit only | review-only | orchestrator → five reviewers in parallel |
+| Review / audit only | review-only | orchestrator → five reviewers in parallel, plus solid-guardian on design-bearing diffs |
 
 Run gates exactly as in `.agents/orchestration.md` through **DONE** (AGENTS.md Definition of Done).
 

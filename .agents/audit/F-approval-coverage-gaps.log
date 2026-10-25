@@ -1,0 +1,16 @@
+2026-10-23T22:30:00+01:00 orchestrator GATE SPEC ok — spec-run-10/spec.md v1 (R1–R59) reused unchanged; 8 documented coverage gaps map onto R6, R19, R26, R27, R28, R29, R30, R36, R38, R41
+2026-10-23T22:31:00+01:00 orchestrator DISPATCH test-planner — behaviour list for the 8 coverage gaps (tests-only run, no new behavior)
+2026-10-23T22:52:00+01:00 orchestrator GATE PLAN ok — 21 dependency-ordered behaviours, 4 new test files, 2 extended, 5 new support helpers
+2026-10-23T22:53:00+01:00 orchestrator GATE PATTERN skipped (n/a) — no new pattern, bus, aggregate or context boundary
+2026-10-23T23:40:00+01:00 unit-test-writer GATE RED ok — 20 of 21 behaviours characterisation (green against unchanged code); behaviour 22 recorded a real defect
+2026-10-24T08:24:00+01:00 unit-test-writer RED tests/Functional/StorefrontApprovalVisibilityTest.php — "a pending product has no readable reviews / Failed asserting that the Response status code is 404. HTTP/1.1 200 OK {slug:vis-3,count:1,averageRating:5.0,...}" — FAIL (4 tests, 79 assertions, 1 failure)
+2026-10-24T08:26:00+01:00 implementer GATE GREEN ok — StorefrontReviewController refuses a product CatalogVisibility::PRODUCT_PUBLIC hides on both review routes (OK, 4 tests / 82 assertions)
+2026-10-24T08:27:00+01:00 implementer NOTE StorefrontProductReviewsPaginationTest's "unknown slug answers 200 with an empty page" expectation encoded the leak; it now answers 404 like the detail route (OK, 7 tests / 36 assertions)
+2026-10-24T08:31:00+01:00 verification NOTE full suite red in SessionCookieTest/AdminCustomerListQueryTest/AdminBannerTest — files untouched by this run; a concurrent task was writing the same checkout
+2026-10-24T09:40:00+01:00 orchestrator DISPATCH REVIEW — code-reviewer, architecture-reviewer, security-reviewer, performance-reviewer, test-reviewer
+2026-10-24T09:52:00+01:00 verification GATE REVIEW ok — PHPStan 0 errors, Deptrac 0 violations / 0 warnings, php-cs-fixer 0 of 469 files; 1 BLOCKING + 1 MAJOR (state file), 3 MINOR/NIT fixed, 5 recorded as limitations
+2026-10-24T09:52:00+01:00 implementer FIX R58 — LegacyCatalogRow delegates to CatalogRow with column overrides instead of restating both tables
+2026-10-24T09:52:00+01:00 implementer FIX MIG-001 — MigrationProbeDatabase::migrateUpToTheApprovalMigration() targets Version20261023000000 instead of the `latest` alias
+2026-10-24T09:52:00+01:00 implementer FIX PRF — StorefrontApprovalVisibilityTest no longer rebuilds the search index for the PostgreSQL-only review routes
+2026-10-24T09:55:00+01:00 verification GATE SPEC-TESTS ok — php bin/phpunit → OK (671 tests, 3890 assertions), no other PHPUnit process on app_test
+2026-10-24T09:56:00+01:00 orchestrator GATE DONE — spec-run-10/coverage.md and .agents/state/F-approval-coverage-gaps.md closed

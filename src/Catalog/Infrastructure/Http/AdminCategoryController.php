@@ -10,9 +10,14 @@ use App\Catalog\Application\Command\DeleteCategory;
 use App\Catalog\Application\Command\HideCategory;
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Command\ShowCategory;
+use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Query\ListCategories;
 use App\Catalog\Application\Service\CategoryHierarchyValidator;
 use App\Catalog\Application\Service\ProductDeletionGuard;
+use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
+use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
+use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
 use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryAlreadyExistsException;
 use App\Catalog\Domain\Model\CategoryHierarchyCycleException;
@@ -60,6 +65,7 @@ final class AdminCategoryController
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
         private StorefrontProductSearchIndexer $searchIndex,
+        private CatalogAuditPort $audit,
     ) {
     }
 
@@ -150,7 +156,7 @@ final class AdminCategoryController
             return new JsonResponse(['error' => 'quoteEligible must be a boolean.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $failure = $this->dispatch(new CreateCategory($slug, $label, $subcategories, $quoteEligible));
+        $failure = $this->dispatch(new CreateCategory($slug, $label, $subcategories, $quoteEligible, $admin->getId()));
         if (null !== $failure) {
             return $failure;
         }
@@ -186,7 +192,13 @@ final class AdminCategoryController
             return new JsonResponse(['error' => 'The parent subcategory label is too long.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $failure = $this->dispatch(new AddCategorySubLevel($slug, $label, '' === $parentLabel ? null : $parentLabel));
+        $failure = $this->dispatch(new AddCategorySubLevel(
+            $slug,
+            $label,
+            '' === $parentLabel ? null : $parentLabel,
+            $admin->getId(),
+            $this->isSuperAdmin($admin),
+        ));
         if (null !== $failure) {
             return $failure;
         }
@@ -228,7 +240,14 @@ final class AdminCategoryController
             return new JsonResponse(['error' => 'quoteEligible must be a boolean.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $failure = $this->dispatch(new ReplaceCategoryTree($slug, $label, $subcategories, $quoteEligible));
+        $failure = $this->dispatch(new ReplaceCategoryTree(
+            $slug,
+            $label,
+            $subcategories,
+            $quoteEligible,
+            $admin->getId(),
+            $this->isSuperAdmin($admin),
+        ));
         if (null !== $failure) {
             return $failure;
         }
@@ -263,7 +282,9 @@ final class AdminCategoryController
             return new JsonResponse(['error' => 'hidden must be a boolean.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $failure = $this->dispatch($hidden ? new HideCategory($slug) : new ShowCategory($slug));
+        $failure = $this->dispatch($hidden
+            ? new HideCategory($slug, $admin->getId(), $this->isSuperAdmin($admin))
+            : new ShowCategory($slug, $admin->getId(), $this->isSuperAdmin($admin)));
         if (null !== $failure) {
             return $failure;
         }
@@ -276,17 +297,20 @@ final class AdminCategoryController
      * `subcategories` JSON tree (plus the legacy `parent_slug` rows). An empty category is
      * removed, a non-empty one is refused with its counts and nothing written, and deleting
      * it again answers not-found instead of a 500.
+     *
+     * spec-run-8 R20/R34 — deleting a catalog record is a Super Admin decision, whatever its
+     * approval state, so the role is checked here and again by `/api/v1/admin` access control.
      */
     #[Route('/categories/{slug}', name: 'admin_catalog_delete_category', methods: ['DELETE'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function deleteCategory(string $slug): JsonResponse
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function deleteCategory(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         $error = $this->checkSlug($slug);
         if (null !== $error) {
             return $error;
         }
 
-        $failure = $this->dispatch(new DeleteCategory($slug));
+        $failure = $this->dispatch(new DeleteCategory($slug, $admin->getId()));
         if (null !== $failure) {
             return $failure;
         }
@@ -294,9 +318,21 @@ final class AdminCategoryController
         return new JsonResponse(['success' => true, 'slug' => $slug, 'message' => 'Category deleted successfully']);
     }
 
+    /**
+     * spec-run-8 R19/R20/R42 — deletion keeps its order-history guard, never touches the
+     * approval decision, and is the Super Admin's call alone.
+     */
     #[Route('/products/{slug}', name: 'admin_catalog_delete_product', methods: ['DELETE'])]
-    public function deleteProduct(string $slug): JsonResponse
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function deleteProduct(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
+        if (false === $this->connection->fetchOne(
+            'SELECT 1 FROM storefront_product_view WHERE slug = :slug',
+            ['slug' => $slug],
+        )) {
+            return new JsonResponse(['error' => 'Product not found.'], Response::HTTP_NOT_FOUND);
+        }
+
         try {
             $this->productGuard->ensureCanDeleteProduct($slug);
         } catch (ProductHasOrdersCannotBeDeletedException $e) {
@@ -307,15 +343,29 @@ final class AdminCategoryController
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $this->connection->executeStatement(
-            'DELETE FROM storefront_product_view WHERE slug = :slug',
-            ['slug' => $slug],
-        );
+        $this->connection->transactional(function () use ($slug, $admin): void {
+            $this->connection->executeStatement(
+                'DELETE FROM storefront_product_view WHERE slug = :slug',
+                ['slug' => $slug],
+            );
+
+            $this->audit->record(
+                'CATALOG_PRODUCT_DELETED',
+                CatalogSubmissionKind::Product->auditTarget(),
+                $slug,
+                $admin->getId(),
+            );
+        });
 
         // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
         $this->searchIndex->forget($slug);
 
         return new JsonResponse(['success' => true, 'slug' => $slug, 'message' => 'Product deleted successfully']);
+    }
+
+    private function isSuperAdmin(CustomerUser $admin): bool
+    {
+        return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
     }
 
     /**
@@ -348,8 +398,16 @@ final class AdminCategoryController
      */
     private function domainFailure(\DomainException $error): JsonResponse
     {
-        if ($error instanceof CategoryNotFoundException) {
+        if ($error instanceof CatalogSubmissionNotFoundException || $error instanceof CategoryNotFoundException) {
             return new JsonResponse(['error' => 'Category not found.', 'message' => $error->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($error instanceof CatalogSubmissionNotOwnedException) {
+            return new JsonResponse(['error' => 'Forbidden', 'message' => $error->getMessage()], Response::HTTP_FORBIDDEN);
+        }
+
+        if ($error instanceof ApprovalTransitionRefusedException) {
+            return new JsonResponse(['error' => 'Approval Transition Refused', 'message' => $error->getMessage()], Response::HTTP_CONFLICT);
         }
 
         if ($error instanceof CategoryAlreadyExistsException) {

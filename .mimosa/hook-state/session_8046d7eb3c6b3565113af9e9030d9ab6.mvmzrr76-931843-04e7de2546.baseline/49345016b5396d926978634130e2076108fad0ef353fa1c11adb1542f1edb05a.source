@@ -1,0 +1,232 @@
+<?php
+
+/**
+ * This file has been auto-generated
+ * by the Symfony Routing Component.
+ */
+
+return [
+    false, // $matchHost
+    [ // $staticRoutes
+        '/api/doc.json' => [[['_route' => 'app.swagger', '_controller' => 'nelmio_api_doc.controller.swagger'], null, ['GET' => 0], null, false, false, null]],
+        '/api/doc' => [[['_route' => 'app.swagger_ui', '_controller' => 'nelmio_api_doc.controller.swagger_ui'], null, ['GET' => 0], null, false, false, null]],
+        '/docs' => [[['_route' => 'app.docs_redirect', '_controller' => 'nelmio_api_doc.controller.swagger_ui'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/admin/promotions/promo-codes' => [
+            [['_route' => 'admin_promo_codes_list', '_controller' => 'App\\Promotions\\Infrastructure\\Http\\AdminPromoCodeController::list'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'admin_promo_codes_create', '_controller' => 'App\\Promotions\\Infrastructure\\Http\\AdminPromoCodeController::create'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/api/v1/storefront/promotions/validate' => [[['_route' => 'storefront_promo_validate', '_controller' => 'App\\Promotions\\Infrastructure\\Http\\StorefrontPromoController::validate'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/api/v1/admin/catalog/banner' => [[['_route' => 'admin_catalog_get_banner', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBannerController::show'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/admin/catalog/banner/images' => [[['_route' => 'admin_catalog_replace_banner_images', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBannerController::replaceImages'], null, ['PUT' => 0], null, false, false, null]],
+        '/api/v1/admin/catalog/banner/images/order' => [[['_route' => 'admin_catalog_reorder_banner_images', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBannerController::reorderImages'], null, ['PATCH' => 0], null, false, false, null]],
+        '/api/v1/admin/catalog/brands' => [
+            [['_route' => 'admin_catalog_list_brands', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBrandController::list'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'admin_catalog_create_brand', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBrandController::create'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/api/v1/admin/catalog/categories/validate-parent' => [[['_route' => 'admin_catalog_validate_parent', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::validateParent'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/admin/catalog/categories' => [
+            [['_route' => 'admin_catalog_list_categories', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::listCategories'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'admin_catalog_create_category', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::createCategory'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/api/v1/admin/catalog/products' => [[['_route' => 'admin_catalog_create_product', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminProductController::create'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/admin/catalog/uploads' => [[['_route' => 'admin_catalog_upload_image', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminUploadController::upload'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/storefront/banner' => [[['_route' => 'storefront_banner', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\StorefrontBannerController::show'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/products' => [[['_route' => 'storefront_products_list', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\StorefrontProductController::list'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/products/search' => [[['_route' => 'storefront_products_search', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\StorefrontProductController::search'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/cart/quote' => [[['_route' => 'storefront_cart_quote', '_controller' => 'App\\Cart\\Infrastructure\\Http\\CheckoutQuoteController::quote'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/storefront/cart' => [
+            [['_route' => 'storefront_cart_get', '_controller' => 'App\\Cart\\Infrastructure\\Http\\StorefrontCartController::get'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'storefront_cart_clear', '_controller' => 'App\\Cart\\Infrastructure\\Http\\StorefrontCartController::clear'], null, ['DELETE' => 0], null, false, false, null],
+        ],
+        '/api/v1/storefront/cart/items' => [[['_route' => 'storefront_cart_add_item', '_controller' => 'App\\Cart\\Infrastructure\\Http\\StorefrontCartController::addItem'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/admin/orders/proxy' => [[['_route' => 'admin_orders_create_proxy', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\AdminOrderController::createProxy'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/storefront/orders' => [
+            [['_route' => 'storefront_orders_create', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\CheckoutOrderController::create'], null, ['POST' => 0], null, false, false, null],
+            [['_route' => 'storefront_orders_list', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\CheckoutOrderController::list'], null, ['GET' => 0], null, false, false, null],
+        ],
+        '/api/v1/admin/customers' => [[['_route' => 'admin_customers_list', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AdminCustomerController::list'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/auth/register' => [[['_route' => 'identity_register', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AuthController::register'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/auth/forgot-password' => [[['_route' => 'identity_forgot_password', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AuthController::forgotPassword'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/auth/reset-password' => [[['_route' => 'identity_reset_password', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AuthController::resetPassword'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/auth/login' => [[['_route' => 'identity_login', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AuthController::login'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/auth/logout' => [[['_route' => 'identity_logout', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AuthController::logout'], null, ['POST' => 0, 'GET' => 1], null, false, false, null]],
+        '/api/v1/auth/me' => [[['_route' => 'identity_me', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AuthController::me'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/contact' => [[['_route' => 'storefront_contact_submit', '_controller' => 'App\\Identity\\Infrastructure\\Http\\ContactController::submit'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/storefront/customer/profile' => [
+            [['_route' => 'storefront_customer_profile_get', '_controller' => 'App\\Identity\\Infrastructure\\Http\\CustomerController::getProfile'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'storefront_customer_profile_update', '_controller' => 'App\\Identity\\Infrastructure\\Http\\CustomerController::updateProfile'], null, ['PUT' => 0, 'POST' => 1], null, false, false, null],
+        ],
+        '/api/v1/storefront/customer/addresses' => [
+            [['_route' => 'storefront_customer_addresses_list', '_controller' => 'App\\Identity\\Infrastructure\\Http\\CustomerController::listAddresses'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'storefront_customer_addresses_save', '_controller' => 'App\\Identity\\Infrastructure\\Http\\CustomerController::saveAddress'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/api/v1/auth/google/redirect' => [[['_route' => 'identity_google_redirect', '_controller' => 'App\\Identity\\Infrastructure\\Http\\GoogleOAuthController::redirect'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/auth/google/callback' => [[['_route' => 'identity_google_callback', '_controller' => 'App\\Identity\\Infrastructure\\Http\\GoogleOAuthController::callback'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/newsletter' => [[['_route' => 'storefront_newsletter_subscribe', '_controller' => 'App\\Identity\\Infrastructure\\Http\\NewsletterController::subscribe'], null, ['POST' => 0], null, false, false, null]],
+        '/api/v1/storefront/quote-requests' => [
+            [['_route' => 'storefront_quote_requests_create', '_controller' => 'App\\Identity\\Infrastructure\\Http\\QuoteRequestController::create'], null, ['POST' => 0], null, false, false, null],
+            [['_route' => 'storefront_quote_requests_list', '_controller' => 'App\\Identity\\Infrastructure\\Http\\QuoteRequestController::list'], null, ['GET' => 0], null, false, false, null],
+        ],
+        '/api/v1/storefront/wishlist' => [
+            [['_route' => 'storefront_wishlist_list', '_controller' => 'App\\Identity\\Infrastructure\\Http\\WishlistController::list'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'storefront_wishlist_add', '_controller' => 'App\\Identity\\Infrastructure\\Http\\WishlistController::add'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/api/v1/admin/settings' => [
+            [['_route' => 'admin_settings_read', '_controller' => 'App\\Shared\\Infrastructure\\Http\\AdminSettingsController::read'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'admin_settings_update', '_controller' => 'App\\Shared\\Infrastructure\\Http\\AdminSettingsController::update'], null, ['PUT' => 0], null, false, false, null],
+        ],
+        '/api/v1/admin/settings/shipping' => [[['_route' => 'admin_settings_shipping_update', '_controller' => 'App\\Shared\\Infrastructure\\Http\\AdminSettingsController::updateShipping'], null, ['PUT' => 0], null, false, false, null]],
+        '/healthz' => [[['_route' => 'app_health_liveness', '_controller' => 'App\\Shared\\Infrastructure\\Http\\HealthController::liveness'], null, ['GET' => 0], null, false, false, null]],
+        '/readyz' => [[['_route' => 'app_health_readiness', '_controller' => 'App\\Shared\\Infrastructure\\Http\\HealthController::readiness'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/faq' => [[['_route' => 'storefront_faq', '_controller' => 'App\\Shared\\Infrastructure\\Http\\StorefrontFaqController'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/reference' => [[['_route' => 'storefront_reference', '_controller' => 'App\\Shared\\Infrastructure\\Http\\StorefrontReferenceController'], null, ['GET' => 0], null, false, false, null]],
+        '/api/v1/storefront/contact/whatsapp' => [[['_route' => 'storefront_whatsapp_contact', '_controller' => 'App\\Shared\\Infrastructure\\Http\\WhatsAppContactController'], null, ['GET' => 0], null, false, false, null]],
+    ],
+    [ // $regexpList
+        0 => '{^(?'
+                .'|/api/v1/(?'
+                    .'|admin/(?'
+                        .'|p(?'
+                            .'|ayments/([^/]++)(?'
+                                .'|(*:50)'
+                                .'|/(?'
+                                    .'|confirm(*:68)'
+                                    .'|refund(*:81)'
+                                .')'
+                            .')'
+                            .'|romotions/promo\\-codes/([^/]++)(?'
+                                .'|(*:124)'
+                            .')'
+                        .')'
+                        .'|c(?'
+                            .'|atalog/(?'
+                                .'|b(?'
+                                    .'|anner/images/([^/]++)(*:173)'
+                                    .'|rands/([^/]++)(?'
+                                        .'|(*:198)'
+                                    .')'
+                                .')'
+                                .'|submissions/([^/]++)(?'
+                                    .'|(*:231)'
+                                    .'|/([^/]++)(?'
+                                        .'|(*:251)'
+                                        .'|/(?'
+                                            .'|submit(*:269)'
+                                            .'|re(?'
+                                                .'|submit(*:288)'
+                                                .'|ject(*:300)'
+                                            .')'
+                                            .'|approve(*:316)'
+                                        .')'
+                                    .')'
+                                .')'
+                                .'|categories/([^/]++)(?'
+                                    .'|/(?'
+                                        .'|subcategories(*:366)'
+                                        .'|visibility(*:384)'
+                                    .')'
+                                    .'|(*:393)'
+                                .')'
+                                .'|products/([^/]++)(?'
+                                    .'|(*:422)'
+                                    .'|/publication(*:442)'
+                                .')'
+                            .')'
+                            .'|ustomers/([^/]++)(?'
+                                .'|/(?'
+                                    .'|orders(*:482)'
+                                    .'|ban(*:493)'
+                                    .'|unban(*:506)'
+                                    .'|role(*:518)'
+                                    .'|audit(*:531)'
+                                .')'
+                                .'|(*:540)'
+                            .')'
+                        .')'
+                        .'|orders/([^/]++)/(?'
+                            .'|status(*:575)'
+                            .'|audit(*:588)'
+                        .')'
+                    .')'
+                    .'|storefront/(?'
+                        .'|products/([^/]++)(?'
+                            .'|(*:632)'
+                            .'|/reviews(?'
+                                .'|(*:651)'
+                            .')'
+                        .')'
+                        .'|c(?'
+                            .'|art/items/([^/]++)(?'
+                                .'|(*:686)'
+                            .')'
+                            .'|ustomer/addresses/([^/]++)(*:721)'
+                        .')'
+                        .'|orders/(?'
+                            .'|([^/]++)/cancel(*:755)'
+                            .'|track/([^/]++)(*:777)'
+                            .'|([^/]++)(*:793)'
+                        .')'
+                        .'|wishlist/([^/]++)(*:819)'
+                    .')'
+                .')'
+            .')/?$}sDu',
+    ],
+    [ // $dynamicRoutes
+        50 => [[['_route' => 'admin_payments_show', '_controller' => 'App\\Payment\\Infrastructure\\Http\\AdminPaymentController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        68 => [[['_route' => 'admin_payments_confirm', '_controller' => 'App\\Payment\\Infrastructure\\Http\\AdminPaymentController::confirm'], ['id'], ['POST' => 0], null, false, false, null]],
+        81 => [[['_route' => 'admin_payments_refund', '_controller' => 'App\\Payment\\Infrastructure\\Http\\AdminPaymentController::refund'], ['id'], ['POST' => 0], null, false, false, null]],
+        124 => [
+            [['_route' => 'admin_promo_codes_update', '_controller' => 'App\\Promotions\\Infrastructure\\Http\\AdminPromoCodeController::update'], ['code'], ['PUT' => 0], null, false, true, null],
+            [['_route' => 'admin_promo_codes_delete', '_controller' => 'App\\Promotions\\Infrastructure\\Http\\AdminPromoCodeController::delete'], ['code'], ['DELETE' => 0], null, false, true, null],
+        ],
+        173 => [[['_route' => 'admin_catalog_remove_banner_image', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBannerController::removeImage'], ['imageId'], ['DELETE' => 0], null, false, true, null]],
+        198 => [
+            [['_route' => 'admin_catalog_rename_brand', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBrandController::rename'], ['name'], ['PUT' => 0], null, false, true, null],
+            [['_route' => 'admin_catalog_delete_brand', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminBrandController::delete'], ['name'], ['DELETE' => 0], null, false, true, null],
+        ],
+        231 => [[['_route' => 'admin_catalog_list_submissions', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCatalogSubmissionController::list'], ['kind'], ['GET' => 0], null, false, true, null]],
+        251 => [[['_route' => 'admin_catalog_show_submission', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCatalogSubmissionController::show'], ['kind', 'slug'], ['GET' => 0], null, false, true, null]],
+        269 => [[['_route' => 'admin_catalog_submit_submission', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCatalogSubmissionController::submit'], ['kind', 'slug'], ['POST' => 0], null, false, false, null]],
+        288 => [[['_route' => 'admin_catalog_resubmit_submission', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCatalogSubmissionController::submit'], ['kind', 'slug'], ['POST' => 0], null, false, false, null]],
+        300 => [[['_route' => 'admin_catalog_reject_submission', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCatalogSubmissionController::reject'], ['kind', 'slug'], ['POST' => 0], null, false, false, null]],
+        316 => [[['_route' => 'admin_catalog_approve_submission', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCatalogSubmissionController::approve'], ['kind', 'slug'], ['POST' => 0], null, false, false, null]],
+        366 => [[['_route' => 'admin_catalog_add_category_sub_level', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::addSubLevel'], ['slug'], ['POST' => 0], null, false, false, null]],
+        384 => [[['_route' => 'admin_catalog_category_visibility', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::setVisibility'], ['slug'], ['PATCH' => 0], null, false, false, null]],
+        393 => [
+            [['_route' => 'admin_catalog_update_category', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::updateCategory'], ['slug'], ['PUT' => 0], null, false, true, null],
+            [['_route' => 'admin_catalog_delete_category', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::deleteCategory'], ['slug'], ['DELETE' => 0], null, false, true, null],
+        ],
+        422 => [
+            [['_route' => 'admin_catalog_delete_product', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminCategoryController::deleteProduct'], ['slug'], ['DELETE' => 0], null, false, true, null],
+            [['_route' => 'admin_catalog_show_product', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminProductController::show'], ['slug'], ['GET' => 0], null, false, true, null],
+            [['_route' => 'admin_catalog_update_product', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminProductController::update'], ['slug'], ['PUT' => 0], null, false, true, null],
+        ],
+        442 => [[['_route' => 'admin_catalog_product_publication', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\AdminProductController::setPublication'], ['slug'], ['PATCH' => 0], null, false, false, null]],
+        482 => [[['_route' => 'admin_customers_list_orders', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\AdminCustomerOrderController::list'], ['id'], ['GET' => 0], null, false, false, null]],
+        493 => [[['_route' => 'admin_customers_ban', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AdminCustomerController::ban'], ['id'], ['POST' => 0], null, false, false, null]],
+        506 => [[['_route' => 'admin_customers_unban', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AdminCustomerController::unban'], ['id'], ['POST' => 0], null, false, false, null]],
+        518 => [[['_route' => 'admin_customers_role_change', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AdminCustomerController::changeRole'], ['id'], ['PATCH' => 0], null, false, false, null]],
+        531 => [[['_route' => 'admin_customers_audit_trail', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AdminCustomerController::auditTrail'], ['id'], ['GET' => 0], null, false, false, null]],
+        540 => [[['_route' => 'admin_customers_delete', '_controller' => 'App\\Identity\\Infrastructure\\Http\\AdminCustomerController::delete'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        575 => [[['_route' => 'admin_orders_transition_status', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\AdminOrderController::transitionStatus'], ['id'], ['PATCH' => 0], null, false, false, null]],
+        588 => [[['_route' => 'admin_orders_audit_trail', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\AdminOrderController::auditTrail'], ['id'], ['GET' => 0], null, false, false, null]],
+        632 => [[['_route' => 'storefront_products_show', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\StorefrontProductController::show'], ['slug'], ['GET' => 0], null, false, true, null]],
+        651 => [
+            [['_route' => 'storefront_reviews_list', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\StorefrontReviewController::list'], ['slug'], ['GET' => 0], null, false, false, null],
+            [['_route' => 'storefront_reviews_create', '_controller' => 'App\\Catalog\\Infrastructure\\Http\\StorefrontReviewController::create'], ['slug'], ['POST' => 0], null, false, false, null],
+        ],
+        686 => [
+            [['_route' => 'storefront_cart_update_item', '_controller' => 'App\\Cart\\Infrastructure\\Http\\StorefrontCartController::updateItem'], ['itemId'], ['PATCH' => 0], null, false, true, null],
+            [['_route' => 'storefront_cart_remove_item', '_controller' => 'App\\Cart\\Infrastructure\\Http\\StorefrontCartController::removeItem'], ['itemId'], ['DELETE' => 0], null, false, true, null],
+        ],
+        721 => [[['_route' => 'storefront_customer_addresses_delete', '_controller' => 'App\\Identity\\Infrastructure\\Http\\CustomerController::deleteAddress'], ['id'], ['DELETE' => 0], null, false, true, null]],
+        755 => [[['_route' => 'storefront_orders_cancel', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\CheckoutOrderController::cancel'], ['id'], ['POST' => 0], null, false, false, null]],
+        777 => [[['_route' => 'storefront_orders_track', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\CheckoutOrderController::track'], ['orderNumber'], ['GET' => 0], null, false, true, null]],
+        793 => [[['_route' => 'storefront_orders_show', '_controller' => 'App\\Ordering\\Infrastructure\\Http\\CheckoutOrderController::show'], ['idOrNumber'], ['GET' => 0], null, false, true, null]],
+        819 => [
+            [['_route' => 'storefront_wishlist_remove', '_controller' => 'App\\Identity\\Infrastructure\\Http\\WishlistController::remove'], ['slug'], ['DELETE' => 0], null, false, true, null],
+            [null, null, null, null, false, false, 0],
+        ],
+    ],
+    null, // $checkCondition
+];

@@ -12,16 +12,26 @@ use PHPUnit\Framework\TestCase;
 
 final class AddCategorySubLevelHandlerTest extends TestCase
 {
-    /** @param list<array<string, mixed>|false> $rows */
+    /**
+     * The guard row is pinned by its statement so the queued row stays the content row.
+     *
+     * @param list<array<string, mixed>|false> $rows
+     */
     private function handler(array $rows, bool $refuseWrite = false): CategoryConnectionFake
     {
         $connection = new CategoryConnectionFake();
         $connection->rows = $rows;
+        $connection->submission();
         if ($refuseWrite) {
             $connection->expectsNoWrite();
         }
 
         return $connection;
+    }
+
+    private function add(CategoryConnectionFake $connection, AddCategorySubLevel $command): void
+    {
+        (new AddCategorySubLevelHandler($connection, $connection->accessPolicy(), new RecordingCatalogAudit()))($command);
     }
 
     /**
@@ -46,7 +56,7 @@ final class AddCategorySubLevelHandlerTest extends TestCase
     {
         $connection = $this->handler([$this->row([['label' => 'Cuvette']], hidden: true)]);
 
-        (new AddCategorySubLevelHandler($connection))(new AddCategorySubLevel('wc', ' Abattant '));
+        $this->add($connection, new AddCategorySubLevel('wc', ' Abattant '));
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
@@ -63,7 +73,7 @@ final class AddCategorySubLevelHandlerTest extends TestCase
     {
         $connection = $this->handler([$this->row([['label' => 'Cuvette']])]);
 
-        (new AddCategorySubLevelHandler($connection))(new AddCategorySubLevel('wc', 'Abattant', 'Cuvette'));
+        $this->add($connection, new AddCategorySubLevel('wc', 'Abattant', 'Cuvette'));
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
@@ -79,7 +89,7 @@ final class AddCategorySubLevelHandlerTest extends TestCase
 
         $this->expectException(CategoryNotFoundException::class);
 
-        (new AddCategorySubLevelHandler($connection))(new AddCategorySubLevel('introuvable', 'Alpha'));
+        $this->add($connection, new AddCategorySubLevel('introuvable', 'Alpha'));
     }
 
     public function testASubLevelDuplicatingASiblingIsRefusedAndTheParentIsUnchanged(): void
@@ -89,7 +99,7 @@ final class AddCategorySubLevelHandlerTest extends TestCase
         $this->expectException(CategorySublevelException::class);
         $this->expectExceptionMessage('The subcategory "Abattant" already exists at this level.');
 
-        (new AddCategorySubLevelHandler($connection))(new AddCategorySubLevel('wc', 'Abattant'));
+        $this->add($connection, new AddCategorySubLevel('wc', 'Abattant'));
     }
 
     public function testASubLevelBelowAnUnknownNodeIsRefusedAndTheParentIsUnchanged(): void
@@ -98,6 +108,6 @@ final class AddCategorySubLevelHandlerTest extends TestCase
 
         $this->expectException(CategorySublevelException::class);
 
-        (new AddCategorySubLevelHandler($connection))(new AddCategorySubLevel('wc', 'Abattant', 'Introuvable'));
+        $this->add($connection, new AddCategorySubLevel('wc', 'Abattant', 'Introuvable'));
     }
 }

@@ -1,0 +1,10 @@
+2026-10-24T10:05:00+01:00 dispatch orchestrator — /feature "ADR-0013 CSRF follow-up: Origin/Referer/Sec-Fetch-Site allow-list for state-changing /api/v1 requests"; task F-csrf-origin-guard created, workflow feature, first agent test-planner
+2026-10-24T23:26:00+01:00 orchestrator NOTE — continuation resumed via /spec (spec-run-13); audit log found truncated to 1 dispatch line, prior gates preserved only in the state file; new entries appended from here
+2026-10-24T23:26:00+01:00 orchestrator GATE SPEC ok — spec-run-13/spec.md v2 (3 analysts → synthesizer; 23 requirements, 4 WPs, 0 blocking)
+2026-10-24T23:26:00+01:00 orchestrator DISPATCH workers WP1 (FIX-2 production + unit tests) and WP2 (FIX-3 ADR) in parallel
+2026-10-24T23:26:00+01:00 implementer GATE FIXES ok — WP1: decode-once + Origin/OriginAllowList + priority 14; CsrfOriginGuardTest 24/98 green unmodified; Unit 300/727; phpstan/cs-fixer/deptrac clean. WP2: ADR-0013 S2/S4/S5 + priority 14
+2026-10-24T23:45:00+01:00 orchestrator DISPATCH review fan-out round 2 — security-reviewer, code-reviewer, architecture-reviewer, performance-reviewer, test-reviewer (waves of two; one concurrency retry each for test-reviewer and solid-guardian)
+2026-10-24T23:44:00+01:00 solid-guardian GATE REVIEW ok — PASS, OCP-001 closed, no findings (dispatched separately after two concurrency rejections)
+2026-10-24T23:59:00+01:00 orchestrator GATE REVIEW ok — all six APPROVE/PASS, zero blocking findings; LOW AGT-002 record correction applied (unit tests 21/58, not 21/53)
+2026-10-24T23:59:00+01:00 orchestrator VERIFICATION — phpunit --exclude-filter=StorefrontReviewEndpointBudgetTest: 741 tests / 4213 assertions, sole failure foreign tests/Architecture/CatalogApprovalDesignTest.php (documented blocker); vendor/bin/phpstan analyse: 0 errors (468 files); php-cs-fixer --dry-run: 0 of 493; deptrac: 0 violations / 0 errors / 0 warnings
+2026-10-24T23:59:00+01:00 orchestrator GATE DONE — extended coverage table (R1–R23 + round-1 findings) appended to the state file; F-csrf-origin-guard closed via spec-run-13

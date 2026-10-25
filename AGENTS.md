@@ -71,11 +71,12 @@ REFACTOR: suite stays green. One behavior per cycle.
 | solid-guardian | read-only | SOLID review citing SOLID-* rule IDs |
 | test-planner | read-only | requirement → ordered behavior list |
 | unit-test-writer | tests/Unit/** | RED: one failing test at a time |
-| implementer | src/** (never tests/**) | GREEN: minimal passing change |
+| implementer | src/** (never tests/**); infra files (ci-local.sh, compose*.yaml, docker/**, scripts/**, bin/**, Makefile, .github/workflows/**) only when the fix boundary names them | GREEN: minimal passing change |
 | refactorer | src/**, tests/** | behavior-preserving cleanup, suite green |
 | integration-test-agent | tests/Integration/** | Doctrine, Messenger, outbox, concurrency |
 | projection-test-agent | tests/Projection/** | read models, idempotent/replayable projections |
 | e2e-contract-test-agent | tests/Functional/**, tests/Contract/** | HTTP flows, gateway contracts, webhooks |
+| architecture-test-writer | tests/Architecture/** | repository-state guards: wiring, naming, layering, docs presence |
 | mutation-test-agent | read-only (runs infection) | triage survivors, request missing tests |
 | code-reviewer | read-only | correctness, readability, naming, error handling |
 | architecture-reviewer | read-only | CQRS/layering/context boundaries, cites rule IDs |
@@ -89,7 +90,7 @@ REFACTOR: suite stays green. One behavior per cycle.
 | new feature | feature | test-planner | /feature |
 | bug | bugfix | investigator | /bugfix |
 | unclear behavior | investigation-only | investigator | /investigate |
-| review only | review-only | orchestrator → reviewers in parallel | /review |
+| review only | review-only | orchestrator → reviewers in parallel (+ solid-guardian on design-bearing diffs) | /review |
 | design decision | pattern-decision-only | pattern-selector | /choose-pattern |
 | single TDD cycle | tdd-cycle | unit-test-writer | /tdd |
 | spec then CQRS delivery | spec-then-feature | spec-driven-agents → test-planner | /spec |

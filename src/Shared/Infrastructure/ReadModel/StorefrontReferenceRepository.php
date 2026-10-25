@@ -9,8 +9,22 @@ use Doctrine\DBAL\Connection;
 
 final class StorefrontReferenceRepository
 {
-    public function __construct(private Connection $connection)
+    public function __construct(
+        private Connection $connection,
+        private PlatformSettingsRepository $platformSettings,
+    ) {
+    }
+
+    /**
+     * I-15 — the shop's reachable channels as the storefront labels them.
+     *
+     * @return array{phone: string, whatsapp: string}
+     */
+    public function contactChannels(): array
     {
+        $settings = $this->platformSettings->get();
+
+        return ['phone' => $settings['contactPhone'], 'whatsapp' => $settings['contactWhatsapp']];
     }
 
     public function deliveryPolicy(): DeliveryPolicy
@@ -45,7 +59,7 @@ final class StorefrontReferenceRepository
     public function isQuoteCategory(string $slug): bool
     {
         $eligible = $this->connection->fetchOne(
-            'SELECT quote_eligible FROM storefront_category WHERE slug = :slug',
+            "SELECT quote_eligible FROM storefront_category WHERE slug = :slug AND approval_status = 'APPROVED'",
             ['slug' => $slug],
         );
 
@@ -72,12 +86,16 @@ final class StorefrontReferenceRepository
      * JSON tree go with it, and so does every legacy `parent_slug` descendant. Hiding is a
      * read-side concern only: the row and its products stay in place and stay reachable.
      *
+     * spec-run-8 R31 — an unapproved category is dropped the same way, subtree included: the
+     * navigation is a public read, so a submission still awaiting review never appears in it.
+     *
      * @return list<array{slug: string, label: string, subs: list<array{label: string, children?: list<array<string, mixed>>}>}>
      */
     public function categories(): array
     {
         $rows = $this->connection->fetchAllAssociative(
-            'SELECT slug, label, subcategories, hidden, parent_slug FROM storefront_category ORDER BY sort_order ASC, slug ASC',
+            'SELECT slug, label, subcategories, hidden, parent_slug, approval_status
+             FROM storefront_category ORDER BY sort_order ASC, slug ASC',
         );
 
         $bySlug = [];
@@ -101,7 +119,7 @@ final class StorefrontReferenceRepository
     }
 
     /**
-     * Is this row hidden itself, or a descendant of a hidden row?
+     * Is this row unapproved, hidden itself, or a descendant of either?
      *
      * The ancestor walk is guarded so a malformed `parent_slug` cycle can never turn the
      * storefront read into an endless loop.
@@ -112,6 +130,10 @@ final class StorefrontReferenceRepository
      */
     private static function isObscured(array $row, array $rowsBySlug, array $visited = []): bool
     {
+        if ('APPROVED' !== (string) ($row['approval_status'] ?? '')) {
+            return true;
+        }
+
         if (filter_var($row['hidden'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
             return true;
         }

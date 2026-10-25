@@ -41,6 +41,22 @@ final class StorefrontProductSqlFallbackTest extends KernelTestCase
 
         $connection = self::connection();
         $connection->executeStatement('DELETE FROM storefront_product_view WHERE category_slug = :category', ['category' => self::CATEGORY]);
+        // spec-run-8 R31 — a product is only reachable through an approved, visible category,
+        // so the fixture owns the category its products point at.
+        $connection->executeStatement('DELETE FROM storefront_category WHERE slug = :category', ['category' => self::CATEGORY]);
+        $connection->insert('storefront_category', [
+            'slug' => self::CATEGORY,
+            'label' => 'IT fallback',
+            'subcategories' => '[]',
+            'quote_eligible' => false,
+            'hidden' => false,
+            'sort_order' => 999,
+            'parent_slug' => null,
+            'approval_status' => 'APPROVED',
+        ], [
+            'quote_eligible' => ParameterType::BOOLEAN,
+            'hidden' => ParameterType::BOOLEAN,
+        ]);
 
         self::$brand ??= 'FallbackBrand'.substr(bin2hex(random_bytes(3)), 0, 4);
 
@@ -59,6 +75,8 @@ final class StorefrontProductSqlFallbackTest extends KernelTestCase
             );
         }
         $this->slugs = [];
+
+        self::connection()->executeStatement('DELETE FROM storefront_category WHERE slug = :category', ['category' => self::CATEGORY]);
 
         parent::tearDown();
     }
@@ -250,12 +268,16 @@ final class StorefrontProductSqlFallbackTest extends KernelTestCase
                 'is_new' => $isNew,
                 'is_best' => $isBest,
                 'description' => $name.' description',
+                // spec-run-8 R28 — these products exist to be browsed, so they are approved and published.
+                'approval_status' => 'APPROVED',
+                'published' => true,
             ],
             [
                 'rating' => ParameterType::STRING,
                 'is_new' => ParameterType::BOOLEAN,
                 'is_best' => ParameterType::BOOLEAN,
                 'reviews' => ParameterType::INTEGER,
+                'published' => ParameterType::BOOLEAN,
                 'price_minor' => ParameterType::INTEGER,
                 'old_price_minor' => ParameterType::INTEGER,
             ],

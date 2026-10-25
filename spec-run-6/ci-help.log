@@ -1,0 +1,19 @@
+ci-local.sh — run the E-commerce GitHub pipelines locally before pushing.
+
+Usage: ./ci-local.sh [options]
+
+Options:
+  --quick            quality, tests and harness only (skip infection + prod-image)
+  --skip-infection   skip the mutation-testing job
+  --skip-prod-image  skip the production image smoke test
+  --skip-harness     skip bin/harness-check
+  --no-build         reuse the current image instead of rebuilding it
+  -h, --help         show this help
+
+Environment:
+  COMPOSE_PROJECT_NAME  container namespace (default: ecommerce-ci)
+  COMPOSE_FILE          compose file (default: compose.yaml)
+  CI_COMPOSE_FILE       host-port overlay (default: compose.ci.yaml)
+  ECOMMERCE_DIR         backend checkout path (default: <script dir>/E-commerce)
+  PROD_SMOKE_PORT       host port for the prod readiness probe (default: ephemeral)
+exit=0

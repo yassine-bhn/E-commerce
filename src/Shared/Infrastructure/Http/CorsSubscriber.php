@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Http;
 
+use App\Shared\Domain\Http\OriginAllowList;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,12 +13,20 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * The browser's Origin header value is echoed back verbatim in Access-Control-Allow-Origin, so an
+ * allow-listed origin is judged on the exact header spelling through OriginAllowList::containsRaw(),
+ * never on a normalised form of it.
+ */
 final class CorsSubscriber implements EventSubscriberInterface
 {
+    private readonly OriginAllowList $allowList;
+
     public function __construct(
         #[Autowire('%env(STOREFRONT_CORS_ORIGIN)%')]
-        private readonly string $allowedOrigins,
+        string $allowedOrigins,
     ) {
+        $this->allowList = OriginAllowList::fromCommaSeparated($allowedOrigins);
     }
 
     public static function getSubscribedEvents(): array
@@ -67,23 +76,12 @@ final class CorsSubscriber implements EventSubscriberInterface
 
         $response->headers->set('Vary', 'Origin');
 
-        if ('' !== $origin && $this->isAllowedOrigin($origin)) {
+        if ('' !== $origin && $this->allowList->containsRaw($origin)) {
             $response->headers->set('Access-Control-Allow-Origin', $origin);
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
 
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Customer-Id, Idempotency-Key');
-    }
-
-    private function isAllowedOrigin(string $origin): bool
-    {
-        foreach (explode(',', $this->allowedOrigins) as $allowed) {
-            if (trim($allowed) === $origin) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

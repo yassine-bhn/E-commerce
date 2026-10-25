@@ -4,104 +4,310 @@ deptrac:
   exclude_files:
     - '#.*Kernel\.php#'
 
+  # One layer per (bounded context, tier): the collectors are a partition of src/,
+  # so no class belongs to two layers and a dependency is counted once. The old
+  # model also had one layer per context (`src/Catalog/.*`) on top of the tier
+  # layers, which overlaps by construction: every class was in two layers, the
+  # context layer allowed only `Shared`, and each dependency produced two
+  # violations. 27 disjoint layers let the ruleset state LAY-001…LAY-004 directly.
   layers:
-    - name: Domain
+    # --- Cart ---
+    - name: Cart.Domain
       collectors:
         - type: directory
-          value: src/.+/Domain/.*
-    - name: Application
+          value: src/Cart/Domain/.*
+    - name: Cart.Application
       collectors:
         - type: directory
-          value: src/.+/Application/.*
-    - name: Infrastructure
+          value: src/Cart/Application/.*
+    - name: Cart.Infrastructure
       collectors:
         - type: directory
-          value: src/.+/Infrastructure/.*
-    - name: SharedDomain
+          value: src/Cart/Infrastructure/.*
+
+    # --- Catalog ---
+    - name: Catalog.Domain
+      collectors:
+        - type: directory
+          value: src/Catalog/Domain/.*
+    - name: Catalog.Application
+      collectors:
+        - type: directory
+          value: src/Catalog/Application/.*
+    - name: Catalog.Infrastructure
+      collectors:
+        - type: directory
+          value: src/Catalog/Infrastructure/.*
+
+    # --- Identity ---
+    - name: Identity.Domain
+      collectors:
+        - type: directory
+          value: src/Identity/Domain/.*
+    - name: Identity.Application
+      collectors:
+        - type: directory
+          value: src/Identity/Application/.*
+    - name: Identity.Infrastructure
+      collectors:
+        - type: directory
+          value: src/Identity/Infrastructure/.*
+
+    # --- Inventory ---
+    - name: Inventory.Domain
+      collectors:
+        - type: directory
+          value: src/Inventory/Domain/.*
+    - name: Inventory.Application
+      collectors:
+        - type: directory
+          value: src/Inventory/Application/.*
+    - name: Inventory.Infrastructure
+      collectors:
+        - type: directory
+          value: src/Inventory/Infrastructure/.*
+
+    # --- Ordering ---
+    - name: Ordering.Domain
+      collectors:
+        - type: directory
+          value: src/Ordering/Domain/.*
+    - name: Ordering.Application
+      collectors:
+        - type: directory
+          value: src/Ordering/Application/.*
+    - name: Ordering.Infrastructure
+      collectors:
+        - type: directory
+          value: src/Ordering/Infrastructure/.*
+
+    # --- Payment ---
+    - name: Payment.Domain
+      collectors:
+        - type: directory
+          value: src/Payment/Domain/.*
+    - name: Payment.Application
+      collectors:
+        - type: directory
+          value: src/Payment/Application/.*
+    - name: Payment.Infrastructure
+      collectors:
+        - type: directory
+          value: src/Payment/Infrastructure/.*
+
+    # --- Promotions ---
+    - name: Promotions.Domain
+      collectors:
+        - type: directory
+          value: src/Promotions/Domain/.*
+    - name: Promotions.Application
+      collectors:
+        - type: directory
+          value: src/Promotions/Application/.*
+    - name: Promotions.Infrastructure
+      collectors:
+        - type: directory
+          value: src/Promotions/Infrastructure/.*
+
+    # --- Shipping ---
+    - name: Shipping.Domain
+      collectors:
+        - type: directory
+          value: src/Shipping/Domain/.*
+    - name: Shipping.Application
+      collectors:
+        - type: directory
+          value: src/Shipping/Application/.*
+    - name: Shipping.Infrastructure
+      collectors:
+        - type: directory
+          value: src/Shipping/Infrastructure/.*
+
+    # --- Shared kernel ---
+    - name: Shared.Domain
       collectors:
         - type: directory
           value: src/Shared/Domain/.*
-    - name: SharedApplication
+    - name: Shared.Application
       collectors:
         - type: directory
           value: src/Shared/Application/.*
-    - name: SharedInfrastructure
+    - name: Shared.Infrastructure
       collectors:
         - type: directory
           value: src/Shared/Infrastructure/.*
-    - name: Catalog
-      collectors:
-        - type: directory
-          value: src/Catalog/.*
-    - name: Cart
-      collectors:
-        - type: directory
-          value: src/Cart/.*
-    - name: Ordering
-      collectors:
-        - type: directory
-          value: src/Ordering/.*
-    - name: Payment
-      collectors:
-        - type: directory
-          value: src/Payment/.*
-    - name: Inventory
-      collectors:
-        - type: directory
-          value: src/Inventory/.*
-    - name: Shipping
-      collectors:
-        - type: directory
-          value: src/Shipping/.*
-    - name: Identity
-      collectors:
-        - type: directory
-          value: src/Identity/.*
-    - name: Promotions
-      collectors:
-        - type: directory
-          value: src/Promotions/.*
-    - name: Shared
-      collectors:
-        - type: directory
-          value: src/Shared/.*
 
   ruleset:
-    Domain:
-      - SharedDomain
-    Application:
-      - Domain
-      - SharedDomain
-      - SharedApplication
-    Infrastructure:
-      - Domain
-      - Application
-      - SharedDomain
-      - SharedApplication
-      - SharedInfrastructure
-    SharedDomain: []
-    SharedApplication:
-      - SharedDomain
-    SharedInfrastructure:
-      - SharedDomain
-      - SharedApplication
-    Catalog:
-      - Shared
-    Cart:
-      - Shared
-    Ordering:
-      - Shared
-    Payment:
-      - Shared
-    Inventory:
-      - Shared
-    Shipping:
-      - Shared
-    Identity:
-      - Shared
-    Promotions:
-      - Shared
-    Shared:
-      - SharedDomain
-      - SharedApplication
-      - SharedInfrastructure
+    # LAY-001 — Domain is dependency-free: its own layer (allowed implicitly) plus
+    # the shared kernel. Nothing outward, no vendor coupling beyond that.
+    Cart.Domain:
+      - Shared.Domain
+    Catalog.Domain:
+      - Shared.Domain
+    Identity.Domain:
+      - Shared.Domain
+    Inventory.Domain:
+      - Shared.Domain
+    Ordering.Domain:
+      - Shared.Domain
+    Payment.Domain:
+      - Shared.Domain
+    Promotions.Domain:
+      - Shared.Domain
+    Shipping.Domain:
+      - Shared.Domain
+    Shared.Domain: []
+
+    # LAY-002 — Application orchestrates its own Domain and uses the shared ports.
+    # Cross-context Application/Domain is not in the list: integration goes through
+    # domain events or an ACL owned by Infrastructure (LAY-004).
+    Cart.Application:
+      - Cart.Domain
+      - Shared.Domain
+      - Shared.Application
+    Catalog.Application:
+      - Catalog.Domain
+      - Shared.Domain
+      - Shared.Application
+    Identity.Application:
+      - Identity.Domain
+      - Shared.Domain
+      - Shared.Application
+    Inventory.Application:
+      - Inventory.Domain
+      - Shared.Domain
+      - Shared.Application
+    Ordering.Application:
+      - Ordering.Domain
+      - Shared.Domain
+      - Shared.Application
+    Payment.Application:
+      - Payment.Domain
+      - Shared.Domain
+      - Shared.Application
+    Promotions.Application:
+      - Promotions.Domain
+      - Shared.Domain
+      - Shared.Application
+    Shipping.Application:
+      - Shipping.Domain
+      - Shared.Domain
+      - Shared.Application
+    Shared.Application:
+      - Shared.Domain
+
+    # LAY-003 / LAY-004 — Infrastructure implements the ports. It may name its own
+    # inner layers, the shared kernel, and another context only through that
+    # context's Infrastructure (the explicit anti-corruption layer). No inner layer
+    # may name Infrastructure back, and Domain/Application of another context stay
+    # unreachable from here.
+    Cart.Infrastructure:
+      - Cart.Domain
+      - Cart.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Catalog.Infrastructure
+      - Identity.Infrastructure
+      - Inventory.Infrastructure
+      - Ordering.Infrastructure
+      - Payment.Infrastructure
+      - Promotions.Infrastructure
+      - Shipping.Infrastructure
+    Catalog.Infrastructure:
+      - Catalog.Domain
+      - Catalog.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Cart.Infrastructure
+      - Identity.Infrastructure
+      - Inventory.Infrastructure
+      - Ordering.Infrastructure
+      - Payment.Infrastructure
+      - Promotions.Infrastructure
+      - Shipping.Infrastructure
+    Identity.Infrastructure:
+      - Identity.Domain
+      - Identity.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Cart.Infrastructure
+      - Catalog.Infrastructure
+      - Inventory.Infrastructure
+      - Ordering.Infrastructure
+      - Payment.Infrastructure
+      - Promotions.Infrastructure
+      - Shipping.Infrastructure
+    Inventory.Infrastructure:
+      - Inventory.Domain
+      - Inventory.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Cart.Infrastructure
+      - Catalog.Infrastructure
+      - Identity.Infrastructure
+      - Ordering.Infrastructure
+      - Payment.Infrastructure
+      - Promotions.Infrastructure
+      - Shipping.Infrastructure
+    Ordering.Infrastructure:
+      - Ordering.Domain
+      - Ordering.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Cart.Infrastructure
+      - Catalog.Infrastructure
+      - Identity.Infrastructure
+      - Inventory.Infrastructure
+      - Payment.Infrastructure
+      - Promotions.Infrastructure
+      - Shipping.Infrastructure
+    Payment.Infrastructure:
+      - Payment.Domain
+      - Payment.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Cart.Infrastructure
+      - Catalog.Infrastructure
+      - Identity.Infrastructure
+      - Inventory.Infrastructure
+      - Ordering.Infrastructure
+      - Promotions.Infrastructure
+      - Shipping.Infrastructure
+    Promotions.Infrastructure:
+      - Promotions.Domain
+      - Promotions.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Cart.Infrastructure
+      - Catalog.Infrastructure
+      - Identity.Infrastructure
+      - Inventory.Infrastructure
+      - Ordering.Infrastructure
+      - Payment.Infrastructure
+      - Shipping.Infrastructure
+    Shipping.Infrastructure:
+      - Shipping.Domain
+      - Shipping.Application
+      - Shared.Domain
+      - Shared.Application
+      - Shared.Infrastructure
+      - Cart.Infrastructure
+      - Catalog.Infrastructure
+      - Identity.Infrastructure
+      - Inventory.Infrastructure
+      - Ordering.Infrastructure
+      - Payment.Infrastructure
+      - Promotions.Infrastructure
+    # The shared kernel is the layer every context depends on, so it may not depend
+    # back on a context: nothing in `src/Shared` names one, and allowing it would let
+    # a Shared <-> context cycle exist without deptrac ever reporting it.
+    Shared.Infrastructure:
+      - Shared.Domain
+      - Shared.Application

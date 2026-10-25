@@ -1,0 +1,161 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\MacroNamespace;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTestError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* @WebProfiler/Profiler/table.html.twig */
+class __TwigTemplate_ab68b72c860caa4344c4c6e0c6ae06cc extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, MacroNamespace>
+     */
+    private array $macros = [];
+    private \Twig\Runtime\EscaperRuntime $escaper;
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->escaper = $env->getRuntime('Twig\Runtime\EscaperRuntime');
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Profiler/table.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Profiler/table.html.twig"));
+
+        // line 1
+        yield "<div class=\"table-with-search-field\">
+<table class=\"";
+        // line 2
+        yield (string) $this->escaper->escape(((array_key_exists("class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["class"]) || array_key_exists("class", $context) ? $context["class"] : (function () { throw new RuntimeError('Variable "class" does not exist.', 2, $this->source); })()), "")) : ("")), "html", null, true);
+        yield "\">
+    <thead>
+        <tr>
+            <th scope=\"col\" class=\"key\">";
+        // line 5
+        yield (string) ((array_key_exists("labels", $context)) ? ($this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["labels"]) || array_key_exists("labels", $context) ? $context["labels"] : (function () { throw new RuntimeError('Variable "labels" does not exist.', 5, $this->source); })()), 0, [], "array", false, false, false, 5), "html", null, true)) : ("Key"));
+        yield "</th>
+            <th scope=\"col\">";
+        // line 6
+        yield (string) ((array_key_exists("labels", $context)) ? ($this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["labels"]) || array_key_exists("labels", $context) ? $context["labels"] : (function () { throw new RuntimeError('Variable "labels" does not exist.', 6, $this->source); })()), 1, [], "array", false, false, false, 6), "html", null, true)) : ("Value"));
+        yield "</th>
+        </tr>
+    </thead>
+    <tbody>
+        ";
+        // line 10
+        $context['_parent'] = $context;
+        $context['_seq'] = CoreExtension::ensureTraversable(Twig\Extension\CoreExtension::sort($this->env, $this->env->hasExtension(\Twig\Extension\SandboxExtension::class) && $this->env->getExtension(\Twig\Extension\SandboxExtension::class)->getChecker()->isSandboxed($this->source), Twig\Extension\CoreExtension::keys((isset($context["data"]) || array_key_exists("data", $context) ? $context["data"] : (function () { throw new RuntimeError('Variable "data" does not exist.', 10, $this->source); })()))));
+        foreach ($context['_seq'] as $context["_key"] => $context["key"]) {
+            // line 11
+            yield "            <tr>
+                <th scope=\"row\">";
+            // line 12
+            yield (string) $this->escaper->escape($context["key"], "html", null, true);
+            yield "</th>
+                <td>";
+            // line 13
+            yield (string) $this->extensions['Symfony\Bundle\WebProfilerBundle\Twig\WebProfilerExtension']->dumpData($this->env, CoreExtension::getAttribute($this->env, $this->source, (isset($context["data"]) || array_key_exists("data", $context) ? $context["data"] : (function () { throw new RuntimeError('Variable "data" does not exist.', 13, $this->source); })()), $context["key"], [], "array", false, false, false, 13));
+            yield "</td>
+            </tr>
+        ";
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_key'], $context['key'], $context['_parent']);
+        $context = array_intersect_key($context, $_parent);
+        $context += $_parent;
+        // line 16
+        yield "    </tbody>
+</table>
+</div>
+";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        return; yield;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "@WebProfiler/Profiler/table.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDefaultEscapeStrategy(): string|false
+    {
+        return "html";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  94 => 16,  84 => 13,  80 => 12,  77 => 11,  73 => 10,  66 => 6,  62 => 5,  56 => 2,  53 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<div class=\"table-with-search-field\">
+<table class=\"{{ class|default(\x27\x27) }}\">
+    <thead>
+        <tr>
+            <th scope=\"col\" class=\"key\">{{ labels is defined ? labels[0] : \x27Key\x27 }}</th>
+            <th scope=\"col\">{{ labels is defined ? labels[1] : \x27Value\x27 }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key in data|keys|sort %}
+            <tr>
+                <th scope=\"row\">{{ key }}</th>
+                <td>{{ profiler_dump(data[key]) }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+", "@WebProfiler/Profiler/table.html.twig", "/app/vendor/symfony/web-profiler-bundle/Resources/views/Profiler/table.html.twig");
+    }
+}

@@ -1,0 +1,37 @@
+ M .env
+ M .env.prod.example
+ M config/packages/security.yaml
+ M deptrac.yaml
+ M src/Identity/Infrastructure/Security/LoginAuthenticator.php
+ M tests/Contract/Storefront/HttpApiContractTest.php
+ M tests/Functional/CorsTest.php
+ M tests/Functional/GoogleOAuthTest.php
+ M tests/Functional/StorefrontCatalogBrowseTest.php
+?? .agents/audit/B-local-ci-deptrac-gate.log
+?? .agents/audit/F-remember-me.log
+?? .agents/state/B-local-ci-deptrac-gate.md
+?? .agents/state/F-remember-me.md
+?? public/uploads/products/01a167bf-a35e-746d-bd7f-4fd436f2f440.png
+?? spec-run-6/ci-full-baseline.log
+?? spec-run-6/ci-help.log
+?? spec-run-6/ci-quick.log
+?? spec-run-6/deptrac-baseline.log
+?? spec-run-6/deptrac-candidate.log
+?? spec-run-6/deptrac-candidate.yaml
+?? spec-run-6/deptrac-fixed.log
+?? spec-run-6/deptrac-report.json
+?? spec-run-6/failures.md
+?? spec-run-6/partition-proof.txt
+?? spec-run-6/tree-before-quick-final.txt
+?? spec-run-6/verify-full-1.log
+?? spec-run-6/verify-full-2.log
+?? spec-run-6/verify-full-3.log
+?? spec-run-6/verify-quick.log
+?? spec-run-7/
+?? src/Identity/Infrastructure/Security/MalformedRememberMeCookieSubscriber.php
+?? tests/Functional/RememberMeTest.php
+?? tests/Integration/Identity/FreshProductionKernel.php
+?? tests/Integration/Identity/RememberMeCookiePolicyTest.php
+0a1715dc0572f3f5f3aec0cc5685cc50  deptrac.yaml
+406f7e0f633a71c49667eb6390e9035b  tests/Functional/StorefrontCatalogBrowseTest.php
+Fri Oct 23 13:57:47 UTC 2026

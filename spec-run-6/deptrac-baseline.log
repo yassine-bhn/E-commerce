@@ -1,0 +1,14 @@
+Composer detected issues in your platform:
+
+Your Composer dependencies require a PHP version ">= 8.5.0". You are running 8.4.13.
+
+PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.5.0". You are running 8.4.13. in /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/composer/autoload_real.php(25): require()
+#1 /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/autoload.php(22): ComposerAutoloaderInite8d3a95da1ed2c87bca868e4168fd74a::getLoader()
+#2 phar:///home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/qossmic/deptrac-shim/deptrac/deptrac.php(18): include_once('...')
+#3 phar:///home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/qossmic/deptrac-shim/deptrac/deptrac.php(20): {closure:phar:///home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/qossmic/deptrac-shim/deptrac/deptrac.php:16}()
+#4 /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/qossmic/deptrac-shim/deptrac(14): require('...')
+#5 /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/bin/deptrac(119): include('...')
+#6 {main}
+  thrown in /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/vendor/composer/platform_check.php on line 22

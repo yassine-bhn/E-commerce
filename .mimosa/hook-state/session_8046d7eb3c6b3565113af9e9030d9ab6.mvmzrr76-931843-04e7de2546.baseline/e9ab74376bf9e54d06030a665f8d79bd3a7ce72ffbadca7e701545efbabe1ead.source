@@ -1,0 +1,791 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\MacroNamespace;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTestError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* daisyui_5_layout.html.twig */
+class __TwigTemplate_54233207d67ffc1296d32fc9ca872883 extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, MacroNamespace>
+     */
+    private array $macros = [];
+    private \Twig\Runtime\EscaperRuntime $escaper;
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->escaper = $env->getRuntime('Twig\Runtime\EscaperRuntime');
+
+        $this->parent = false;
+
+        $this->ensureTraitsAllowed();
+
+        // line 1
+        $_trait_0 = $this->load("form_div_layout.html.twig", 1);
+        if (!$_trait_0->unwrap()->isTraitable()) {
+            throw new RuntimeError('Template "'."form_div_layout.html.twig".'" cannot be used as a trait.', 1, $this->source);
+        }
+        $_trait_0_blocks = $_trait_0->unwrap()->getBlocks();
+
+        $this->traits = $_trait_0_blocks;
+
+        $this->blocks = array_merge(
+            $this->traits,
+            [
+                'form_row' => [$this, 'block_form_row'],
+                'widget_attributes' => [$this, 'block_widget_attributes'],
+                'form_errors' => [$this, 'block_form_errors'],
+                'form_help' => [$this, 'block_form_help'],
+                'form_label' => [$this, 'block_form_label'],
+                'button_widget' => [$this, 'block_button_widget'],
+                'submit_widget' => [$this, 'block_submit_widget'],
+                'choice_widget_expanded' => [$this, 'block_choice_widget_expanded'],
+                'checkbox_row' => [$this, 'block_checkbox_row'],
+                'checkbox_widget' => [$this, 'block_checkbox_widget'],
+                'radio_widget' => [$this, 'block_radio_widget'],
+                'choice_widget_collapsed' => [$this, 'block_choice_widget_collapsed'],
+                'textarea_widget' => [$this, 'block_textarea_widget'],
+                'range_widget' => [$this, 'block_range_widget'],
+                'file_widget' => [$this, 'block_file_widget'],
+                'form_widget_simple' => [$this, 'block_form_widget_simple'],
+            ]
+        );
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "daisyui_5_layout.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "daisyui_5_layout.html.twig"));
+
+        // line 3
+        yield from $this->unwrap()->yieldBlock('form_row', $context, $blocks);
+        // line 8
+        yield from $this->unwrap()->yieldBlock('widget_attributes', $context, $blocks);
+        // line 14
+        yield from $this->unwrap()->yieldBlock('form_errors', $context, $blocks);
+        // line 24
+        yield from $this->unwrap()->yieldBlock('form_help', $context, $blocks);
+        // line 29
+        yield from $this->unwrap()->yieldBlock('form_label', $context, $blocks);
+        // line 34
+        yield from $this->unwrap()->yieldBlock('button_widget', $context, $blocks);
+        // line 39
+        yield from $this->unwrap()->yieldBlock('submit_widget', $context, $blocks);
+        // line 44
+        yield from $this->unwrap()->yieldBlock('choice_widget_expanded', $context, $blocks);
+        // line 58
+        yield from $this->unwrap()->yieldBlock('checkbox_row', $context, $blocks);
+        // line 74
+        yield from $this->unwrap()->yieldBlock('checkbox_widget', $context, $blocks);
+        // line 79
+        yield from $this->unwrap()->yieldBlock('radio_widget', $context, $blocks);
+        // line 84
+        yield from $this->unwrap()->yieldBlock('choice_widget_collapsed', $context, $blocks);
+        // line 89
+        yield from $this->unwrap()->yieldBlock('textarea_widget', $context, $blocks);
+        // line 94
+        yield from $this->unwrap()->yieldBlock('range_widget', $context, $blocks);
+        // line 100
+        yield from $this->unwrap()->yieldBlock('file_widget', $context, $blocks);
+        // line 106
+        yield "
+";
+        // line 107
+        yield from $this->unwrap()->yieldBlock('form_widget_simple', $context, $blocks);
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        return; yield;
+    }
+
+    // line 3
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_form_row(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_row"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_row"));
+
+        // line 4
+        $context["row_attr"] = Twig\Extension\CoreExtension::merge((isset($context["row_attr"]) || array_key_exists("row_attr", $context) ? $context["row_attr"] : (function () { throw new RuntimeError('Variable "row_attr" does not exist.', 4, $this->source); })()), ["class" => ((CoreExtension::getAttribute($this->env, $this->source, ($context["row_attr"] ?? null), "class", [], "any", true, true, false, 4)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["row_attr"]) || array_key_exists("row_attr", $context) ? $context["row_attr"] : (function () { throw new RuntimeError('Variable "row_attr" does not exist.', 4, $this->source); })()), "class", [], "any", false, false, false, 4), ((array_key_exists("row_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["row_class"]) || array_key_exists("row_class", $context) ? $context["row_class"] : (function () { throw new RuntimeError('Variable "row_class" does not exist.', 4, $this->source); })()), "flex flex-col mb-6")) : ("flex flex-col mb-6")))) : (((array_key_exists("row_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["row_class"]) || array_key_exists("row_class", $context) ? $context["row_class"] : (function () { throw new RuntimeError('Variable "row_class" does not exist.', 4, $this->source); })()), "flex flex-col mb-6")) : ("flex flex-col mb-6"))))]);
+        // line 5
+        yield from $this->yieldParentBlock("form_row", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 8
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_widget_attributes(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "widget_attributes"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "widget_attributes"));
+
+        // line 9
+        $context["widget_errors_class"] = ((array_key_exists("widget_errors_class", $context)) ? ((isset($context["widget_errors_class"]) || array_key_exists("widget_errors_class", $context) ? $context["widget_errors_class"] : (function () { throw new RuntimeError('Variable "widget_errors_class" does not exist.', 9, $this->source); })())) : ("input-error"));
+        // line 10
+        $context["attr"] = Twig\Extension\CoreExtension::merge((isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 10, $this->source); })()), ["class" => (((CoreExtension::getAttribute($this->env, $this->source, ($context["attr"] ?? null), "class", [], "any", true, true, false, 10)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 10, $this->source); })()), "class", [], "any", false, false, false, 10), ((array_key_exists("widget_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["widget_class"]) || array_key_exists("widget_class", $context) ? $context["widget_class"] : (function () { throw new RuntimeError('Variable "widget_class" does not exist.', 10, $this->source); })()), "mt-1 w-full")) : ("mt-1 w-full")))) : (((array_key_exists("widget_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["widget_class"]) || array_key_exists("widget_class", $context) ? $context["widget_class"] : (function () { throw new RuntimeError('Variable "widget_class" does not exist.', 10, $this->source); })()), "mt-1 w-full")) : ("mt-1 w-full")))) . ((((($tmp = Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["errors"]) || array_key_exists("errors", $context) ? $context["errors"] : (function () { throw new RuntimeError('Variable "errors" does not exist.', 10, $this->source); })()))) && $tmp instanceof Markup ? (string) $tmp : $tmp) && (($tmp = (isset($context["widget_errors_class"]) || array_key_exists("widget_errors_class", $context) ? $context["widget_errors_class"] : (function () { throw new RuntimeError('Variable "widget_errors_class" does not exist.', 10, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp))) ? ((" " . (isset($context["widget_errors_class"]) || array_key_exists("widget_errors_class", $context) ? $context["widget_errors_class"] : (function () { throw new RuntimeError('Variable "widget_errors_class" does not exist.', 10, $this->source); })()))) : ("")))]);
+        // line 11
+        yield from $this->yieldParentBlock("widget_attributes", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 14
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_form_errors(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_errors"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_errors"));
+
+        // line 15
+        if ((Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["errors"]) || array_key_exists("errors", $context) ? $context["errors"] : (function () { throw new RuntimeError('Variable "errors" does not exist.', 15, $this->source); })())) > 0)) {
+            // line 16
+            yield "<ul>";
+            // line 17
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable((isset($context["errors"]) || array_key_exists("errors", $context) ? $context["errors"] : (function () { throw new RuntimeError('Variable "errors" does not exist.', 17, $this->source); })()));
+            $context['loop'] = [
+              'parent' => $context['_parent'],
+              'index0' => 0,
+              'index'  => 1,
+              'first'  => true,
+            ];
+            if (is_array($context['_seq']) || (is_object($context['_seq']) && $context['_seq'] instanceof \Countable)) {
+                $length = count($context['_seq']);
+                $context['loop']['revindex0'] = $length - 1;
+                $context['loop']['revindex'] = $length;
+                $context['loop']['length'] = $length;
+                $context['loop']['last'] = 1 === $length;
+            }
+            foreach ($context['_seq'] as $context["_key"] => $context["error"]) {
+                // line 18
+                yield "<li class=\"";
+                yield (string) $this->escaper->escape(((array_key_exists("error_item_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["error_item_class"]) || array_key_exists("error_item_class", $context) ? $context["error_item_class"] : (function () { throw new RuntimeError('Variable "error_item_class" does not exist.', 18, $this->source); })()), "text-error")) : ("text-error")), "html", null, true);
+                yield "\" id=\"";
+                yield (string) $this->escaper->escape((((isset($context["id"]) || array_key_exists("id", $context) ? $context["id"] : (function () { throw new RuntimeError('Variable "id" does not exist.', 18, $this->source); })()) . "_error") . CoreExtension::getAttribute($this->env, $this->source, $context["loop"], "index", [], "any", false, false, false, 18)), "html", null, true);
+                yield "\">";
+                yield (string) $this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, $context["error"], "message", [], "any", false, false, false, 18), "html", null, true);
+                yield "</li>";
+                ++$context['loop']['index0'];
+                ++$context['loop']['index'];
+                $context['loop']['first'] = false;
+                if (isset($context['loop']['revindex0'], $context['loop']['revindex'])) {
+                    --$context['loop']['revindex0'];
+                    --$context['loop']['revindex'];
+                    $context['loop']['last'] = 0 === $context['loop']['revindex0'];
+                }
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['error'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent);
+            $context += $_parent;
+            // line 20
+            yield "</ul>";
+        }
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 24
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_form_help(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_help"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_help"));
+
+        // line 25
+        $context["help_attr"] = Twig\Extension\CoreExtension::merge((isset($context["help_attr"]) || array_key_exists("help_attr", $context) ? $context["help_attr"] : (function () { throw new RuntimeError('Variable "help_attr" does not exist.', 25, $this->source); })()), ["class" => Twig\Extension\CoreExtension::trim(((CoreExtension::getAttribute($this->env, $this->source, ($context["help_attr"] ?? null), "class", [], "any", true, true, false, 25)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["help_attr"]) || array_key_exists("help_attr", $context) ? $context["help_attr"] : (function () { throw new RuntimeError('Variable "help_attr" does not exist.', 25, $this->source); })()), "class", [], "any", false, false, false, 25), "mt-1 label")) : ("mt-1 label")))]);
+        // line 26
+        yield from $this->yieldParentBlock("form_help", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 29
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_form_label(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_label"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_label"));
+
+        // line 30
+        $context["label_attr"] = Twig\Extension\CoreExtension::merge((isset($context["label_attr"]) || array_key_exists("label_attr", $context) ? $context["label_attr"] : (function () { throw new RuntimeError('Variable "label_attr" does not exist.', 30, $this->source); })()), ["class" => ((CoreExtension::getAttribute($this->env, $this->source, ($context["label_attr"] ?? null), "class", [], "any", true, true, false, 30)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["label_attr"]) || array_key_exists("label_attr", $context) ? $context["label_attr"] : (function () { throw new RuntimeError('Variable "label_attr" does not exist.', 30, $this->source); })()), "class", [], "any", false, false, false, 30), ((array_key_exists("label_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["label_class"]) || array_key_exists("label_class", $context) ? $context["label_class"] : (function () { throw new RuntimeError('Variable "label_class" does not exist.', 30, $this->source); })()), "label")) : ("label")))) : (((array_key_exists("label_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["label_class"]) || array_key_exists("label_class", $context) ? $context["label_class"] : (function () { throw new RuntimeError('Variable "label_class" does not exist.', 30, $this->source); })()), "label")) : ("label"))))]);
+        // line 31
+        yield from $this->yieldParentBlock("form_label", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 34
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_button_widget(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "button_widget"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "button_widget"));
+
+        // line 35
+        $context["attr"] = Twig\Extension\CoreExtension::merge((isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 35, $this->source); })()), ["class" => Twig\Extension\CoreExtension::trim((((CoreExtension::getAttribute($this->env, $this->source, ($context["attr"] ?? null), "class", [], "any", true, true, false, 35)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 35, $this->source); })()), "class", [], "any", false, false, false, 35), "btn-neutral")) : ("btn-neutral")) . " btn"))]);
+        // line 36
+        yield from $this->yieldParentBlock("button_widget", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 39
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_submit_widget(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "submit_widget"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "submit_widget"));
+
+        // line 40
+        $context["attr"] = Twig\Extension\CoreExtension::merge((isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 40, $this->source); })()), ["class" => Twig\Extension\CoreExtension::trim(((CoreExtension::getAttribute($this->env, $this->source, ($context["attr"] ?? null), "class", [], "any", true, true, false, 40)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 40, $this->source); })()), "class", [], "any", false, false, false, 40), "btn-primary")) : ("btn-primary")))]);
+        // line 41
+        yield from $this->yieldParentBlock("submit_widget", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 44
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_choice_widget_expanded(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "choice_widget_expanded"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "choice_widget_expanded"));
+
+        // line 45
+        $context["attr"] = Twig\Extension\CoreExtension::merge((isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 45, $this->source); })()), ["class" => ((CoreExtension::getAttribute($this->env, $this->source, ($context["attr"] ?? null), "class", [], "any", true, true, false, 45)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 45, $this->source); })()), "class", [], "any", false, false, false, 45), "mt-2")) : ("mt-2"))]);
+        // line 46
+        yield "<div ";
+        yield from         $this->unwrap()->yieldBlock("widget_container_attributes", $context, $blocks);
+        yield ">";
+        // line 47
+        $context['_parent'] = $context;
+        $context['_seq'] = CoreExtension::ensureTraversable((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 47, $this->source); })()));
+        foreach ($context['_seq'] as $context["_key"] => $context["child"]) {
+            // line 48
+            yield "            <label class=\"flex items-center label mb-2\">";
+            // line 49
+            yield (string) $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock($context["child"], 'widget');
+            // line 50
+            if ( !(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, $context["child"], "vars", [], "any", false, false, false, 50), "label", [], "any", false, false, false, 50) === false)) {
+                // line 51
+                yield (string) $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock($context["child"], 'label', ["translation_domain" => (isset($context["choice_translation_domain"]) || array_key_exists("choice_translation_domain", $context) ? $context["choice_translation_domain"] : (function () { throw new RuntimeError('Variable "choice_translation_domain" does not exist.', 51, $this->source); })()), "label_attr" => ["class" => ""]]);
+            }
+            // line 53
+            yield "</label>
+        ";
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_key'], $context['child'], $context['_parent']);
+        $context = array_intersect_key($context, $_parent);
+        $context += $_parent;
+        // line 55
+        yield "</div>";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 58
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_checkbox_row(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "checkbox_row"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "checkbox_row"));
+
+        // line 59
+        $context["row_attr"] = Twig\Extension\CoreExtension::merge((isset($context["row_attr"]) || array_key_exists("row_attr", $context) ? $context["row_attr"] : (function () { throw new RuntimeError('Variable "row_attr" does not exist.', 59, $this->source); })()), ["class" => ((CoreExtension::getAttribute($this->env, $this->source, ($context["row_attr"] ?? null), "class", [], "any", true, true, false, 59)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["row_attr"]) || array_key_exists("row_attr", $context) ? $context["row_attr"] : (function () { throw new RuntimeError('Variable "row_attr" does not exist.', 59, $this->source); })()), "class", [], "any", false, false, false, 59), ((array_key_exists("row_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["row_class"]) || array_key_exists("row_class", $context) ? $context["row_class"] : (function () { throw new RuntimeError('Variable "row_class" does not exist.', 59, $this->source); })()), "mb-6")) : ("mb-6")))) : (((array_key_exists("row_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["row_class"]) || array_key_exists("row_class", $context) ? $context["row_class"] : (function () { throw new RuntimeError('Variable "row_class" does not exist.', 59, $this->source); })()), "mb-6")) : ("mb-6"))))]);
+        // line 60
+        $context["widget_attr"] = [];
+        // line 61
+        if ( !Twig\Extension\CoreExtension::testEmpty((isset($context["help"]) || array_key_exists("help", $context) ? $context["help"] : (function () { throw new RuntimeError('Variable "help" does not exist.', 61, $this->source); })()))) {
+            // line 62
+            $context["widget_attr"] = ["attr" => ["aria-describedby" => ((isset($context["id"]) || array_key_exists("id", $context) ? $context["id"] : (function () { throw new RuntimeError('Variable "id" does not exist.', 62, $this->source); })()) . "_help")]];
+        }
+        // line 64
+        yield "<div";
+        $_v0 = $context;
+        $_v1 = ["attr" => (isset($context["row_attr"]) || array_key_exists("row_attr", $context) ? $context["row_attr"] : (function () { throw new RuntimeError('Variable "row_attr" does not exist.', 64, $this->source); })())];
+        if (!is_iterable($_v1)) {
+            throw new RuntimeError('Variables passed to the "with" tag must be a mapping.', 64, $this->getSourceContext());
+        }
+        $_v1 = CoreExtension::toArray($_v1);
+        $context = $_v1 + $context + $this->env->getGlobals();
+        yield from         $this->unwrap()->yieldBlock("attributes", $context, $blocks);
+        $context = $_v0;
+        yield ">";
+        // line 65
+        yield (string) $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 65, $this->source); })()), 'errors');
+        // line 66
+        yield "<label class=\"flex items-center label mb-2\">";
+        // line 67
+        yield (string) $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 67, $this->source); })()), 'widget', (isset($context["widget_attr"]) || array_key_exists("widget_attr", $context) ? $context["widget_attr"] : (function () { throw new RuntimeError('Variable "widget_attr" does not exist.', 67, $this->source); })()));
+        // line 68
+        yield from         $this->unwrap()->yieldBlock("form_label_content", $context, $blocks);
+        // line 69
+        yield "</label>";
+        // line 70
+        yield (string) $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 70, $this->source); })()), 'help');
+        // line 71
+        yield "</div>";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 74
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_checkbox_widget(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "checkbox_widget"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "checkbox_widget"));
+
+        // line 75
+        $context["widget_class"] = (((array_key_exists("widget_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["widget_class"]) || array_key_exists("widget_class", $context) ? $context["widget_class"] : (function () { throw new RuntimeError('Variable "widget_class" does not exist.', 75, $this->source); })()), "checkbox")) : ("checkbox")) . (((($tmp = Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["errors"]) || array_key_exists("errors", $context) ? $context["errors"] : (function () { throw new RuntimeError('Variable "errors" does not exist.', 75, $this->source); })()))) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? (" checkbox-error") : ("")));
+        // line 76
+        yield from $this->yieldParentBlock("checkbox_widget", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 79
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_radio_widget(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "radio_widget"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "radio_widget"));
+
+        // line 80
+        $context["widget_class"] = (((array_key_exists("widget_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["widget_class"]) || array_key_exists("widget_class", $context) ? $context["widget_class"] : (function () { throw new RuntimeError('Variable "widget_class" does not exist.', 80, $this->source); })()), "radio")) : ("radio")) . (((($tmp = Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["errors"]) || array_key_exists("errors", $context) ? $context["errors"] : (function () { throw new RuntimeError('Variable "errors" does not exist.', 80, $this->source); })()))) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? (" radio-error") : ("")));
+        // line 81
+        yield from $this->yieldParentBlock("radio_widget", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 84
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_choice_widget_collapsed(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "choice_widget_collapsed"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "choice_widget_collapsed"));
+
+        // line 85
+        $context["attr"] = Twig\Extension\CoreExtension::merge((isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 85, $this->source); })()), ["class" => Twig\Extension\CoreExtension::trim((((CoreExtension::getAttribute($this->env, $this->source, ($context["attr"] ?? null), "class", [], "any", true, true, false, 85)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 85, $this->source); })()), "class", [], "any", false, false, false, 85), "")) : ("")) . " select mt-2"))]);
+        // line 86
+        yield from $this->yieldParentBlock("choice_widget_collapsed", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 89
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_textarea_widget(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "textarea_widget"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "textarea_widget"));
+
+        // line 90
+        $context["attr"] = Twig\Extension\CoreExtension::merge((isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 90, $this->source); })()), ["class" => Twig\Extension\CoreExtension::trim((((CoreExtension::getAttribute($this->env, $this->source, ($context["attr"] ?? null), "class", [], "any", true, true, false, 90)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["attr"]) || array_key_exists("attr", $context) ? $context["attr"] : (function () { throw new RuntimeError('Variable "attr" does not exist.', 90, $this->source); })()), "class", [], "any", false, false, false, 90), "")) : ("")) . " textarea mt-2"))]);
+        // line 91
+        yield from $this->yieldParentBlock("textarea_widget", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 94
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_range_widget(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "range_widget"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "range_widget"));
+
+        // line 95
+        $context["type"] = ((array_key_exists("type", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["type"]) || array_key_exists("type", $context) ? $context["type"] : (function () { throw new RuntimeError('Variable "type" does not exist.', 95, $this->source); })()), "range")) : ("range"));
+        // line 96
+        $context["widget_class"] = ((array_key_exists("widget_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["widget_class"]) || array_key_exists("widget_class", $context) ? $context["widget_class"] : (function () { throw new RuntimeError('Variable "widget_class" does not exist.', 96, $this->source); })()), "range mt-2")) : ("range mt-2"));
+        // line 97
+        yield from         $this->unwrap()->yieldBlock("form_widget_simple", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 100
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_file_widget(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "file_widget"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "file_widget"));
+
+        // line 101
+        $context["type"] = ((array_key_exists("type", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["type"]) || array_key_exists("type", $context) ? $context["type"] : (function () { throw new RuntimeError('Variable "type" does not exist.', 101, $this->source); })()), "file")) : ("file"));
+        // line 102
+        $context["widget_class"] = ((array_key_exists("widget_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["widget_class"]) || array_key_exists("widget_class", $context) ? $context["widget_class"] : (function () { throw new RuntimeError('Variable "widget_class" does not exist.', 102, $this->source); })()), "file-input mt-2")) : ("file-input mt-2"));
+        // line 103
+        $context["widget_errors_class"] = "file-input-error";
+        // line 104
+        yield from         $this->unwrap()->yieldBlock("form_widget_simple", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 107
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_form_widget_simple(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_widget_simple"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "form_widget_simple"));
+
+        // line 108
+        if (( !array_key_exists("type", $context) || !CoreExtension::inFilter((isset($context["type"]) || array_key_exists("type", $context) ? $context["type"] : (function () { throw new RuntimeError('Variable "type" does not exist.', 108, $this->source); })()), ["hidden", "range", "file"]))) {
+            // line 109
+            $context["widget_class"] = ((array_key_exists("widget_class", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["widget_class"]) || array_key_exists("widget_class", $context) ? $context["widget_class"] : (function () { throw new RuntimeError('Variable "widget_class" does not exist.', 109, $this->source); })()), "input mt-2")) : ("input mt-2"));
+        }
+        // line 112
+        yield from $this->yieldParentBlock("form_widget_simple", $context, $blocks);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "daisyui_5_layout.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDefaultEscapeStrategy(): string|false
+    {
+        return "html";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  640 => 112,  637 => 109,  635 => 108,  622 => 107,  611 => 104,  609 => 103,  607 => 102,  605 => 101,  592 => 100,  581 => 97,  579 => 96,  577 => 95,  564 => 94,  553 => 91,  551 => 90,  538 => 89,  527 => 86,  525 => 85,  512 => 84,  501 => 81,  499 => 80,  486 => 79,  475 => 76,  473 => 75,  460 => 74,  449 => 71,  447 => 70,  445 => 69,  443 => 68,  441 => 67,  439 => 66,  437 => 65,  425 => 64,  422 => 62,  420 => 61,  418 => 60,  416 => 59,  403 => 58,  392 => 55,  384 => 53,  381 => 51,  379 => 50,  377 => 49,  375 => 48,  371 => 47,  367 => 46,  365 => 45,  352 => 44,  341 => 41,  339 => 40,  326 => 39,  315 => 36,  313 => 35,  300 => 34,  289 => 31,  287 => 30,  274 => 29,  263 => 26,  261 => 25,  248 => 24,  236 => 20,  215 => 18,  198 => 17,  196 => 16,  194 => 15,  181 => 14,  170 => 11,  168 => 10,  166 => 9,  153 => 8,  142 => 5,  140 => 4,  127 => 3,  116 => 107,  113 => 106,  111 => 100,  109 => 94,  107 => 89,  105 => 84,  103 => 79,  101 => 74,  99 => 58,  97 => 44,  95 => 39,  93 => 34,  91 => 29,  89 => 24,  87 => 14,  85 => 8,  83 => 3,  42 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("{% use \x27form_div_layout.html.twig\x27 %}
+
+{%- block form_row -%}
+    {%- set row_attr = row_attr|merge({class: row_attr.class|default(row_class|default(\x27flex flex-col mb-6\x27))}) -%}
+    {{- parent() -}}
+{%- endblock form_row -%}
+
+{%- block widget_attributes -%}
+    {%- set widget_errors_class = widget_errors_class is defined ? widget_errors_class : \x27input-error\x27 -%}
+    {%- set attr = attr|merge({class: attr.class|default(widget_class|default(\x27mt-1 w-full\x27)) ~ (errors|length and widget_errors_class ? \x27 \x27 ~ widget_errors_class : \x27\x27)}) -%}
+    {{- parent() -}}
+{%- endblock widget_attributes -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul>
+            {%- for error in errors -%}
+                <li class=\"{{ error_item_class|default(\x27text-error\x27) }}\" id=\"{{ id ~ \x27_error\x27 ~ loop.index }}\">{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block form_help -%}
+    {%- set help_attr = help_attr|merge({class: (help_attr.class|default(\x27mt-1 label\x27))|trim}) -%}
+    {{- parent() -}}
+{%- endblock form_help -%}
+
+{%- block form_label -%}
+    {%- set label_attr = label_attr|merge({class: label_attr.class|default(label_class|default(\x27label\x27))}) -%}
+    {{- parent() -}}
+{%- endblock form_label -%}
+
+{%- block button_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default(\x27btn-neutral\x27) ~ \x27 btn\x27)|trim}) -%}
+    {{- parent() -}}
+{%- endblock button_widget %}
+
+{%- block submit_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default(\x27btn-primary\x27))|trim}) -%}
+    {{- parent() -}}
+{%- endblock submit_widget %}
+
+{%- block choice_widget_expanded -%}
+    {%- set attr = attr|merge({class: attr.class|default(\x27mt-2\x27)}) -%}
+    <div {{ block(\x27widget_container_attributes\x27) }}>
+        {%- for child in form %}
+            <label class=\"flex items-center label mb-2\">
+                {{- form_widget(child) -}}
+                {%- if child.vars.label is not same as(false) -%}
+                    {{- form_label(child, null, {translation_domain: choice_translation_domain, label_attr: {class: \x27\x27}}) -}}
+                {%- endif -%}
+            </label>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block checkbox_row -%}
+    {%- set row_attr = row_attr|merge({class: row_attr.class|default(row_class|default(\x27mb-6\x27))}) -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {\x27aria-describedby\x27: id ~ \x27_help\x27}} -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr} %}{{ block(\x27attributes\x27) }}{% endwith %}>
+        {{- form_errors(form) -}}
+        <label class=\"flex items-center label mb-2\">
+            {{- form_widget(form, widget_attr) -}}
+            {{- block(\x27form_label_content\x27) -}}
+        </label>
+        {{- form_help(form) -}}
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block checkbox_widget -%}
+    {%- set widget_class = (widget_class|default(\x27checkbox\x27) ~ (errors|length ? \x27 checkbox-error\x27)) -%}
+    {{- parent() -}}
+{%- endblock checkbox_widget -%}
+
+{% block radio_widget -%}
+{%- set widget_class = (widget_class|default(\x27radio\x27) ~ (errors|length ? \x27 radio-error\x27)) -%}
+    {{- parent() -}}
+{%- endblock radio_widget %}
+
+{%- block choice_widget_collapsed -%}
+    {%- set attr = attr|merge({class: (attr.class|default(\x27\x27) ~ \x27 select mt-2\x27)|trim}) -%}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}
+
+{% block textarea_widget -%}
+    {% set attr = attr|merge({class: (attr.class|default(\x27\x27) ~ \x27 textarea mt-2\x27)|trim}) %}
+    {{- parent() -}}
+{%- endblock textarea_widget %}
+
+{%- block range_widget -%}
+    {% set type = type|default(\x27range\x27) %}
+    {%- set widget_class = widget_class|default(\x27range mt-2\x27) -%}
+    {{- block(\x27form_widget_simple\x27) -}}
+{%- endblock range_widget %}
+
+{%- block file_widget -%}
+    {% set type = type|default(\x27file\x27) %}
+    {%- set widget_class = widget_class|default(\x27file-input mt-2\x27) -%}
+    {%- set widget_errors_class = \x27file-input-error\x27 -%}
+    {{- block(\x27form_widget_simple\x27) -}}
+{%- endblock file_widget %}
+
+{% block form_widget_simple -%}
+    {%- if type is not defined or type not in [\x27hidden\x27, \x27range\x27, \x27file\x27] %}
+        {%- set widget_class = widget_class|default(\x27input mt-2\x27) -%}
+    {% endif -%}
+
+    {{- parent() -}}
+{%- endblock form_widget_simple %}
+", "daisyui_5_layout.html.twig", "/app/vendor/symfony/twig-bridge/Resources/views/Form/daisyui_5_layout.html.twig");
+    }
+}

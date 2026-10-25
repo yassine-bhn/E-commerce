@@ -49,13 +49,35 @@ final class DeleteCategoryHandlerTest extends TestCase
     public function testDeletesACategoryThatHasNoSubLevelAndNoProduct(): void
     {
         $connection = $this->handler([$this->row([])], [['child_rows' => 0, 'products' => 0]]);
+        $audit = new RecordingCatalogAudit();
 
-        (new DeleteCategoryHandler($connection))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, $audit))(new DeleteCategory('wc', 'super-admin'));
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
         self::assertStringContainsString('DELETE FROM storefront_category', $write['sql']);
         self::assertSame('wc', $write['params']['slug']);
+        self::assertSame(
+            ['action' => 'CATALOG_CATEGORY_DELETED', 'target' => 'category', 'slug' => 'wc', 'actor' => 'super-admin', 'reason' => null],
+            $audit->last(),
+        );
+    }
+
+    public function testARefusedDeletionWritesNeitherTheRowNorAnAuditEntry(): void
+    {
+        $connection = $this->handler(
+            [$this->row([['label' => 'Cuvette']])],
+            [['child_rows' => 0, 'products' => 0]],
+            refuseWrite: true,
+        );
+        $audit = new RecordingCatalogAudit();
+
+        try {
+            (new DeleteCategoryHandler($connection, $audit))(new DeleteCategory('wc', 'super-admin'));
+            self::fail('a category that still owns a sub-level must not be deleted');
+        } catch (CategoryNotEmptyException) {
+            self::assertSame([], $audit->records, 'a refused deletion leaves no audit row (R45)');
+        }
     }
 
     public function testRefusesToDropTheSubLevelsAndProductsOfACategoryWithItsCounts(): void
@@ -69,7 +91,7 @@ final class DeleteCategoryHandlerTest extends TestCase
         $this->expectException(CategoryNotEmptyException::class);
         $this->expectExceptionMessage('Cannot delete category "wc": it contains 4 subcategories and 5 products.');
 
-        (new DeleteCategoryHandler($connection))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
     }
 
     public function testRefusesToDeleteACategoryThatOnlyHasSubLevels(): void
@@ -78,7 +100,7 @@ final class DeleteCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotEmptyException::class);
 
-        (new DeleteCategoryHandler($connection))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
     }
 
     public function testDeletingAnUnknownCategoryIsNotFoundRatherThanSuccessful(): void
@@ -87,7 +109,7 @@ final class DeleteCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotFoundException::class);
 
-        (new DeleteCategoryHandler($connection))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
     }
 
     public function testHidingACategoryNeverDeletesIt(): void
@@ -96,6 +118,6 @@ final class DeleteCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotEmptyException::class);
 
-        (new DeleteCategoryHandler($connection))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
     }
 }

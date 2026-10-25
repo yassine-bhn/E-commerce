@@ -26,6 +26,11 @@ final class PlaceOrderOutboxTest extends KernelTestCase
 
         $orderId = '55555555-5555-5555-5555-555555555555';
         $connection->executeStatement('DELETE FROM processed_commands WHERE key = :key', ['key' => 'integration-place-order-'.$orderId]);
+        $connection->executeStatement(
+            'DELETE FROM payment_ledger WHERE payment_id IN (SELECT id FROM payment WHERE order_id = :id)',
+            ['id' => $orderId],
+        );
+        $connection->executeStatement('DELETE FROM payment WHERE order_id = :id', ['id' => $orderId]);
         $connection->executeStatement('DELETE FROM ordering_order_lines WHERE order_id = :id', ['id' => $orderId]);
         $connection->executeStatement('DELETE FROM ordering_orders WHERE id = :id', ['id' => $orderId]);
         $connection->executeStatement('DELETE FROM outbox WHERE aggregate_id = :id', ['id' => $orderId]);

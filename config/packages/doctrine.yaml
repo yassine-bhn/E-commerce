@@ -56,6 +56,9 @@ when@test:
     doctrine:
         dbal:
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+            # PRF-001 enforcement: the statement budget of a read is asserted from the functional
+            # profile (DoctrineDataCollector::getQueryCount()), which needs the DBAL logger.
+            logging: true
 
 when@prod:
     doctrine:

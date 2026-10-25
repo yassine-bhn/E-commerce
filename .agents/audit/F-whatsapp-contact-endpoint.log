@@ -1,0 +1,48 @@
+GATE: SPEC ok — 2026-10-23T19:32:16+01:00 — orchestrator — spec-run-9/spec.md v2 (R1–R22), both BLOCKING questions answered by the user
+GATE: PLAN ok — 2026-10-23T19:34:00+01:00 — test-planner — 10 dependency-ordered behaviors
+DISPATCH: unit-test-writer — 2026-10-23T19:35:00+01:00 — B1 WhatsAppNumberTest
+GATE: RED ok — 2026-10-23T19:36:00+01:00 — unit-test-writer — B1 12 tests red
+GATE: GREEN ok — 2026-10-23T19:39:00+01:00 — implementer — src/Shared/Domain/WhatsApp/WhatsAppNumber.php
+DISPATCH: unit-test-writer — 2026-10-23T19:39:30+01:00 — B2 WhatsAppChatLinkTest
+GATE: RED ok — 2026-10-23T19:40:00+01:00 — unit-test-writer — B2 10 tests red
+GATE: GREEN ok — 2026-10-23T19:41:01+01:00 — implementer — src/Shared/Domain/WhatsApp/WhatsAppChatLink.php
+DISPATCH: unit-test-writer — 2026-10-23T19:43:00+01:00 — B3 WhatsAppMessageTest
+GATE: RED ok — 2026-10-23T19:44:00+01:00 — unit-test-writer — B3 14 tests red
+GATE: GREEN ok — 2026-10-23T19:47:00+01:00 — implementer — src/Shared/Domain/WhatsApp/WhatsAppMessage.php
+DISPATCH: integration-test-agent — 2026-10-23T20:10:00+01:00 — B4 WhatsAppContactConfigurationTest
+GATE: RED ok — 2026-10-23T20:12:00+01:00 — integration-test-agent — B4 3 tests red
+GATE: GREEN ok — 2026-10-23T20:21:22+01:00 — implementer — WHATSAPP_* env keys, GetWhatsAppContact query, handler
+FINDING: prod env delivery gap — 2026-10-23T20:25:00+01:00 — orchestrator — compose.prod.yaml does not forward WHATSAPP_*; routed to FIXES
+DISPATCH: e2e-contract-test-agent — 2026-10-23T20:28:00+01:00 — B5/B6 WhatsAppContactTest
+GATE: RED ok — 2026-10-23T20:30:00+01:00 — e2e-contract-test-agent — route 404
+GATE: GREEN blocked — 2026-10-23T20:36:00+01:00 — implementer — LogicException in contactPayload() (test-side defect, four kernels in one method); blocked write returned to the tests/Functional owner
+DISPATCH: e2e-contract-test-agent — 2026-10-23T20:38:00+01:00 — blocked-write owner fix: hand the KernelBrowser to contactPayload() instead of booting four kernels
+GATE: GREEN ok — 2026-10-23T20:44:00+01:00 — implementer — WhatsAppContactController.php after the client-reuse fix
+DISPATCH: unit-test-writer — 2026-10-23T21:03:00+01:00 — B7/B9 invalid contextual input + configured-number validation
+GATE: RED ok — 2026-10-23T21:05:00+01:00 — unit-test-writer — B7 400 failures (500 from the bus), B9 InvalidArgumentException missing
+GATE: GREEN ok — 2026-10-23T21:14:00+01:00 — implementer — InvalidContextualMessageException, handler constructor validation, HandlerFailedException → 400
+DISPATCH: unit-test-writer — 2026-10-23T21:28:00+01:00 — B9 handler coverage + B10 documentation guard
+GATE: RED ok — 2026-10-23T21:30:00+01:00 — unit-test-writer — B10 3 documentation failures
+GATE: GREEN ok — 2026-10-23T21:36:00+01:00 — implementer — docs page, README section, compose forwarding, release guard, runbook
+GATE: QUALITY ok — 2026-10-23T21:39:00+01:00 — orchestrator — Unit 273 / Architecture 3 / Integration 62 / Functional 244 / Projection 14 / Contract 16, phpstan/cs-fixer/deptrac/harness-check clean
+DISPATCH: code-reviewer, security-reviewer, test-reviewer, architecture-reviewer — 2026-10-23T21:40:00+01:00 — review round 1 (4 reviewers)
+GATE: REVIEW round 1 — 2026-10-23T21:41:00+01:00 — 3 CHANGES REQUESTED (code, test, architecture), 1 APPROVE (security); findings ledger in the state file
+NOTE: round 1 was an incomplete fan-out — performance-reviewer and solid-guardian were not dispatched; both were dispatched in round 2 before the gate was called ok
+DISPATCH: unit-test-writer — 2026-10-23T21:42:00+01:00 — contract corrections for ERR-001, ERR-002, F3/F4
+GATE: RED ok — 2026-10-23T21:43:15+01:00 — unit-test-writer — Unit 47/4 failures, Functional 16/4 failures, Architecture 10 green
+GATE: GREEN ok — 2026-10-23T21:47:30+01:00 — implementer — DomainException base, raw-verbatim message, spaces-only blank rule, non-scalar 400, #[Autowire] wiring, optional default message, normalised release guard
+GATE: QUALITY ok — 2026-10-23T21:52:00+01:00 — orchestrator — Unit 276 / Architecture 10 / Integration 63 / Functional 253 / Projection 14 / Contract 16, phpstan 0, cs-fixer 0/457, deptrac 0, lint:container ok, harness-check ok
+DISPATCH: code-reviewer, security-reviewer, test-reviewer, architecture-reviewer — 2026-10-23T21:54:00+01:00 — review round 2 on the corrected contract
+GATE: REVIEW round 2 — 2026-10-23T21:56:00+01:00 — code-reviewer 1 HIGH + 4 LOW, test-reviewer 5 open + 7 new, security-reviewer APPROVE (N1), architecture-reviewer APPROVE
+DISPATCH: implementer — 2026-10-23T22:05:00+01:00 — FIXES batch: release-gate/runtime divergence, value-free number refusal, test hardening
+GATE: RED ok — 2026-10-23T22:07:00+01:00 — implementer — B9 cycle 2 (security F1): the number refusal echoed the unusable configured value
+GATE: GREEN ok — 2026-10-23T22:12:00+01:00 — implementer — release.sh parses like WhatsAppNumber and ships the validated value; value-free refusal message; setUp/tearDown restore, heading-anchored doc guard, quotes/slashes encoding, 8/15-digit boundaries, route-name assertion
+GATE: QUALITY ok — 2026-10-23T22:26:00+01:00 — orchestrator — Unit 279/674, Architecture 11/68, Integration 64/482, Functional 253/1810, Projection 14/53, Contract 16/495 OK; phpstan 0, cs-fixer 0/457, deptrac 0/0, lint:container ok, harness-check ok, bash -n ok
+DISPATCH: performance-reviewer, solid-guardian — 2026-10-23T22:27:00+01:00 — closing the fan-out gap left by round 1
+GATE: REVIEW round 2 ok — 2026-10-23T22:28:00+01:00 — full six-reviewer fan-out: all APPROVE, no blocking findings; three LOW hardenings accepted as deferrals
+NOTE: record integrity — 2026-10-23T22:28:00+01:00 — orchestrator — gate timestamps in this log and in the state file were re-baselined against the real clock from file mtimes; the earlier ledger ran ahead of the wall clock. Order, status and content unchanged
+DISPATCH: mutation-test-agent-equivalent run (orchestrator, no agent write) — 2026-10-24T00:20:00+01:00 — build the coverage-driver image and run Infection on the touched Domain+Application code, closing the M6 deferral
+GATE: QUALITY ok (final DoD re-run) — 2026-10-24T00:36:00+01:00 — orchestrator — Unit 279/674, Architecture 14/96, Integration 72/526, Projection 20/71, Functional 264/1916, Contract 16/495 all exit=0; WhatsApp-scoped Unit 50 / Functional 18 / Integration 5 / Architecture 11 green; phpstan exit=0 and cs-fixer 0/7 on this task's paths; deptrac 0 violations / 0 errors; bin/harness-check ok
+GATE: MUTATION ok — 2026-10-24T00:34:00+01:00 — orchestrator — Infection 0.35.8 on src/Shared/Domain/WhatsApp + src/Shared/Application/Query/GetWhatsAppContact.php: 40 mutations generated, 40 killed, Mutation Code Coverage 100%, Covered MSI 100%, exit=0; report var/infection-whatsapp.log
+GATE: DONE ok — 2026-10-24T00:38:50+01:00 — orchestrator — Definition of Done satisfied item by item, including the mutation item rounds 1–2 left open
+NOTE: shared working tree — 2026-10-24T00:38:50+01:00 — orchestrator — the spec-run-10 task edits the same tree and shares the `app` database during this gate; its files (`StorefrontApprovalVisibilityTest`, `AdminCustomerManagementTest`, `Catalog/Support/*`) produced transient suite/phpstan/cs-fixer findings that were absent on the next pass. This task's paths were verified separately and are clean; nothing was masked or claimed fixed on the concurrent task's behalf

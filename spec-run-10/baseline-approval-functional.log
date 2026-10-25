@@ -1,0 +1,166 @@
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+[41;37mF[0m[31;1mE[0m[41;37mF[0m[41;37mF[0m[41;37mF[0m[41;37mF[0m[41;37mF[0m[41;37mF[0m                                                            8 / 8 (100%)
+
+Time: 00:00.644, Memory: 48.50 MB
+
+There was 1 error:
+
+1) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testTheSuperAdminDecidesAnotherAdminsSubmissionsAndTheDecisionIsStoredAndAudited
+TypeError: array_column(): Argument #1 ($array) must be of type array, null given
+
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:140
+/app/vendor/phpunit/phpunit/phpunit:104
+
+--
+
+There were 7 failures:
+
+1) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testASubmissionStartsPendingAndOnlyItsAuthorReadsIt
+Failed asserting that the Response status code is 404.
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Customer-Id, Idempotency-Key
+Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+Cache-Control:                max-age=0, must-revalidate, private
+Content-Type:                 application/json
+Date:                         Fri, 23 Oct 2026 19:33:57 GMT
+Expires:                      Fri, 23 Oct 2026 19:33:57 GMT
+Vary:                         Origin
+X-Robots-Tag:                 noindex
+
+{"type":"products","slug":"wf-owned-01a16a41","label":"Produit du workflow","approvalStatus":"PENDING_APPROVAL","submittedBy":"01a16a41-7656-76cb-bb5f-7bb2360765c7","submittedAt":"2026-10-23T19:33:57+00:00","reviewedBy":null,"reviewedAt":null,"rejectionReason":null,"published":false,"categorySlug":"sanitaires"}
+
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:199
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:48
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:104
+/app/vendor/phpunit/phpunit/phpunit:104
+
+2) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testARejectedSubmissionStaysRejectedUntilItsAuthorResubmitsIt
+Failed asserting that the Response is successful.
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Customer-Id, Idempotency-Key
+Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+Cache-Control:                max-age=0, must-revalidate, private
+Content-Type:                 application/json
+Date:                         Fri, 23 Oct 2026 19:33:57 GMT
+Expires:                      Fri, 23 Oct 2026 19:33:57 GMT
+Set-Cookie:                   REMEMBERME=deleted; expires=Thu, 23 Oct 2025 19:33:56 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Set-Cookie:                   MOCKSESSID=deleted; expires=Thu, 23 Oct 2025 19:33:56 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Vary:                         Origin
+X-Robots-Tag:                 noindex
+
+{"error":"Authentication required."}
+
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:199
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:43
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:195
+/app/vendor/phpunit/phpunit/phpunit:104
+
+3) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testTheSuperAdminCorrectsReadsAndDeletesAnotherAdminsSubmissionWithoutApprovingIt
+Failed asserting that the Response is successful.
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Customer-Id, Idempotency-Key
+Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+Cache-Control:                max-age=0, must-revalidate, private
+Content-Type:                 application/json
+Date:                         Fri, 23 Oct 2026 19:33:57 GMT
+Expires:                      Fri, 23 Oct 2026 19:33:57 GMT
+Set-Cookie:                   REMEMBERME=deleted; expires=Thu, 23 Oct 2025 19:33:56 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Vary:                         Origin
+X-Robots-Tag:                 noindex
+
+{"error":"Authentication required."}
+
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:199
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:43
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:250
+/app/vendor/phpunit/phpunit/phpunit:104
+
+4) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testTheSuperAdminManagesASubmittedCategoryAndDeletionHonoursItsProducts
+Failed asserting that the Response is successful.
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Customer-Id, Idempotency-Key
+Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+Cache-Control:                max-age=0, must-revalidate, private
+Content-Type:                 application/json
+Date:                         Fri, 23 Oct 2026 19:33:57 GMT
+Expires:                      Fri, 23 Oct 2026 19:33:57 GMT
+Set-Cookie:                   REMEMBERME=deleted; expires=Thu, 23 Oct 2025 19:33:56 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Vary:                         Origin
+X-Robots-Tag:                 noindex
+
+{"error":"Authentication required."}
+
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:199
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:43
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:308
+/app/vendor/phpunit/phpunit/phpunit:104
+
+5) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testARegularAdminCannotDecidePublishOrTouchAForeignSubmission
+a foreign submission is not the intruder's to submit
+Failed asserting that the Response status code is 403.
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Customer-Id, Idempotency-Key
+Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+Cache-Control:                max-age=0, must-revalidate, private
+Content-Type:                 application/json
+Date:                         Fri, 23 Oct 2026 19:33:57 GMT
+Expires:                      Fri, 23 Oct 2026 19:33:57 GMT
+Vary:                         Origin
+X-Robots-Tag:                 noindex
+
+{"type":"products","slug":"wf-guarded-01a16a41","label":"Produit du workflow","approvalStatus":"PENDING_APPROVAL","submittedBy":"01a16a41-781a-7dcf-9172-8464a94bf918","submittedAt":"2026-10-23T19:33:57+00:00","reviewedBy":null,"reviewedAt":null,"rejectionReason":null,"published":false,"categorySlug":"sanitaires"}
+
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:199
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:48
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:359
+/app/vendor/phpunit/phpunit/phpunit:104
+
+6) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testAPendingProductCannotBePublishedAndNoPublicPayloadCarriesApprovalData
+an unapproved product cannot be published
+Failed asserting that the Response status code is 409.
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Customer-Id, Idempotency-Key
+Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+Cache-Control:                max-age=0, must-revalidate, private
+Content-Type:                 application/json
+Date:                         Fri, 23 Oct 2026 19:33:58 GMT
+Expires:                      Fri, 23 Oct 2026 19:33:58 GMT
+Set-Cookie:                   REMEMBERME=deleted; expires=Thu, 23 Oct 2025 19:33:57 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Set-Cookie:                   MOCKSESSID=deleted; expires=Thu, 23 Oct 2025 19:33:57 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Vary:                         Origin
+X-Robots-Tag:                 noindex
+
+{"error":"Authentication required."}
+
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:199
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:48
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:390
+/app/vendor/phpunit/phpunit/phpunit:104
+
+7) App\Tests\Functional\AdminCatalogApprovalWorkflowTest::testARefusedDecisionWritesNeitherTheRowNorAnAuditEntry
+Failed asserting that the Response is successful.
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Customer-Id, Idempotency-Key
+Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+Cache-Control:                max-age=0, must-revalidate, private
+Content-Type:                 application/json
+Date:                         Fri, 23 Oct 2026 19:33:58 GMT
+Expires:                      Fri, 23 Oct 2026 19:33:58 GMT
+Set-Cookie:                   REMEMBERME=deleted; expires=Thu, 23 Oct 2025 19:33:57 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Set-Cookie:                   MOCKSESSID=deleted; expires=Thu, 23 Oct 2025 19:33:57 GMT; Max-Age=0; path=/; httponly; samesite=lax
+Vary:                         Origin
+X-Robots-Tag:                 noindex
+
+{"error":"Authentication required."}
+
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:199
+/app/vendor/symfony/framework-bundle/Test/BrowserKitAssertionsTrait.php:43
+/app/tests/Functional/AdminCatalogApprovalWorkflowTest.php:429
+/app/vendor/phpunit/phpunit/phpunit:104
+
+[37;41mERRORS![0m
+[37;41mTests: 8[0m[37;41m, Assertions: 26[0m[37;41m, Errors: 1[0m[37;41m, Failures: 7[0m[37;41m.[0m

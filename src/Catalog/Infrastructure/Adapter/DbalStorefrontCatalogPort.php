@@ -28,6 +28,7 @@ final class DbalStorefrontCatalogPort implements StorefrontCatalogPort
             $product->priceMinor,
             $product->stock,
             $product->variants,
+            $product->stockQuantity,
         );
     }
 }

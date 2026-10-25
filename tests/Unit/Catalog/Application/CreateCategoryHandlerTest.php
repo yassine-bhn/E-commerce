@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Catalog\Application;
 
 use App\Catalog\Application\Command\CreateCategory;
 use App\Catalog\Application\CommandHandler\CreateCategoryHandler;
+use App\Catalog\Domain\Model\ApprovalStatus;
 use App\Catalog\Domain\Model\CategoryAlreadyExistsException;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -17,12 +18,14 @@ final class CreateCategoryHandlerTest extends TestCase
     {
         $connection = new CategoryConnectionFake();
         $connection->scalars = [5];
+        $audit = new RecordingCatalogAudit();
 
-        (new CreateCategoryHandler($connection))(new CreateCategory(
+        (new CreateCategoryHandler($connection, $audit))(new CreateCategory(
             slug: 'test-cat',
             label: '  Test cat  ',
             subcategories: [['label' => 'Alpha', 'children' => [['label' => 'Alpha un']]]],
             quoteEligible: true,
+            actorId: 'admin-1',
         ));
 
         $write = $connection->lastWrite();
@@ -40,6 +43,33 @@ final class CreateCategoryHandlerTest extends TestCase
         );
     }
 
+    /**
+     * spec-run-8 R2/R10/R39 — a new category is a pending submission owned by its creator, and
+     * the creation is audited with the same actor.
+     */
+    public function testANewCategoryIsAPendingSubmissionOwnedByItsCreatorAndAudited(): void
+    {
+        $connection = new CategoryConnectionFake();
+        $connection->scalars = [0];
+        $audit = new RecordingCatalogAudit();
+
+        (new CreateCategoryHandler($connection, $audit))(new CreateCategory(
+            slug: 'pompes',
+            label: 'Pompes',
+            actorId: 'admin-1',
+        ));
+
+        $write = $connection->lastWrite();
+        self::assertNotNull($write);
+        self::assertSame(ApprovalStatus::PendingApproval->value, $write['params']['approval'], 'no field of the request can make it approved');
+        self::assertSame('admin-1', $write['params']['submitted_by']);
+        self::assertNotNull($write['params']['submitted_at']);
+        self::assertSame(
+            ['action' => 'CATALOG_SUBMISSION_CREATED', 'target' => 'category', 'slug' => 'pompes', 'actor' => 'admin-1', 'reason' => null],
+            $audit->last(),
+        );
+    }
+
     public function testAnEmptyLabelIsRefusedBeforeAnythingIsWritten(): void
     {
         $connection = new CategoryConnectionFake();
@@ -47,7 +77,7 @@ final class CreateCategoryHandlerTest extends TestCase
 
         $this->expectException(\DomainException::class);
 
-        (new CreateCategoryHandler($connection))(new CreateCategory('vide', '   '));
+        (new CreateCategoryHandler($connection, new RecordingCatalogAudit()))(new CreateCategory('vide', '   '));
     }
 
     public function testADuplicateSlugIsRefusedAndNothingIsWritten(): void
@@ -63,10 +93,15 @@ final class CreateCategoryHandlerTest extends TestCase
             },
             null,
         );
+        $audit = new RecordingCatalogAudit();
 
         $this->expectException(CategoryAlreadyExistsException::class);
         $this->expectExceptionMessage('A category with the slug "sanitaires" already exists.');
 
-        (new CreateCategoryHandler($connection))(new CreateCategory('sanitaires', 'Plomberie bis'));
+        try {
+            (new CreateCategoryHandler($connection, $audit))(new CreateCategory('sanitaires', 'Plomberie bis'));
+        } finally {
+            self::assertSame([], $audit->records, 'a refused creation writes no audit row (R45)');
+        }
     }
 }

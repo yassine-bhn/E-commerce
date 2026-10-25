@@ -9,6 +9,8 @@ use App\Ordering\Domain\Model\Order;
 use App\Ordering\Domain\Model\OrderId;
 use App\Ordering\Domain\Model\OrderLine;
 use App\Ordering\Domain\Repository\OrderRepository;
+use App\Shared\Application\Port\PaymentInitiationPort;
+use App\Shared\Application\Port\StockReservationPort;
 use App\Shared\Application\Service\StorefrontQuoteService;
 use App\Shared\Domain\Money;
 use App\Shared\Domain\Outbox\OutboxPort;
@@ -22,6 +24,8 @@ final class PlaceOrderHandler
     public function __construct(
         private Connection $connection,
         private StorefrontQuoteService $quotes,
+        private StockReservationPort $stock,
+        private PaymentInitiationPort $payments,
         private OrderRepository $orders,
         private OutboxPort $outbox,
     ) {
@@ -38,6 +42,18 @@ final class PlaceOrderHandler
         }
 
         $quote = $this->quotes->quote($command->lines, $command->promoCode, $command->deliveryMethod);
+
+        $this->stock->reserve(
+            $command->orderId,
+            array_map(
+                static fn (array $line): array => [
+                    'slug' => (string) $line['slug'],
+                    'quantity' => (int) $line['quantity'],
+                ],
+                $quote['pricedLines'],
+            ),
+        );
+
         $currency = $quote['total']->currency();
 
         $lines = array_map(
@@ -68,6 +84,17 @@ final class PlaceOrderHandler
         );
 
         $this->orders->save($order);
+
+        // ADR-0004 — only the *record* is synchronous; authorizing the card stays off the
+        // request path, so the customer never waits on a gateway to get an order number.
+        $this->payments->open(
+            $command->orderId,
+            $command->paymentMethod,
+            $quote['total']->minorUnits(),
+            $currency->value,
+            $command->customerId,
+        );
+
         $this->outbox->append(Order::class, $command->orderId, $order->releaseEvents());
     }
 }

@@ -9,6 +9,7 @@ use App\Identity\Application\Command\SaveCustomerAddress;
 use App\Identity\Application\Command\UpdateCustomerProfile;
 use App\Identity\Application\Query\GetCustomerProfile;
 use App\Identity\Application\Query\ListCustomerAddresses;
+use App\Identity\Domain\Model\EmailAlreadyUsedException;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Infrastructure\Http\ListQueryParams;
@@ -16,6 +17,7 @@ use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -56,15 +58,27 @@ final class CustomerController
         $company = is_string($body['company'] ?? null) && '' !== trim($body['company']) ? trim($body['company']) : null;
         $mf = is_string($body['mf'] ?? null) && '' !== trim($body['mf']) ? trim($body['mf']) : null;
 
-        $this->commandBus->dispatch(new UpdateCustomerProfile(
-            $customerId,
-            $name,
-            $email,
-            $phone,
-            $type,
-            $company,
-            $mf,
-        ));
+        try {
+            $this->commandBus->dispatch(new UpdateCustomerProfile(
+                $customerId,
+                $name,
+                $email,
+                $phone,
+                $type,
+                $company,
+                $mf,
+            ));
+        } catch (HandlerFailedException $exception) {
+            $emailAlreadyUsed = $exception->getWrappedExceptions(EmailAlreadyUsedException::class, true);
+
+            // The address another account owns (Version20261024000000): the same 409 the
+            // registration endpoint answers, so the two endpoints cannot disagree.
+            if ([] !== $emailAlreadyUsed) {
+                return new JsonResponse(['error' => reset($emailAlreadyUsed)->getMessage()], Response::HTTP_CONFLICT);
+            }
+
+            throw $exception;
+        }
 
         return new JsonResponse(['status' => 'updated']);
     }

@@ -17,6 +17,10 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * envelope total and the returned rows can never disagree. The requester travels with the query
  * and is part of that SQL predicate, so a hidden category can only be read by an identified
  * admin — the storefront-facing shape of the same table stays hidden from everybody else (QRY-004).
+ *
+ * spec-run-8 R16/R32 — the admin list carries the approval state, while `product_count` counts
+ * every product for an admin and only publicly visible ones for anybody else, so the count the
+ * dashboard shows is the count the storefront can see.
  */
 #[AsMessageHandler(bus: 'query.bus')]
 final class CategoryFinder
@@ -67,9 +71,15 @@ final class CategoryFinder
             $types,
         );
 
+        // An admin counts every product; anybody else counts only what the storefront can see.
+        $countScope = $query->isAdmin ? '' : " AND p.approval_status = 'APPROVED' AND p.published = true";
+
         $rows = $this->connection->fetchAllAssociative(
             'SELECT c.slug, c.label, c.subcategories, c.quote_eligible, c.hidden, c.sort_order, c.parent_slug,
-                    (SELECT COUNT(*) FROM storefront_product_view p WHERE p.category_slug = c.slug) AS product_count
+                    c.approval_status, c.submitted_by, c.rejection_reason,
+                    (SELECT COUNT(*) FROM storefront_product_view p
+                      WHERE p.category_slug = c.slug'.$countScope.'
+                    ) AS product_count
              FROM storefront_category c
              WHERE '.$where.'
              ORDER BY '.self::ORDER_BY[$query->effectiveSort()].'

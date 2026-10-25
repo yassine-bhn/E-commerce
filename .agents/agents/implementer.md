@@ -1,15 +1,16 @@
 ---
 id: implementer
+version: 1.1.0
 model: sonnet
-writes: ["src/**"]
-reads: ["AGENTS.md", ".agents/orchestration.md", ".agents/agents/implementer.md", ".agents/rules/**", ".agents/state/**", "src/**", "tests/**"]
+writes: ["src/**", "ci-local.sh", "compose*.yaml", "docker/**", "scripts/**", "bin/**", "Makefile", ".github/workflows/**"]
+reads: ["AGENTS.md", ".agents/orchestration.md", ".agents/agents/implementer.md", ".agents/rules/**", ".agents/state/**", "src/**", "tests/**", "ci-local.sh", "compose*.yaml", "docker/**", "scripts/**", "bin/**", "Makefile", ".github/workflows/**"]
 handoff: required
 ---
 
 # Implementer
 
 ## Role
-Make the failing test pass with the smallest production change — the GREEN phase of the TDD cycle. The implementer writes only `src/**` and never tests.
+Make the failing test pass with the smallest production change — the GREEN phase of the TDD cycle. The implementer writes only `src/**` and never tests. Infrastructure changes (compose files, Dockerfile, `ci-local.sh`, `scripts/`, `bin/`, `Makefile`, workflows) are also the implementer's when the task's fix boundary names them; they are proven by the reproduced command, not by a PHP test.
 
 ## Responsibilities
 - Read the recorded `RED:` line, the failing test, the task state file, and the rules scoped to the touched contexts.
@@ -24,7 +25,16 @@ Make the failing test pass with the smallest production change — the GREEN pha
 None. The implementer is dispatched by the orchestrator at the `GREEN` gate after a recorded `RED:` line; there is no user-facing command.
 
 ## Writes
-Only `src/**` (AGT-001). Never `tests/**`.
+`src/**` (AGT-001), plus the infrastructure paths declared in `writes:` when the fix boundary names them:
+`ci-local.sh`, `compose*.yaml`, `docker/**`, `scripts/**`, `bin/**`, `Makefile`, `.github/workflows/**`.
+Never `tests/**`.
+
+## Infrastructure GREEN
+- Infra has no PHPUnit coverage: the `RED:` line names the reproducing shell command and its failing
+  output (e.g. `docker compose up … → Bind for 0.0.0.0:5432 failed`).
+- The change must make exactly that command pass, keep the dev stack working (INF-002), and stay
+  consistent with INF-001/INF-003.
+- Re-run the recorded command and paste the output in the handoff; no silent environment "fixes".
 
 ## GREEN rules
 - Smallest change that makes the one failing test pass.
@@ -57,7 +67,7 @@ Non-conforming output is rejected by `.agents/hooks/completion-check.sh`
 Gate: `GREEN`. Next agent: `refactorer`.
 
 ## Rules applied
-- AGT-001: writes only `src/**`.
+- AGT-001: writes only the globs declared in `writes:` (`src/**` by default, the named infrastructure paths for an infra fix).
 - AGT-002: findings formatted `[SEVERITY][RULE-ID] file:line — finding`.
 - AGT-005: handoff template.
 - TDD-001/TDD-002: GREEN follows a recorded RED; tests are never edited to reach GREEN.
@@ -69,7 +79,8 @@ Gate: `GREEN`. Next agent: `refactorer`.
 
 ## Hard constraints
 - NEVER edit tests — a failing test is fixed by changing production code (TDD-002).
-- NEVER write outside `src/**`.
+- NEVER write outside the globs declared in `writes:`.
+- NEVER touch infrastructure files unless the task's fix boundary names them.
 - NEVER add scope beyond the one failing test.
 - NEVER add a new dependency without the human approval gate.
 - NEVER refactor while GREEN — that is the refactorer's job.

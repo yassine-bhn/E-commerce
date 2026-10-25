@@ -1,0 +1,636 @@
+[1mE-commerce local CI[0m — /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce @ df5dc84
+compose project: ecommerce-ci (file: compose.yaml)
+
+[1;36m[1] start the stack (build + up)[0m
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.64kB done
+#1 DONE 0.0s
+
+#2 [worker internal] load build definition from Dockerfile
+#2 transferring dockerfile: 2.53kB done
+#2 DONE 0.0s
+
+#3 [outbox internal] load metadata for docker.io/composer/composer:2
+#3 DONE 0.0s
+
+#4 [worker internal] load metadata for docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#4 DONE 11.3s
+
+#5 [outbox internal] load .dockerignore
+#5 transferring context: 338B done
+#5 DONE 0.0s
+
+#6 [app] FROM docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4
+#6 resolve docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4 0.0s done
+#6 DONE 0.0s
+
+#7 [outbox base 1/5] FROM docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#7 resolve docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae 0.0s done
+#7 DONE 0.0s
+
+#8 [app internal] load build context
+#8 transferring context: 64B done
+#8 DONE 0.0s
+
+#9 [app base 2/5] RUN install-php-extensions         intl         opcache         pdo_pgsql         zip     && if [ "false" = "true" ]; then install-php-extensions xdebug; fi
+#9 CACHED
+
+#10 [app base 3/5] COPY --from=composer/composer:2 /usr/bin/composer /usr/bin/composer
+#10 CACHED
+
+#11 [app base 4/5] WORKDIR /app
+#11 CACHED
+
+#12 [app base 5/5] COPY docker/Caddyfile /etc/caddy/Caddyfile
+#12 CACHED
+
+#13 [outbox dev 1/1] RUN apt-get update     && apt-get install -y --no-install-recommends python3 python3-yaml     && rm -rf /var/lib/apt/lists/*
+#13 CACHED
+
+#14 [outbox] exporting to image
+#14 exporting layers done
+#14 exporting manifest sha256:eecf37c77ebe7e0d178dd3cd119585da27c50e566be688838bf993795b125d6b done
+#14 exporting config sha256:fdf8cbd9a699d43e0b19dd53b69c2e55260a4d7e9174e2db73c462101362f94c 0.0s done
+#14 ...
+
+#15 [app] exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:70b4c30bda964fa0ce10b819415d4d288a8002b8dd2f67e0f94ce406edc5edb0 done
+#15 exporting config sha256:1042569af1f0e17c1bb895d91248a69f3781d99dfecddf54c20b35c0f10d3f1f done
+#15 exporting attestation manifest sha256:3c8d545dbbee1065385b288a86e0b954bdf21c50a234af00f70a8091ad5ef86a 0.0s done
+#15 exporting manifest list sha256:5c2b689b9bedf812adb23735398f3dd58897e2f08c957126f4f534f74e7c2317 0.0s done
+#15 naming to docker.io/library/ecommerce-core:dev done
+#15 unpacking to docker.io/library/ecommerce-core:dev done
+#15 DONE 0.1s
+
+#16 [worker] exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:2c3f6766b78152aa89292070c069c46f497b3af70db6405e42678bbb66e294a1 done
+#16 exporting config sha256:cfdc32dc09050820b3a82d617f525fc41f165258b3a3266c105c9752077a530a done
+#16 exporting attestation manifest sha256:30a84c67d5304e1d96b6631dfab120096351859c0673cf51c236640b68f4755f 0.0s done
+#16 exporting manifest list sha256:6f5469e73c2f720957d8ca298cf17a371bbcd9a5ed8b76bec16d0518e271331c 0.0s done
+#16 naming to docker.io/library/ecommerce-core:dev done
+#16 unpacking to docker.io/library/ecommerce-core:dev done
+#16 DONE 0.1s
+
+#14 [outbox] exporting to image
+#14 exporting attestation manifest sha256:ee943213877271c28f077376336aaa9b8183ebb663f50ddf15ddf0c16b6b787e 0.1s done
+#14 exporting manifest list sha256:3e2274295e3c86cdb02b0a7de9fdafc79e2127b43bf2e07d191432717c9db22e 0.0s done
+#14 naming to docker.io/library/ecommerce-core:dev done
+#14 unpacking to docker.io/library/ecommerce-core:dev 0.0s done
+#14 DONE 0.2s
+
+#17 [app] resolving provenance for metadata file
+#17 DONE 0.1s
+
+#18 [worker] resolving provenance for metadata file
+#18 DONE 0.1s
+
+#19 [outbox] resolving provenance for metadata file
+#19 DONE 0.0s
+ ecommerce-core:dev  Built
+ ecommerce-core:dev  Built
+ ecommerce-core:dev  Built
+ Container ecommerce-ci-database-1  Running
+ Container ecommerce-ci-app-1  Recreate
+ Container ecommerce-ci-meilisearch-1  Running
+ Container ecommerce-ci-app-1  Recreated
+ Container ecommerce-ci-database-1  Waiting
+ Container ecommerce-ci-database-1  Healthy
+ Container ecommerce-ci-app-1  Starting
+ Container ecommerce-ci-app-1  Started
+ Container ecommerce-ci-meilisearch-1  Waiting
+ Container ecommerce-ci-app-1  Waiting
+ Container ecommerce-ci-database-1  Waiting
+ Container ecommerce-ci-meilisearch-1  Healthy
+ Container ecommerce-ci-database-1  Healthy
+ Container ecommerce-ci-app-1  Healthy
+
+[1;36m[2] ci.yml: quality[0m
+./composer.json is valid
+Installing dependencies from lock file (including require-dev)
+Verifying lock file contents can be installed on current platform.
+Nothing to install, update or remove
+Package qossmic/deptrac-shim is abandoned, you should avoid using it. Use qossmic/deptrac instead.
+Generating autoload files
+infection/extension-installer: No extensions found
+142 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+
+Run composer recipes at any time to see the status of your Symfony recipes.
+
+Executing script cache:clear [OK]
+Executing script assets:install public [OK]
+Executing script importmap:install [OK]
+
+PHP CS Fixer 3.95.27 Adalbertus by Fabien Potencier, Dariusz Ruminski and contributors.
+PHP runtime: 8.5.12
+Loaded config default from ".php-cs-fixer.dist.php".
+Running analysis on 15 cores with 10 files per process.
+Using cache file ".php-cs-fixer.cache".
+   0/413 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+ 124/413 [▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░]  30%
+ 413/413 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+   1) tests/Functional/RememberMeTest.php
+      ---------- begin diff ----------
+--- /app/tests/Functional/RememberMeTest.php
++++ /app/tests/Functional/RememberMeTest.php
+@@ -8,10 +8,10 @@
+ use Doctrine\DBAL\ArrayParameterType;
+ use Doctrine\DBAL\Connection;
+ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
++use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+ use Symfony\Component\BrowserKit\Cookie;
+ use Symfony\Component\HttpFoundation\Cookie as ResponseCookie;
+ use Symfony\Component\HttpFoundation\Response;
+-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+ use Symfony\Component\Uid\Uuid;
+ 
+ /**
+
+      ----------- end diff -----------
+
+
+Found 1 of 413 files that can be fixed in 0.251 seconds, 46.00 MB memory used
+ci-local: step failed: dc exec -T app vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
+
+[1;36m[3] tests.yml: every PHPUnit suite[0m
+Installing dependencies from lock file (including require-dev)
+Verifying lock file contents can be installed on current platform.
+Nothing to install, update or remove
+Package qossmic/deptrac-shim is abandoned, you should avoid using it. Use qossmic/deptrac instead.
+Generating autoload files
+infection/extension-installer: No extensions found
+142 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+
+Run composer recipes at any time to see the status of your Symfony recipes.
+
+Executing script cache:clear [OK]
+Executing script assets:install public [OK]
+Executing script importmap:install [OK]
+
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+Database "app_test" for connection named default already exists. Skipped.
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+
+===== Unit =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+...............................................................  63 / 199 ( 31%)
+............................................................... 126 / 199 ( 63%)
+............................................................... 189 / 199 ( 94%)
+..........                                                      199 / 199 (100%)
+
+Time: 00:00.041, Memory: 28.00 MB
+
+[30;42mOK (199 tests, 541 assertions)[0m
+
+===== Integration =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+..........................................................        58 / 58 (100%)
+
+Time: 00:05.422, Memory: 52.50 MB
+
+[30;42mOK (58 tests, 392 assertions)[0m
+
+===== Projection =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+..............                                                    14 / 14 (100%)
+
+Time: 00:00.276, Memory: 38.50 MB
+
+[30;42mOK (14 tests, 53 assertions)[0m
+
+===== Functional =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+...............................................................  63 / 214 ( 29%)
+............................................................... 126 / 214 ( 58%)
+......[41;37mF[0m.[31;1mE[0m[31;1mE[0m.[41;37mF[0m[31;1mE[0m.[41;37mF[0m................................................ 189 / 214 ( 88%)
+.........................                                       214 / 214 (100%)
+
+Time: 00:23.193, Memory: 66.50 MB
+
+There were 3 errors:
+
+1) App\Tests\Functional\RememberMeTest::testRememberMeCookieAloneAuthenticatesAfterRestart
+LogicException: Booting the kernel before calling "Symfony\Bundle\FrameworkBundle\Test\WebTestCase::createClient()" is not supported, the kernel should only be booted once.
+
+/app/vendor/symfony/framework-bundle/Test/WebTestCase.php:48
+/app/tests/Functional/RememberMeTest.php:107
+/app/tests/Functional/RememberMeTest.php:165
+
+2) App\Tests\Functional\RememberMeTest::testSecondRestartStillAuthenticatesAndKeepsTheCookie
+LogicException: Booting the kernel before calling "Symfony\Bundle\FrameworkBundle\Test\WebTestCase::createClient()" is not supported, the kernel should only be booted once.
+
+/app/vendor/symfony/framework-bundle/Test/WebTestCase.php:48
+/app/tests/Functional/RememberMeTest.php:107
+/app/tests/Functional/RememberMeTest.php:183
+
+3) App\Tests\Functional\RememberMeTest::testTamperedCookieIsRejectedWithJson401
+LogicException: Booting the kernel before calling "Symfony\Bundle\FrameworkBundle\Test\WebTestCase::createClient()" is not supported, the kernel should only be booted once.
+
+/app/vendor/symfony/framework-bundle/Test/WebTestCase.php:48
+/app/tests/Functional/RememberMeTest.php:226
+
+--
+
+There were 3 failures:
+
+1) App\Tests\Functional\RememberMeTest::testUnflaggedLoginIssuesNoRememberMeCookie
+An unticked login must not issue a remember-me cookie.
+Failed asserting that an instance of class Symfony\Component\HttpFoundation\Cookie is null.
+
+/app/tests/Functional/RememberMeTest.php:140
+
+2) App\Tests\Functional\RememberMeTest::testFailedFlaggedLoginIssuesNoRememberMeCookie
+Failed asserting that an instance of class Symfony\Component\HttpFoundation\Cookie is null.
+
+/app/tests/Functional/RememberMeTest.php:210
+
+3) App\Tests\Functional\RememberMeTest::testGoogleOAuthLoginIsNotAffectedByTheRememberMeFlag
+Failed asserting that an instance of class Symfony\Component\HttpFoundation\Cookie is null.
+
+/app/tests/Functional/RememberMeTest.php:258
+
+[37;41mERRORS![0m
+[37;41mTests: 214[0m[37;41m, Assertions: 1481[0m[37;41m, Errors: 3[0m[37;41m, Failures: 3[0m[37;41m.[0m
+
+===== Contract =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+..............                                                    14 / 14 (100%)
+
+Time: 00:02.118, Memory: 50.50 MB
+
+[30;42mOK (14 tests, 482 assertions)[0m
+
+===== Architecture =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+...                                                                 3 / 3 (100%)
+
+Time: 00:00.001, Memory: 22.00 MB
+
+[30;42mOK (3 tests, 29 assertions)[0m
+
+Test report: 6 suites, 502 tests, 6 failures
+
+Failing tests
+-------------
+FAILURE Functional    App\Tests\Functional\RememberMeTest::testUnflaggedLoginIssuesNoRememberMeCookie
+                      tests/Functional/RememberMeTest.php:132
+                      An unticked login must not issue a remember-me cookie.
+
+ERROR   Functional    App\Tests\Functional\RememberMeTest::testRememberMeCookieAloneAuthenticatesAfterRestart
+                      tests/Functional/RememberMeTest.php:157
+                      LogicException: Booting the kernel before calling "Symfony\Bundle\FrameworkBundle\Test\WebTestCase::createClient()" is not supported, the kernel should only be booted once.
+
+ERROR   Functional    App\Tests\Functional\RememberMeTest::testSecondRestartStillAuthenticatesAndKeepsTheCookie
+                      tests/Functional/RememberMeTest.php:175
+                      LogicException: Booting the kernel before calling "Symfony\Bundle\FrameworkBundle\Test\WebTestCase::createClient()" is not supported, the kernel should only be booted once.
+
+FAILURE Functional    App\Tests\Functional\RememberMeTest::testFailedFlaggedLoginIssuesNoRememberMeCookie
+                      tests/Functional/RememberMeTest.php:202
+                      Failed asserting that an instance of class Symfony\Component\HttpFoundation\Cookie is null.
+
+ERROR   Functional    App\Tests\Functional\RememberMeTest::testTamperedCookieIsRejectedWithJson401
+                      tests/Functional/RememberMeTest.php:213
+                      LogicException: Booting the kernel before calling "Symfony\Bundle\FrameworkBundle\Test\WebTestCase::createClient()" is not supported, the kernel should only be booted once.
+
+FAILURE Functional    App\Tests\Functional\RememberMeTest::testGoogleOAuthLoginIsNotAffectedByTheRememberMeFlag
+                      tests/Functional/RememberMeTest.php:248
+                      Failed asserting that an instance of class Symfony\Component\HttpFoundation\Cookie is null.
+
+Suites
+------
+  Unit          ok      199 tests
+  Integration   ok      58 tests
+  Projection    ok      14 tests
+  Functional    FAILED  214 tests, 3 failures, 3 errors
+  Contract      ok      14 tests
+  Architecture  ok      3 tests
+ci-local: step failed: ./scripts/run-tests.sh
+
+[1;36m[4] ci.yml: harness integrity[0m
+harness-check: ok — 17 agents, 14 domain skills + 14 superpowers, 14 rule files, 8 hook scripts + hooks.yaml, 5 PHPStan rules
+
+[1;36m[5] ci.yml: infection[0m
+infection: mutating src/Catalog/Infrastructure/Adapter/DbalStorefrontCatalogPort.php,src/Catalog/Infrastructure/Http/AdminProductController.php,src/Catalog/Infrastructure/ReadModel/StorefrontProductRepository.php,src/Catalog/Infrastructure/ReadModel/StorefrontProductView.php,src/Inventory/Infrastructure/Persistence/DbalStockReservationAdapter.php,src/Ordering/Application/Command/AutoCancelOrder.php,src/Ordering/Application/Command/CancelOrderByCustomer.php,src/Ordering/Application/CommandHandler/AutoCancelOrderHandler.php,src/Ordering/Application/CommandHandler/CancelOrderByCustomerHandler.php,src/Ordering/Application/CommandHandler/CreateAdminProxyOrderHandler.php,src/Ordering/Application/CommandHandler/PlaceOrderHandler.php,src/Ordering/Domain/Model/OrderNotFoundException.php,src/Ordering/Infrastructure/Console/AutoCancelExpiredOrdersCommand.php,src/Ordering/Infrastructure/Http/AdminOrderController.php,src/Ordering/Infrastructure/Http/CheckoutOrderController.php,src/Ordering/Infrastructure/Persistence/DbalOrderSettlementAdapter.php,src/Payment/Application/Command/ConfirmOfflinePayment.php,src/Payment/Application/Command/RefundPayment.php,src/Payment/Application/CommandHandler/ConfirmOfflinePaymentHandler.php,src/Payment/Application/CommandHandler/RefundPaymentHandler.php,src/Payment/Application/Query/GetPaymentDetail.php,src/Payment/Domain/Event/PaymentAuthorized.php,src/Payment/Domain/Event/PaymentRefunded.php,src/Payment/Domain/Model/IllegalPaymentStateTransitionException.php,src/Payment/Domain/Model/PaymentLedger.php,src/Payment/Domain/Model/PaymentNotFoundException.php,src/Payment/Domain/Model/PaymentStatus.php,src/Payment/Domain/Model/PaymentTransition.php,src/Payment/Domain/Model/PaymentVersionConflictException.php,src/Payment/Infrastructure/Http/AdminPaymentController.php,src/Payment/Infrastructure/Persistence/DbalPaymentInitiationAdapter.php,src/Payment/Infrastructure/Persistence/DbalPaymentLedger.php,src/Payment/Infrastructure/ReadModel/GetPaymentDetailHandler.php,src/Shared/Application/Command/UpdatePlatformSettings.php,src/Shared/Application/Command/UpdateShippingPolicy.php,src/Shared/Application/CommandHandler/UpdatePlatformSettingsHandler.php,src/Shared/Application/CommandHandler/UpdateShippingPolicyHandler.php,src/Shared/Application/Dto/StorefrontProductSnapshot.php,src/Shared/Application/Port/OrderSettlementPort.php,src/Shared/Application/Port/PaymentInitiationPort.php,src/Shared/Application/Port/StockReservationPort.php,src/Shared/Application/Query/GetPlatformSettings.php,src/Shared/Application/Service/StorefrontQuoteService.php,src/Shared/Domain/Inventory/InsufficientStockException.php,src/Shared/Domain/Payment/OrderNotPayableException.php,src/Shared/Domain/Payment/OrderNotRefundableException.php,src/Shared/Infrastructure/Http/AdminSettingsController.php,src/Shared/Infrastructure/Http/LineQuantity.php,src/Shared/Infrastructure/ReadModel/GetPlatformSettingsHandler.php,src/Shared/Infrastructure/ReadModel/GetStorefrontReferenceHandler.php,src/Shared/Infrastructure/ReadModel/PlatformSettingsRepository.php,src/Shared/Infrastructure/ReadModel/StorefrontReferenceRepository.php
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.81kB done
+#1 DONE 0.0s
+
+#2 [app internal] load build definition from Dockerfile
+#2 transferring dockerfile: 2.53kB done
+#2 DONE 0.0s
+
+#3 [worker internal] load metadata for docker.io/composer/composer:2
+#3 DONE 0.0s
+
+#4 [app internal] load metadata for docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#4 DONE 0.0s
+
+#5 [outbox internal] load .dockerignore
+#5 transferring context: 338B done
+#5 DONE 0.0s
+
+#6 [app base 1/5] FROM docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#6 resolve docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae 0.0s done
+#6 DONE 0.0s
+
+#7 [outbox] FROM docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4
+#7 resolve docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4 0.0s done
+#7 DONE 0.0s
+
+#8 [app internal] load build context
+#8 transferring context: 64B done
+#8 DONE 0.0s
+
+#9 [app base 5/5] COPY docker/Caddyfile /etc/caddy/Caddyfile
+#9 CACHED
+
+#10 [app base 4/5] WORKDIR /app
+#10 CACHED
+
+#11 [app base 3/5] COPY --from=composer/composer:2 /usr/bin/composer /usr/bin/composer
+#11 CACHED
+
+#12 [app base 2/5] RUN install-php-extensions         intl         opcache         pdo_pgsql         zip     && if [ "true" = "true" ]; then install-php-extensions xdebug; fi
+#12 CACHED
+
+#13 [worker dev 1/1] RUN apt-get update     && apt-get install -y --no-install-recommends python3 python3-yaml     && rm -rf /var/lib/apt/lists/*
+#13 CACHED
+
+#14 [worker] exporting to image
+#14 exporting layers done
+#14 exporting manifest sha256:23c9be053f85b1a5f0dd556c86691c02540cad4cabed45a8d430cbb74cbbb822 done
+#14 exporting config sha256:9206758705047635ae3a67bdc75746491f7df9ec1d09fe9ab42087caea80337d 0.0s done
+#14 exporting attestation manifest sha256:5b658baf72c240458b01febafebf049c0df5278b3856bea00b53c2da2d8b80e3
+#14 exporting attestation manifest sha256:5b658baf72c240458b01febafebf049c0df5278b3856bea00b53c2da2d8b80e3 0.0s done
+#14 exporting manifest list sha256:255c8c4796998f69f81632b7d5b6a88f3d83be2dd90476001a44ce237557c744 0.0s done
+#14 naming to docker.io/library/ecommerce-core:dev done
+#14 unpacking to docker.io/library/ecommerce-core:dev
+#14 unpacking to docker.io/library/ecommerce-core:dev 0.3s done
+#14 DONE 0.4s
+
+#15 [app] exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:930d1d16a179571ea3aa2d76a47d17019578eeb566dda36b2fe5b226b45a7e29 done
+#15 exporting config sha256:815100459f458e96ed3fe2d40796e9a94c78e96eeb2c1e87e6d5e1c10e2b9cf6 done
+#15 exporting attestation manifest sha256:6aa33ae2ff15b6bfe36e95ef9b6230b5120cb9162aaa69b62d336bfdfdcace77 0.1s done
+#15 exporting manifest list sha256:fb93d1b7bf645e73d9a10fd4fcb15a6902ab6df3493ac9314b79eea7d598e098 0.0s done
+#15 naming to docker.io/library/ecommerce-core:dev done
+#15 unpacking to docker.io/library/ecommerce-core:dev 0.3s done
+#15 DONE 0.4s
+
+#16 [outbox] exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:d986043e808b71f7e75e243a0a36c423a26ca16b76b31e8b71fa15bf808dfaea done
+#16 exporting config sha256:ba41eecd3433e712d01683636d375a4da39eb4662e4fa43f355e5d9c5b7e93ce done
+#16 exporting attestation manifest sha256:bd14f5a2caba2633805a6f0899a1080aa2c06af545eeb5d6146d8bda69266816 0.1s done
+#16 exporting manifest list sha256:471070c57a487217fc39ca4784f779119f1783d91045815fa027dd994a129571 0.0s done
+#16 naming to docker.io/library/ecommerce-core:dev done
+#16 unpacking to docker.io/library/ecommerce-core:dev 0.3s done
+#16 DONE 0.4s
+
+#17 [app] resolving provenance for metadata file
+#17 DONE 0.0s
+
+#18 [outbox] resolving provenance for metadata file
+#18 DONE 0.0s
+
+#19 [worker] resolving provenance for metadata file
+#19 DONE 0.0s
+ ecommerce-core:dev  Built
+ ecommerce-core:dev  Built
+ ecommerce-core:dev  Built
+ Container ecommerce-ci-meilisearch-1  Running
+ Container ecommerce-ci-database-1  Running
+ Container ecommerce-ci-app-1  Recreate
+ Container ecommerce-ci-app-1  Recreated
+ Container ecommerce-ci-database-1  Waiting
+ Container ecommerce-ci-database-1  Healthy
+ Container ecommerce-ci-app-1  Starting
+ Container ecommerce-ci-app-1  Started
+ Container ecommerce-ci-app-1  Waiting
+ Container ecommerce-ci-database-1  Waiting
+ Container ecommerce-ci-meilisearch-1  Waiting
+ Container ecommerce-ci-meilisearch-1  Healthy
+ Container ecommerce-ci-database-1  Healthy
+ Container ecommerce-ci-app-1  Healthy
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+Database "app_test" for connection named default already exists. Skipped.
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+
+ [WARNING] The "--filter" option is deprecated since 0.34.0 and will be removed 
+           in future versions. Use positional arguments instead: infection      
+           <filter>                                                             
+
+
+ [WARNING] The "--filter" option is deprecated since 0.34.0 and will be removed 
+           in future versions. Use positional arguments instead: infection      
+           <filter>                                                             
+
+
+    ____      ____          __  _
+   /  _/___  / __/__  _____/ /_(_)___  ____
+   / // __ \/ /_/ _ \/ ___/ __/ / __ \/ __ \
+ _/ // / / / __/  __/ /__/ /_/ / /_/ / / / /
+/___/_/ /_/_/  \___/\___/\__/_/\____/_/ /_/
+
+#StandWithUkraine
+
+Infection - PHP Mutation Testing Framework version 0.35.8
+
+[notice] Running Infection with 15 threads.
+
+Running initial tests with PHPUnit version 13.4.3
+ [ERROR] Project tests must be in a passing state before running Infection.     
+         Infection runs the test suite in a RANDOM order. Make sure your tests  
+         do not have hidden dependencies.                                       
+                                                                                
+         You can add these attributes to `phpunit.xml` to check it: <phpunit    
+         executionOrder="random" resolveDependencies="true" ...                 
+                                                                                
+         If you don't want to let Infection run tests in a random order, set the
+         `executionOrder` to some value, for example <phpunit                   
+         executionOrder="default"                                               
+                                                                                
+         Check the executed command to identify the problem:                    
+         '/app/vendor/bin/phpunit' '--configuration'                            
+         '/tmp/infection/phpunitConfiguration.initial.infection.xml'            
+         '--exclude-source-from-xml-coverage'                                   
+         '--coverage-xml=/tmp/infection/coverage-xml'                           
+         '--log-junit=/tmp/infection/junit.xml'                                 
+         PHPUnit reported an exit code of 1.                                    
+         Refer to the PHPUnit's output below:                                   
+         STDOUT:                                                                
+         PHPUnit 13.4.3 by Sebastian Bergmann and contributors.                 
+                                                                                
+         Runtime:       PHP 8.5.12 with Xdebug 3.5.3                            
+         Configuration:                                                         
+         /tmp/infection/phpunitConfiguration.initial.infection.xml              
+         Random Seed:   1792760987                                              
+                                                                                
+         ...............................................................  63 /  
+         502 ( 12%)                                                             
+         ............................................................... 126 /  
+         502 ( 25%)                                                             
+         ............................................................... 189 /  
+         502 ( 37%)                                                             
+         ............................................................... 252 /  
+         502 ( 50%)                                                             
+         ............................................................... 315 /  
+         502 ( 62%)                                                             
+         ............................................................... 378 /  
+         502 ( 75%)                                                             
+         ............................................................... 441 /  
+         502 ( 87%)                                                             
+         ..........................................................F            
+                                                                                
+         Time: 00:37.626, Memory: 88.50 MB                                      
+                                                                                
+         There was 1 failure:                                                   
+                                                                                
+         1)                                                                     
+         App\Tests\Functional\StorefrontCatalogBrowseTest::testASecondPageWithAC
+         ustomSizeDoesNotRepeatTheFirstOne                                      
+         meta.total is the filtered total, not the page size                    
+         Failed asserting that 14 is identical to 13.                           
+                                                                                
+         /app/tests/Functional/StorefrontCatalogBrowseTest.php:81               
+                                                                                
+         FAILURES!                                                              
+         Tests: 500, Assertions: 2959, Failures: 1.                             
+                                                                                
+         Generating code coverage report in PHPUnit XML format ... done         
+         [00:00.151]                                                            
+
+ci-local: step failed: dc exec -T app vendor/bin/infection --no-progress --filter=src/Catalog/Infrastructure/Adapter/DbalStorefrontCatalogPort.php,src/Catalog/Infrastructure/Http/AdminProductController.php,src/Catalog/Infrastructure/ReadModel/StorefrontProductRepository.php,src/Catalog/Infrastructure/ReadModel/StorefrontProductView.php,src/Inventory/Infrastructure/Persistence/DbalStockReservationAdapter.php,src/Ordering/Application/Command/AutoCancelOrder.php,src/Ordering/Application/Command/CancelOrderByCustomer.php,src/Ordering/Application/CommandHandler/AutoCancelOrderHandler.php,src/Ordering/Application/CommandHandler/CancelOrderByCustomerHandler.php,src/Ordering/Application/CommandHandler/CreateAdminProxyOrderHandler.php,src/Ordering/Application/CommandHandler/PlaceOrderHandler.php,src/Ordering/Domain/Model/OrderNotFoundException.php,src/Ordering/Infrastructure/Console/AutoCancelExpiredOrdersCommand.php,src/Ordering/Infrastructure/Http/AdminOrderController.php,src/Ordering/Infrastructure/Http/CheckoutOrderController.php,src/Ordering/Infrastructure/Persistence/DbalOrderSettlementAdapter.php,src/Payment/Application/Command/ConfirmOfflinePayment.php,src/Payment/Application/Command/RefundPayment.php,src/Payment/Application/CommandHandler/ConfirmOfflinePaymentHandler.php,src/Payment/Application/CommandHandler/RefundPaymentHandler.php,src/Payment/Application/Query/GetPaymentDetail.php,src/Payment/Domain/Event/PaymentAuthorized.php,src/Payment/Domain/Event/PaymentRefunded.php,src/Payment/Domain/Model/IllegalPaymentStateTransitionException.php,src/Payment/Domain/Model/PaymentLedger.php,src/Payment/Domain/Model/PaymentNotFoundException.php,src/Payment/Domain/Model/PaymentStatus.php,src/Payment/Domain/Model/PaymentTransition.php,src/Payment/Domain/Model/PaymentVersionConflictException.php,src/Payment/Infrastructure/Http/AdminPaymentController.php,src/Payment/Infrastructure/Persistence/DbalPaymentInitiationAdapter.php,src/Payment/Infrastructure/Persistence/DbalPaymentLedger.php,src/Payment/Infrastructure/ReadModel/GetPaymentDetailHandler.php,src/Shared/Application/Command/UpdatePlatformSettings.php,src/Shared/Application/Command/UpdateShippingPolicy.php,src/Shared/Application/CommandHandler/UpdatePlatformSettingsHandler.php,src/Shared/Application/CommandHandler/UpdateShippingPolicyHandler.php,src/Shared/Application/Dto/StorefrontProductSnapshot.php,src/Shared/Application/Port/OrderSettlementPort.php,src/Shared/Application/Port/PaymentInitiationPort.php,src/Shared/Application/Port/StockReservationPort.php,src/Shared/Application/Query/GetPlatformSettings.php,src/Shared/Application/Service/StorefrontQuoteService.php,src/Shared/Domain/Inventory/InsufficientStockException.php,src/Shared/Domain/Payment/OrderNotPayableException.php,src/Shared/Domain/Payment/OrderNotRefundableException.php,src/Shared/Infrastructure/Http/AdminSettingsController.php,src/Shared/Infrastructure/Http/LineQuantity.php,src/Shared/Infrastructure/ReadModel/GetPlatformSettingsHandler.php,src/Shared/Infrastructure/ReadModel/GetStorefrontReferenceHandler.php,src/Shared/Infrastructure/ReadModel/PlatformSettingsRepository.php,src/Shared/Infrastructure/ReadModel/StorefrontReferenceRepository.php
+
+[1;36m[6] ci.yml: prod-image smoke[0m
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.53kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/composer/composer:2
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 338B done
+#4 DONE 0.0s
+
+#5 FROM docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4
+#5 resolve docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4 0.0s done
+#5 DONE 0.0s
+
+#6 [base 1/5] FROM docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#6 resolve docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.51MB 0.0s done
+#7 DONE 0.0s
+
+#8 [base 4/5] WORKDIR /app
+#8 CACHED
+
+#9 [base 2/5] RUN install-php-extensions         intl         opcache         pdo_pgsql         zip     && if [ "false" = "true" ]; then install-php-extensions xdebug; fi
+#9 CACHED
+
+#10 [base 3/5] COPY --from=composer/composer:2 /usr/bin/composer /usr/bin/composer
+#10 CACHED
+
+#11 [prod 2/5] COPY composer.json composer.lock ./
+#11 CACHED
+
+#12 [prod 1/5] COPY docker/php.ini /usr/local/etc/php/conf.d/99-app.ini
+#12 CACHED
+
+#13 [base 5/5] COPY docker/Caddyfile /etc/caddy/Caddyfile
+#13 CACHED
+
+#14 [prod 3/5] RUN composer install         --no-dev         --no-interaction         --no-progress         --prefer-dist         --no-scripts         --no-autoloader
+#14 CACHED
+
+#15 [prod 4/5] COPY . .
+#15 DONE 0.1s
+
+#16 [prod 5/5] RUN composer dump-autoload --no-dev --classmap-authoritative     && composer run-script auto-scripts     && mkdir -p var/cache var/log var/share public/uploads     && chown -R www-data:www-data var public/uploads /config /data
+#16 0.217 Generating optimized autoload files (authoritative)
+#16 0.796 Generated optimized autoload files (authoritative) containing 6529 classes
+#16 0.890 Executing script cache:clear [OK]
+#16 1.901 Executing script assets:install public [OK]
+#16 1.954 Executing script importmap:install
+#16 1.999  [OK]
+#16 DONE 2.0s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 0.5s done
+#17 exporting manifest sha256:30730869c8782f9452306e07f8553e7211aad6e9e47113017ebcfc9d2596fdc0 done
+#17 exporting config sha256:9890622a34295d67477136913a370aa5fbeefade00d9c922c0ea247beb769df2 0.0s done
+#17 exporting attestation manifest sha256:83940c9e649d341d4c52a977f14c41d4f2f26f8629035798a7a9ef333249180d 0.0s done
+#17 exporting manifest list sha256:98e8e7d0fa1e715a9b33f5ecab9a4eeb9dd0dddf71bffe92e77431ebc14682dc done
+#17 naming to docker.io/library/ecommerce-core:prod done
+#17 unpacking to docker.io/library/ecommerce-core:prod
+#17 unpacking to docker.io/library/ecommerce-core:prod 0.2s done
+#17 DONE 0.8s
+ccace96c715bc27846c4c3368883c7aa2c1efdfcf2e5d12897c2caea9c308789
+/var/run/postgresql:5432 - accepting connections
+[notice] Migrating up to DoctrineMigrations\Version20261022000006
+[notice] finished in 193.2ms, used 14M memory, 20 migrations executed, 188 sql queries
+
+ [OK] Successfully migrated to version: DoctrineMigrations\Version20261022000006
+
+
+6f8044f5b6ab24686997fba7dc3385b2503756be55efdb6fda1ae0c487621add
+prod smoke: http://127.0.0.1:32770/readyz
+{"status":"degraded","checks":{"database":"ok","migrations":"ok","search":"failed"}}readiness contract ok: {'status': 'degraded', 'checks': {'database': 'ok', 'migrations': 'ok', 'search': 'failed'}}
+
+[1mSummary[0m
+  [32mok[0m     start the stack (build + up)
+  [31mFAILED[0m ci.yml: quality
+  [31mFAILED[0m tests.yml: every PHPUnit suite
+  [32mok[0m     ci.yml: harness integrity
+  [31mFAILED[0m ci.yml: infection
+  [32mok[0m     ci.yml: prod-image smoke
+
+[31mOne or more CI phases failed — do not push.[0m
+EXIT_CODE=1

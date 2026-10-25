@@ -1,0 +1,27 @@
+2026-10-22T22:05:00+01:00 gate PLAN ok test-planner — 8 behaviors planned for the payment increment (O-05, O-07, O-08, O-19, RP1.1..RP1.6)
+2026-10-22T22:06:00+01:00 gate PATTERN skipped orchestrator — ADR-0001 accepts the Payment context, its events and the append-only ledger; ADR-0004 fixes the saga shape; no boundary moves
+2026-10-22T22:12:41+01:00 gate RED ok unit-test-writer — tests/Functional/CheckoutPaymentTest.php: relation "payment" does not exist (migration not applied)
+2026-10-22T22:14:10+01:00 gate RED ok unit-test-writer — same test after applying Version20261022000006: payment stays empty, nothing writes it
+2026-10-22T22:21:35+01:00 gate GREEN ok implementer — Behavior 1: PaymentInitiationPort + DbalPaymentInitiationAdapter called from PlaceOrderHandler, 1 test / 12 assertions
+2026-10-22T22:26:02+01:00 gate RED ok unit-test-writer — tests/Functional/AdminProxyOrderPaymentTest.php: proxy order opens no payment
+2026-10-22T22:28:44+01:00 gate GREEN ok implementer — Behavior 2: CreateAdminProxyOrderHandler opens the payment, 1 test / 13 assertions
+2026-10-22T22:41:09+01:00 gate RED ok unit-test-writer — tests/Functional/ConfirmOfflinePaymentTest.php: 404, POST /api/v1/admin/payments/{id}/confirm missing
+2026-10-22T22:52:37+01:00 gate GREEN ok implementer — Behavior 3: PaymentStatus, PaymentAuthorized, OrderSettlementPort, ConfirmOfflinePayment command/handler/controller, 1 test / 21 assertions
+2026-10-22T22:31:46+01:00 gate RED ok unit-test-writer — stale expectedVersion answered 200 instead of 409
+2026-10-22T22:36:20+01:00 gate GREEN ok implementer — Behavior 4: version pre-check + guarded UPDATE + 409 mapping, 2 tests / 29 assertions
+2026-10-22T22:39:12+01:00 gate RED ok unit-test-writer — a second confirmation answered 500 (no mapping for the illegal transition)
+2026-10-22T22:40:05+01:00 gate GREEN ok implementer — Behavior 5: 409 payment-not-confirmable, one ledger row, 3 tests / 37 assertions
+2026-10-22T22:47:31+01:00 gate RED ok unit-test-writer — tests/Functional/CheckoutPaymentMethodTest.php: Bitcoin answered 201, settings response had no paymentMethods
+2026-10-22T22:56:18+01:00 gate GREEN ok implementer — Behavior 6: allow-list stored in platform_setting, enforced with 422 payment-method-not-allowed before any reservation, 2 tests / 8 assertions; 11 settings tests still green
+2026-10-22T23:03:22+01:00 gate RED ok unit-test-writer — tests/Functional/RefundPaymentTest.php: 404, POST /api/v1/admin/payments/{id}/refund missing
+2026-10-22T23:12:40+01:00 gate GREEN ok implementer — Behavior 7: PaymentRefunded, RefundPayment handler, markRefunded via FOR UPDATE, refund route, 1 test / 20 assertions
+2026-10-22T20:59:39+00:00 gate RED ok unit-test-writer — tests/Functional/AdminPaymentReadTest.php: 2 of 3 tests got 404, GET /api/v1/admin/payments/{id} missing
+2026-10-22T21:04:12+00:00 gate GREEN ok implementer — Behavior 8: GetPaymentDetail query + read-model handler on query.bus + GET route, 3 tests / 24 assertions
+2026-10-22T21:12:00+00:00 gate REFACTOR ok refactorer — extracted PaymentLedger/PaymentTransition/DbalPaymentLedger from the two handlers, behavior-preserving (11 tests / 115 assertions before and after)
+2026-10-22T21:29:00+00:00 gate SPEC-TESTS ok integration-test-agent+projection-test-agent+e2e-contract-test-agent — PaymentTransitionConcurrencyTest 1 test / 10 assertions deterministic over 3 runs; repaired OrderConcurrencyAndProxyOrderTest and PlaceOrderOutboxTest; no projection and no contract file needed
+2026-10-22T21:30:00+00:00 gate QUALITY ok orchestrator — 491 tests / 2943 assertions, phpstan [OK] (one array_values finding fixed), cs-fixer 0 of 411, deptrac Errors 0
+2026-10-22T21:32:00+00:00 gate REVIEW ok code-reviewer+architecture-reviewer+security-reviewer+performance-reviewer+test-reviewer — 2 MINOR (CR-001 conflict message, TDD-011 untested ownership filter), 2 NIT (CR-002 outbox leak, TDD-012 unused FAILED), 4 INFO recorded as debt
+2026-10-22T21:44:00+00:00 gate FIXES ok implementer — F-1 CR-001+CR-002, F-2 TDD-011 GetPaymentDetailAuthorizationTest; both fixes proven by mutation checks
+2026-10-22T21:47:00+00:00 gate REVIEW ok orchestrator (re-run) — FIXES delta re-read by the five roles, no new finding; REVIEW closed
+2026-10-22T21:50:00+00:00 gate DONE ok orchestrator — 492 tests / 2950 assertions, phpstan [OK], cs-fixer 0 of 412, deptrac Errors 0; 9 debt items and 3 open questions recorded in the closure
+2026-10-22T21:50:00+00:00 note TDD-010 — Infection still not runnable: no pcov/phpdbg/xdebug in the image (CoverageChecker.php:89); MSI >= 85 stays open

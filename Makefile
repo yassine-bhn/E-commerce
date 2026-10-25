@@ -55,11 +55,14 @@ install: up ## Install composer dependencies from composer.lock
 console: ## Run bin/console: make console ARGS="cache:clear"
 	$(EXEC) php bin/console $(ARGS)
 
-migrate: up ## Apply the migrations to the dev database
+migrate: up ## Apply the migrations to the dev database, then approve the catalogue that predates the workflow
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration
+	$(EXEC) php bin/console app:catalog:backfill-approval --apply
 
-migrate-test: up ## Apply the migrations to the test database
+migrate-test: up ## Apply the migrations to the test database, then approve the catalogue that predates the workflow
+	$(EXEC) php bin/console doctrine:database:create --if-not-exists --env=test
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+	$(EXEC) php bin/console app:catalog:backfill-approval --apply --env=test
 
 test: up ## Run every PHPUnit suite
 	$(EXEC) vendor/bin/phpunit
@@ -112,7 +115,10 @@ ci: build up ## Reproduce the CI quality job locally, same order
 	$(EXEC) vendor/bin/phpstan analyse --no-progress
 	$(EXEC) vendor/bin/deptrac analyse --no-progress
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration
+	$(EXEC) php bin/console app:catalog:backfill-approval --apply
+	$(EXEC) php bin/console doctrine:database:create --if-not-exists --env=test
 	$(EXEC) php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+	$(EXEC) php bin/console app:catalog:backfill-approval --apply --env=test
 	$(EXEC) vendor/bin/phpunit --testsuite Unit
 	$(EXEC) vendor/bin/phpunit --testsuite Integration
 	$(EXEC) vendor/bin/phpunit --testsuite Projection

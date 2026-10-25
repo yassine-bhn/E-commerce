@@ -83,11 +83,12 @@ final class AdminCatalogPaginationTest extends WebTestCase
         );
         self::assertSame([$parent, $visible, $hidden, $childOne, $childTwo], array_column($all['items'], 'slug'), 'sort_order is the default sort');
         self::assertSame(
-            ['slug', 'label', 'parentSlug', 'subcategories', 'subLevelCount', 'hidden', 'quoteEligible', 'productCount', 'sortOrder'],
+            ['slug', 'label', 'parentSlug', 'subcategories', 'subLevelCount', 'hidden', 'quoteEligible', 'productCount', 'sortOrder', 'approvalStatus', 'submittedBy', 'rejectionReason'],
             array_keys($all['items'][0]),
-            'the item shape is unchanged by pagination',
+            'the item shape is unchanged by pagination, approval metadata included',
         );
         self::assertIsInt($all['items'][0]['productCount']);
+        self::assertSame('PENDING_APPROVAL', $all['items'][0]['approvalStatus'], 'a fixture inserted without a decision is a pending submission');
 
         self::assertSame([$hidden], array_column($this->get('/api/v1/admin/catalog/categories?q='.$this->token.'&hidden=true')['items'], 'slug'));
         self::assertCount(4, $this->get('/api/v1/admin/catalog/categories?q='.$this->token.'&hidden=false')['items']);

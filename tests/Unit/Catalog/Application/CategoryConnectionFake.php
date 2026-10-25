@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Catalog\Application;
 
+use App\Catalog\Application\Service\SubmissionAccessPolicy;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
@@ -29,9 +30,20 @@ final class CategoryConnectionFake extends Connection
     /** @var list<list<array<string, mixed>>> */
     public array $rowLists = [];
 
+    /**
+     * Rows answered by SQL fragment instead of by position, for the handlers that read the
+     * same row twice: once through {@see SubmissionAccessPolicy}
+     * and once for the content they rewrite. The policy statement is the one selected below.
+     *
+     * @var array<string, array<string, mixed>|false>
+     */
+    public array $rowsBySqlFragment = [];
+
     public ?\Throwable $failNextWrite = null;
 
     public int $affectedRows = 1;
+
+    public bool $inTransaction = false;
 
     private bool $forbidWrites = false;
 
@@ -80,9 +92,51 @@ final class CategoryConnectionFake extends Connection
 
     public function fetchAssociative(string $query, array $params = [], array $types = []): array|false
     {
+        foreach ($this->rowsBySqlFragment as $fragment => $row) {
+            if (str_contains($query, $fragment)) {
+                return $row;
+            }
+        }
+
         $row = array_shift($this->rows);
 
         return $row ?? false;
+    }
+
+    /**
+     * The approval row {@see SubmissionAccessPolicy} reads for
+     * the slug under test, so a handler test can stay about the write it makes.
+     */
+    public function submission(string $status = 'PENDING_APPROVAL', ?string $owner = null): void
+    {
+        $this->rowsBySqlFragment['approval_status, submitted_by'] = [
+            'approval_status' => $status,
+            'submitted_by' => $owner,
+        ];
+    }
+
+    public function accessPolicy(): SubmissionAccessPolicy
+    {
+        return new SubmissionAccessPolicy($this);
+    }
+
+    /**
+     * Transactions are bookkeeping on an in-memory fake: there is nothing to roll back, and
+     * the statements a handler issues are asserted directly.
+     */
+    public function beginTransaction(): void
+    {
+        $this->inTransaction = true;
+    }
+
+    public function commit(): void
+    {
+        $this->inTransaction = false;
+    }
+
+    public function rollBack(): void
+    {
+        $this->inTransaction = false;
     }
 
     /**

@@ -24,6 +24,9 @@ final readonly class CategoryView implements \JsonSerializable
         public bool $quoteEligible,
         public int $productCount,
         public int $sortOrder,
+        public ?string $approvalStatus = null,
+        public ?string $submittedBy = null,
+        public ?string $rejectionReason = null,
     ) {
     }
 
@@ -48,6 +51,9 @@ final readonly class CategoryView implements \JsonSerializable
             quoteEligible: $category->quoteEligible,
             productCount: (int) ($row['product_count'] ?? 0),
             sortOrder: $category->sortOrder,
+            approvalStatus: isset($row['approval_status']) ? (string) $row['approval_status'] : null,
+            submittedBy: isset($row['submitted_by']) ? (string) $row['submitted_by'] : null,
+            rejectionReason: isset($row['rejection_reason']) ? (string) $row['rejection_reason'] : null,
         );
     }
 
@@ -69,6 +75,9 @@ final readonly class CategoryView implements \JsonSerializable
             'quoteEligible' => $this->quoteEligible,
             'productCount' => $this->productCount,
             'sortOrder' => $this->sortOrder,
+            'approvalStatus' => $this->approvalStatus,
+            'submittedBy' => $this->submittedBy,
+            'rejectionReason' => $this->rejectionReason,
         ];
     }
 

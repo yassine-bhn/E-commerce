@@ -63,6 +63,32 @@ Le projet est structuré selon les principes DDD / CQRS en 8 contextes délimit�
 
 ---
 
+## 📞 Contact WhatsApp (Storefront)
+
+`GET /api/v1/storefront/contact/whatsapp` — lecture publique (sans authentification ni rate limiting)
+qui renvoie le contact WhatsApp Business configuré et le lien de conversation prêt à ouvrir :
+
+```json
+{
+  "phoneNumber": "21600000000",
+  "message": "Hello, I would like more information about your products.",
+  "chatUrl": "https://wa.me/21600000000?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20products."
+}
+```
+
+- `?message=…` remplace le message par défaut : 1 à 200 caractères Unicode, sans caractère de
+  contrôle. Une valeur absente, vide ou composée d'espaces ASCII retombe sur le message configuré
+  (`200`) ; une valeur trop longue, un retour à la ligne ou un tableau (`?message[]=…`) est refusé en
+  `400` avec `{"error": "…"}`.
+- La destination n'est jamais pilotée par la requête : le numéro, le schéma et l'hôte
+  (`https://wa.me/`) viennent uniquement de la configuration.
+- Variables : `WHATSAPP_PHONE_NUMBER` (chiffres uniquement, format international ; un `+` initial est
+  accepté et retiré) et `WHATSAPP_DEFAULT_MESSAGE`, déclarées dans `.env` / `.env.test` et
+  documentées dans `.env.prod.example`. En production, remplacez le placeholder `21600000000`.
+- Contrat complet, cas d'erreur et garanties : [docs/whatsapp-contact-endpoint.md](docs/whatsapp-contact-endpoint.md).
+
+---
+
 ## 🧪 Tests & Qualité de Code
 
 ```bash

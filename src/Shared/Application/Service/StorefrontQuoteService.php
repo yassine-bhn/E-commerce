@@ -8,6 +8,7 @@ use App\Shared\Application\Dto\StorefrontProductSnapshot;
 use App\Shared\Application\Port\StorefrontCatalogPort;
 use App\Shared\Application\Port\StorefrontPricingPort;
 use App\Shared\Domain\Currency;
+use App\Shared\Domain\Inventory\InsufficientStockException;
 use App\Shared\Domain\Money;
 
 final class StorefrontQuoteService
@@ -46,9 +47,16 @@ final class StorefrontQuoteService
                 throw new \InvalidArgumentException(sprintf('Product out of stock: %s', $line['slug']));
             }
 
+            $qty = (int) ($line['quantity'] ?? $line['qty'] ?? 1);
+            if ($qty < 1) {
+                throw new \InvalidArgumentException(sprintf('Quantity must be positive for product: %s', $product->slug));
+            }
+            if (null !== $product->stockQuantity && $qty > $product->stockQuantity) {
+                throw new InsufficientStockException($product->slug);
+            }
+
             $variant = $line['variant'] ?? null;
             $unitMinor = $this->resolveUnitPrice($product, $variant);
-            $qty = max(1, (int) ($line['quantity'] ?? $line['qty'] ?? 1));
             $itemCount += $qty;
             $subtotal = $subtotal->add(Money::ofMinor($unitMinor, $currency)->multiply($qty));
             $pricedLines[] = [

@@ -72,6 +72,10 @@ DIP-001 | Deptrac + review | deptrac.yaml; architecture-reviewer | no
 DIP-002 | hook grep (container->get) + phpstan-symfony | .agents/hooks/guard-cqrs.sh; phpstan.neon | no
 DIP-003 | custom PHPStan rule + Deptrac | .agents/phpstan/NoInfrastructureInHandlerRule.php; deptrac.yaml | no
 
+SOLID-* review rows are dispatched by the `## Review fan-out` section of
+`.agents/orchestration.md`: solid-guardian joins the five core reviewers on design-bearing
+diffs, and AGT-007 fails `bin/harness-check` if that route is ever dropped.
+
 ## Agent scope & TDD gates
 
 Gate/rule | Mechanism | File | Auto-fixable
@@ -82,6 +86,7 @@ AGT-003 | audit log review + ownership check | .agents/hooks/completion-check.sh
 AGT-004 | scope guard hook (orchestrator globs) | .agents/hooks/scope-guard.sh | no
 AGT-005 | completion hook + harness self-test | .agents/hooks/completion-check.sh; bin/harness-check | no
 AGT-006 | orchestrator gate + state schema check | .agents/orchestration.md; bin/harness-check | no
+AGT-007 | reachability loop over .agents/agents/*.md | bin/harness-check; .agents/orchestration.md | no
 TDD gate (RED record) | tdd-gate hook on every src/** write | .agents/hooks/tdd-gate.sh | no
 Post-edit fast check | php-cs-fixer + PHPStan on changed files | .agents/hooks/post-edit.sh | yes (php-cs-fixer without --dry-run)
 Pre-finish full check | phpstan + deptrac + suites + infection | .agents/hooks/pre-finish.sh | no

@@ -1,5 +1,9 @@
 # DIP-001 / LAY-003 — Domain is not a service layer; HTTP under */Infrastructure/Http (SRP-002).
 parameters:
+    # The remember-me cookie name, shared by the firewall (config/packages/security.yaml) and the
+    # request-input guard that drops malformed payloads before the firewall reads it, so both always
+    # address the same cookie.
+    remember_me_cookie_name: 'REMEMBERME'
 
 services:
     _defaults:
@@ -97,13 +101,37 @@ services:
     App\Ordering\Domain\Repository\OrderRepository:
         alias: App\Ordering\Infrastructure\Persistence\DoctrineOrderRepository
 
+    # ADR-0001 — the payment row and its ledger move together, through one guarded write.
+    App\Payment\Domain\Model\PaymentLedger:
+        alias: App\Payment\Infrastructure\Persistence\DbalPaymentLedger
+
     # ADR-0005: one client for the storefront search index (read finder + indexer).
     Meilisearch\Client:
         arguments:
             $url: '%env(MEILISEARCH_URL)%'
 
+    # spec-run-9 (R1/R2) — the WhatsApp contact is configuration-only: the number and the default
+    # message reach the read handler through #[Autowire('%env(...)%')] on its constructor, so no
+    # value is hardcoded in src/** and the wiring lives with the class that needs it.
     App\Shared\Domain\Outbox\OutboxPort:
         alias: App\Shared\Infrastructure\Outbox\DoctrineOutbox
+
+    # spec-run-8 (ADR-0012): catalog audit rows are slugs, not user ids, so they cannot reuse
+    # identity_audit_log — the port keeps the handlers free of the table choice.
+    App\Catalog\Application\Port\CatalogAuditPort:
+        alias: App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter
+
+    # spec-run-12 (R18): the review write asks the read side through a port, so Application never
+    # names the SQL predicate. The container can resolve the interface on its own while there is one
+    # implementation; the binding is written out because a second implementation must be a visible
+    # decision, not a silent change of what the command side is talking to.
+    App\Catalog\Application\Port\ProductVisibilityPort:
+        alias: App\Catalog\Infrastructure\ReadModel\DbalProductVisibility
+
+    # ADR-0011: the malformed-cookie guard must read the same cookie name the firewall writes.
+    App\Identity\Infrastructure\Security\MalformedRememberMeCookieSubscriber:
+        arguments:
+            $cookieName: '%remember_me_cookie_name%'
 
     messenger.bus.command:
         alias: command.bus

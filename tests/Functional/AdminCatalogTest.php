@@ -7,6 +7,7 @@ namespace App\Tests\Functional;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,12 +82,27 @@ final class AdminCatalogTest extends WebTestCase
     }
 
     /** @return array<string, mixed> */
-    private function json(\Symfony\Bundle\FrameworkBundle\KernelBrowser $client): array
+    private function json(KernelBrowser $client): array
     {
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         return $payload;
+    }
+
+    /** spec-run-8 R22 — approving is a Super Admin decision on the submission route. */
+    private function approve(KernelBrowser $client, string $kind, string $slug): void
+    {
+        $collection = 'product' === $kind ? 'products' : 'categories';
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/'.$collection.'/'.$slug.'/approve');
+        self::assertResponseIsSuccessful('approving the '.$kind.' '.$slug.' must succeed');
+    }
+
+    /** spec-run-8 R28/R29 — publication is a second, separate decision. */
+    private function publish(KernelBrowser $client, string $slug): void
+    {
+        $client->jsonRequest('PATCH', '/api/v1/admin/catalog/products/'.$slug.'/publication', ['published' => true]);
+        self::assertResponseIsSuccessful();
     }
 
     /** @return array<string, mixed> */
@@ -113,7 +129,11 @@ final class AdminCatalogTest extends WebTestCase
         ];
     }
 
-    public function testGuestAndStandardAdminCannotWriteTheCatalog(): void
+    /**
+     * spec-run-8 R1/R10/R34 — a standard admin may create, but only as a pending submission it
+     * cannot approve or publish; a guest may not create at all.
+     */
+    public function testGuestIsRefusedAndAStandardAdminOnlySubmitsForReview(): void
     {
         $client = static::createClient();
 
@@ -121,8 +141,33 @@ final class AdminCatalogTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
 
         $client->loginUser($this->createUser('ROLE_ADMIN'));
-        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $this->productPayload('admin-denied'));
+        $slug = 'test-admin-submission-'.substr(Uuid::v4()->toRfc4122(), 0, 8);
+        $this->productSlugs[] = $slug;
+
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $this->productPayload($slug));
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $client->request('GET', '/api/v1/admin/catalog/products/'.$slug);
+        self::assertSame('PENDING_APPROVAL', $this->json($client)['approval']['approvalStatus'], 'a creation is always a pending submission');
+
+        // Neither the approval decision nor its metadata can be reached by a regular Admin.
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/approve');
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/reject', ['reason' => 'mine']);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $client->jsonRequest('PATCH', '/api/v1/admin/catalog/products/'.$slug.'/publication', ['published' => true]);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        // A server-controlled status in the payload is ignored, not trusted (R10).
+        $payload = $this->productPayload($slug.'-smuggled');
+        $payload['approvalStatus'] = 'APPROVED';
+        $payload['reviewedBy'] = 'somebody';
+        $this->productSlugs[] = $slug.'-smuggled';
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $payload);
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $client->request('GET', '/api/v1/admin/catalog/products/'.$slug.'-smuggled');
+        self::assertSame('PENDING_APPROVAL', $this->json($client)['approval']['approvalStatus']);
+        self::assertNull($this->json($client)['approval']['reviewedBy']);
 
         $client->jsonRequest('POST', '/api/v1/admin/promotions/promo-codes', ['code' => 'NOPE10', 'discountBasisPoints' => 1000]);
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
@@ -140,7 +185,16 @@ final class AdminCatalogTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         self::assertSame($slug, $this->json($client)['slug']);
 
-        // Public storefront sees it immediately.
+        // spec-run-8 R10/R32 — a creation is a pending submission, so it is not public yet.
+        $client->request('GET', '/api/v1/storefront/products/'.$slug);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        // spec-run-8 R22/R28 — approval and publication are two explicit decisions.
+        $this->approve($client, 'product', $slug);
+        $client->request('GET', '/api/v1/storefront/products/'.$slug);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, 'an approved product stays a draft until published');
+
+        $this->publish($client, $slug);
         $client->request('GET', '/api/v1/storefront/products/'.$slug);
         self::assertResponseIsSuccessful();
         self::assertSame(200, $this->json($client)['price']);
@@ -161,11 +215,61 @@ final class AdminCatalogTest extends WebTestCase
         self::assertSame(220, $updated['oldPrice']);
         self::assertSame('out', $updated['stock']);
 
+        // spec-run-8 R25/R32 — editing an approved record reopens it, so it leaves the storefront.
+        self::assertSame('PENDING_APPROVAL', $updated['approval']['approvalStatus']);
+        $client->request('GET', '/api/v1/storefront/products/'.$slug);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
         $client->request('DELETE', '/api/v1/admin/catalog/products/'.$slug);
         self::assertResponseIsSuccessful();
 
         $client->request('GET', '/api/v1/storefront/products/'.$slug);
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testAdminCannotSetNegativeStockQuantity(): void
+    {
+        $client = static::createClient();
+        $client->loginUser($this->createUser('ROLE_SUPER_ADMIN'));
+
+        $slug = 'test-stock-negative-'.substr(Uuid::v4()->toRfc4122(), 0, 8);
+        $this->productSlugs[] = $slug;
+
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $this->productPayload($slug));
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $update = $this->productPayload($slug);
+        $update['stockQuantity'] = -1;
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function testAdminCanSetStockQuantity(): void
+    {
+        $client = static::createClient();
+        $client->loginUser($this->createUser('ROLE_SUPER_ADMIN'));
+
+        $slug = 'test-stock-quantity-'.substr(Uuid::v4()->toRfc4122(), 0, 8);
+        $this->productSlugs[] = $slug;
+
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $this->productPayload($slug));
+        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+
+        $update = $this->productPayload($slug);
+        $update['stockQuantity'] = 7;
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
+        self::assertResponseIsSuccessful();
+
+        $payload = $this->json($client);
+        self::assertArrayHasKey('stockQuantity', $payload);
+        self::assertSame(7, $payload['stockQuantity']);
+
+        /** @var Connection $connection */
+        $connection = static::getContainer()->get(Connection::class);
+        self::assertSame(7, (int) $connection->fetchOne(
+            'SELECT stock_quantity FROM storefront_product_view WHERE slug = :slug',
+            ['slug' => $slug],
+        ));
     }
 
     public function testProductValidationRejectsBadInput(): void
@@ -245,7 +349,7 @@ final class AdminCatalogTest extends WebTestCase
         $client->jsonRequest('PUT', '/api/v1/admin/catalog/brands/'.rawurlencode($brand), ['name' => $renamed]);
         self::assertResponseIsSuccessful();
 
-        $client->request('GET', '/api/v1/storefront/products/'.$slug);
+        $client->request('GET', '/api/v1/admin/catalog/products/'.$slug);
         self::assertSame($renamed, $this->json($client)['brand']);
 
         $client->request('DELETE', '/api/v1/admin/catalog/products/'.$slug);
@@ -313,7 +417,18 @@ final class AdminCatalogTest extends WebTestCase
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-        // It shows up in the public reference data and in the admin listing.
+        // It is still a submission: the admin listing carries it with its state, the public
+        // reference data does not (spec-run-8 R16/R31/R33).
+        $client->request('GET', '/api/v1/admin/catalog/categories?q='.$slug);
+        $listed = $this->json($client)['items'][0] ?? [];
+        self::assertSame($slug, $listed['slug'] ?? null);
+        self::assertSame('PENDING_APPROVAL', $listed['approvalStatus'] ?? null);
+
+        $client->request('GET', '/api/v1/storefront/reference');
+        self::assertNotContains($slug, array_column($this->json($client)['categories'] ?? [], 'slug'), 'a pending category must not reach the storefront');
+
+        // Approving the category — and only approving it — makes it public reference data.
+        $this->approve($client, 'category', $slug);
         $client->request('GET', '/api/v1/storefront/reference');
         $slugs = array_column($this->json($client)['categories'] ?? [], 'slug');
         self::assertContains($slug, $slugs);

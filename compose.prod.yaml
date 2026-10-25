@@ -14,6 +14,14 @@ x-app-environment: &app-environment
   APP_ENV: prod
   APP_DEBUG: "0"
   APP_SECRET: ${APP_SECRET:?set APP_SECRET in .env.prod}
+  # Read by %env(int:REMEMBER_ME_LIFETIME)% in config/packages/security.yaml; defaults to 14 days.
+  REMEMBER_ME_LIFETIME: ${REMEMBER_ME_LIFETIME:-1209600}
+  # Read by #[Autowire('%env(...)%')] on GetWhatsAppContactHandler. The number must be the real
+  # WhatsApp Business one: deploy/release.sh refuses the placeholder and any value that is not
+  # 8-15 digits, and .env.prod.example documents the format rule. The message may be empty (the
+  # link then carries no prefilled text), so it defaults to empty instead of failing the stack.
+  WHATSAPP_PHONE_NUMBER: ${WHATSAPP_PHONE_NUMBER:?set WHATSAPP_PHONE_NUMBER in .env.prod}
+  WHATSAPP_DEFAULT_MESSAGE: ${WHATSAPP_DEFAULT_MESSAGE:-}
   DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DB:?}?serverVersion=16&charset=utf8
   MESSENGER_TRANSPORT_DSN: doctrine://default?queue_name=async
   MEILISEARCH_URL: http://meilisearch:7700

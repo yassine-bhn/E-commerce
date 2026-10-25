@@ -1,0 +1,877 @@
+[1mE-commerce local CI[0m — /home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce @ df5dc84
+compose project: ecommerce-ci (file: compose.yaml)
+
+[1;36m[1] start the stack (build + up)[0m
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.64kB done
+#1 DONE 0.0s
+
+#2 [app internal] load build definition from Dockerfile
+#2 transferring dockerfile: 2.53kB done
+#2 DONE 0.0s
+
+#3 [outbox internal] load metadata for docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#3 DONE 0.0s
+
+#4 [app internal] load metadata for docker.io/composer/composer:2
+#4 DONE 0.0s
+
+#5 [worker internal] load .dockerignore
+#5 transferring context: 338B done
+#5 DONE 0.0s
+
+#6 [app] FROM docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4
+#6 resolve docker.io/composer/composer:2@sha256:42f8dbbcbb86ceeaecd109c9317d8fb488f43ed75291b3bab70d9d242ad4e6f4 0.0s done
+#6 DONE 0.0s
+
+#7 [app base 1/5] FROM docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae
+#7 resolve docker.io/dunglas/frankenphp@sha256:308b7dbf7e263a7200f17c1957c0ed1dfdcd01fd914e1b7e99eef7f92b06d4ae 0.0s done
+#7 DONE 0.0s
+
+#8 [outbox internal] load build context
+#8 transferring context: 64B done
+#8 DONE 0.0s
+
+#9 [outbox base 4/5] WORKDIR /app
+#9 CACHED
+
+#10 [outbox base 2/5] RUN install-php-extensions         intl         opcache         pdo_pgsql         zip     && if [ "false" = "true" ]; then install-php-extensions xdebug; fi
+#10 CACHED
+
+#11 [outbox base 5/5] COPY docker/Caddyfile /etc/caddy/Caddyfile
+#11 CACHED
+
+#12 [outbox base 3/5] COPY --from=composer/composer:2 /usr/bin/composer /usr/bin/composer
+#12 CACHED
+
+#13 [outbox dev 1/1] RUN apt-get update     && apt-get install -y --no-install-recommends python3 python3-yaml     && rm -rf /var/lib/apt/lists/*
+#13 CACHED
+
+#14 [app] exporting to image
+#14 exporting layers done
+#14 exporting manifest sha256:70b4c30bda964fa0ce10b819415d4d288a8002b8dd2f67e0f94ce406edc5edb0 done
+#14 exporting config sha256:1042569af1f0e17c1bb895d91248a69f3781d99dfecddf54c20b35c0f10d3f1f 0.0s done
+#14 exporting attestation manifest sha256:56ed4ef214fd5bb6f9268ab24433ca18bc74771b0e2b3081ebc6b1ecccc6fb6f
+#14 exporting attestation manifest sha256:56ed4ef214fd5bb6f9268ab24433ca18bc74771b0e2b3081ebc6b1ecccc6fb6f 0.0s done
+#14 exporting manifest list sha256:fe2a59e9de9111563738e51d38be3df4d57d5b90ecd98cd9501a02cb5c7218d8 0.0s done
+#14 naming to docker.io/library/ecommerce-core:dev done
+#14 unpacking to docker.io/library/ecommerce-core:dev done
+#14 DONE 0.1s
+
+#15 [outbox] exporting to image
+#15 exporting layers done
+#15 exporting manifest sha256:eecf37c77ebe7e0d178dd3cd119585da27c50e566be688838bf993795b125d6b done
+#15 exporting config sha256:fdf8cbd9a699d43e0b19dd53b69c2e55260a4d7e9174e2db73c462101362f94c done
+#15 exporting attestation manifest sha256:feec156419aae81e0b8389d3df9d95144773b4b3213b23feffe557055c602688 0.0s done
+#15 exporting manifest list sha256:b683effdf1a0f60660302adee4d75d74daa844550a41953e01a0c1ae63bed20c 0.0s done
+#15 naming to docker.io/library/ecommerce-core:dev 0.0s done
+#15 unpacking to docker.io/library/ecommerce-core:dev 0.0s done
+#15 DONE 0.1s
+
+#16 [worker] exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:2c3f6766b78152aa89292070c069c46f497b3af70db6405e42678bbb66e294a1 done
+#16 exporting config sha256:cfdc32dc09050820b3a82d617f525fc41f165258b3a3266c105c9752077a530a 0.0s done
+#16 exporting attestation manifest sha256:404e93c578654f96f89f8c80d9570d04e135990c64e495fec150a21f478f3a88 0.0s done
+#16 exporting manifest list sha256:629f3aca3ccf38000a563f093702f737d9c77bb336d4cf5518120e53dee90a41 0.0s done
+#16 naming to docker.io/library/ecommerce-core:dev done
+#16 unpacking to docker.io/library/ecommerce-core:dev 0.0s done
+#16 DONE 0.2s
+
+#17 [outbox] resolving provenance for metadata file
+#17 DONE 0.0s
+
+#18 [app] resolving provenance for metadata file
+#18 DONE 0.0s
+
+#19 [worker] resolving provenance for metadata file
+#19 DONE 0.0s
+ ecommerce-core:dev  Built
+ ecommerce-core:dev  Built
+ ecommerce-core:dev  Built
+ Container ecommerce-ci-database-1  Running
+ Container ecommerce-ci-meilisearch-1  Running
+ Container ecommerce-ci-app-1  Recreate
+ Container ecommerce-ci-app-1  Recreated
+ Container ecommerce-ci-database-1  Waiting
+ Container ecommerce-ci-database-1  Healthy
+ Container ecommerce-ci-app-1  Starting
+ Container ecommerce-ci-app-1  Started
+ Container ecommerce-ci-app-1  Waiting
+ Container ecommerce-ci-database-1  Waiting
+ Container ecommerce-ci-meilisearch-1  Waiting
+ Container ecommerce-ci-database-1  Healthy
+ Container ecommerce-ci-meilisearch-1  Healthy
+ Container ecommerce-ci-app-1  Healthy
+
+[1;36m[2] ci.yml: quality[0m
+./composer.json is valid
+Installing dependencies from lock file (including require-dev)
+Verifying lock file contents can be installed on current platform.
+Nothing to install, update or remove
+Package qossmic/deptrac-shim is abandoned, you should avoid using it. Use qossmic/deptrac instead.
+Generating autoload files
+infection/extension-installer: No extensions found
+142 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+
+Run composer recipes at any time to see the status of your Symfony recipes.
+
+Executing script cache:clear [OK]
+Executing script assets:install public [OK]
+Executing script importmap:install [OK]
+
+PHP CS Fixer 3.95.27 Adalbertus by Fabien Potencier, Dariusz Ruminski and contributors.
+PHP runtime: 8.5.12
+Loaded config default from ".php-cs-fixer.dist.php".
+Running analysis on 15 cores with 10 files per process.
+Using cache file ".php-cs-fixer.cache".
+   0/416 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+ 416/416 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+
+Found 0 of 416 files that can be fixed in 0.244 seconds, 24.00 MB memory used
+Note: Using configuration file /app/phpstan.neon.
+
+ [OK] No errors                                                                 
+
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Application::run(): Implicitly marking parameter $input as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Application.php on line 128
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Application::run(): Implicitly marking parameter $output as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Application.php on line 128
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Application::all(): Implicitly marking parameter $namespace as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Application.php on line 630
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Application::extractNamespace(): Implicitly marking parameter $limit as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Application.php on line 920
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\ArgvInput::__construct(): Implicitly marking parameter $argv as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/ArgvInput.php on line 43
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\ArgvInput::__construct(): Implicitly marking parameter $definition as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/ArgvInput.php on line 43
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\Input::__construct(): Implicitly marking parameter $definition as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/Input.php on line 33
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Output\ConsoleOutput::__construct(): Implicitly marking parameter $decorated as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Output/ConsoleOutput.php on line 37
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Output\ConsoleOutput::__construct(): Implicitly marking parameter $formatter as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Output/ConsoleOutput.php on line 37
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Output\StreamOutput::__construct(): Implicitly marking parameter $decorated as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Output/StreamOutput.php on line 39
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Output\StreamOutput::__construct(): Implicitly marking parameter $formatter as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Output/StreamOutput.php on line 39
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Output\Output::__construct(): Implicitly marking parameter $formatter as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Output/Output.php on line 37
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyle::__construct(): Implicitly marking parameter $foreground as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyle.php on line 33
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyle::__construct(): Implicitly marking parameter $background as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyle.php on line 33
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyle::setForeground(): Implicitly marking parameter $color as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyle.php on line 40
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyle::setBackground(): Implicitly marking parameter $color as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyle.php on line 47
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyleInterface::setForeground(): Implicitly marking parameter $color as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyleInterface.php on line 23
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyleInterface::setBackground(): Implicitly marking parameter $color as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyleInterface.php on line 27
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyleStack::__construct(): Implicitly marking parameter $emptyStyle as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyleStack.php on line 25
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Formatter\OutputFormatterStyleStack::pop(): Implicitly marking parameter $style as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Formatter/OutputFormatterStyleStack.php on line 49
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\InputArgument::__construct(): Implicitly marking parameter $mode as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/InputArgument.php on line 43
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\InputArgument::__construct(): Implicitly marking parameter $default as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/InputArgument.php on line 43
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\InputArgument::setDefault(): Implicitly marking parameter $default as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/InputArgument.php on line 86
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\InputOption::__construct(): Implicitly marking parameter $shortcut as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/InputOption.php on line 60
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\InputOption::__construct(): Implicitly marking parameter $mode as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/InputOption.php on line 60
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\InputOption::__construct(): Implicitly marking parameter $default as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/InputOption.php on line 60
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Input\InputOption::setDefault(): Implicitly marking parameter $default as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Input/InputOption.php on line 157
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Filesystem\Path::getFilenameWithoutExtension(): Implicitly marking parameter $extension as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/filesystem/Path.php on line 226
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::__construct(): Implicitly marking parameter $parameterBag as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 119
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::loadFromExtension(): Implicitly marking parameter $values as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 351
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::doGet(): Implicitly marking parameter $inlineServices as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 431
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::register(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 716
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::autowire(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 726
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::createService(): Implicitly marking parameter $id as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 824
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::registerAliasForArgument(): Implicitly marking parameter $name as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 1090
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::resolveEnvPlaceholders(): Implicitly marking parameter $format as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 1124
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ContainerBuilder::resolveEnvPlaceholders(): Implicitly marking parameter $usedEnvs as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ContainerBuilder.php on line 1124
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Container::__construct(): Implicitly marking parameter $parameterBag as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Container.php on line 60
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Argument\ServiceLocator::__construct(): Implicitly marking parameter $serviceTypes as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Argument/ServiceLocator.php on line 24
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\ServiceLocator::formatAlternatives(): Implicitly marking parameter $alternatives as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/ServiceLocator.php on line 116
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Definition::__construct(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Definition.php on line 57
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Definition::setDecoratedService(): Implicitly marking parameter $renamedId as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Definition.php on line 120
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationContainerBuilder::__construct(): Implicitly marking parameter $parameterBag as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Compiler/MergeExtensionConfigurationPass.php on line 136
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationContainerBuilder::resolveEnvPlaceholders(): Implicitly marking parameter $format as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Compiler/MergeExtensionConfigurationPass.php on line 165
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationContainerBuilder::resolveEnvPlaceholders(): Implicitly marking parameter $usedEnvs as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Compiler/MergeExtensionConfigurationPass.php on line 165
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass::register(): Implicitly marking parameter $callerId as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Compiler/ServiceLocatorTagPass.php on line 79
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass::__construct(): Implicitly marking parameter $analyzingPass as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Compiler/InlineServiceDefinitionsPass.php on line 32
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraph::connect(): Implicitly marking parameter $reference as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Compiler/ServiceReferenceGraph.php on line 69
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\EventDispatcher\EventDispatcher::dispatch(): Implicitly marking parameter $eventName as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/event-dispatcher/EventDispatcher.php on line 44
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\EventDispatcher\EventDispatcher::getListeners(): Implicitly marking parameter $eventName as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/event-dispatcher/EventDispatcher.php on line 60
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\EventDispatcher\EventDispatcher::hasListeners(): Implicitly marking parameter $eventName as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/event-dispatcher/EventDispatcher.php on line 106
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\EventDispatcher\EventDispatcherInterface::getListeners(): Implicitly marking parameter $eventName as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/event-dispatcher/EventDispatcherInterface.php on line 47
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\EventDispatcher\EventDispatcherInterface::hasListeners(): Implicitly marking parameter $eventName as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/event-dispatcher/EventDispatcherInterface.php on line 57
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Contracts\EventDispatcher\EventDispatcherInterface::dispatch(): Implicitly marking parameter $eventName as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/event-dispatcher-contracts/EventDispatcherInterface.php on line 30
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\PhpFileLoader::__construct(): Implicitly marking parameter $env as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/PhpFileLoader.php on line 36
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\PhpFileLoader::__construct(): Implicitly marking parameter $generator as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/PhpFileLoader.php on line 36
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\PhpFileLoader::load(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/PhpFileLoader.php on line 44
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\PhpFileLoader::supports(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/PhpFileLoader.php on line 70
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\FileLoader::__construct(): Implicitly marking parameter $env as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/FileLoader.php on line 39
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\FileLoader::import(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/FileLoader.php on line 49
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\FileLoader::import(): Implicitly marking parameter $sourceResource as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/FileLoader.php on line 49
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\FileLoader::registerClasses(): Implicitly marking parameter $exclude as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/FileLoader.php on line 82
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\FileLoader::__construct(): Implicitly marking parameter $env as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/FileLoader.php on line 29
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\FileLoader::import(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/FileLoader.php on line 63
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\FileLoader::import(): Implicitly marking parameter $sourceResource as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/FileLoader.php on line 63
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\FileLoader::import(): Implicitly marking parameter $exclude as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/FileLoader.php on line 63
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\FileLoader::glob(): Implicitly marking parameter $resource as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/FileLoader.php on line 90
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\FileLoader::doImport(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/FileLoader.php on line 117
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\FileLoader::doImport(): Implicitly marking parameter $sourceResource as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/FileLoader.php on line 117
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\Loader::__construct(): Implicitly marking parameter $env as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/Loader.php on line 23
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\Loader::import(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/Loader.php on line 46
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\Loader::resolve(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/Loader.php on line 55
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\LoaderInterface::load(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/LoaderInterface.php on line 27
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\LoaderInterface::supports(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/LoaderInterface.php on line 35
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\FileLocator::locate(): Implicitly marking parameter $currentPath as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/FileLocator.php on line 32
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\FileLocatorInterface::locate(): Implicitly marking parameter $currentPath as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/FileLocatorInterface.php on line 31
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator::__construct(): Implicitly marking parameter $env as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 37
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator::import(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 56
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\inline_service(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 101
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator(): Implicitly marking parameter $indexAttribute as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 126
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator(): Implicitly marking parameter $defaultIndexMethod as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 126
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator(): Implicitly marking parameter $defaultPriorityMethod as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 126
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\tagged_locator(): Implicitly marking parameter $indexAttribute as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 133
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\tagged_locator(): Implicitly marking parameter $defaultIndexMethod as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 133
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\tagged_locator(): Implicitly marking parameter $defaultPriorityMethod as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php on line 133
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator::__construct(): Implicitly marking parameter $path as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ServicesConfigurator.php on line 33
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator::set(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ServicesConfigurator.php on line 65
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator::__invoke(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ServicesConfigurator.php on line 153
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\DefaultsConfigurator::__construct(): Implicitly marking parameter $path as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/DefaultsConfigurator.php on line 26
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator::__construct(): Implicitly marking parameter $id as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/AbstractServiceConfigurator.php on line 20
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator::set(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/AbstractServiceConfigurator.php on line 40
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\AbstractServiceConfigurator::__invoke(): Implicitly marking parameter $class as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/AbstractServiceConfigurator.php on line 92
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\ServiceConfigurator::__construct(): Implicitly marking parameter $path as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/ServiceConfigurator.php on line 45
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\Configurator\Traits\DecorateTrait::decorate(): Implicitly marking parameter $renamedId as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/Configurator/Traits/DecorateTrait.php on line 26
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\ParserFactory::create(): Implicitly marking parameter $lexer as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/ParserFactory.php on line 21
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument::__construct(): Implicitly marking parameter $indexAttribute as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Argument/TaggedIteratorArgument.php on line 34
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument::__construct(): Implicitly marking parameter $defaultIndexMethod as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Argument/TaggedIteratorArgument.php on line 34
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument::__construct(): Implicitly marking parameter $defaultPriorityMethod as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Argument/TaggedIteratorArgument.php on line 34
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\DelegatingLoader::load(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/DelegatingLoader.php on line 31
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\DelegatingLoader::supports(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/DelegatingLoader.php on line 41
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\LoaderResolver::resolve(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/LoaderResolver.php on line 39
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Loader\LoaderResolverInterface::resolve(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Loader/LoaderResolverInterface.php on line 25
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\YamlFileLoader::load(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/YamlFileLoader.php on line 51
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\Loader\YamlFileLoader::supports(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/Loader/YamlFileLoader.php on line 105
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Parser::getNextEmbedBlock(): Implicitly marking parameter $indentation as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Parser.php on line 470
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Parser::preg_match(): Implicitly marking parameter $matches as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Parser.php on line 853
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Inline::initialize(): Implicitly marking parameter $parsedLineNumber as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Inline.php on line 32
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Inline::initialize(): Implicitly marking parameter $parsedFilename as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Inline.php on line 32
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Inline::parse(): Implicitly marking parameter $value as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Inline.php on line 51
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Inline::parseScalar(): Implicitly marking parameter $delimiters as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Inline.php on line 224
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Inline::parseScalar(): Implicitly marking parameter $isQuoted as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Inline.php on line 224
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Yaml\Inline::evaluateScalar(): Implicitly marking parameter $isQuotedString as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/yaml/Inline.php on line 473
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\BaseNode::__construct(): Implicitly marking parameter $parent as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/BaseNode.php on line 42
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Resource\ClassExistenceResource::__construct(): Implicitly marking parameter $exists as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Resource/ClassExistenceResource.php on line 34
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Resource\ClassExistenceResource::throwOnRequiredClass(): Implicitly marking parameter $previous as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Resource/ClassExistenceResource.php on line 130
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Processor::normalizeConfig(): Implicitly marking parameter $plural as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Processor.php on line 66
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\TreeBuilder::__construct(): Implicitly marking parameter $builder as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/TreeBuilder.php on line 23
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\NodeBuilder::setParent(): Implicitly marking parameter $parent as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/NodeBuilder.php on line 31
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition::__construct(): Implicitly marking parameter $parent as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 40
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition::addDefaultChildrenIfNoneSet(): Implicitly marking parameter $children as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 118
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition::fixXmlConfig(): Implicitly marking parameter $plural as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 155
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\NodeDefinition::__construct(): Implicitly marking parameter $parent as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/NodeDefinition.php on line 38
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\NormalizationBuilder::remap(): Implicitly marking parameter $plural as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/NormalizationBuilder.php on line 35
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\NormalizationBuilder::before(): Implicitly marking parameter $closure as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/NormalizationBuilder.php on line 45
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition::__construct(): Implicitly marking parameter $parent as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/BooleanNodeDefinition.php on line 25
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\ExprBuilder::always(): Implicitly marking parameter $then as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ExprBuilder.php on line 34
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\Builder\ExprBuilder::ifTrue(): Implicitly marking parameter $closure as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ExprBuilder.php on line 51
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Config\Definition\EnumNode::__construct(): Implicitly marking parameter $parent as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/EnumNode.php on line 22
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Lexer::startLexing(): Implicitly marking parameter $errorHandler as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Lexer.php on line 64
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Parser::parse(): Implicitly marking parameter $errorHandler as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Parser.php on line 18
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\Command::__construct(): Implicitly marking parameter $name as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/Command.php on line 95
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\Command::setApplication(): Implicitly marking parameter $application as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/Command.php on line 123
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\Command::addArgument(): Implicitly marking parameter $mode as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/Command.php on line 388
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\Command::addOption(): Implicitly marking parameter $shortcut as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/Command.php on line 410
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\Command::addOption(): Implicitly marking parameter $mode as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/Command.php on line 410
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\EnvVarProcessor::__construct(): Implicitly marking parameter $loaders as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/EnvVarProcessor.php on line 27
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\TypedReference::__construct(): Implicitly marking parameter $name as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/TypedReference.php on line 28
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/config/Definition/Builder/ArrayNodeDefinition.php on line 283
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper::getTypeHint(): Implicitly marking parameter $p as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/dependency-injection/LazyProxy/ProxyHelper.php on line 23
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\HelperSet::set(): Implicitly marking parameter $alias as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/HelperSet.php on line 34
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\Helper::setHelperSet(): Implicitly marking parameter $helperSet as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/Helper.php on line 26
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\Helper::substr(): Implicitly marking parameter $length as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/Helper.php on line 70
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\HelperInterface::setHelperSet(): Implicitly marking parameter $helperSet as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/HelperInterface.php on line 23
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\ProcessHelper::run(): Implicitly marking parameter $error as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/ProcessHelper.php on line 33
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\ProcessHelper::run(): Implicitly marking parameter $callback as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/ProcessHelper.php on line 33
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\ProcessHelper::mustRun(): Implicitly marking parameter $error as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/ProcessHelper.php on line 84
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\ProcessHelper::mustRun(): Implicitly marking parameter $callback as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/ProcessHelper.php on line 84
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\ProcessHelper::wrapCallback(): Implicitly marking parameter $callback as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/ProcessHelper.php on line 95
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\LazyCommand::setApplication(): Implicitly marking parameter $application as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/LazyCommand.php on line 38
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\LazyCommand::addArgument(): Implicitly marking parameter $mode as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/LazyCommand.php on line 94
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\LazyCommand::addOption(): Implicitly marking parameter $shortcut as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/LazyCommand.php on line 105
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Command\LazyCommand::addOption(): Implicitly marking parameter $mode as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Command/LazyCommand.php on line 105
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Parser\Multiple::parse(): Implicitly marking parameter $errorHandler as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Parser/Multiple.php on line 26
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\ParserAbstract::parse(): Implicitly marking parameter $errorHandler as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/ParserAbstract.php on line 139
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\NodeVisitor\NameResolver::__construct(): Implicitly marking parameter $errorHandler as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/NodeVisitor/NameResolver.php on line 35
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\NodeVisitor\NameResolver::addAlias(): Implicitly marking parameter $prefix as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/NodeVisitor/NameResolver.php on line 150
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\NameContext::startNamespace(): Implicitly marking parameter $namespace as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/NameContext.php on line 35
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::block(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 56
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::block(): Implicitly marking parameter $style as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 56
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::ask(): Implicitly marking parameter $default as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 203
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::ask(): Implicitly marking parameter $validator as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 203
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::askHidden(): Implicitly marking parameter $validator as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 212
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::progressIterate(): Implicitly marking parameter $max as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 279
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::createBlock(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 373
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\SymfonyStyle::createBlock(): Implicitly marking parameter $style as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/SymfonyStyle.php on line 373
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\StyleInterface::ask(): Implicitly marking parameter $default as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/StyleInterface.php on line 63
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\StyleInterface::ask(): Implicitly marking parameter $validator as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/StyleInterface.php on line 63
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Style\StyleInterface::askHidden(): Implicitly marking parameter $validator as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Style/StyleInterface.php on line 67
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Output\TrimmedBufferOutput::__construct(): Implicitly marking parameter $formatter as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Output/TrimmedBufferOutput.php on line 24
+
+Deprecated: Qossmic\Deptrac\Core\Ast\AstMap\ClassLike\ClassLikeReference::__construct(): Implicitly marking parameter $classLikeType as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/src/Core/Ast/AstMap/ClassLike/ClassLikeReference.php on line 20
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Node\Stmt\Declare_::__construct(): Implicitly marking parameter $stmts as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Node/Stmt/Declare_.php on line 20
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Node\Name::slice(): Implicitly marking parameter $length as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Node/Name.php on line 146
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Node\Stmt\Namespace_::__construct(): Implicitly marking parameter $name as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Node/Stmt/Namespace_.php on line 23
+
+Syntax Error on File /app/src/Identity/Application/Query/ListCustomerAddresses.php
+Syntax error, unexpected T_STRING, expecting '=' on line 11
+
+
+Syntax Error on File /app/src/Identity/Application/Query/ListWishlistItems.php
+Syntax error, unexpected T_STRING, expecting '=' on line 11
+
+
+Syntax Error on File /app/src/Identity/Application/Query/ListQuoteRequestsForUser.php
+Syntax error, unexpected T_STRING, expecting '=' on line 16
+
+
+Syntax Error on File /app/src/Identity/Application/Query/ListAdminCustomers.php
+Syntax error, unexpected T_STRING, expecting '=' on line 16
+
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Node\Arg::__construct(): Implicitly marking parameter $name as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Node/Arg.php on line 27
+
+Syntax Error on File /app/src/Identity/Infrastructure/ReadModel/AdminCustomerFinder.php
+Syntax error, unexpected T_STRING, expecting '=' on line 36
+
+
+Syntax Error on File /app/src/Identity/Infrastructure/ReadModel/WishlistFinder.php
+Syntax error, unexpected T_STRING, expecting '=' on line 16
+
+
+Syntax Error on File /app/src/Catalog/Application/Service/SubcategoryTree.php
+Syntax error, unexpected T_STRING, expecting '=' on line 13
+
+
+Syntax Error on File /app/src/Catalog/Application/Query/StorefrontProductFilters.php
+Syntax error, unexpected T_STRING, expecting '=' on line 15
+
+
+Syntax Error on File /app/src/Catalog/Application/Query/ListCategories.php
+Syntax error, unexpected T_STRING, expecting '=' on line 20
+
+
+Syntax Error on File /app/src/Catalog/Application/Query/ListProductReviews.php
+Syntax error, unexpected T_STRING, expecting '=' on line 17
+
+
+Syntax Error on File /app/src/Catalog/Application/Query/ListAdminBrands.php
+Syntax error, unexpected T_STRING, expecting '=' on line 15
+
+
+Syntax Error on File /app/src/Catalog/Application/Query/SearchStorefrontProducts.php
+Syntax error, unexpected T_STRING, expecting '=' on line 15
+
+
+Syntax Error on File /app/src/Catalog/Application/Query/ListStorefrontProducts.php
+Syntax error, unexpected T_STRING, expecting '=' on line 15
+
+
+Syntax Error on File /app/src/Catalog/Domain/Model/BannerSet.php
+Syntax error, unexpected T_STRING, expecting '=' on line 19
+
+
+Syntax Error on File /app/src/Catalog/Domain/Model/CategorySubtree.php
+Syntax error, unexpected T_STRING, expecting '=' on line 16
+
+
+Syntax Error on File /app/src/Catalog/Domain/Model/BannerImage.php
+Syntax error, unexpected T_STRING, expecting '=' on line 20
+
+
+Syntax Error on File /app/src/Catalog/Domain/Model/Category.php
+Syntax error, unexpected T_STRING, expecting '=' on line 18
+
+
+Syntax Error on File /app/src/Catalog/Domain/Model/BannerRejectedException.php
+Syntax error, unexpected T_STRING, expecting '=' on line 13
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/ReadModel/AdminBrandFinder.php
+Syntax error, unexpected T_STRING, expecting '=' on line 22
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/ReadModel/CategoryFinder.php
+Syntax error, unexpected T_STRING, expecting '=' on line 25
+
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\PhpParser\Node\Param::__construct(): Implicitly marking parameter $default as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/nikic/php-parser/lib/PhpParser/Node/Param.php on line 35
+
+Syntax Error on File /app/src/Catalog/Infrastructure/ReadModel/ProductReviewsPage.php
+Syntax error, unexpected T_OBJECT_OPERATOR on line 33
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/ReadModel/BannerFinder.php
+Syntax error, unexpected T_STRING, expecting '=' on line 23
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/ReadModel/StorefrontProductRepository.php
+Syntax error, unexpected T_STRING, expecting '=' on line 26
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/Http/AdminUploadController.php
+Syntax error, unexpected T_STRING, expecting '=' on line 25
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/Http/AdminCategoryController.php
+Syntax error, unexpected T_STRING, expecting '=' on line 51
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/Http/AdminProductController.php
+Syntax error, unexpected T_STRING, expecting '=' on line 31
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/Search/StorefrontProductSearchQuery.php
+Syntax error, unexpected T_STRING, expecting '=' on line 21
+
+
+Syntax Error on File /app/src/Catalog/Infrastructure/Search/StorefrontProductSearchIndexer.php
+Syntax error, unexpected T_STRING, expecting '=' on line 23
+
+
+Syntax Error on File /app/src/Shared/Application/Pagination/TimestampCursor.php
+Syntax error, unexpected T_STRING, expecting '=' on line 20
+
+
+Syntax Error on File /app/src/Shared/Infrastructure/ReadModel/PlatformSettingsRepository.php
+Syntax error, unexpected T_STRING, expecting '=' on line 18
+
+
+Syntax Error on File /app/src/Shared/Infrastructure/Http/AdminSettingsController.php
+Syntax error, unexpected T_STRING, expecting '=' on line 23
+
+
+Syntax Error on File /app/src/Promotions/Application/Query/ListAdminPromoCodes.php
+Syntax error, unexpected T_STRING, expecting '=' on line 15
+
+
+Syntax Error on File /app/src/Ordering/Application/Query/ListOrdersForAdminRequestedCustomer.php
+Syntax error, unexpected T_STRING, expecting '=' on line 20
+
+
+Syntax Error on File /app/src/Ordering/Application/Query/ListOrdersForCustomer.php
+Syntax error, unexpected T_STRING, expecting '=' on line 17
+
+
+Syntax Error on File /app/src/Ordering/Infrastructure/ReadModel/CustomerOrderFinder.php
+Syntax error, unexpected T_STRING, expecting '=' on line 25
+
+
+Syntax Error on File /app/src/Ordering/Infrastructure/ReadModel/AdminCustomerOrderFinder.php
+Syntax error, unexpected T_STRING, expecting '=' on line 34
+
+
+Deprecated: Qossmic\Deptrac\Core\Ast\AstMap\AstMap::recursivelyResolveDependencies(): Implicitly marking parameter $alreadyResolved as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/src/Core/Ast/AstMap/AstMap.php on line 90
+
+Deprecated: Qossmic\Deptrac\Core\Ast\AstMap\AstMap::recursivelyResolveDependencies(): Implicitly marking parameter $pathStack as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/src/Core/Ast/AstMap/AstMap.php on line 90
+
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Output\ConsoleSectionOutput::clear(): Implicitly marking parameter $lines as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Output/ConsoleSectionOutput.php on line 42
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\Table::renderRowSeparator(): Implicitly marking parameter $title as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/Table.php on line 367
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\Table::renderRowSeparator(): Implicitly marking parameter $titleFormat as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/Table.php on line 367
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\Table::renderRow(): Implicitly marking parameter $firstCellFormat as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/Table.php on line 423
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\TableStyle::setHorizontalBorderChars(): Implicitly marking parameter $inside as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/TableStyle.php on line 84
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\TableStyle::setVerticalBorderChars(): Implicitly marking parameter $inside as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/TableStyle.php on line 107
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\TableStyle::setCrossingChars(): Implicitly marking parameter $topLeftBottom as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/TableStyle.php on line 153
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\TableStyle::setCrossingChars(): Implicitly marking parameter $topMidBottom as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/TableStyle.php on line 153
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\Console\Helper\TableStyle::setCrossingChars(): Implicitly marking parameter $topRightBottom as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/console/Helper/TableStyle.php on line 153
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\UnicodeString::join(): Implicitly marking parameter $lastGlue as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/UnicodeString.php on line 145
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\UnicodeString::slice(): Implicitly marking parameter $length as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/UnicodeString.php on line 205
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\UnicodeString::splice(): Implicitly marking parameter $length as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/UnicodeString.php on line 211
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\UnicodeString::split(): Implicitly marking parameter $limit as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/UnicodeString.php on line 223
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\UnicodeString::split(): Implicitly marking parameter $flags as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/UnicodeString.php on line 223
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\AbstractUnicodeString::join(): Implicitly marking parameter $lastGlue as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/AbstractUnicodeString.php on line 169
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\AbstractString::join(): Implicitly marking parameter $lastGlue as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/AbstractString.php on line 309
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\AbstractString::slice(): Implicitly marking parameter $length as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/AbstractString.php on line 340
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\AbstractString::splice(): Implicitly marking parameter $length as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/AbstractString.php on line 342
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\AbstractString::split(): Implicitly marking parameter $limit as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/AbstractString.php on line 346
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\AbstractString::split(): Implicitly marking parameter $flags as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/AbstractString.php on line 346
+
+Deprecated: _HumbugBoxd1ea71d4b9d8\Symfony\Component\String\AbstractString::toByteString(): Implicitly marking parameter $toEncoding as nullable is deprecated, the explicit nullable type must be used instead in phar:///app/vendor/qossmic/deptrac-shim/deptrac/vendor/symfony/string/AbstractString.php on line 400
+ -------------------- ------ 
+  Report                     
+ -------------------- ------ 
+  Violations           0     
+  Skipped violations   0     
+  Uncovered            1453  
+  Allowed              709   
+  Warnings             0     
+  Errors               0     
+ -------------------- ------ 
+
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+Database "app_test" for connection named default already exists. Skipped.
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+
+[1;36m[3] tests.yml: every PHPUnit suite[0m
+Installing dependencies from lock file (including require-dev)
+Verifying lock file contents can be installed on current platform.
+Nothing to install, update or remove
+Package qossmic/deptrac-shim is abandoned, you should avoid using it. Use qossmic/deptrac instead.
+Generating autoload files
+142 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+infection/extension-installer: No extensions found
+
+Run composer recipes at any time to see the status of your Symfony recipes.
+
+Executing script cache:clear [OK]
+Executing script assets:install public [OK]
+Executing script importmap:install [OK]
+
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+Database "app_test" for connection named default already exists. Skipped.
+
+ [OK] Already at the latest version ("DoctrineMigrations\Version20261022000006")
+
+
+===== Unit =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+...............................................................  63 / 199 ( 31%)
+............................................................... 126 / 199 ( 63%)
+............................................................... 189 / 199 ( 94%)
+..........                                                      199 / 199 (100%)
+
+Time: 00:00.042, Memory: 28.00 MB
+
+[30;42mOK (199 tests, 541 assertions)[0m
+
+===== Integration =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+...........................................................       59 / 59 (100%)
+
+Time: 00:05.178, Memory: 56.50 MB
+
+[30;42mOK (59 tests, 413 assertions)[0m
+
+===== Projection =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+..............                                                    14 / 14 (100%)
+
+Time: 00:00.254, Memory: 38.50 MB
+
+[30;42mOK (14 tests, 53 assertions)[0m
+
+===== Functional =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+...............................................................  63 / 223 ( 28%)
+............................................................... 126 / 223 ( 56%)
+............................................................... 189 / 223 ( 84%)
+..................................                              223 / 223 (100%)
+
+Time: 00:24.574, Memory: 66.50 MB
+
+[30;42mOK (223 tests, 1540 assertions)[0m
+
+===== Contract =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+................                                                  16 / 16 (100%)
+
+Time: 00:02.837, Memory: 52.50 MB
+
+[30;42mOK (16 tests, 495 assertions)[0m
+
+===== Architecture =====
+PHPUnit 13.4.3 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.12
+Configuration: /app/phpunit.dist.xml
+
+...                                                                 3 / 3 (100%)
+
+Time: 00:00.001, Memory: 22.00 MB
+
+[30;42mOK (3 tests, 29 assertions)[0m
+
+Test report: 6 suites, 514 tests, 0 failures
+
+Every test passed.
+
+Suites
+------
+  Unit          ok      199 tests
+  Integration   ok      59 tests
+  Projection    ok      14 tests
+  Functional    ok      223 tests
+  Contract      ok      16 tests
+  Architecture  ok      3 tests
+
+[1;36m[4] ci.yml: harness integrity[0m
+harness-check: ok — 17 agents, 14 domain skills + 14 superpowers, 14 rule files, 8 hook scripts + hooks.yaml, 5 PHPStan rules
+
+[1mSummary[0m
+  [32mok[0m     start the stack (build + up)
+  [32mok[0m     ci.yml: quality
+  [32mok[0m     tests.yml: every PHPUnit suite
+  [32mok[0m     ci.yml: harness integrity
+
+[32mEvery reproduced CI phase passed.[0m
+EXIT=0

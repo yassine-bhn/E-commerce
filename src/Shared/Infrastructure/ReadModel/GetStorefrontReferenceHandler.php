@@ -28,6 +28,7 @@ final class GetStorefrontReferenceHandler
                 'deliveryFee' => $policy->deliveryFeeMinor,
                 'freeDeliveryThreshold' => $policy->freeDeliveryThresholdMinor,
             ],
+            'contact' => $this->reference->contactChannels(),
         ];
     }
 }

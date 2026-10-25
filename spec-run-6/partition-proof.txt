@@ -1,0 +1,5 @@
+php files under src: 286  (Kernel.php excluded)
+layers: 27  empty layers: ['Inventory.Domain', 'Inventory.Application', 'Promotions.Domain', 'Shipping.Domain', 'Shipping.Application', 'Shipping.Infrastructure']
+files in exactly one layer: 285
+files in no layer: 0 []
+files in more than one layer: 0 []
