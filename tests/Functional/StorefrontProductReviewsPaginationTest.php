@@ -30,10 +30,48 @@ final class StorefrontProductReviewsPaginationTest extends WebTestCase
 
         $this->slug = 'it-reviews-'.bin2hex(random_bytes(4));
 
+        // The reviews route resolves its product through the storefront predicate, so the fixture is
+        // a public product of a visible category: a review of a product the storefront hides is not
+        // a state the API can produce any more.
+        $connection = self::connection();
+        $connection->insert(
+            'storefront_product_view',
+            [
+                'id' => '0192a000-7000-7000-9000-000000000001',
+                'slug' => $this->slug,
+                'name' => 'Produit à avis',
+                'brand' => 'Sopal',
+                'ref' => strtoupper(bin2hex(random_bytes(4))),
+                'category_slug' => 'sanitaires',
+                'subcategory' => 'Sanitaires',
+                'price_minor' => 12_000,
+                'old_price_minor' => null,
+                'currency' => 'TND',
+                'stock' => 'in',
+                'material' => 'Acier',
+                'dims' => '10 x 20 cm',
+                'image_path' => '/uploads/products/it-reviews.jpg',
+                'rating' => 4.5,
+                'reviews' => 12,
+                'is_new' => false,
+                'is_best' => false,
+                'description' => 'Produit créé par le test de pagination des avis.',
+                'approval_status' => 'APPROVED',
+                'published' => true,
+            ],
+            [
+                'rating' => ParameterType::STRING,
+                'reviews' => ParameterType::INTEGER,
+                'price_minor' => ParameterType::INTEGER,
+                'is_new' => ParameterType::BOOLEAN,
+                'is_best' => ParameterType::BOOLEAN,
+                'published' => ParameterType::BOOLEAN,
+            ],
+        );
+
         // 12 reviews: seven 5-star, three 4-star and two 2-star.
         $ratings = [5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 2, 2];
         $base = new \DateTimeImmutable('2026-01-01 10:00:00+00:00');
-        $connection = self::connection();
 
         foreach ($ratings as $index => $rating) {
             $id = sprintf('0192a000-7000-7000-8000-%012d', $index);
@@ -65,6 +103,11 @@ final class StorefrontProductReviewsPaginationTest extends WebTestCase
             );
         }
         $this->reviewIds = [];
+
+        self::connection()->executeStatement(
+            'DELETE FROM storefront_product_view WHERE slug = :slug',
+            ['slug' => $this->slug],
+        );
 
         parent::tearDown();
     }
@@ -136,18 +179,18 @@ final class StorefrontProductReviewsPaginationTest extends WebTestCase
         self::assertNull($data['meta']['nextCursor']);
     }
 
-    public function testAnUnknownProductHasAnEmptyPageAndZeroAggregates(): void
+    /**
+     * An unknown product answers exactly as its detail route does: the review routes resolve the
+     * product through the same storefront predicate, so an unknown and a hidden slug are
+     * indistinguishable from outside (QRY-004), instead of one of them leaking a 200.
+     */
+    public function testAnUnknownProductAnswersLikeItsDetailRoute(): void
     {
         $this->client->request('GET', '/api/v1/storefront/products/does-not-exist-it/reviews');
-        self::assertResponseIsSuccessful();
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
 
-        /** @var array<string, mixed> $data */
-        $data = $this->json();
-
-        self::assertSame(0, $data['count']);
-        self::assertSame(0.0, $data['averageRating']);
-        self::assertSame([], $data['items']);
-        self::assertFalse($data['meta']['hasMore']);
+        $this->client->request('GET', '/api/v1/storefront/products/does-not-exist-it');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
     public function testTheLimitIsClampedInsteadOfRejected(): void

@@ -82,8 +82,12 @@ final class AdminCategoryManagementTest extends WebTestCase
         self::assertSame('carrelage-60x60', $derived);
         $this->categorySlugs[] = $derived;
 
-        // R1: the admin list and the storefront navigation both see it.
+        // R1: the admin list sees it at once; the storefront only after the Super Admin approves
+        // it (spec-run-8 R28 — approval and publication are separate from creation).
         self::assertContains($slug, $this->adminListSlugs($client));
+        self::assertNotContains($slug, $this->navigationSlugs($client), 'a pending submission is not navigable');
+
+        $this->approve($client, 'category', $slug);
         self::assertContains($slug, $this->navigationSlugs($client));
     }
 
@@ -136,6 +140,7 @@ final class AdminCategoryManagementTest extends WebTestCase
             0,
             (int) $this->db()->fetchOne('SELECT COUNT(*) FROM storefront_category WHERE parent_slug = :s', ['s' => $slug]),
         );
+        $this->approve($client, 'category', $slug);
         self::assertSame([$slug], $this->navigationSlugs($client, [$slug]));
     }
 
@@ -228,10 +233,11 @@ final class AdminCategoryManagementTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function testTheStorefrontNavigationDropsAHiddenCategoryAndItsSubtreeButItsProductsStay(): void
+    public function testHidingACategoryDropsItAndItsProductsFromTheStorefrontButKeepsThemInTheAdmin(): void
     {
         $client = $this->loginAs('ROLE_SUPER_ADMIN');
         $slug = $this->category($client, 'Assainissement de test', [['label' => 'Regard'], ['label' => 'Tuyau', 'children' => [['label' => 'PEHD']]]]);
+        $this->approve($client, 'category', $slug);
         $childSlug = $slug.'-legacy';
         $this->categorySlugs[] = $childSlug;
         $this->db()->insert('storefront_category', [
@@ -242,12 +248,18 @@ final class AdminCategoryManagementTest extends WebTestCase
             'hidden' => false,
             'sort_order' => 500,
             'parent_slug' => $slug,
+            'approval_status' => 'APPROVED',
         ], ['quote_eligible' => ParameterType::BOOLEAN, 'hidden' => ParameterType::BOOLEAN]);
         $productSlug = $this->product($client, $slug, 'Regard');
+        $this->approve($client, 'product', $productSlug);
+        $this->publish($client, $productSlug);
 
         $navigation = $this->navigation($client);
         self::assertContains($slug, array_column($navigation, 'slug'));
         self::assertContains($childSlug, array_column($navigation, 'slug'));
+
+        $client->request('GET', '/api/v1/storefront/products/'.$productSlug);
+        self::assertResponseIsSuccessful('an approved, published product of a visible category is reachable');
 
         $client->jsonRequest('PATCH', '/api/v1/admin/catalog/categories/'.$slug.'/visibility', ['hidden' => true]);
         self::assertResponseIsSuccessful();
@@ -256,20 +268,22 @@ final class AdminCategoryManagementTest extends WebTestCase
         self::assertNotContains($slug, $slugs, 'R6: the hidden category is gone from the navigation');
         self::assertNotContains($childSlug, $slugs, 'R6: and so is its whole subtree');
 
-        // Its products stay reachable and listed — hiding is a navigation concern only.
+        // spec-run-8 R31 — category visibility now governs its products too: they are no longer
+        // publicly reachable, while the rows and the admin reads keep them. This narrows the
+        // behaviour this test used to lock, deliberately (spec-run-8 Decision, §4 vs §7).
         $client->request('GET', '/api/v1/storefront/products/'.$productSlug);
-        self::assertResponseIsSuccessful();
-        self::assertSame($productSlug, $this->json($client)['slug']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, 'a product of a hidden category is not publicly reachable');
 
         $client->request('GET', '/api/v1/storefront/products?category='.$slug);
         self::assertResponseIsSuccessful();
-        self::assertContains($productSlug, array_column($this->json($client)['items'] ?? [], 'slug'));
+        self::assertNotContains($productSlug, array_column($this->json($client)['items'] ?? [], 'slug'));
 
-        // And the admin list still shows it, flag included.
-        $hidden = $this->categoryPayload($client, $slug);
-        self::assertTrue($hidden['hidden']);
-        self::assertSame(1, $hidden['productCount']);
-        self::assertSame(3, $hidden['subLevelCount']);
+        // The row and its admin reads are untouched by hiding.
+        self::assertSame(
+            1,
+            (int) $this->db()->fetchOne('SELECT COUNT(*) FROM storefront_product_view WHERE slug = :s', ['s' => $productSlug]),
+            'hiding never deletes a product',
+        );
     }
 
     public function testThePublicNavigationPayloadKeepsItsContract(): void
@@ -311,7 +325,8 @@ final class AdminCategoryManagementTest extends WebTestCase
 
         foreach ($items as $item) {
             self::assertSame(
-                ['slug', 'label', 'parentSlug', 'subcategories', 'subLevelCount', 'hidden', 'quoteEligible', 'productCount', 'sortOrder'],
+                ['slug', 'label', 'parentSlug', 'subcategories', 'subLevelCount', 'hidden', 'quoteEligible', 'productCount', 'sortOrder',
+                    'approvalStatus', 'submittedBy', 'rejectionReason'],
                 array_keys($item),
             );
             self::assertIsBool($item['hidden']);
@@ -471,6 +486,24 @@ final class AdminCategoryManagementTest extends WebTestCase
         $this->productSlugs[] = $slug;
 
         return $slug;
+    }
+
+    /**
+     * spec-run-8 R22 — only the Super Admin approves, and every test that expects a submission to
+     * reach the storefront has to take that step first.
+     */
+    private function approve(KernelBrowser $client, string $kind, string $slug): void
+    {
+        $collection = 'product' === $kind ? 'products' : 'categories';
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/'.$collection.'/'.$slug.'/approve');
+        self::assertResponseIsSuccessful('approving the '.$kind.' '.$slug.' must succeed');
+    }
+
+    /** spec-run-8 R28/R29 — approval does not publish; a product joins the storefront only when published. */
+    private function publish(KernelBrowser $client, string $slug): void
+    {
+        $client->jsonRequest('PATCH', '/api/v1/admin/catalog/products/'.$slug.'/publication', ['published' => true]);
+        self::assertResponseIsSuccessful();
     }
 
     private function loginAs(string $role): KernelBrowser

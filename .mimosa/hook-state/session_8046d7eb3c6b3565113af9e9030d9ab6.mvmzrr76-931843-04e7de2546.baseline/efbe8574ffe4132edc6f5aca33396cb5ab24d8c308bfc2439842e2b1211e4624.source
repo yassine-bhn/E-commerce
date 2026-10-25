@@ -1,0 +1,1879 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\MacroNamespace;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTestError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* @WebProfiler/Profiler/toolbar_js.html.twig */
+class __TwigTemplate_ea88b095cec4086ae8def5dbfc9b73ec extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, MacroNamespace>
+     */
+    private array $macros = [];
+    private \Twig\Runtime\EscaperRuntime $escaper;
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->escaper = $env->getRuntime('Twig\Runtime\EscaperRuntime');
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Profiler/toolbar_js.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Profiler/toolbar_js.html.twig"));
+
+        // line 1
+        yield "<!-- START of Symfony Web Debug Toolbar -->
+";
+        // line 4
+        yield "<link rel=\"stylesheet\"";
+        if ((($tmp = (isset($context["csp_style_nonce"]) || array_key_exists("csp_style_nonce", $context) ? $context["csp_style_nonce"] : (function () { throw new RuntimeError('Variable "csp_style_nonce" does not exist.', 4, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            yield " nonce=\"";
+            yield (string) $this->escaper->escape((isset($context["csp_style_nonce"]) || array_key_exists("csp_style_nonce", $context) ? $context["csp_style_nonce"] : (function () { throw new RuntimeError('Variable "csp_style_nonce" does not exist.', 4, $this->source); })()), "html", null, true);
+            yield "\"";
+        }
+        yield " href=\"";
+        yield (string) $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getUrl("_wdt_stylesheet");
+        yield "\" />
+<script";
+        // line 5
+        if ((array_key_exists("csp_script_nonce", $context) && (($tmp = (isset($context["csp_script_nonce"]) || array_key_exists("csp_script_nonce", $context) ? $context["csp_script_nonce"] : (function () { throw new RuntimeError('Variable "csp_script_nonce" does not exist.', 5, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp))) {
+            yield " nonce=\"";
+            yield (string) $this->escaper->escape((isset($context["csp_script_nonce"]) || array_key_exists("csp_script_nonce", $context) ? $context["csp_script_nonce"] : (function () { throw new RuntimeError('Variable "csp_script_nonce" does not exist.', 5, $this->source); })()), "html", null, true);
+            yield "\"";
+        }
+        yield "> </script>
+
+<div class=\"sf-toolbar sf-toolbar-opened\" role=\"toolbar\" aria-label=\"Symfony Web Debug Toolbar\" data-frankenphp-hot-reload-preserve>
+    <div id=\"sfwdt";
+        // line 8
+        yield (string) $this->escaper->escape((isset($context["token"]) || array_key_exists("token", $context) ? $context["token"] : (function () { throw new RuntimeError('Variable "token" does not exist.', 8, $this->source); })()), "html", null, true);
+        yield "\">
+        ";
+        // line 9
+        yield (string) Twig\Extension\CoreExtension::include($this->env, $context, "@WebProfiler/Profiler/toolbar.html.twig", ["templates" => ["request" => "@WebProfiler/Profiler/cancel.html.twig"], "profile" => null, "profiler_url" => $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getUrl("_profiler", ["token" =>         // line 14
+(isset($context["token"]) || array_key_exists("token", $context) ? $context["token"] : (function () { throw new RuntimeError('Variable "token" does not exist.', 14, $this->source); })())]), "profiler_markup_version" => 3]);
+        // line 16
+        yield "
+    </div>
+
+    ";
+        // line 22
+        yield "    <script";
+        if ((array_key_exists("csp_script_nonce", $context) && (($tmp = (isset($context["csp_script_nonce"]) || array_key_exists("csp_script_nonce", $context) ? $context["csp_script_nonce"] : (function () { throw new RuntimeError('Variable "csp_script_nonce" does not exist.', 22, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp))) {
+            yield " nonce=\"";
+            yield (string) $this->escaper->escape((isset($context["csp_script_nonce"]) || array_key_exists("csp_script_nonce", $context) ? $context["csp_script_nonce"] : (function () { throw new RuntimeError('Variable "csp_script_nonce" does not exist.', 22, $this->source); })()), "html", null, true);
+            yield "\"";
+        }
+        yield ">/*<![CDATA[*/
+        if (typeof Sfjs === \x27undefined\x27 || typeof Sfjs.loadToolbar === \x27undefined\x27) {
+            Sfjs = (function() {
+                \"use strict\";
+
+                if (\x27classList\x27 in document.documentElement) {
+                    var hasClass = function (el, cssClass) { return el.classList.contains(cssClass); };
+                    var removeClass = function(el, cssClass) { el.classList.remove(cssClass); };
+                    var addClass = function(el, cssClass) { el.classList.add(cssClass); };
+                    var toggleClass = function(el, cssClass) { el.classList.toggle(cssClass); };
+                } else {
+                    var hasClass = function (el, cssClass) { return el.className.match(new RegExp(\x27\\\\b\x27 + cssClass + \x27\\\\b\x27)); };
+                    var removeClass = function(el, cssClass) { el.className = el.className.replace(new RegExp(\x27\\\\b\x27 + cssClass + \x27\\\\b\x27), \x27 \x27); };
+                    var addClass = function(el, cssClass) { if (!hasClass(el, cssClass)) { el.className += \" \" + cssClass; } };
+                    var toggleClass = function(el, cssClass) { hasClass(el, cssClass) ? removeClass(el, cssClass) : addClass(el, cssClass); };
+                }
+
+                var noop = function() {};
+
+                var profilerStorageKey = \x27symfony/profiler/\x27;
+
+                var addEventListener;
+
+                var el = document.createElement(\x27div\x27);
+                if (!(\x27addEventListener\x27 in el)) {
+                    addEventListener = function (element, eventName, callback, options) {
+                        element.attachEvent(\x27on\x27 + eventName, callback);
+                    };
+                } else {
+                    addEventListener = function (element, eventName, callback, options) {
+                        element.addEventListener(eventName, callback, options || false);
+                    };
+                }
+
+                var toolbarLoadAborter = null;
+
+                var request = function(url, onSuccess, onError, payload, options, tries) {
+                    url = new URL(url);
+                    url.searchParams.set(\x27XDEBUG_IGNORE\x27, \x271\x27);
+                    url = url.toString();
+                    var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject(\x27Microsoft.XMLHTTP\x27);
+                    options = options || {};
+                    options.retry = options.retry || false;
+                    tries = tries || 1;
+                    /* this delays for 125, 375, 625, 875, and 1000, ... */
+                    var delay = tries < 5 ? (tries - 0.5) * 250 : 1000;
+
+                    xhr.open(options.method || \x27GET\x27, url, true);
+                    xhr.setRequestHeader(\x27X-Requested-With\x27, \x27XMLHttpRequest\x27);
+                    xhr.onreadystatechange = function(state) {
+                        if (4 !== xhr.readyState) {
+                            return null;
+                        }
+
+                        if (xhr.status == 404 && options.retry && !options.stop) {
+                            setTimeout(function() {
+                                if (options.stop) {
+                                    return;
+                                }
+                                request(url, onSuccess, onError, payload, options, tries + 1);
+                            }, delay);
+
+                            return null;
+                        }
+
+                        if (200 === xhr.status) {
+                            (onSuccess || noop)(xhr);
+                        } else {
+                            (onError || noop)(xhr);
+                        }
+                    };
+
+                    if (options.onSend) {
+                        options.onSend(tries);
+                    }
+
+                    xhr.send(payload || \x27\x27);
+                };
+
+                var getPreference = function(name) {
+                    if (!window.localStorage) {
+                        return null;
+                    }
+
+                    return localStorage.getItem(profilerStorageKey + name);
+                };
+
+                var setPreference = function(name, value) {
+                    if (!window.localStorage) {
+                        return null;
+                    }
+
+                    localStorage.setItem(profilerStorageKey + name, value);
+                };
+
+                var requestStack = [];
+
+                var extractHeaders = function(xhr, stackElement) {
+                    /* Here we avoid to call xhr.getResponseHeader in order to */
+                    /* prevent polluting the console with CORS security errors */
+                    var allHeaders = xhr.getAllResponseHeaders();
+                    var ret;
+
+                    if (ret = allHeaders.match(/^x-debug-token:\\s+(.*)\$/im)) {
+                        stackElement.profile = ret[1];
+                    }
+                    if (ret = allHeaders.match(/^x-debug-token-link:\\s+(.*)\$/im)) {
+                        stackElement.profilerUrl = ret[1];
+                    }
+                    if (ret = allHeaders.match(/^Symfony-Debug-Toolbar-Replace:\\s+(.*)\$/im)) {
+                        stackElement.toolbarReplaceFinished = false;
+                        stackElement.toolbarReplace = \x271\x27 === ret[1];
+                    }
+                };
+
+                var successStreak = 4;
+                var pendingRequests = 0;
+                var renderAjaxRequests = function() {
+                    var requestCounter = document.querySelector(\x27.sf-toolbar-ajax-request-counter\x27);
+                    if (!requestCounter) {
+                        return;
+                    }
+                    requestCounter.textContent = requestStack.length;
+
+                    var infoSpan = document.querySelector(\".sf-toolbar-ajax-info\");
+                    if (infoSpan) {
+                        infoSpan.textContent = requestStack.length + \x27 AJAX request\x27 + (requestStack.length !== 1 ? \x27s\x27 : \x27\x27);
+                    }
+
+                    var ajaxToolbarPanel = document.querySelector(\x27.sf-toolbar-block-ajax\x27);
+                    if (!ajaxToolbarPanel) {
+                        return;
+                    }
+
+                    if (requestStack.length) {
+                        ajaxToolbarPanel.style.display = \x27\x27;
+                    } else {
+                        ajaxToolbarPanel.style.display = \x27none\x27;
+                    }
+                    if (pendingRequests > 0) {
+                        addClass(ajaxToolbarPanel, \x27sf-ajax-request-loading\x27);
+                    } else if (successStreak < 4) {
+                        addClass(ajaxToolbarPanel, \x27sf-toolbar-status-red\x27);
+                        removeClass(ajaxToolbarPanel, \x27sf-ajax-request-loading\x27);
+                    } else {
+                        removeClass(ajaxToolbarPanel, \x27sf-ajax-request-loading\x27);
+                        removeClass(ajaxToolbarPanel, \x27sf-toolbar-status-red\x27);
+                    }
+                };
+
+                var startAjaxRequest = function(index) {
+                    var tbody = document.querySelector(\x27.sf-toolbar-ajax-request-list\x27);
+                    if (!tbody) {
+                        return;
+                    }
+
+                    var nbOfAjaxRequest = tbody.rows.length;
+                    if (nbOfAjaxRequest >= 100) {
+                        tbody.deleteRow(0);
+                    }
+
+                    var request = requestStack[index];
+                    pendingRequests++;
+                    var row = document.createElement(\x27tr\x27);
+                    request.DOMNode = row;
+
+                    var requestNumberCell = document.createElement(\x27td\x27);
+                    requestNumberCell.textContent = index + 1;
+                    row.appendChild(requestNumberCell);
+
+                    var profilerCell = document.createElement(\x27td\x27);
+                    profilerCell.textContent = \x27n/a\x27;
+                    row.appendChild(profilerCell);
+
+                    var methodCell = document.createElement(\x27td\x27);
+                    methodCell.textContent = request.method;
+                    row.appendChild(methodCell);
+
+                    var typeCell = document.createElement(\x27td\x27);
+                    typeCell.textContent = request.type;
+                    row.appendChild(typeCell);
+
+                    var statusCodeCell = document.createElement(\x27td\x27);
+                    var statusCode = document.createElement(\x27span\x27);
+                    statusCode.textContent = \x27n/a\x27;
+                    statusCodeCell.appendChild(statusCode);
+                    row.appendChild(statusCodeCell);
+
+                    var pathCell = document.createElement(\x27td\x27);
+                    pathCell.className = \x27sf-ajax-request-url\x27;
+                    if (\x27GET\x27 === request.method) {
+                        var pathLink = document.createElement(\x27a\x27);
+                        pathLink.setAttribute(\x27href\x27, request.url);
+                        pathLink.textContent = request.url;
+                        pathCell.appendChild(pathLink);
+                    } else {
+                        var pathText = document.createElement(\x27span\x27);
+                        pathText.textContent = request.url;
+                        pathCell.appendChild(pathText);
+                    }
+                    pathCell.setAttribute(\x27title\x27, request.url);
+                    row.appendChild(pathCell);
+
+                    var durationCell = document.createElement(\x27td\x27);
+                    durationCell.className = \x27sf-ajax-request-duration\x27;
+                    durationCell.textContent = \x27n/a\x27;
+                    row.appendChild(durationCell);
+
+                    request.liveDurationHandle = setInterval(function() {
+                        durationCell.textContent = (new Date() - request.start) + \x27 ms\x27;
+                    }, 100);
+
+                    row.className = \x27sf-ajax-request sf-ajax-request-loading\x27;
+                    tbody.insertBefore(row, null);
+
+                    var toolbarInfo = document.querySelector(\x27.sf-toolbar-block-ajax .sf-toolbar-info\x27);
+                    toolbarInfo.scrollTop = toolbarInfo.scrollHeight;
+
+                    renderAjaxRequests();
+                };
+
+                var finishAjaxRequest = function(index) {
+                    var request = requestStack[index];
+                    clearInterval(request.liveDurationHandle);
+
+                    if (!request.DOMNode) {
+                        return;
+                    }
+
+                    if (request.toolbarReplace && !request.toolbarReplaceFinished && request.profile) {
+                        /* Flag as complete because finishAjaxRequest can be called multiple times. */
+                        request.toolbarReplaceFinished = true;
+                        /* Search up through the DOM to find the toolbar\x27s container ID. */
+                        for (var elem = request.DOMNode; elem && elem !== document; elem = elem.parentNode) {
+                            if (elem.id.match(/^sfwdt/)) {
+                                Sfjs.loadToolbar(elem.id.replace(/^sfwdt/, \x27\x27), request.profile);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (pendingRequests > 0) {
+                        pendingRequests--;
+                    }
+
+                    var row = request.DOMNode;
+                    /* Unpack the children from the row */
+                    var profilerCell = row.children[1];
+                    var methodCell = row.children[2];
+                    var statusCodeCell = row.children[4];
+                    var statusCodeElem = statusCodeCell.children[0];
+                    var durationCell = row.children[6];
+
+                    if (request.error) {
+                        row.className = \x27sf-ajax-request sf-ajax-request-error\x27;
+                        methodCell.className = \x27sf-ajax-request-error\x27;
+                        successStreak = 0;
+                    } else {
+                        row.className = \x27sf-ajax-request sf-ajax-request-ok\x27;
+                        successStreak++;
+                    }
+
+                    if (request.statusCode) {
+                        if (request.statusCode < 300) {
+                            statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status\x27);
+                        } else if (request.statusCode < 400) {
+                            statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status sf-toolbar-status-yellow\x27);
+                        } else {
+                            statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status sf-toolbar-status-red\x27);
+                        }
+                        statusCodeElem.textContent = request.statusCode;
+                    } else {
+                        statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status sf-toolbar-status-red\x27);
+                    }
+
+                    if (request.duration) {
+                        durationCell.textContent = request.duration + \x27 ms\x27;
+                    }
+
+                    if (request.profilerUrl) {
+                        profilerCell.textContent = \x27\x27;
+                        var profilerLink = document.createElement(\x27a\x27);
+                        profilerLink.setAttribute(\x27href\x27, request.profilerUrl);
+                        profilerLink.textContent = request.profile;
+                        profilerCell.appendChild(profilerLink);
+                    }
+
+                    renderAjaxRequests();
+                };
+
+                ";
+        // line 312
+        if (array_key_exists("excluded_ajax_paths", $context)) {
+            // line 313
+            yield "                if (window.EventSource) {
+                    var oldEventSource = window.EventSource;
+                    function patchedEventSource(url, options) {
+                        var es = new oldEventSource(url, options);
+                        if (!url.toString().match(new RegExp(";
+            // line 317
+            yield (string) json_encode((isset($context["excluded_ajax_paths"]) || array_key_exists("excluded_ajax_paths", $context) ? $context["excluded_ajax_paths"] : (function () { throw new RuntimeError('Variable "excluded_ajax_paths" does not exist.', 317, $this->source); })()));
+            yield "))) {
+                            var stackElement = {
+                                error: false,
+                                url: url,
+                                method: \x27GET\x27,
+                                type: \x27event-stream\x27,
+                                start: new Date()
+                            };
+
+                            var idx = requestStack.push(stackElement) - 1;
+                            var finished = false;
+                            /* The \"Clear\" link empties the list, after which idx points to another request or to none */
+                            var finish = function () {
+                                finished = true;
+                                if (stackElement === requestStack[idx]) {
+                                    finishAjaxRequest(idx);
+                                }
+                            };
+                            startAjaxRequest(idx);
+                            addEventListener(es, \x27error\x27, function () {
+                                stackElement.error = true;
+                                finish();
+                            });
+                            addEventListener(es, \x27open\x27, function () {
+                                stackElement.statusCode = 200;
+                                stackElement.toolbarReplaceFinished = false;
+                                stackElement.toolbarReplace = true;
+                            });
+                            addEventListener(es, \x27symfony:debug:started\x27, function (event) {
+                                var items = event.data.split(\x27\\n\x27);
+                                stackElement.profile = items[0];
+                                stackElement.profilerUrl = items[1];
+                            });
+                            addEventListener(es, \x27symfony:debug:error\x27, function (event) {
+                                stackElement.error = true;
+                                stackElement.statusCode = event.data;
+                                finish();
+                            });
+                            addEventListener(es, \x27symfony:debug:finished\x27, function () {
+                                stackElement.duration = new Date() - stackElement.start;
+                                stackElement.toolbarReplaceFinished = false;
+                                stackElement.toolbarReplace = true;
+                                finish();
+                            });
+                            /* close() dispatches no event: wrap it to mark the request as finished, unless an event already did */
+                            var originalClose = es.close.bind(es);
+                            es.close = function () {
+                                originalClose();
+
+                                if (!finished) {
+                                    stackElement.duration = new Date() - stackElement.start;
+                                    finish();
+                                }
+                            };
+                        }
+
+                        return es;
+                    };
+                    Object.defineProperties(patchedEventSource, Object.getOwnPropertyDescriptors(oldEventSource));
+                    window.EventSource = patchedEventSource;
+                }
+                if (window.fetch && window.fetch.polyfill === undefined) {
+                    var oldFetch = window.fetch;
+                    window.fetch = function () {
+                        var promise = oldFetch.apply(this, arguments);
+                        var url = arguments[0];
+                        var params = arguments[1];
+                        var paramType = Object.prototype.toString.call(arguments[0]);
+                        if (paramType === \x27[object Request]\x27) {
+                            url = arguments[0].url;
+                            params = {
+                                method: arguments[0].method,
+                                credentials: arguments[0].credentials,
+                                headers: arguments[0].headers,
+                                mode: arguments[0].mode,
+                                redirect: arguments[0].redirect
+                            };
+                        } else {
+                            url = String(url);
+                        }
+                        if (!url.match(new RegExp(";
+            // line 397
+            yield (string) json_encode((isset($context["excluded_ajax_paths"]) || array_key_exists("excluded_ajax_paths", $context) ? $context["excluded_ajax_paths"] : (function () { throw new RuntimeError('Variable "excluded_ajax_paths" does not exist.', 397, $this->source); })()));
+            yield "))) {
+                            var method = \x27GET\x27;
+                            if (params && params.method !== undefined) {
+                                method = params.method;
+                            }
+
+                            var stackElement = {
+                                error: false,
+                                url: url,
+                                method: method,
+                                type: \x27fetch\x27,
+                                start: new Date()
+                            };
+
+                            var idx = requestStack.push(stackElement) - 1;
+                            promise.then(function (r) {
+                                stackElement.duration = new Date() - stackElement.start;
+                                stackElement.error = r.status < 200 || r.status >= 400;
+                                stackElement.statusCode = r.status;
+                                stackElement.profile = r.headers.get(\x27x-debug-token\x27);
+                                stackElement.profilerUrl = r.headers.get(\x27x-debug-token-link\x27);
+                                stackElement.toolbarReplaceFinished = false;
+                                stackElement.toolbarReplace = \x271\x27 === r.headers.get(\x27Symfony-Debug-Toolbar-Replace\x27);
+                                finishAjaxRequest(idx);
+                            }, function (e){
+                                stackElement.error = true;
+                                finishAjaxRequest(idx);
+                            });
+                            startAjaxRequest(idx);
+                        }
+
+                        return promise;
+                    };
+                }
+                if (window.XMLHttpRequest && XMLHttpRequest.prototype.addEventListener) {
+                    var proxied = XMLHttpRequest.prototype.open;
+
+                    XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+                        var self = this;
+                        url = String(url);
+
+                        /* prevent logging AJAX calls to static and inline files, like templates */
+                        var path = url;
+                        if (url.slice(0, 1) === \x27/\x27) {
+                            if (0 === url.indexOf(\x27";
+            // line 441
+            yield (string) $this->escaper->escape($this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["request"]) || array_key_exists("request", $context) ? $context["request"] : (function () { throw new RuntimeError('Variable "request" does not exist.', 441, $this->source); })()), "basePath", [], "any", false, false, false, 441), "js"), "html", null, true);
+            yield "\x27)) {
+                                path = url.slice(";
+            // line 442
+            yield (string) $this->escaper->escape(Twig\Extension\CoreExtension::length($this->env->getCharset(), CoreExtension::getAttribute($this->env, $this->source, (isset($context["request"]) || array_key_exists("request", $context) ? $context["request"] : (function () { throw new RuntimeError('Variable "request" does not exist.', 442, $this->source); })()), "basePath", [], "any", false, false, false, 442)), "html", null, true);
+            yield ");
+                            }
+                        }
+                        else if (0 === url.indexOf(\x27";
+            // line 445
+            yield (string) $this->escaper->escape($this->escaper->escape((CoreExtension::getAttribute($this->env, $this->source, (isset($context["request"]) || array_key_exists("request", $context) ? $context["request"] : (function () { throw new RuntimeError('Variable "request" does not exist.', 445, $this->source); })()), "schemeAndHttpHost", [], "any", false, false, false, 445) . CoreExtension::getAttribute($this->env, $this->source, (isset($context["request"]) || array_key_exists("request", $context) ? $context["request"] : (function () { throw new RuntimeError('Variable "request" does not exist.', 445, $this->source); })()), "basePath", [], "any", false, false, false, 445)), "js"), "html", null, true);
+            yield "\x27)) {
+                            path = url.slice(";
+            // line 446
+            yield (string) $this->escaper->escape(Twig\Extension\CoreExtension::length($this->env->getCharset(), (CoreExtension::getAttribute($this->env, $this->source, (isset($context["request"]) || array_key_exists("request", $context) ? $context["request"] : (function () { throw new RuntimeError('Variable "request" does not exist.', 446, $this->source); })()), "schemeAndHttpHost", [], "any", false, false, false, 446) . CoreExtension::getAttribute($this->env, $this->source, (isset($context["request"]) || array_key_exists("request", $context) ? $context["request"] : (function () { throw new RuntimeError('Variable "request" does not exist.', 446, $this->source); })()), "basePath", [], "any", false, false, false, 446))), "html", null, true);
+            yield ");
+                        }
+
+                        if (!path.match(new RegExp(";
+            // line 449
+            yield (string) json_encode((isset($context["excluded_ajax_paths"]) || array_key_exists("excluded_ajax_paths", $context) ? $context["excluded_ajax_paths"] : (function () { throw new RuntimeError('Variable "excluded_ajax_paths" does not exist.', 449, $this->source); })()));
+            yield "))) {
+                            var stackElement = {
+                                error: false,
+                                url: url,
+                                method: method,
+                                type: \x27xhr\x27,
+                                start: new Date()
+                            };
+
+                            var idx = requestStack.push(stackElement) - 1;
+
+                            this.addEventListener(\x27readystatechange\x27, function() {
+                                if (self.readyState == 4) {
+                                    stackElement.duration = new Date() - stackElement.start;
+                                    stackElement.error = self.status < 200 || self.status >= 400;
+                                    stackElement.statusCode = self.status;
+                                    extractHeaders(self, stackElement);
+
+                                    finishAjaxRequest(idx);
+                                }
+                            }, false);
+
+                            startAjaxRequest(idx);
+                        }
+
+                        proxied.apply(this, Array.prototype.slice.call(arguments));
+                    };
+                }
+                ";
+        }
+        // line 478
+        yield "
+                return {
+                    hasClass: hasClass,
+
+                    removeClass: removeClass,
+
+                    addClass: addClass,
+
+                    toggleClass: toggleClass,
+
+                    getPreference: getPreference,
+
+                    setPreference: setPreference,
+
+                    addEventListener: addEventListener,
+
+                    request: request,
+
+                    renderAjaxRequests: renderAjaxRequests,
+
+                    getSfwdt: function(token) {
+                        return document.getElementById(\x27sfwdt\x27 + token);
+                    },
+
+                    load: function(selector, url, onSuccess, onError, options) {
+                        var el = document.getElementById(selector);
+
+                        if (el && el.getAttribute(\x27data-sfurl\x27) !== url) {
+                            request(
+                                url,
+                                function(xhr) {
+                                    el.innerHTML = xhr.responseText;
+                                    el.setAttribute(\x27data-sfurl\x27, url);
+                                    removeClass(el, \x27loading\x27);
+                                    var pending = pendingRequests;
+                                    for (var i = 0; i < requestStack.length; i++) {
+                                        startAjaxRequest(i);
+                                        if (requestStack[i].duration || requestStack[i].error) {
+                                            finishAjaxRequest(i);
+                                        }
+                                    }
+                                    /* Revert the pending state in case there was a start called without a finish above. */
+                                    pendingRequests = pending;
+                                    (onSuccess || noop)(xhr, el);
+                                },
+                                function(xhr) { (onError || noop)(xhr, el); },
+                                \x27\x27,
+                                options
+                            );
+                        }
+
+                        return this;
+                    },
+
+                    showToolbar: function(token) {
+                        var sfwdt = this.getSfwdt(token);
+                        var toggleButton = document.querySelector(`#sfToolbarToggleButton-\${token}`);
+
+                        if (\x27closed\x27 === getPreference(\x27toolbar/displayState\x27)) {
+                            addClass(sfwdt.parentNode, \x27sf-toolbar-closed\x27);
+                            removeClass(sfwdt.parentNode, \x27sf-toolbar-opened\x27);
+                            if (toggleButton) { toggleButton.setAttribute(\x27aria-expanded\x27, \x27false\x27); }
+                        } else {
+                            addClass(sfwdt.parentNode, \x27sf-toolbar-opened\x27);
+                            removeClass(sfwdt.parentNode, \x27sf-toolbar-closed\x27);
+                            if (toggleButton) { toggleButton.setAttribute(\x27aria-expanded\x27, \x27true\x27); }
+                        }
+                    },
+
+                    hideToolbar: function(token) {
+                        var sfwdt = this.getSfwdt(token);
+                        var toggleButton = document.querySelector(`#sfToolbarToggleButton-\${token}`);
+                        addClass(sfwdt.parentNode, \x27sf-toolbar-closed\x27);
+                        removeClass(sfwdt.parentNode, \x27sf-toolbar-opened\x27);
+                        if (toggleButton) { toggleButton.setAttribute(\x27aria-expanded\x27, \x27false\x27); }
+                    },
+
+                    initToolbar: function(token) {
+                        this.showToolbar(token);
+
+                        var toggleButton = document.querySelector(`#sfToolbarToggleButton-\${token}`);
+                        addEventListener(toggleButton, \x27click\x27, function (event) {
+                            event.preventDefault();
+
+                            const newState = \x27closed\x27 === getPreference(\x27toolbar/displayState\x27) ? \x27opened\x27 : \x27closed\x27;
+                            setPreference(\x27toolbar/displayState\x27, newState);
+                            \x27opened\x27 === newState ? Sfjs.showToolbar(token) : Sfjs.hideToolbar(token);
+                        });
+                    },
+
+                    loadToolbar: function(token, newToken) {
+                        var that = this;
+                        var triesCounter = document.getElementById(\x27sfLoadCounter-\x27 + token);
+
+                        var options = {
+                            retry: true,
+                            onSend: function (count) {
+                                if (count === 3) {
+                                    that.initToolbar(token);
+                                }
+
+                                if (triesCounter) {
+                                    triesCounter.textContent = count;
+                                }
+                            },
+                        };
+
+                        var cancelButton = document.getElementById(\x27sfLoadCancel-\x27 + token);
+                        if (cancelButton) {
+                            addEventListener(cancelButton, \x27click\x27, function (event) {
+                                event.preventDefault();
+
+                                options.stop = true;
+                                that.hideToolbar(token);
+                            });
+                        }
+
+                        newToken = (newToken || token);
+
+                        this.load(
+                            \x27sfwdt\x27 + token,
+                            \x27";
+        // line 599
+        yield (string) $this->escaper->escape($this->escaper->escape($this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getUrl("_wdt", ["token" => "xxxxxx"]), "js"), "html", null, true);
+        yield "\x27.replace(/xxxxxx/, newToken),
+                            function(xhr, el) {
+                                var toolbarContent = document.getElementById(\x27sfToolbarMainContent-\x27 + newToken);
+
+                                /* Do nothing in the edge case where the toolbar has already been replaced with a new one */
+                                if (!toolbarContent) {
+                                    return;
+                                }
+
+                                /* Drop listeners attached during the previous load so they don\x27t stack on AJAX replacements */
+                                if (toolbarLoadAborter && typeof toolbarLoadAborter.abort === \x27function\x27) {
+                                    toolbarLoadAborter.abort();
+                                }
+                                toolbarLoadAborter = (typeof AbortController === \x27function\x27) ? new AbortController() : null;
+                                var toolbarLoadSignal = toolbarLoadAborter ? { signal: toolbarLoadAborter.signal } : false;
+
+                                /* Replace the ID, it has to match the new token */
+                                toolbarContent.parentElement.id = \x27sfwdt\x27 + newToken;
+
+                                /* Evaluate in global scope scripts embedded inside the toolbar */
+                                var i, scripts = [].slice.call(el.querySelectorAll(\x27script\x27));
+                                for (i = 0; i < scripts.length; ++i) {
+                                    if (scripts[i].firstChild) {
+                                        eval.call({}, scripts[i].firstChild.nodeValue);
+                                    }
+                                }
+
+                                el.style.display = -1 !== xhr.responseText.indexOf(\x27sf-toolbarreset\x27) ? \x27block\x27 : \x27none\x27;
+
+                                if (el.style.display == \x27none\x27) {
+                                    return;
+                                }
+
+                                that.initToolbar(newToken);
+
+                                /* Handle toolbar-info position */
+                                var toolbarBlocks = [].slice.call(el.querySelectorAll(\x27.sf-toolbar-block\x27));
+                                var positionToolbarInfo = function () {
+                                    var toolbarInfo = this.querySelectorAll(\x27.sf-toolbar-info\x27)[0];
+                                    var pageWidth = document.body.clientWidth;
+                                    var elementWidth = toolbarInfo.offsetWidth;
+                                    var leftValue = (elementWidth + this.offsetLeft) - pageWidth;
+                                    var rightValue = (elementWidth + (pageWidth - this.offsetLeft)) - pageWidth;
+
+                                    /* Reset right and left value, useful on window resize */
+                                    toolbarInfo.style.right = \x27\x27;
+                                    toolbarInfo.style.left = \x27\x27;
+
+                                    if (elementWidth > pageWidth) {
+                                        toolbarInfo.style.left = 0;
+                                    } else if (leftValue > 0 && rightValue > 0) {
+                                        toolbarInfo.style.right = (rightValue * -1) + \x27px\x27;
+                                    } else if (leftValue < 0) {
+                                        toolbarInfo.style.left = 0;
+                                    } else {
+                                        toolbarInfo.style.right = \x270px\x27;
+                                    }
+                                };
+                                for (i = 0; i < toolbarBlocks.length; ++i) {
+                                    addEventListener(toolbarBlocks[i], \x27focusin\x27, positionToolbarInfo, toolbarLoadSignal);
+                                    toolbarBlocks[i].onmouseover = function () {
+                                        /* Transfer focus away from any other toolbar block so that */
+                                        /* :focus-within and :hover are never active simultaneously */
+                                        var focused = document.activeElement;
+                                        if (focused && !this.contains(focused) && focused.closest) {
+                                            var focusedBlock = focused.closest(\x27.sf-toolbar-block\x27);
+                                            if (focusedBlock) {
+                                                focused.blur();
+                                            }
+                                        }
+                                        positionToolbarInfo.call(this);
+                                    };
+                                }
+
+                                /* Roving tabindex for WAI-ARIA toolbar pattern */
+                                var triggers = [];
+                                for (i = 0; i < toolbarBlocks.length; ++i) {
+                                    var icon = toolbarBlocks[i].querySelector(\x27.sf-toolbar-icon\x27);
+                                    var trigger = (icon && icon.parentElement.tagName === \x27A\x27) ? icon.parentElement : icon;
+                                    if (trigger) {
+                                        trigger.setAttribute(\x27tabindex\x27, triggers.length === 0 ? \x270\x27 : \x27-1\x27);
+                                        triggers.push(trigger);
+                                    }
+
+                                    /* Inject accessible label when no visible SVG <title> provides one */
+                                    var label = toolbarBlocks[i].getAttribute(\x27data-accessible-label\x27);
+                                    if (label) {
+                                        var svg = toolbarBlocks[i].querySelector(\x27.sf-toolbar-icon svg\x27);
+                                        var hasVisibleTitle = svg && svg.querySelector(\x27title\x27) && window.getComputedStyle(svg).display !== \x27none\x27 && svg.getAttribute(\x27aria-hidden\x27) !== \x27true\x27;
+                                        if (!hasVisibleTitle) {
+                                            var span = document.createElement(\x27span\x27);
+                                            span.className = \x27visually-hidden\x27;
+                                            span.textContent = label;
+                                            var parent = trigger || toolbarBlocks[i];
+                                            parent.insertBefore(span, parent.firstChild);
+                                        }
+                                    }
+                                }
+                                var toggleButton = document.getElementById(\x27sfToolbarToggleButton-\x27 + newToken);
+                                if (toggleButton) {
+                                    toggleButton.setAttribute(\x27tabindex\x27, triggers.length === 0 ? \x270\x27 : \x27-1\x27);
+                                    triggers.push(toggleButton);
+                                }
+
+                                var isTriggerVisible = function(trigger) {
+                                    var block = trigger.closest(\x27.sf-toolbar-block\x27);
+                                    return block && window.getComputedStyle(block).display !== \x27none\x27;
+                                };
+
+                                var findVisibleIndex = function(fromIndex, direction) {
+                                    var len = triggers.length;
+                                    for (var step = 1; step < len; step++) {
+                                        var candidate = (fromIndex + direction * step + len) % len;
+                                        if (isTriggerVisible(triggers[candidate])) {
+                                            return candidate;
+                                        }
+                                    }
+                                    return fromIndex;
+                                };
+
+                                var findFirstVisible = function() {
+                                    for (var t = 0; t < triggers.length; t++) {
+                                        if (isTriggerVisible(triggers[t])) return t;
+                                    }
+                                    return 0;
+                                };
+
+                                var findLastVisible = function() {
+                                    for (var t = triggers.length - 1; t >= 0; t--) {
+                                        if (isTriggerVisible(triggers[t])) return t;
+                                    }
+                                    return triggers.length - 1;
+                                };
+
+                                var setRovingFocus = function(newIndex) {
+                                    for (var t = 0; t < triggers.length; t++) {
+                                        triggers[t].setAttribute(\x27tabindex\x27, t === newIndex ? \x270\x27 : \x27-1\x27);
+                                    }
+                                    triggers[newIndex].focus();
+                                };
+
+                                for (i = 0; i < triggers.length; ++i) {
+                                    (function(index) {
+                                        addEventListener(triggers[index], \x27keydown\x27, function(event) {
+                                            var handled = true;
+                                            switch (event.key) {
+                                                case \x27ArrowRight\x27:
+                                                    setRovingFocus(findVisibleIndex(index, 1));
+                                                    break;
+                                                case \x27ArrowLeft\x27:
+                                                    setRovingFocus(findVisibleIndex(index, -1));
+                                                    break;
+                                                case \x27Home\x27:
+                                                    setRovingFocus(findFirstVisible());
+                                                    break;
+                                                case \x27End\x27:
+                                                    setRovingFocus(findLastVisible());
+                                                    break;
+                                                case \x27ArrowDown\x27:
+                                                    var block = triggers[index].closest(\x27.sf-toolbar-block\x27);
+                                                    if (block) {
+                                                        var info = block.querySelector(\x27.sf-toolbar-info\x27);
+                                                        if (info) {
+                                                            info.focus();
+                                                        }
+                                                    }
+                                                    break;
+                                                default:
+                                                    handled = false;
+                                            }
+                                            if (handled) {
+                                                event.preventDefault();
+                                            }
+                                        }, toolbarLoadSignal);
+                                    })(i);
+                                }
+
+                                /* Escape from popover returns focus to trigger */
+                                var infoElements = el.querySelectorAll(\x27.sf-toolbar-info[tabindex]\x27);
+                                for (i = 0; i < infoElements.length; ++i) {
+                                    (function(infoEl) {
+                                        addEventListener(infoEl, \x27keydown\x27, function(event) {
+                                            if (event.key === \x27Escape\x27) {
+                                                var block = infoEl.closest(\x27.sf-toolbar-block\x27);
+                                                if (block) {
+                                                    removeClass(block, \x27hover\x27);
+                                                    var blockIcon = block.querySelector(\x27.sf-toolbar-icon\x27);
+                                                    var trigger = (blockIcon && blockIcon.parentElement.tagName === \x27A\x27) ? blockIcon.parentElement : blockIcon;
+                                                    if (trigger) {
+                                                        trigger.focus();
+                                                    }
+                                                }
+                                                event.preventDefault();
+                                            }
+                                        }, toolbarLoadSignal);
+                                    })(infoElements[i]);
+                                }
+
+                                renderAjaxRequests();
+                                addEventListener(document.querySelector(\x27.sf-toolbar-ajax-clear\x27), \x27click\x27, function() {
+                                    requestStack = [];
+                                    renderAjaxRequests();
+                                    successStreak = 4;
+                                    document.querySelector(\x27.sf-toolbar-ajax-request-list\x27).innerHTML = \x27\x27;
+                                });
+                                addEventListener(document.querySelector(\x27.sf-toolbar-block-ajax\x27), \x27mouseenter\x27, function (event) {
+                                    var elem = document.querySelector(\x27.sf-toolbar-block-ajax .sf-toolbar-info\x27);
+                                    elem.scrollTop = elem.scrollHeight;
+                                });
+                                addEventListener(document.querySelector(\x27.sf-toolbar-block-ajax > .sf-toolbar-icon\x27), \x27click\x27, function (event) {
+                                    event.preventDefault();
+
+                                    toggleClass(this.parentNode, \x27hover\x27);
+                                });
+
+                                var dumpInfo = document.querySelector(\x27.sf-toolbar-block-dump .sf-toolbar-info\x27);
+                                if (null !== dumpInfo) {
+                                    addEventListener(dumpInfo, \x27sfbeforedumpcollapse\x27, function () {
+                                        dumpInfo.style.minHeight = dumpInfo.getBoundingClientRect().height+\x27px\x27;
+                                    });
+                                    addEventListener(dumpInfo, \x27mouseleave\x27, function () {
+                                        dumpInfo.style.minHeight = \x27\x27;
+                                    });
+                                }
+                            },
+                            function(xhr) {
+                                if (xhr.status !== 0 && !options.stop) {
+                                    var sfwdt = that.getSfwdt(token);
+                                    sfwdt.innerHTML = \x27\\
+                                    <div class=\"sf-toolbarreset notranslate\">\\
+                                        <div class=\"sf-toolbar-icon\"><svg width=\"26\" height=\"28\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 26 28\" enable-background=\"new 0 0 26 28\" xml:space=\"preserve\"><path fill=\"#FFFFFF\" d=\"M13 0C5.8 0 0 5.8 0 13c0 7.2 5.8 13 13 13c7.2 0 13-5.8 13-13C26 5.8 20.2 0 13 0z M20 7.5 c-0.6 0-1-0.3-1-0.9c0-0.2 0-0.4 0.2-0.6c0.1-0.3 0.2-0.3 0.2-0.4c0-0.3-0.5-0.4-0.7-0.4c-2 0.1-2.5 2.7-2.9 4.8l-0.2 1.1 c1.1 0.2 1.9 0 2.4-0.3c0.6-0.4-0.2-0.8-0.1-1.3C18 9.2 18.4 9 18.7 8.9c0.5 0 0.8 0.5 0.8 1c0 0.8-1.1 2-3.3 1.9 c-0.3 0-0.5 0-0.7-0.1L15 14.1c-0.4 1.7-0.9 4.1-2.6 6.2c-1.5 1.8-3.1 2.1-3.8 2.1c-1.3 0-2.1-0.6-2.2-1.6c0-0.9 0.8-1.4 1.3-1.4 c0.7 0 1.2 0.5 1.2 1.1c0 0.5-0.2 0.6-0.4 0.7c-0.1 0.1-0.3 0.2-0.3 0.4c0 0.1 0.1 0.3 0.4 0.3c0.5 0 0.9-0.3 1.2-0.5 c1.3-1 1.7-2.9 2.4-6.2l0.1-0.8c0.2-1.1 0.5-2.3 0.8-3.5c-0.9-0.7-1.4-1.5-2.6-1.8c-0.8-0.2-1.3 0-1.7 0.4C8.4 10 8.6 10.7 9 11.1 l0.7 0.7c0.8 0.9 1.3 1.7 1.1 2.7c-0.3 1.6-2.1 2.8-4.3 2.1c-1.9-0.6-2.2-1.9-2-2.7c0.2-0.6 0.7-0.8 1.2-0.6 c0.5 0.2 0.7 0.8 0.6 1.3c0 0.1 0 0.1-0.1 0.3C6 15 5.9 15.2 5.9 15.3c-0.1 0.4 0.4 0.7 0.8 0.8c0.8 0.3 1.7-0.2 1.9-0.9 c0.2-0.6-0.2-1.1-0.4-1.2l-0.8-0.9c-0.4-0.4-1.2-1.5-0.8-2.8c0.2-0.5 0.5-1 0.9-1.4c1-0.7 2-0.8 3-0.6c1.3 0.4 1.9 1.2 2.8 1.9 c0.5-1.3 1.1-2.6 2-3.8c0.9-1 2-1.7 3.3-1.8C20 4.8 21 5.4 21 6.3C21 6.7 20.8 7.5 20 7.5z\"/></svg></div>\\
+                                        An error occurred while loading the web debug toolbar. <a href=\"";
+        // line 830
+        yield (string) $this->escaper->escape($this->escaper->escape($this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getUrl("_profiler_home"), "js"), "html", null, true);
+        yield "\x27 + newToken + \x27\">Open the web profiler.</a>\\
+                                    </div>\\
+                                \x27;
+                                    sfwdt.parentElement.setAttribute(\x27class\x27, \x27sf-toolbar sf-error-toolbar\x27);
+                                }
+                            },
+                            options
+                        );
+
+                        return this;
+                    },
+
+                    toggle: function(selector, elOn, elOff) {
+                        var tmp = elOn.style.display,
+                            el = document.getElementById(selector);
+
+                        elOn.style.display = elOff.style.display;
+                        elOff.style.display = tmp;
+
+                        if (el) {
+                            el.style.display = \x27none\x27 === tmp ? \x27none\x27 : \x27block\x27;
+                        }
+
+                        return this;
+                    },
+                };
+            })();
+        }
+
+        Sfjs.loadToolbar(\x27";
+        // line 859
+        yield (string) $this->escaper->escape((isset($context["token"]) || array_key_exists("token", $context) ? $context["token"] : (function () { throw new RuntimeError('Variable "token" does not exist.', 859, $this->source); })()), "html", null, true);
+        yield "\x27);
+    /*]]>*/</script>
+</div>
+<!-- END of Symfony Web Debug Toolbar -->
+";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        return; yield;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "@WebProfiler/Profiler/toolbar_js.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDefaultEscapeStrategy(): string|false
+    {
+        return "html";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  966 => 859,  934 => 830,  700 => 599,  577 => 478,  545 => 449,  539 => 446,  535 => 445,  529 => 442,  525 => 441,  478 => 397,  395 => 317,  389 => 313,  387 => 312,  89 => 22,  84 => 16,  82 => 14,  81 => 9,  77 => 8,  67 => 5,  56 => 4,  53 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<!-- START of Symfony Web Debug Toolbar -->
+{# The stylesheet is loaded before the toolbar markup, and the empty script below makes
+   the parser wait for it, so the toolbar is never painted unstyled. #}
+<link rel=\"stylesheet\"{% if csp_style_nonce %} nonce=\"{{ csp_style_nonce }}\"{% endif %} href=\"{{ url(\x27_wdt_stylesheet\x27) }}\" />
+<script{% if csp_script_nonce is defined and csp_script_nonce %} nonce=\"{{ csp_script_nonce }}\"{% endif %}> </script>
+
+<div class=\"sf-toolbar sf-toolbar-opened\" role=\"toolbar\" aria-label=\"Symfony Web Debug Toolbar\" data-frankenphp-hot-reload-preserve>
+    <div id=\"sfwdt{{ token }}\">
+        {{ include(\x27@WebProfiler/Profiler/toolbar.html.twig\x27, {
+            templates: {
+                request: \x27@WebProfiler/Profiler/cancel.html.twig\x27,
+            },
+            profile: null,
+            profiler_url: url(\x27_profiler\x27, {token: token}),
+            profiler_markup_version: 3,
+        }) }}
+    </div>
+
+    {# CAUTION: the contents of this file are processed by Twig before loading
+                them as JavaScript source code. Always use \x27/*\x27 comments instead
+                of \x27//\x27 comments to avoid impossible-to-debug side-effects #}
+    <script{% if csp_script_nonce is defined and csp_script_nonce %} nonce=\"{{ csp_script_nonce }}\"{% endif %}>/*<![CDATA[*/
+        if (typeof Sfjs === \x27undefined\x27 || typeof Sfjs.loadToolbar === \x27undefined\x27) {
+            Sfjs = (function() {
+                \"use strict\";
+
+                if (\x27classList\x27 in document.documentElement) {
+                    var hasClass = function (el, cssClass) { return el.classList.contains(cssClass); };
+                    var removeClass = function(el, cssClass) { el.classList.remove(cssClass); };
+                    var addClass = function(el, cssClass) { el.classList.add(cssClass); };
+                    var toggleClass = function(el, cssClass) { el.classList.toggle(cssClass); };
+                } else {
+                    var hasClass = function (el, cssClass) { return el.className.match(new RegExp(\x27\\\\b\x27 + cssClass + \x27\\\\b\x27)); };
+                    var removeClass = function(el, cssClass) { el.className = el.className.replace(new RegExp(\x27\\\\b\x27 + cssClass + \x27\\\\b\x27), \x27 \x27); };
+                    var addClass = function(el, cssClass) { if (!hasClass(el, cssClass)) { el.className += \" \" + cssClass; } };
+                    var toggleClass = function(el, cssClass) { hasClass(el, cssClass) ? removeClass(el, cssClass) : addClass(el, cssClass); };
+                }
+
+                var noop = function() {};
+
+                var profilerStorageKey = \x27symfony/profiler/\x27;
+
+                var addEventListener;
+
+                var el = document.createElement(\x27div\x27);
+                if (!(\x27addEventListener\x27 in el)) {
+                    addEventListener = function (element, eventName, callback, options) {
+                        element.attachEvent(\x27on\x27 + eventName, callback);
+                    };
+                } else {
+                    addEventListener = function (element, eventName, callback, options) {
+                        element.addEventListener(eventName, callback, options || false);
+                    };
+                }
+
+                var toolbarLoadAborter = null;
+
+                var request = function(url, onSuccess, onError, payload, options, tries) {
+                    url = new URL(url);
+                    url.searchParams.set(\x27XDEBUG_IGNORE\x27, \x271\x27);
+                    url = url.toString();
+                    var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject(\x27Microsoft.XMLHTTP\x27);
+                    options = options || {};
+                    options.retry = options.retry || false;
+                    tries = tries || 1;
+                    /* this delays for 125, 375, 625, 875, and 1000, ... */
+                    var delay = tries < 5 ? (tries - 0.5) * 250 : 1000;
+
+                    xhr.open(options.method || \x27GET\x27, url, true);
+                    xhr.setRequestHeader(\x27X-Requested-With\x27, \x27XMLHttpRequest\x27);
+                    xhr.onreadystatechange = function(state) {
+                        if (4 !== xhr.readyState) {
+                            return null;
+                        }
+
+                        if (xhr.status == 404 && options.retry && !options.stop) {
+                            setTimeout(function() {
+                                if (options.stop) {
+                                    return;
+                                }
+                                request(url, onSuccess, onError, payload, options, tries + 1);
+                            }, delay);
+
+                            return null;
+                        }
+
+                        if (200 === xhr.status) {
+                            (onSuccess || noop)(xhr);
+                        } else {
+                            (onError || noop)(xhr);
+                        }
+                    };
+
+                    if (options.onSend) {
+                        options.onSend(tries);
+                    }
+
+                    xhr.send(payload || \x27\x27);
+                };
+
+                var getPreference = function(name) {
+                    if (!window.localStorage) {
+                        return null;
+                    }
+
+                    return localStorage.getItem(profilerStorageKey + name);
+                };
+
+                var setPreference = function(name, value) {
+                    if (!window.localStorage) {
+                        return null;
+                    }
+
+                    localStorage.setItem(profilerStorageKey + name, value);
+                };
+
+                var requestStack = [];
+
+                var extractHeaders = function(xhr, stackElement) {
+                    /* Here we avoid to call xhr.getResponseHeader in order to */
+                    /* prevent polluting the console with CORS security errors */
+                    var allHeaders = xhr.getAllResponseHeaders();
+                    var ret;
+
+                    if (ret = allHeaders.match(/^x-debug-token:\\s+(.*)\$/im)) {
+                        stackElement.profile = ret[1];
+                    }
+                    if (ret = allHeaders.match(/^x-debug-token-link:\\s+(.*)\$/im)) {
+                        stackElement.profilerUrl = ret[1];
+                    }
+                    if (ret = allHeaders.match(/^Symfony-Debug-Toolbar-Replace:\\s+(.*)\$/im)) {
+                        stackElement.toolbarReplaceFinished = false;
+                        stackElement.toolbarReplace = \x271\x27 === ret[1];
+                    }
+                };
+
+                var successStreak = 4;
+                var pendingRequests = 0;
+                var renderAjaxRequests = function() {
+                    var requestCounter = document.querySelector(\x27.sf-toolbar-ajax-request-counter\x27);
+                    if (!requestCounter) {
+                        return;
+                    }
+                    requestCounter.textContent = requestStack.length;
+
+                    var infoSpan = document.querySelector(\".sf-toolbar-ajax-info\");
+                    if (infoSpan) {
+                        infoSpan.textContent = requestStack.length + \x27 AJAX request\x27 + (requestStack.length !== 1 ? \x27s\x27 : \x27\x27);
+                    }
+
+                    var ajaxToolbarPanel = document.querySelector(\x27.sf-toolbar-block-ajax\x27);
+                    if (!ajaxToolbarPanel) {
+                        return;
+                    }
+
+                    if (requestStack.length) {
+                        ajaxToolbarPanel.style.display = \x27\x27;
+                    } else {
+                        ajaxToolbarPanel.style.display = \x27none\x27;
+                    }
+                    if (pendingRequests > 0) {
+                        addClass(ajaxToolbarPanel, \x27sf-ajax-request-loading\x27);
+                    } else if (successStreak < 4) {
+                        addClass(ajaxToolbarPanel, \x27sf-toolbar-status-red\x27);
+                        removeClass(ajaxToolbarPanel, \x27sf-ajax-request-loading\x27);
+                    } else {
+                        removeClass(ajaxToolbarPanel, \x27sf-ajax-request-loading\x27);
+                        removeClass(ajaxToolbarPanel, \x27sf-toolbar-status-red\x27);
+                    }
+                };
+
+                var startAjaxRequest = function(index) {
+                    var tbody = document.querySelector(\x27.sf-toolbar-ajax-request-list\x27);
+                    if (!tbody) {
+                        return;
+                    }
+
+                    var nbOfAjaxRequest = tbody.rows.length;
+                    if (nbOfAjaxRequest >= 100) {
+                        tbody.deleteRow(0);
+                    }
+
+                    var request = requestStack[index];
+                    pendingRequests++;
+                    var row = document.createElement(\x27tr\x27);
+                    request.DOMNode = row;
+
+                    var requestNumberCell = document.createElement(\x27td\x27);
+                    requestNumberCell.textContent = index + 1;
+                    row.appendChild(requestNumberCell);
+
+                    var profilerCell = document.createElement(\x27td\x27);
+                    profilerCell.textContent = \x27n/a\x27;
+                    row.appendChild(profilerCell);
+
+                    var methodCell = document.createElement(\x27td\x27);
+                    methodCell.textContent = request.method;
+                    row.appendChild(methodCell);
+
+                    var typeCell = document.createElement(\x27td\x27);
+                    typeCell.textContent = request.type;
+                    row.appendChild(typeCell);
+
+                    var statusCodeCell = document.createElement(\x27td\x27);
+                    var statusCode = document.createElement(\x27span\x27);
+                    statusCode.textContent = \x27n/a\x27;
+                    statusCodeCell.appendChild(statusCode);
+                    row.appendChild(statusCodeCell);
+
+                    var pathCell = document.createElement(\x27td\x27);
+                    pathCell.className = \x27sf-ajax-request-url\x27;
+                    if (\x27GET\x27 === request.method) {
+                        var pathLink = document.createElement(\x27a\x27);
+                        pathLink.setAttribute(\x27href\x27, request.url);
+                        pathLink.textContent = request.url;
+                        pathCell.appendChild(pathLink);
+                    } else {
+                        var pathText = document.createElement(\x27span\x27);
+                        pathText.textContent = request.url;
+                        pathCell.appendChild(pathText);
+                    }
+                    pathCell.setAttribute(\x27title\x27, request.url);
+                    row.appendChild(pathCell);
+
+                    var durationCell = document.createElement(\x27td\x27);
+                    durationCell.className = \x27sf-ajax-request-duration\x27;
+                    durationCell.textContent = \x27n/a\x27;
+                    row.appendChild(durationCell);
+
+                    request.liveDurationHandle = setInterval(function() {
+                        durationCell.textContent = (new Date() - request.start) + \x27 ms\x27;
+                    }, 100);
+
+                    row.className = \x27sf-ajax-request sf-ajax-request-loading\x27;
+                    tbody.insertBefore(row, null);
+
+                    var toolbarInfo = document.querySelector(\x27.sf-toolbar-block-ajax .sf-toolbar-info\x27);
+                    toolbarInfo.scrollTop = toolbarInfo.scrollHeight;
+
+                    renderAjaxRequests();
+                };
+
+                var finishAjaxRequest = function(index) {
+                    var request = requestStack[index];
+                    clearInterval(request.liveDurationHandle);
+
+                    if (!request.DOMNode) {
+                        return;
+                    }
+
+                    if (request.toolbarReplace && !request.toolbarReplaceFinished && request.profile) {
+                        /* Flag as complete because finishAjaxRequest can be called multiple times. */
+                        request.toolbarReplaceFinished = true;
+                        /* Search up through the DOM to find the toolbar\x27s container ID. */
+                        for (var elem = request.DOMNode; elem && elem !== document; elem = elem.parentNode) {
+                            if (elem.id.match(/^sfwdt/)) {
+                                Sfjs.loadToolbar(elem.id.replace(/^sfwdt/, \x27\x27), request.profile);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (pendingRequests > 0) {
+                        pendingRequests--;
+                    }
+
+                    var row = request.DOMNode;
+                    /* Unpack the children from the row */
+                    var profilerCell = row.children[1];
+                    var methodCell = row.children[2];
+                    var statusCodeCell = row.children[4];
+                    var statusCodeElem = statusCodeCell.children[0];
+                    var durationCell = row.children[6];
+
+                    if (request.error) {
+                        row.className = \x27sf-ajax-request sf-ajax-request-error\x27;
+                        methodCell.className = \x27sf-ajax-request-error\x27;
+                        successStreak = 0;
+                    } else {
+                        row.className = \x27sf-ajax-request sf-ajax-request-ok\x27;
+                        successStreak++;
+                    }
+
+                    if (request.statusCode) {
+                        if (request.statusCode < 300) {
+                            statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status\x27);
+                        } else if (request.statusCode < 400) {
+                            statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status sf-toolbar-status-yellow\x27);
+                        } else {
+                            statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status sf-toolbar-status-red\x27);
+                        }
+                        statusCodeElem.textContent = request.statusCode;
+                    } else {
+                        statusCodeElem.setAttribute(\x27class\x27, \x27sf-toolbar-status sf-toolbar-status-red\x27);
+                    }
+
+                    if (request.duration) {
+                        durationCell.textContent = request.duration + \x27 ms\x27;
+                    }
+
+                    if (request.profilerUrl) {
+                        profilerCell.textContent = \x27\x27;
+                        var profilerLink = document.createElement(\x27a\x27);
+                        profilerLink.setAttribute(\x27href\x27, request.profilerUrl);
+                        profilerLink.textContent = request.profile;
+                        profilerCell.appendChild(profilerLink);
+                    }
+
+                    renderAjaxRequests();
+                };
+
+                {% if excluded_ajax_paths is defined %}
+                if (window.EventSource) {
+                    var oldEventSource = window.EventSource;
+                    function patchedEventSource(url, options) {
+                        var es = new oldEventSource(url, options);
+                        if (!url.toString().match(new RegExp({{ excluded_ajax_paths|json_encode|raw }}))) {
+                            var stackElement = {
+                                error: false,
+                                url: url,
+                                method: \x27GET\x27,
+                                type: \x27event-stream\x27,
+                                start: new Date()
+                            };
+
+                            var idx = requestStack.push(stackElement) - 1;
+                            var finished = false;
+                            /* The \"Clear\" link empties the list, after which idx points to another request or to none */
+                            var finish = function () {
+                                finished = true;
+                                if (stackElement === requestStack[idx]) {
+                                    finishAjaxRequest(idx);
+                                }
+                            };
+                            startAjaxRequest(idx);
+                            addEventListener(es, \x27error\x27, function () {
+                                stackElement.error = true;
+                                finish();
+                            });
+                            addEventListener(es, \x27open\x27, function () {
+                                stackElement.statusCode = 200;
+                                stackElement.toolbarReplaceFinished = false;
+                                stackElement.toolbarReplace = true;
+                            });
+                            addEventListener(es, \x27symfony:debug:started\x27, function (event) {
+                                var items = event.data.split(\x27\\n\x27);
+                                stackElement.profile = items[0];
+                                stackElement.profilerUrl = items[1];
+                            });
+                            addEventListener(es, \x27symfony:debug:error\x27, function (event) {
+                                stackElement.error = true;
+                                stackElement.statusCode = event.data;
+                                finish();
+                            });
+                            addEventListener(es, \x27symfony:debug:finished\x27, function () {
+                                stackElement.duration = new Date() - stackElement.start;
+                                stackElement.toolbarReplaceFinished = false;
+                                stackElement.toolbarReplace = true;
+                                finish();
+                            });
+                            /* close() dispatches no event: wrap it to mark the request as finished, unless an event already did */
+                            var originalClose = es.close.bind(es);
+                            es.close = function () {
+                                originalClose();
+
+                                if (!finished) {
+                                    stackElement.duration = new Date() - stackElement.start;
+                                    finish();
+                                }
+                            };
+                        }
+
+                        return es;
+                    };
+                    Object.defineProperties(patchedEventSource, Object.getOwnPropertyDescriptors(oldEventSource));
+                    window.EventSource = patchedEventSource;
+                }
+                if (window.fetch && window.fetch.polyfill === undefined) {
+                    var oldFetch = window.fetch;
+                    window.fetch = function () {
+                        var promise = oldFetch.apply(this, arguments);
+                        var url = arguments[0];
+                        var params = arguments[1];
+                        var paramType = Object.prototype.toString.call(arguments[0]);
+                        if (paramType === \x27[object Request]\x27) {
+                            url = arguments[0].url;
+                            params = {
+                                method: arguments[0].method,
+                                credentials: arguments[0].credentials,
+                                headers: arguments[0].headers,
+                                mode: arguments[0].mode,
+                                redirect: arguments[0].redirect
+                            };
+                        } else {
+                            url = String(url);
+                        }
+                        if (!url.match(new RegExp({{ excluded_ajax_paths|json_encode|raw }}))) {
+                            var method = \x27GET\x27;
+                            if (params && params.method !== undefined) {
+                                method = params.method;
+                            }
+
+                            var stackElement = {
+                                error: false,
+                                url: url,
+                                method: method,
+                                type: \x27fetch\x27,
+                                start: new Date()
+                            };
+
+                            var idx = requestStack.push(stackElement) - 1;
+                            promise.then(function (r) {
+                                stackElement.duration = new Date() - stackElement.start;
+                                stackElement.error = r.status < 200 || r.status >= 400;
+                                stackElement.statusCode = r.status;
+                                stackElement.profile = r.headers.get(\x27x-debug-token\x27);
+                                stackElement.profilerUrl = r.headers.get(\x27x-debug-token-link\x27);
+                                stackElement.toolbarReplaceFinished = false;
+                                stackElement.toolbarReplace = \x271\x27 === r.headers.get(\x27Symfony-Debug-Toolbar-Replace\x27);
+                                finishAjaxRequest(idx);
+                            }, function (e){
+                                stackElement.error = true;
+                                finishAjaxRequest(idx);
+                            });
+                            startAjaxRequest(idx);
+                        }
+
+                        return promise;
+                    };
+                }
+                if (window.XMLHttpRequest && XMLHttpRequest.prototype.addEventListener) {
+                    var proxied = XMLHttpRequest.prototype.open;
+
+                    XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+                        var self = this;
+                        url = String(url);
+
+                        /* prevent logging AJAX calls to static and inline files, like templates */
+                        var path = url;
+                        if (url.slice(0, 1) === \x27/\x27) {
+                            if (0 === url.indexOf(\x27{{ request.basePath|e(\x27js\x27) }}\x27)) {
+                                path = url.slice({{ request.basePath|length }});
+                            }
+                        }
+                        else if (0 === url.indexOf(\x27{{ (request.schemeAndHttpHost ~ request.basePath)|e(\x27js\x27) }}\x27)) {
+                            path = url.slice({{ (request.schemeAndHttpHost ~ request.basePath)|length }});
+                        }
+
+                        if (!path.match(new RegExp({{ excluded_ajax_paths|json_encode|raw }}))) {
+                            var stackElement = {
+                                error: false,
+                                url: url,
+                                method: method,
+                                type: \x27xhr\x27,
+                                start: new Date()
+                            };
+
+                            var idx = requestStack.push(stackElement) - 1;
+
+                            this.addEventListener(\x27readystatechange\x27, function() {
+                                if (self.readyState == 4) {
+                                    stackElement.duration = new Date() - stackElement.start;
+                                    stackElement.error = self.status < 200 || self.status >= 400;
+                                    stackElement.statusCode = self.status;
+                                    extractHeaders(self, stackElement);
+
+                                    finishAjaxRequest(idx);
+                                }
+                            }, false);
+
+                            startAjaxRequest(idx);
+                        }
+
+                        proxied.apply(this, Array.prototype.slice.call(arguments));
+                    };
+                }
+                {% endif %}
+
+                return {
+                    hasClass: hasClass,
+
+                    removeClass: removeClass,
+
+                    addClass: addClass,
+
+                    toggleClass: toggleClass,
+
+                    getPreference: getPreference,
+
+                    setPreference: setPreference,
+
+                    addEventListener: addEventListener,
+
+                    request: request,
+
+                    renderAjaxRequests: renderAjaxRequests,
+
+                    getSfwdt: function(token) {
+                        return document.getElementById(\x27sfwdt\x27 + token);
+                    },
+
+                    load: function(selector, url, onSuccess, onError, options) {
+                        var el = document.getElementById(selector);
+
+                        if (el && el.getAttribute(\x27data-sfurl\x27) !== url) {
+                            request(
+                                url,
+                                function(xhr) {
+                                    el.innerHTML = xhr.responseText;
+                                    el.setAttribute(\x27data-sfurl\x27, url);
+                                    removeClass(el, \x27loading\x27);
+                                    var pending = pendingRequests;
+                                    for (var i = 0; i < requestStack.length; i++) {
+                                        startAjaxRequest(i);
+                                        if (requestStack[i].duration || requestStack[i].error) {
+                                            finishAjaxRequest(i);
+                                        }
+                                    }
+                                    /* Revert the pending state in case there was a start called without a finish above. */
+                                    pendingRequests = pending;
+                                    (onSuccess || noop)(xhr, el);
+                                },
+                                function(xhr) { (onError || noop)(xhr, el); },
+                                \x27\x27,
+                                options
+                            );
+                        }
+
+                        return this;
+                    },
+
+                    showToolbar: function(token) {
+                        var sfwdt = this.getSfwdt(token);
+                        var toggleButton = document.querySelector(`#sfToolbarToggleButton-\${token}`);
+
+                        if (\x27closed\x27 === getPreference(\x27toolbar/displayState\x27)) {
+                            addClass(sfwdt.parentNode, \x27sf-toolbar-closed\x27);
+                            removeClass(sfwdt.parentNode, \x27sf-toolbar-opened\x27);
+                            if (toggleButton) { toggleButton.setAttribute(\x27aria-expanded\x27, \x27false\x27); }
+                        } else {
+                            addClass(sfwdt.parentNode, \x27sf-toolbar-opened\x27);
+                            removeClass(sfwdt.parentNode, \x27sf-toolbar-closed\x27);
+                            if (toggleButton) { toggleButton.setAttribute(\x27aria-expanded\x27, \x27true\x27); }
+                        }
+                    },
+
+                    hideToolbar: function(token) {
+                        var sfwdt = this.getSfwdt(token);
+                        var toggleButton = document.querySelector(`#sfToolbarToggleButton-\${token}`);
+                        addClass(sfwdt.parentNode, \x27sf-toolbar-closed\x27);
+                        removeClass(sfwdt.parentNode, \x27sf-toolbar-opened\x27);
+                        if (toggleButton) { toggleButton.setAttribute(\x27aria-expanded\x27, \x27false\x27); }
+                    },
+
+                    initToolbar: function(token) {
+                        this.showToolbar(token);
+
+                        var toggleButton = document.querySelector(`#sfToolbarToggleButton-\${token}`);
+                        addEventListener(toggleButton, \x27click\x27, function (event) {
+                            event.preventDefault();
+
+                            const newState = \x27closed\x27 === getPreference(\x27toolbar/displayState\x27) ? \x27opened\x27 : \x27closed\x27;
+                            setPreference(\x27toolbar/displayState\x27, newState);
+                            \x27opened\x27 === newState ? Sfjs.showToolbar(token) : Sfjs.hideToolbar(token);
+                        });
+                    },
+
+                    loadToolbar: function(token, newToken) {
+                        var that = this;
+                        var triesCounter = document.getElementById(\x27sfLoadCounter-\x27 + token);
+
+                        var options = {
+                            retry: true,
+                            onSend: function (count) {
+                                if (count === 3) {
+                                    that.initToolbar(token);
+                                }
+
+                                if (triesCounter) {
+                                    triesCounter.textContent = count;
+                                }
+                            },
+                        };
+
+                        var cancelButton = document.getElementById(\x27sfLoadCancel-\x27 + token);
+                        if (cancelButton) {
+                            addEventListener(cancelButton, \x27click\x27, function (event) {
+                                event.preventDefault();
+
+                                options.stop = true;
+                                that.hideToolbar(token);
+                            });
+                        }
+
+                        newToken = (newToken || token);
+
+                        this.load(
+                            \x27sfwdt\x27 + token,
+                            \x27{{ url(\x27_wdt\x27, {token: \x27xxxxxx\x27})|escape(\x27js\x27) }}\x27.replace(/xxxxxx/, newToken),
+                            function(xhr, el) {
+                                var toolbarContent = document.getElementById(\x27sfToolbarMainContent-\x27 + newToken);
+
+                                /* Do nothing in the edge case where the toolbar has already been replaced with a new one */
+                                if (!toolbarContent) {
+                                    return;
+                                }
+
+                                /* Drop listeners attached during the previous load so they don\x27t stack on AJAX replacements */
+                                if (toolbarLoadAborter && typeof toolbarLoadAborter.abort === \x27function\x27) {
+                                    toolbarLoadAborter.abort();
+                                }
+                                toolbarLoadAborter = (typeof AbortController === \x27function\x27) ? new AbortController() : null;
+                                var toolbarLoadSignal = toolbarLoadAborter ? { signal: toolbarLoadAborter.signal } : false;
+
+                                /* Replace the ID, it has to match the new token */
+                                toolbarContent.parentElement.id = \x27sfwdt\x27 + newToken;
+
+                                /* Evaluate in global scope scripts embedded inside the toolbar */
+                                var i, scripts = [].slice.call(el.querySelectorAll(\x27script\x27));
+                                for (i = 0; i < scripts.length; ++i) {
+                                    if (scripts[i].firstChild) {
+                                        eval.call({}, scripts[i].firstChild.nodeValue);
+                                    }
+                                }
+
+                                el.style.display = -1 !== xhr.responseText.indexOf(\x27sf-toolbarreset\x27) ? \x27block\x27 : \x27none\x27;
+
+                                if (el.style.display == \x27none\x27) {
+                                    return;
+                                }
+
+                                that.initToolbar(newToken);
+
+                                /* Handle toolbar-info position */
+                                var toolbarBlocks = [].slice.call(el.querySelectorAll(\x27.sf-toolbar-block\x27));
+                                var positionToolbarInfo = function () {
+                                    var toolbarInfo = this.querySelectorAll(\x27.sf-toolbar-info\x27)[0];
+                                    var pageWidth = document.body.clientWidth;
+                                    var elementWidth = toolbarInfo.offsetWidth;
+                                    var leftValue = (elementWidth + this.offsetLeft) - pageWidth;
+                                    var rightValue = (elementWidth + (pageWidth - this.offsetLeft)) - pageWidth;
+
+                                    /* Reset right and left value, useful on window resize */
+                                    toolbarInfo.style.right = \x27\x27;
+                                    toolbarInfo.style.left = \x27\x27;
+
+                                    if (elementWidth > pageWidth) {
+                                        toolbarInfo.style.left = 0;
+                                    } else if (leftValue > 0 && rightValue > 0) {
+                                        toolbarInfo.style.right = (rightValue * -1) + \x27px\x27;
+                                    } else if (leftValue < 0) {
+                                        toolbarInfo.style.left = 0;
+                                    } else {
+                                        toolbarInfo.style.right = \x270px\x27;
+                                    }
+                                };
+                                for (i = 0; i < toolbarBlocks.length; ++i) {
+                                    addEventListener(toolbarBlocks[i], \x27focusin\x27, positionToolbarInfo, toolbarLoadSignal);
+                                    toolbarBlocks[i].onmouseover = function () {
+                                        /* Transfer focus away from any other toolbar block so that */
+                                        /* :focus-within and :hover are never active simultaneously */
+                                        var focused = document.activeElement;
+                                        if (focused && !this.contains(focused) && focused.closest) {
+                                            var focusedBlock = focused.closest(\x27.sf-toolbar-block\x27);
+                                            if (focusedBlock) {
+                                                focused.blur();
+                                            }
+                                        }
+                                        positionToolbarInfo.call(this);
+                                    };
+                                }
+
+                                /* Roving tabindex for WAI-ARIA toolbar pattern */
+                                var triggers = [];
+                                for (i = 0; i < toolbarBlocks.length; ++i) {
+                                    var icon = toolbarBlocks[i].querySelector(\x27.sf-toolbar-icon\x27);
+                                    var trigger = (icon && icon.parentElement.tagName === \x27A\x27) ? icon.parentElement : icon;
+                                    if (trigger) {
+                                        trigger.setAttribute(\x27tabindex\x27, triggers.length === 0 ? \x270\x27 : \x27-1\x27);
+                                        triggers.push(trigger);
+                                    }
+
+                                    /* Inject accessible label when no visible SVG <title> provides one */
+                                    var label = toolbarBlocks[i].getAttribute(\x27data-accessible-label\x27);
+                                    if (label) {
+                                        var svg = toolbarBlocks[i].querySelector(\x27.sf-toolbar-icon svg\x27);
+                                        var hasVisibleTitle = svg && svg.querySelector(\x27title\x27) && window.getComputedStyle(svg).display !== \x27none\x27 && svg.getAttribute(\x27aria-hidden\x27) !== \x27true\x27;
+                                        if (!hasVisibleTitle) {
+                                            var span = document.createElement(\x27span\x27);
+                                            span.className = \x27visually-hidden\x27;
+                                            span.textContent = label;
+                                            var parent = trigger || toolbarBlocks[i];
+                                            parent.insertBefore(span, parent.firstChild);
+                                        }
+                                    }
+                                }
+                                var toggleButton = document.getElementById(\x27sfToolbarToggleButton-\x27 + newToken);
+                                if (toggleButton) {
+                                    toggleButton.setAttribute(\x27tabindex\x27, triggers.length === 0 ? \x270\x27 : \x27-1\x27);
+                                    triggers.push(toggleButton);
+                                }
+
+                                var isTriggerVisible = function(trigger) {
+                                    var block = trigger.closest(\x27.sf-toolbar-block\x27);
+                                    return block && window.getComputedStyle(block).display !== \x27none\x27;
+                                };
+
+                                var findVisibleIndex = function(fromIndex, direction) {
+                                    var len = triggers.length;
+                                    for (var step = 1; step < len; step++) {
+                                        var candidate = (fromIndex + direction * step + len) % len;
+                                        if (isTriggerVisible(triggers[candidate])) {
+                                            return candidate;
+                                        }
+                                    }
+                                    return fromIndex;
+                                };
+
+                                var findFirstVisible = function() {
+                                    for (var t = 0; t < triggers.length; t++) {
+                                        if (isTriggerVisible(triggers[t])) return t;
+                                    }
+                                    return 0;
+                                };
+
+                                var findLastVisible = function() {
+                                    for (var t = triggers.length - 1; t >= 0; t--) {
+                                        if (isTriggerVisible(triggers[t])) return t;
+                                    }
+                                    return triggers.length - 1;
+                                };
+
+                                var setRovingFocus = function(newIndex) {
+                                    for (var t = 0; t < triggers.length; t++) {
+                                        triggers[t].setAttribute(\x27tabindex\x27, t === newIndex ? \x270\x27 : \x27-1\x27);
+                                    }
+                                    triggers[newIndex].focus();
+                                };
+
+                                for (i = 0; i < triggers.length; ++i) {
+                                    (function(index) {
+                                        addEventListener(triggers[index], \x27keydown\x27, function(event) {
+                                            var handled = true;
+                                            switch (event.key) {
+                                                case \x27ArrowRight\x27:
+                                                    setRovingFocus(findVisibleIndex(index, 1));
+                                                    break;
+                                                case \x27ArrowLeft\x27:
+                                                    setRovingFocus(findVisibleIndex(index, -1));
+                                                    break;
+                                                case \x27Home\x27:
+                                                    setRovingFocus(findFirstVisible());
+                                                    break;
+                                                case \x27End\x27:
+                                                    setRovingFocus(findLastVisible());
+                                                    break;
+                                                case \x27ArrowDown\x27:
+                                                    var block = triggers[index].closest(\x27.sf-toolbar-block\x27);
+                                                    if (block) {
+                                                        var info = block.querySelector(\x27.sf-toolbar-info\x27);
+                                                        if (info) {
+                                                            info.focus();
+                                                        }
+                                                    }
+                                                    break;
+                                                default:
+                                                    handled = false;
+                                            }
+                                            if (handled) {
+                                                event.preventDefault();
+                                            }
+                                        }, toolbarLoadSignal);
+                                    })(i);
+                                }
+
+                                /* Escape from popover returns focus to trigger */
+                                var infoElements = el.querySelectorAll(\x27.sf-toolbar-info[tabindex]\x27);
+                                for (i = 0; i < infoElements.length; ++i) {
+                                    (function(infoEl) {
+                                        addEventListener(infoEl, \x27keydown\x27, function(event) {
+                                            if (event.key === \x27Escape\x27) {
+                                                var block = infoEl.closest(\x27.sf-toolbar-block\x27);
+                                                if (block) {
+                                                    removeClass(block, \x27hover\x27);
+                                                    var blockIcon = block.querySelector(\x27.sf-toolbar-icon\x27);
+                                                    var trigger = (blockIcon && blockIcon.parentElement.tagName === \x27A\x27) ? blockIcon.parentElement : blockIcon;
+                                                    if (trigger) {
+                                                        trigger.focus();
+                                                    }
+                                                }
+                                                event.preventDefault();
+                                            }
+                                        }, toolbarLoadSignal);
+                                    })(infoElements[i]);
+                                }
+
+                                renderAjaxRequests();
+                                addEventListener(document.querySelector(\x27.sf-toolbar-ajax-clear\x27), \x27click\x27, function() {
+                                    requestStack = [];
+                                    renderAjaxRequests();
+                                    successStreak = 4;
+                                    document.querySelector(\x27.sf-toolbar-ajax-request-list\x27).innerHTML = \x27\x27;
+                                });
+                                addEventListener(document.querySelector(\x27.sf-toolbar-block-ajax\x27), \x27mouseenter\x27, function (event) {
+                                    var elem = document.querySelector(\x27.sf-toolbar-block-ajax .sf-toolbar-info\x27);
+                                    elem.scrollTop = elem.scrollHeight;
+                                });
+                                addEventListener(document.querySelector(\x27.sf-toolbar-block-ajax > .sf-toolbar-icon\x27), \x27click\x27, function (event) {
+                                    event.preventDefault();
+
+                                    toggleClass(this.parentNode, \x27hover\x27);
+                                });
+
+                                var dumpInfo = document.querySelector(\x27.sf-toolbar-block-dump .sf-toolbar-info\x27);
+                                if (null !== dumpInfo) {
+                                    addEventListener(dumpInfo, \x27sfbeforedumpcollapse\x27, function () {
+                                        dumpInfo.style.minHeight = dumpInfo.getBoundingClientRect().height+\x27px\x27;
+                                    });
+                                    addEventListener(dumpInfo, \x27mouseleave\x27, function () {
+                                        dumpInfo.style.minHeight = \x27\x27;
+                                    });
+                                }
+                            },
+                            function(xhr) {
+                                if (xhr.status !== 0 && !options.stop) {
+                                    var sfwdt = that.getSfwdt(token);
+                                    sfwdt.innerHTML = \x27\\
+                                    <div class=\"sf-toolbarreset notranslate\">\\
+                                        <div class=\"sf-toolbar-icon\"><svg width=\"26\" height=\"28\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 26 28\" enable-background=\"new 0 0 26 28\" xml:space=\"preserve\"><path fill=\"#FFFFFF\" d=\"M13 0C5.8 0 0 5.8 0 13c0 7.2 5.8 13 13 13c7.2 0 13-5.8 13-13C26 5.8 20.2 0 13 0z M20 7.5 c-0.6 0-1-0.3-1-0.9c0-0.2 0-0.4 0.2-0.6c0.1-0.3 0.2-0.3 0.2-0.4c0-0.3-0.5-0.4-0.7-0.4c-2 0.1-2.5 2.7-2.9 4.8l-0.2 1.1 c1.1 0.2 1.9 0 2.4-0.3c0.6-0.4-0.2-0.8-0.1-1.3C18 9.2 18.4 9 18.7 8.9c0.5 0 0.8 0.5 0.8 1c0 0.8-1.1 2-3.3 1.9 c-0.3 0-0.5 0-0.7-0.1L15 14.1c-0.4 1.7-0.9 4.1-2.6 6.2c-1.5 1.8-3.1 2.1-3.8 2.1c-1.3 0-2.1-0.6-2.2-1.6c0-0.9 0.8-1.4 1.3-1.4 c0.7 0 1.2 0.5 1.2 1.1c0 0.5-0.2 0.6-0.4 0.7c-0.1 0.1-0.3 0.2-0.3 0.4c0 0.1 0.1 0.3 0.4 0.3c0.5 0 0.9-0.3 1.2-0.5 c1.3-1 1.7-2.9 2.4-6.2l0.1-0.8c0.2-1.1 0.5-2.3 0.8-3.5c-0.9-0.7-1.4-1.5-2.6-1.8c-0.8-0.2-1.3 0-1.7 0.4C8.4 10 8.6 10.7 9 11.1 l0.7 0.7c0.8 0.9 1.3 1.7 1.1 2.7c-0.3 1.6-2.1 2.8-4.3 2.1c-1.9-0.6-2.2-1.9-2-2.7c0.2-0.6 0.7-0.8 1.2-0.6 c0.5 0.2 0.7 0.8 0.6 1.3c0 0.1 0 0.1-0.1 0.3C6 15 5.9 15.2 5.9 15.3c-0.1 0.4 0.4 0.7 0.8 0.8c0.8 0.3 1.7-0.2 1.9-0.9 c0.2-0.6-0.2-1.1-0.4-1.2l-0.8-0.9c-0.4-0.4-1.2-1.5-0.8-2.8c0.2-0.5 0.5-1 0.9-1.4c1-0.7 2-0.8 3-0.6c1.3 0.4 1.9 1.2 2.8 1.9 c0.5-1.3 1.1-2.6 2-3.8c0.9-1 2-1.7 3.3-1.8C20 4.8 21 5.4 21 6.3C21 6.7 20.8 7.5 20 7.5z\"/></svg></div>\\
+                                        An error occurred while loading the web debug toolbar. <a href=\"{{ url(\x27_profiler_home\x27)|escape(\x27js\x27) }}\x27 + newToken + \x27\">Open the web profiler.</a>\\
+                                    </div>\\
+                                \x27;
+                                    sfwdt.parentElement.setAttribute(\x27class\x27, \x27sf-toolbar sf-error-toolbar\x27);
+                                }
+                            },
+                            options
+                        );
+
+                        return this;
+                    },
+
+                    toggle: function(selector, elOn, elOff) {
+                        var tmp = elOn.style.display,
+                            el = document.getElementById(selector);
+
+                        elOn.style.display = elOff.style.display;
+                        elOff.style.display = tmp;
+
+                        if (el) {
+                            el.style.display = \x27none\x27 === tmp ? \x27none\x27 : \x27block\x27;
+                        }
+
+                        return this;
+                    },
+                };
+            })();
+        }
+
+        Sfjs.loadToolbar(\x27{{ token }}\x27);
+    /*]]>*/</script>
+</div>
+<!-- END of Symfony Web Debug Toolbar -->
+", "@WebProfiler/Profiler/toolbar_js.html.twig", "/app/vendor/symfony/web-profiler-bundle/Resources/views/Profiler/toolbar_js.html.twig");
+    }
+}

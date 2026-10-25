@@ -95,6 +95,17 @@ INSERT INTO storefront_product_view (
  '[{"label":"Couronne 10 m","price":95},{"label":"Couronne 25 m","price":225}]'::json)
 ON CONFLICT (slug) DO NOTHING;
 
+-- spec-run-8: these are demo rows, not submissions. The approval workflow defaults every new
+-- row to PENDING_APPROVAL and unpublished, so the fixture marks its own rows approved and
+-- published to keep the storefront filled (spec-run-8 assumption 11).
+UPDATE storefront_product_view
+   SET approval_status = 'APPROVED', published = true
+ WHERE slug IN (
+   'pompe-filtration-piscine','robot-nettoyeur-piscine','chlore-galets-5kg','caniveau-douche-inox',
+   'siphon-sol-exterieur','broyeur-sanitaire-600w','spot-led-encastrable','rail-supportage-galvanise',
+   'osmoseur-5-etapes','adoucisseur-eau-20l','kit-plancher-chauffant','chauffe-eau-electrique',
+   'thermostat-programmable-wifi','mitigeur-lavabo-hansgrohe','tube-cuivre-recuit-15');
+
 COMMIT;
 
 -- To remove exactly these test products again:

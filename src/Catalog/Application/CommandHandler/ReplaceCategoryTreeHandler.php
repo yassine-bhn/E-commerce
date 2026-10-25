@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\ReplaceCategoryTree;
+use App\Catalog\Application\Port\CatalogAuditPort;
+use App\Catalog\Application\Service\SubmissionAccessPolicy;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
@@ -17,6 +20,10 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Visibility is deliberately not part of this statement — hiding is its own command — and
  * a tree that would drop a sub-level a product still points at is refused before anything
  * is written, so the catalog can never disagree with an order snapshot (ECO-006).
+ *
+ * spec-run-8 R7/R8/R25/R35/R40 — the row is read through {@see SubmissionAccessPolicy} first,
+ * so an Admin can only rewrite their own pending or rejected submission; a Super Admin editing
+ * an approved category sends it back to `PENDING_APPROVAL`, review metadata included.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class ReplaceCategoryTreeHandler
@@ -33,29 +40,55 @@ final class ReplaceCategoryTreeHandler
 
     private const STORE = 'UPDATE storefront_category SET label = :label, quote_eligible = :quote, subcategories = :subs WHERE slug = :slug';
 
-    public function __construct(private Connection $connection)
-    {
+    private const STORE_REOPEN = 'UPDATE storefront_category SET label = :label, quote_eligible = :quote, subcategories = :subs,
+            approval_status = :status, reviewed_by = NULL, reviewed_at = NULL, rejection_reason = NULL
+         WHERE slug = :slug';
+
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly SubmissionAccessPolicy $access,
+        private readonly CatalogAuditPort $audit,
+    ) {
     }
 
     public function __invoke(ReplaceCategoryTree $command): void
     {
-        $category = Category::fromStoredRow(
-            $this->connection->fetchAssociative(self::LOAD, ['slug' => $command->slug]),
-            $command->slug,
-        )->withContent($command->label, $command->subcategories, $command->quoteEligible);
+        $this->connection->transactional(function () use ($command): void {
+            $current = $this->access->authorize(
+                CatalogSubmissionKind::Category,
+                $command->slug,
+                $command->actorId,
+                $command->actorIsSuperAdmin,
+            );
 
-        $category->coversSubLevels($this->usedSubLevels($category->slug));
+            $category = Category::fromStoredRow(
+                $this->connection->fetchAssociative(self::LOAD, ['slug' => $command->slug]),
+                $command->slug,
+            )->withContent($command->label, $command->subcategories, $command->quoteEligible);
 
-        $this->connection->executeStatement(
-            self::STORE,
-            [
-                'label' => $category->label,
-                'quote' => $category->quoteEligible,
-                'subs' => $category->subcategoriesJson(),
-                'slug' => $category->slug,
-            ],
-            ['quote' => ParameterType::BOOLEAN],
-        );
+            $category->coversSubLevels($this->usedSubLevels($category->slug));
+
+            $next = $current->afterModification();
+            $reopens = $next !== $current;
+
+            $this->connection->executeStatement(
+                $reopens ? self::STORE_REOPEN : self::STORE,
+                [
+                    'label' => $category->label,
+                    'quote' => $category->quoteEligible,
+                    'subs' => $category->subcategoriesJson(),
+                    'slug' => $category->slug,
+                ] + ($reopens ? ['status' => $next->value] : []),
+                ['quote' => ParameterType::BOOLEAN],
+            );
+
+            $this->audit->record(
+                'CATALOG_CATEGORY_UPDATED',
+                CatalogSubmissionKind::Category->auditTarget(),
+                $category->slug,
+                $command->actorId ?? 'system',
+            );
+        });
     }
 
     /**

@@ -67,6 +67,14 @@ jobs:
       - name: Migrate the test database
         run: docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
 
+      # No migration writes read-model rows any more (MIG-002), so a fresh runner gets the catalogue
+      # seeded by Version20261017000002 as PENDING_APPROVAL and unpublished. This is the same
+      # operator step the release runs, and it is idempotent: a re-run approves nothing.
+      - name: Approve the catalogue that predates the approval workflow
+        run: |
+          docker compose exec -T app php bin/console app:catalog:backfill-approval --apply
+          docker compose exec -T app php bin/console app:catalog:backfill-approval --apply --env=test
+
       # One step per suite: Integration resets the schema, so it must never race Functional (R3).
       - name: PHPUnit — Unit
         run: docker compose exec -T app vendor/bin/phpunit --testsuite Unit
@@ -144,7 +152,9 @@ jobs:
         if: steps.changed.outputs.files != ''
         run: |
           docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration
+          docker compose exec -T app php bin/console app:catalog:backfill-approval --apply
           docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+          docker compose exec -T app php bin/console app:catalog:backfill-approval --apply --env=test
 
       - name: Infection (thresholds from infection.json.dist)
         if: steps.changed.outputs.files != ''

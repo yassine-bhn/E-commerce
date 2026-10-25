@@ -12,7 +12,7 @@ fail() {
   status=1
 }
 
-expected_agents=17
+expected_agents=18
 expected_skills=14
 expected_rule_files=14
 expected_hook_scripts=8
@@ -132,8 +132,17 @@ if [ "$roster_rows" -ne "$expected_agents" ]; then
   fail "AGENTS.md roster rows ${roster_rows}, expected ${expected_agents}"
 fi
 
+# AGT-007: an agent that exists in .agents/agents/ but is never named in the workflow
+# contract can never be dispatched — it passes every other check while being dead weight.
+for agent_file in "$agents_dir"/*.md; do
+  base=$(basename "$agent_file" .md)
+  if ! grep -qF "$base" .agents/orchestration.md; then
+    fail "agent '${base}' is not reachable from .agents/orchestration.md (AGT-007)"
+  fi
+done
+
 if [ "$status" -eq 0 ]; then
-  printf 'harness-check: ok — %s agents, %s domain skills + %s superpowers, %s rule files, %s hook scripts + hooks.yaml, %s PHPStan rules\n' \
+  printf 'harness-check: ok — %s agents (all routed, AGT-007), %s domain skills + %s superpowers, %s rule files, %s hook scripts + hooks.yaml, %s PHPStan rules\n' \
     "$expected_agents" "$expected_skills" "$expected_superpowers_skills" "$expected_rule_files" "$expected_hook_scripts" "$expected_phpstan_rules"
 fi
 

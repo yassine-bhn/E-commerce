@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Projection\Catalog;
 
+use App\Catalog\Infrastructure\ReadModel\CatalogVisibility;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Meilisearch\Client;
 use Nyholm\Psr7\Response;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -25,6 +27,8 @@ final class StorefrontProductSearchIndexerTest extends KernelTestCase
 
     /** @var list<string> */
     private array $seededSlugs = [];
+    /** @var list<string> */
+    private array $seededCategorySlugs = [];
 
     protected function setUp(): void
     {
@@ -51,9 +55,13 @@ final class StorefrontProductSearchIndexerTest extends KernelTestCase
             foreach ($this->seededSlugs as $slug) {
                 $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug = :slug', ['slug' => $slug]);
             }
+            foreach ($this->seededCategorySlugs as $slug) {
+                $connection->executeStatement('DELETE FROM storefront_category WHERE slug = :slug', ['slug' => $slug]);
+            }
         }
 
         $this->seededSlugs = [];
+        $this->seededCategorySlugs = [];
         $this->connection = null;
 
         parent::tearDown();
@@ -112,11 +120,70 @@ final class StorefrontProductSearchIndexerTest extends KernelTestCase
             array_keys($document),
         );
         self::assertSame('Indexer Fixture', $document['name']);
-        self::assertSame('chaises', $document['category_slug']);
+        self::assertSame('sanitaires', $document['category_slug']);
         self::assertSame(250000, $document['price_minor']);
         self::assertSame(4.5, $document['rating']);
         self::assertTrue($document['is_new']);
         self::assertSame('in', $document['stock']);
+    }
+
+    /**
+     * R27/R30 — the index is a projection of the publicly visible rows, not of the table.
+     *
+     * Every storefront read appends {@see CatalogVisibility::PRODUCT_PUBLIC}; the indexer appends
+     * the same fragment, so a product the storefront cannot serve is deleted from the index instead
+     * of being added to it. Without this, a pending submission would be searchable while its detail
+     * route answers 404.
+     *
+     * @return iterable<string, array{string, bool, bool, bool, bool}>
+     */
+    public static function visibilityCases(): iterable
+    {
+        yield 'approved, published, visible category' => ['APPROVED', true, true, false, true];
+        yield 'pending approval' => ['PENDING_APPROVAL', true, true, false, false];
+        yield 'rejected' => ['REJECTED', true, true, false, false];
+        yield 'approved but unpublished' => ['APPROVED', false, true, false, false];
+        yield 'approved, published, category awaiting approval' => ['APPROVED', true, false, false, false];
+        yield 'approved, published, hidden category' => ['APPROVED', true, true, true, false];
+    }
+
+    #[DataProvider('visibilityCases')]
+    public function testIndexSlugOnlyIndexesAProductTheStorefrontCanSee(
+        string $approvalStatus,
+        bool $published,
+        bool $categoryApproved,
+        bool $categoryHidden,
+        bool $indexed,
+    ): void {
+        $slug = 'spec-visibility-'.Uuid::v4()->toRfc4122();
+        $category = 'sanitaires';
+
+        if (!$categoryApproved || $categoryHidden) {
+            $category = $this->seedCategory(
+                $categoryApproved ? 'APPROVED' : 'PENDING_APPROVAL',
+                $categoryHidden,
+            );
+        }
+
+        $this->seedProduct($slug, $approvalStatus, $published, $category);
+
+        $http = new RecordingHttpClient();
+        $indexer = new StorefrontProductSearchIndexer($this->connection(), new Client('http://meilisearch:7700', null, $http));
+
+        $indexer->indexSlug($slug);
+
+        self::assertCount(1, $http->requests);
+        if (!$indexed) {
+            self::assertSame('DELETE', $http->requests[0]['method'], 'a product the storefront cannot serve is removed from the index');
+            self::assertStringContainsString('/indexes/storefront_products/documents/'.$slug, $http->requests[0]['uri']);
+
+            return;
+        }
+
+        self::assertSame('POST', $http->requests[0]['method']);
+        /** @var list<array<string, mixed>> $documents */
+        $documents = json_decode($http->requests[0]['body'], true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame([$slug], array_column($documents, 'slug'));
     }
 
     public function testIndexSlugOfAnUnknownProductRemovesTheDocument(): void
@@ -161,15 +228,19 @@ final class StorefrontProductSearchIndexerTest extends KernelTestCase
         return $connection;
     }
 
-    private function seedProduct(string $slug): void
-    {
+    private function seedProduct(
+        string $slug,
+        string $approvalStatus = 'APPROVED',
+        bool $published = true,
+        string $category = 'sanitaires',
+    ): void {
         $this->connection()->insert('storefront_product_view', [
             'id' => Uuid::v7()->toRfc4122(),
             'slug' => $slug,
             'name' => 'Indexer Fixture',
             'brand' => 'Zidane',
             'ref' => 'ZID-001',
-            'category_slug' => 'chaises',
+            'category_slug' => $category,
             'subcategory' => 'Chaises de bureau',
             'price_minor' => 250000,
             'old_price_minor' => 290000,
@@ -185,6 +256,9 @@ final class StorefrontProductSearchIndexerTest extends KernelTestCase
             'headrest' => false,
             'description' => 'Fixture product',
             'variants' => '[]',
+            // spec-run-8 R32 — only a public product is indexed, so the default fixture is public.
+            'approval_status' => $approvalStatus,
+            'published' => $published,
         ], [
             'price_minor' => ParameterType::INTEGER,
             'old_price_minor' => ParameterType::INTEGER,
@@ -193,9 +267,35 @@ final class StorefrontProductSearchIndexerTest extends KernelTestCase
             'is_new' => ParameterType::BOOLEAN,
             'is_best' => ParameterType::BOOLEAN,
             'headrest' => ParameterType::BOOLEAN,
+            'published' => ParameterType::BOOLEAN,
         ]);
 
         $this->seededSlugs[] = $slug;
+    }
+
+    /** A category of the product's own, so the catalogue predicate can be exercised per case. */
+    private function seedCategory(string $approvalStatus, bool $hidden): string
+    {
+        $slug = 'spec-visibility-category-'.Uuid::v4()->toRfc4122();
+
+        $this->connection()->insert('storefront_category', [
+            'slug' => $slug,
+            'label' => 'Indexer Category',
+            'subcategories' => '[]',
+            'quote_eligible' => false,
+            'sort_order' => 900,
+            'parent_slug' => null,
+            'hidden' => $hidden,
+            'approval_status' => $approvalStatus,
+        ], [
+            'quote_eligible' => ParameterType::BOOLEAN,
+            'hidden' => ParameterType::BOOLEAN,
+            'sort_order' => ParameterType::INTEGER,
+        ]);
+
+        $this->seededCategorySlugs[] = $slug;
+
+        return $slug;
     }
 }
 

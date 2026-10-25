@@ -18,8 +18,19 @@ final class HideCategoryHandlerTest extends TestCase
     {
         $connection = new CategoryConnectionFake();
         $connection->rows = [$row];
+        $connection->submission();
 
         return $connection;
+    }
+
+    private function hide(CategoryConnectionFake $connection, HideCategory $command): void
+    {
+        (new HideCategoryHandler($connection, $connection->accessPolicy()))($command);
+    }
+
+    private function show(CategoryConnectionFake $connection, ShowCategory $command): void
+    {
+        (new ShowCategoryHandler($connection, $connection->accessPolicy()))($command);
     }
 
     /** @return array<string, mixed> */
@@ -40,7 +51,7 @@ final class HideCategoryHandlerTest extends TestCase
     {
         $connection = $this->connection($this->row(hidden: false));
 
-        (new HideCategoryHandler($connection))(new HideCategory('sanitaires'));
+        $this->hide($connection, new HideCategory('sanitaires'));
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
@@ -57,7 +68,7 @@ final class HideCategoryHandlerTest extends TestCase
     {
         $connection = $this->connection($this->row(hidden: true));
 
-        (new HideCategoryHandler($connection))(new HideCategory('sanitaires'));
+        $this->hide($connection, new HideCategory('sanitaires'));
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
@@ -71,14 +82,14 @@ final class HideCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotFoundException::class);
 
-        (new HideCategoryHandler($connection))(new HideCategory('introuvable'));
+        $this->hide($connection, new HideCategory('introuvable'));
     }
 
     public function testUnHidingPersistsTheVisibleFlagWithoutTouchingTheTree(): void
     {
         $connection = $this->connection($this->row(hidden: true));
 
-        (new ShowCategoryHandler($connection))(new ShowCategory('sanitaires'));
+        $this->show($connection, new ShowCategory('sanitaires'));
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
@@ -94,6 +105,6 @@ final class HideCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotFoundException::class);
 
-        (new ShowCategoryHandler($connection))(new ShowCategory('introuvable'));
+        $this->show($connection, new ShowCategory('introuvable'));
     }
 }

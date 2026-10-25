@@ -6,6 +6,7 @@ namespace App\Catalog\Infrastructure\Http;
 
 use App\Catalog\Application\Command\SubmitProductReview;
 use App\Catalog\Application\Query\ListProductReviews;
+use App\Catalog\Domain\Model\ProductNotReviewableException;
 use App\Catalog\Infrastructure\ReadModel\ProductReviewsPage;
 use App\Shared\Application\Pagination\InvalidCursorException;
 use App\Shared\Infrastructure\Http\ListQueryParams;
@@ -31,7 +32,7 @@ final class StorefrontReviewController
     public function list(string $slug, Request $request): JsonResponse
     {
         try {
-            /** @var ProductReviewsPage $page */
+            /** @var ProductReviewsPage|null $page */
             $page = $this->queries->dispatch(new ListProductReviews(
                 $slug,
                 ListQueryParams::cursor($request, ListProductReviews::DEFAULT_LIMIT, ListProductReviews::MAX_LIMIT),
@@ -44,6 +45,12 @@ final class StorefrontReviewController
             }
 
             throw $e;
+        }
+
+        // QRY-004: the handler refuses a product the storefront hides, so the edge only translates
+        // its answer — a review of a hidden product is not a page with zero items, it does not exist.
+        if (null === $page) {
+            return new JsonResponse(['error' => 'Product not found'], Response::HTTP_NOT_FOUND);
         }
 
         // Keep averageRating a float even when it is 0.0 (a product without reviews).
@@ -74,13 +81,26 @@ final class StorefrontReviewController
         }
 
         $id = Uuid::v7()->toRfc4122();
-        $this->commandBus->dispatch(new SubmitProductReview(
-            $id,
-            $slug,
-            $author,
-            $rating,
-            $comment,
-        ));
+
+        try {
+            $this->commandBus->dispatch(new SubmitProductReview(
+                $id,
+                $slug,
+                $author,
+                $rating,
+                $comment,
+            ));
+        } catch (HandlerFailedException $e) {
+            $previous = $e->getPrevious();
+
+            // QRY-004: the command handler refuses a product the storefront hides; the edge only
+            // translates that refusal, so the predicate is not restated here.
+            if ($previous instanceof ProductNotReviewableException) {
+                return new JsonResponse(['error' => 'Product not found'], Response::HTTP_NOT_FOUND);
+            }
+
+            throw $e;
+        }
 
         return new JsonResponse(['id' => $id, 'status' => 'created'], Response::HTTP_CREATED);
     }

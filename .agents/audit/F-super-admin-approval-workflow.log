@@ -1,0 +1,8 @@
+2026-10-23T21:20:00+01:00 orchestrator GATE SPEC ok — spec-run-10/spec.md v1 (R1–R59), both skeptic BLOCKING questions resolved by reproduction
+2026-10-23T21:24:00+01:00 investigator DISPATCH F-super-admin-approval-workflow WP1 — classify the 8 red tests in tests/Functional/AdminCatalogApprovalWorkflowTest.php
+2026-10-23T21:30:00+01:00 investigator GATE INVESTIGATE ok — harness fault (duplicate e-mail local part derived from a UUIDv7 prefix collapsed two actors into one identity)
+2026-10-23T21:32:00+01:00 implementer GATE GREEN ok — tests/Functional/AdminCatalogApprovalWorkflowTest.php createUser() uses the full UUID; 8 tests / 101 assertions green; no src/** write
+2026-10-23T22:12:00+01:00 verification GATE SPEC-TESTS ok — php bin/phpunit → OK (632 tests, 3563 assertions), final run over the whole working tree
+2026-10-23T21:35:00+01:00 verification GATE REVIEW ok — phpstan [OK] No errors; deptrac 0 violations / 0 errors; php-cs-fixer 0 of 457 files fixable; migrations already at latest
+2026-10-23T21:36:00+01:00 orchestrator GATE DONE — DoD met, no human approval gate triggered
+2026-10-23T22:20:00+01:00 orchestrator GATE DOCS closed — docs/adr/ADR-0012-catalog-audit-trail.md written (three code sites cited it, the file was missing); spec-run-10/coverage.md maps R1–R59 with nine named limitations

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Catalog\Infrastructure\ReadModel\CatalogVisibility;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -232,6 +233,8 @@ final class StorefrontCatalogBrowseTest extends WebTestCase
         /** @var Connection $connection */
         $connection = static::getContainer()->get(Connection::class);
 
-        return (int) $connection->fetchOne('SELECT count(*) FROM storefront_product_view');
+        // spec-run-8 R32 — the browse total counts the same public rows the endpoint serves, so a
+        // pending submission left behind by another test no longer shifts this expectation.
+        return (int) $connection->fetchOne('SELECT count(*) FROM storefront_product_view WHERE'.CatalogVisibility::PRODUCT_PUBLIC);
     }
 }

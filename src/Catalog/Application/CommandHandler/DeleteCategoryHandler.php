@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\DeleteCategory;
+use App\Catalog\Application\Port\CatalogAuditPort;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -15,6 +17,9 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * The children counted here are the nodes of this row's `subcategories` JSON tree plus the
  * legacy `parent_slug` rows a pre-Q1 taxonomy may still own, never the products themselves:
  * a category holding a product is refused, so no order line can lose its category.
+ *
+ * spec-run-8 R20/R42/R45 — the refusal happens before anything is written, and the deletion and
+ * its audit row commit together, so a refused delete leaves both the row and the history intact.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class DeleteCategoryHandler
@@ -27,24 +32,35 @@ final class DeleteCategoryHandler
 
     private const STORE = 'DELETE FROM storefront_category WHERE slug = :slug';
 
-    public function __construct(private Connection $connection)
-    {
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly CatalogAuditPort $audit,
+    ) {
     }
 
     public function __invoke(DeleteCategory $command): void
     {
-        $category = Category::fromStoredRow(
-            $this->connection->fetchAssociative(self::LOAD, ['slug' => $command->slug]),
-            $command->slug,
-        );
+        $this->connection->transactional(function () use ($command): void {
+            $category = Category::fromStoredRow(
+                $this->connection->fetchAssociative(self::LOAD, ['slug' => $command->slug]),
+                $command->slug,
+            );
 
-        $counts = $this->connection->fetchAssociative(self::COUNTS, ['slug' => $category->slug]);
+            $counts = $this->connection->fetchAssociative(self::COUNTS, ['slug' => $category->slug]);
 
-        $category->ensureDeletable(
-            (int) ($counts['child_rows'] ?? 0),
-            (int) ($counts['products'] ?? 0),
-        );
+            $category->ensureDeletable(
+                (int) ($counts['child_rows'] ?? 0),
+                (int) ($counts['products'] ?? 0),
+            );
 
-        $this->connection->executeStatement(self::STORE, ['slug' => $category->slug]);
+            $this->connection->executeStatement(self::STORE, ['slug' => $category->slug]);
+
+            $this->audit->record(
+                'CATALOG_CATEGORY_DELETED',
+                CatalogSubmissionKind::Category->auditTarget(),
+                $category->slug,
+                $command->actorId ?? 'system',
+            );
+        });
     }
 }

@@ -67,8 +67,16 @@ boundary is introduced) → `RED` (unit-test-writer) → `GREEN` (implementer) �
 `REFACTOR` (refactorer) → `SPEC-TESTS` (integration-test-agent,
 projection-test-agent, e2e-contract-test-agent; may run in parallel on disjoint
 paths) → `REVIEW` (code-reviewer, architecture-reviewer, security-reviewer,
-performance-reviewer, test-reviewer; parallel) → `FIXES` (implementer, one dispatch
+performance-reviewer, test-reviewer in parallel, plus solid-guardian when the diff is
+design-bearing — see **Review fan-out**) → `FIXES` (implementer, one dispatch
 per finding cluster) → `REVIEW` re-run → `DONE`.
+
+### Review fan-out
+`REVIEW` is one parallel fan-out. Always: code-reviewer, architecture-reviewer,
+security-reviewer, performance-reviewer, test-reviewer. Additionally, when the change
+is design-bearing (a new Domain or Application class, a new or changed port, a new bus
+handler or subscriber, a new tagged strategy): solid-guardian. Small mechanical fixes
+skip solid-guardian. Owners are disjoint: solid-guardian reports SOLID verdicts only.
 
 ### bugfix
 `INVESTIGATE` (investigator produces root cause + reproducing-test proposal) →
@@ -83,8 +91,8 @@ mid-refactor, stop the workflow and re-enter as a feature or bugfix task.
 `INVESTIGATE` → report handoff → `DONE`. No code or test changes.
 
 ### review-only
-Fan out all five reviewers in parallel → consolidate findings report → `DONE`.
-Fixes are routed as new tasks; never applied inline.
+Fan out the reviewers defined under **Review fan-out** in parallel → consolidate
+findings report → `DONE`. Fixes are routed as new tasks; never applied inline.
 
 ### pattern-decision-only
 `PATTERN` (ADR with rejected alternatives) → human approval gate → `DONE`. The ADR
@@ -125,7 +133,8 @@ Only two groups may run in parallel:
 
 - `SPEC-TESTS`: integration-test-agent, projection-test-agent,
   e2e-contract-test-agent — only when their write paths are disjoint.
-- `REVIEW`: the five read-only reviewers.
+- `REVIEW`: the five read-only reviewers, plus solid-guardian when the change is
+  design-bearing (see **Review fan-out**).
 
 Everything else is strictly sequential. The TDD cycle is a single agent at a time
 (one behavior per cycle, TDD-003).

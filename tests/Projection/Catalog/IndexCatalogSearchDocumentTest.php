@@ -179,7 +179,7 @@ final class IndexCatalogSearchDocumentTest extends KernelTestCase
             'name' => $name,
             'brand' => 'Zidane',
             'ref' => 'ZID-001',
-            'category_slug' => 'chaises',
+            'category_slug' => 'sanitaires',
             'subcategory' => 'Chaises de bureau',
             'price_minor' => 1999,
             'old_price_minor' => null,
@@ -195,6 +195,9 @@ final class IndexCatalogSearchDocumentTest extends KernelTestCase
             'headrest' => false,
             'description' => 'Fixture product',
             'variants' => '[]',
+            // spec-run-8 R32 — only a public product produces an index document.
+            'approval_status' => 'APPROVED',
+            'published' => true,
         ], [
             'price_minor' => ParameterType::INTEGER,
             'rating' => ParameterType::STRING,
@@ -202,6 +205,7 @@ final class IndexCatalogSearchDocumentTest extends KernelTestCase
             'is_new' => ParameterType::BOOLEAN,
             'is_best' => ParameterType::BOOLEAN,
             'headrest' => ParameterType::BOOLEAN,
+            'published' => ParameterType::BOOLEAN,
         ]);
 
         $this->seededSlugs[] = $slug;

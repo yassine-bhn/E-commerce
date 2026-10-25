@@ -4,28 +4,46 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Http;
 
+use App\Catalog\Application\Command\SetProductPublication;
+use App\Catalog\Application\Port\CatalogAuditPort;
+use App\Catalog\Application\Query\GetCatalogSubmission;
 use App\Catalog\Application\Service\SubcategoryTree;
+use App\Catalog\Application\Service\SubmissionAccessPolicy;
+use App\Catalog\Domain\Model\ApprovalStatus;
+use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
+use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
+use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
 use App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
+use App\Identity\Infrastructure\Security\CustomerUser;
+use App\Shared\Infrastructure\Http\MessengerQuery;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ParameterType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Super-admin product management (create / update). Deletion lives in
+ * Admin product management (create / update / read / publication). Deletion lives in
  * {@see AdminCategoryController::deleteProduct()} (it protects order history).
  *
  * Prices are whole dinars, like every other product of the storefront.
+ *
+ * spec-run-8 R1/R10/R15/R17/R35 — every writer may create a product, but a creation is always a
+ * `PENDING_APPROVAL` submission owned by its creator; only the Super Admin reads or rewrites
+ * another Admin's record, and only the Super Admin decides approval or publication.
  */
 #[Route('/api/v1/admin/catalog/products')]
-#[IsGranted('ROLE_SUPER_ADMIN')]
+#[IsGranted('ROLE_ADMIN')]
 final class AdminProductController
 {
     private const array STOCKS = ['in', 'order', 'pickup', 'out'];
@@ -34,11 +52,15 @@ final class AdminProductController
         private Connection $connection,
         private StorefrontProductRepository $products,
         private StorefrontProductSearchIndexer $searchIndex,
+        private SubmissionAccessPolicy $access,
+        private MessengerQuery $queries,
+        private MessageBusInterface $commandBus,
+        private CatalogAuditPort $audit,
     ) {
     }
 
     #[Route('', name: 'admin_catalog_create_product', methods: ['POST'])]
-    public function create(Request $request): JsonResponse
+    public function create(Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         $body = $this->decode($request);
         if (null === $body) {
@@ -51,29 +73,57 @@ final class AdminProductController
         }
 
         try {
-            $this->connection->executeStatement(
-                'INSERT INTO storefront_product_view (
-                    id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
-                    stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
-                ) VALUES (
-                    :id, :slug, :name, :brand, :ref, :category, :sub, :price, :old_price, \'TND\',
-                    :stock, :stock_quantity, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants
-                )',
-                ['id' => Uuid::v7()->toRfc4122()] + $this->parameters($product),
-                $this->types(),
-            );
+            $this->connection->transactional(function () use ($product, $admin): void {
+                $this->connection->executeStatement(
+                    'INSERT INTO storefront_product_view (
+                        id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
+                        stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants,
+                        approval_status, submitted_by, submitted_at, published
+                    ) VALUES (
+                        :id, :slug, :name, :brand, :ref, :category, :sub, :price, :old_price, \'TND\',
+                        :stock, :stock_quantity, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants,
+                        :approval, :submitted_by, :submitted_at, false
+                    )',
+                    ['id' => Uuid::v7()->toRfc4122(), 'approval' => ApprovalStatus::initial()->value,
+                        'submitted_by' => $admin->getId(),
+                        'submitted_at' => (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP'),
+                    ] + $this->parameters($product),
+                    $this->types(),
+                );
+
+                $this->audit->record(
+                    'CATALOG_SUBMISSION_CREATED',
+                    CatalogSubmissionKind::Product->auditTarget(),
+                    $product['slug'],
+                    $admin->getId(),
+                );
+            });
         } catch (UniqueConstraintViolationException) {
             return new JsonResponse(['error' => 'A product with this slug already exists.'], Response::HTTP_CONFLICT);
         }
 
-        // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
+        // Best-effort: a pending submission is not public, so this removes any stale document.
         $this->searchIndex->sync($product['slug']);
 
-        return new JsonResponse($this->products->bySlug($product['slug'])?->toAdminApi(), Response::HTTP_CREATED);
+        return new JsonResponse($this->adminPayload($product['slug']), Response::HTTP_CREATED);
+    }
+
+    /**
+     * R15/R17/R25 — the Super Admin reads one product whatever its state, with its approval
+     * metadata; a regular Admin reads their own submission and nobody else's.
+     */
+    #[Route('/{slug}', name: 'admin_catalog_show_product', methods: ['GET'])]
+    public function show(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        $payload = $this->adminPayload($slug, $admin);
+
+        return null === $payload
+            ? new JsonResponse(['error' => 'Product not found.'], Response::HTTP_NOT_FOUND)
+            : new JsonResponse($payload);
     }
 
     #[Route('/{slug}', name: 'admin_catalog_update_product', methods: ['PUT'])]
-    public function update(string $slug, Request $request): JsonResponse
+    public function update(string $slug, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         $body = $this->decode($request);
         if (null === $body) {
@@ -85,26 +135,133 @@ final class AdminProductController
             return new JsonResponse(['error' => $product], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $affected = $this->connection->executeStatement(
-            'UPDATE storefront_product_view SET
-                name = :name, brand = :brand, ref = :ref, category_slug = :category, subcategory = :sub,
-                price_minor = :price, old_price_minor = :old_price, stock = :stock,
-                stock_quantity = COALESCE(:stock_quantity, stock_quantity), material = :material,
-                dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
-                description = :description, variants = :variants
-             WHERE slug = :slug',
-            $this->parameters($product),
-            $this->types(),
-        );
+        try {
+            $this->connection->transactional(function () use ($slug, $product, $admin): void {
+                $current = $this->access->authorize(
+                    CatalogSubmissionKind::Product,
+                    $slug,
+                    $admin->getId(),
+                    $this->isSuperAdmin($admin),
+                );
 
-        if (0 === $affected) {
-            return new JsonResponse(['error' => 'Product not found.'], Response::HTTP_NOT_FOUND);
+                $next = $current->afterModification();
+                $reopens = $next !== $current;
+
+                $this->connection->executeStatement(
+                    'UPDATE storefront_product_view SET
+                        name = :name, brand = :brand, ref = :ref, category_slug = :category, subcategory = :sub,
+                        price_minor = :price, old_price_minor = :old_price, stock = :stock,
+                        stock_quantity = COALESCE(:stock_quantity, stock_quantity), material = :material,
+                        dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
+                        description = :description, variants = :variants'
+                    .($reopens ? ',
+                        approval_status = :approval, reviewed_by = NULL, reviewed_at = NULL, rejection_reason = NULL' : '')
+                    .' WHERE slug = :slug',
+                    $this->parameters($product) + ($reopens ? ['approval' => $next->value] : []),
+                    $this->types(),
+                );
+
+                $this->audit->record(
+                    'CATALOG_PRODUCT_UPDATED',
+                    CatalogSubmissionKind::Product->auditTarget(),
+                    $slug,
+                    $admin->getId(),
+                );
+            });
+        } catch (\DomainException $error) {
+            return $this->domainFailure($error);
         }
 
-        // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
+        // Best-effort: a record that just went back to review leaves the index (ECO-008).
         $this->searchIndex->sync($slug);
 
-        return new JsonResponse($this->products->bySlug($slug)?->toAdminApi());
+        return new JsonResponse($this->adminPayload($slug, $admin));
+    }
+
+    /**
+     * R28/R29 — publication is its own explicit decision, never a side effect of approval.
+     */
+    #[Route('/{slug}/publication', name: 'admin_catalog_product_publication', methods: ['PATCH'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function setPublication(string $slug, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        $body = $this->decode($request);
+        if (null === $body || !is_bool($body['published'] ?? null)) {
+            return new JsonResponse(['error' => 'published must be a boolean.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            $this->commandBus->dispatch(new SetProductPublication($slug, $body['published'], $admin->getId()));
+        } catch (HandlerFailedException $e) {
+            $previous = $e->getPrevious();
+
+            return $previous instanceof \DomainException
+                ? $this->domainFailure($previous)
+                : throw $e;
+        } catch (\DomainException $error) {
+            return $this->domainFailure($error);
+        }
+
+        $this->searchIndex->sync($slug);
+
+        return new JsonResponse($this->adminPayload($slug, $admin));
+    }
+
+    /**
+     * The record as the admin surface sees it: the content plus its approval metadata, or null
+     * when the caller may not read it (missing and foreign are the same answer, R5).
+     *
+     * @return array<string, mixed>|null
+     */
+    private function adminPayload(string $slug, ?CustomerUser $admin = null): ?array
+    {
+        $content = $this->products->adminBySlug($slug);
+        if (null === $content) {
+            return null;
+        }
+
+        $payload = $content->toAdminApi();
+        if (null === $admin) {
+            return $payload;
+        }
+
+        /** @var \App\Catalog\Infrastructure\ReadModel\CatalogSubmissionView|null $submission */
+        $submission = $this->queries->dispatch(new GetCatalogSubmission(
+            CatalogSubmissionKind::Product,
+            $slug,
+            $admin->getId(),
+            $this->isSuperAdmin($admin),
+        ));
+
+        if (null === $submission) {
+            return null;
+        }
+
+        $payload['approval'] = $submission->toApi();
+
+        return $payload;
+    }
+
+    private function isSuperAdmin(CustomerUser $admin): bool
+    {
+        return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
+    }
+
+    private function domainFailure(\DomainException $error): JsonResponse
+    {
+        if ($error instanceof CatalogSubmissionNotFoundException) {
+            return new JsonResponse(['error' => 'Product not found.', 'message' => $error->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($error instanceof CatalogSubmissionNotOwnedException) {
+            return new JsonResponse(['error' => 'Forbidden', 'message' => $error->getMessage()], Response::HTTP_FORBIDDEN);
+        }
+
+        if ($error instanceof ApprovalTransitionRefusedException) {
+            return new JsonResponse(['error' => 'Approval Transition Refused', 'message' => $error->getMessage()], Response::HTTP_CONFLICT);
+        }
+
+        throw $error;
     }
 
     /** @return array<string, mixed>|null */

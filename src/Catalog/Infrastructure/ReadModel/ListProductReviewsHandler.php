@@ -13,6 +13,12 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 /**
  * PRF-001 — a reviews page costs exactly two statements: one aggregate over the whole product
  * (count + average, independent of the rating filter) and one keyset page.
+ *
+ * QRY-004 — the aggregate also answers whether the storefront serves the product at all, so the
+ * authorization happens where the rows are read and costs no extra statement: `0` means the product
+ * is hidden, and the caller answers not-found without ever seeing a review count. The predicate is
+ * composed from {@see CatalogVisibility::PRODUCT_PUBLIC} instead of restating it, so the review path
+ * cannot drift from the product detail (R30/R18).
  */
 #[AsMessageHandler(bus: 'query.bus')]
 final class ListProductReviewsHandler
@@ -21,16 +27,22 @@ final class ListProductReviewsHandler
     {
     }
 
-    public function __invoke(ListProductReviews $query): ProductReviewsPage
+    public function __invoke(ListProductReviews $query): ?ProductReviewsPage
     {
         $limit = $query->cursor->effectiveLimit();
 
         $aggregate = $this->connection->fetchAssociative(
-            'SELECT COUNT(*) AS total, COALESCE(AVG(rating), 0) AS average
+            'SELECT COUNT(*) AS total, COALESCE(AVG(rating), 0) AS average,
+                (SELECT COUNT(*) FROM storefront_product_view
+                 WHERE slug = :visible_slug AND '.CatalogVisibility::PRODUCT_PUBLIC.') AS visible
              FROM storefront_product_review
              WHERE product_slug = :slug',
-            ['slug' => $query->slug],
+            ['slug' => $query->slug, 'visible_slug' => $query->slug],
         );
+
+        if (0 === (int) ($aggregate['visible'] ?? 0)) {
+            return null;
+        }
 
         $conditions = ['product_slug = :slug'];
         $params = ['slug' => $query->slug];

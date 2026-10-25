@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Search;
 
+use App\Catalog\Infrastructure\ReadModel\CatalogVisibility;
 use Doctrine\DBAL\Connection;
 use Meilisearch\Client;
 
@@ -12,6 +13,10 @@ use Meilisearch\Client;
  *
  * The index is sourced from the denormalized `storefront_product_view` read model, never from
  * the write model: Meilisearch is a projection target like any other read table (PRF-003).
+ *
+ * spec-run-8 R32 — only publicly visible products are indexed. {@see CatalogVisibility} is applied
+ * on both the single-slug and the full-rebuild reads, so an approval, a retirement or a hidden
+ * category removes the document instead of leaving a stale hit behind.
  *
  * {@see self::indexSlug()} / {@see self::removeSlug()} / {@see self::ensureSettings()} /
  * {@see self::rebuildAll()} surface transport errors so the reindex command can fail loudly;
@@ -56,7 +61,10 @@ final class StorefrontProductSearchIndexer
 
     public function indexSlug(string $slug): void
     {
-        $row = $this->connection->fetchAssociative(self::SELECT.' WHERE slug = :slug', ['slug' => $slug]);
+        $row = $this->connection->fetchAssociative(
+            self::SELECT.' WHERE slug = :slug AND'.CatalogVisibility::PRODUCT_PUBLIC,
+            ['slug' => $slug],
+        );
 
         if (false === $row) {
             $this->removeSlug($slug);
@@ -128,7 +136,7 @@ final class StorefrontProductSearchIndexer
         /** @var list<array<string, mixed>> $batch */
         $batch = [];
 
-        foreach ($this->connection->iterateAssociative(self::SELECT.' ORDER BY slug ASC') as $row) {
+        foreach ($this->connection->iterateAssociative(self::SELECT.' WHERE'.CatalogVisibility::PRODUCT_PUBLIC.' ORDER BY slug ASC') as $row) {
             $batch[] = self::document($row);
 
             if (self::BATCH_SIZE === count($batch)) {

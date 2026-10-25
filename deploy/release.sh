@@ -42,7 +42,7 @@ set_key() {
 
 required=(APP_DOMAIN STOREFRONT_DOMAIN EDGE_EMAIL APP_SECRET POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD \
 	MEILI_MASTER_KEY BACKEND_IMAGE IMAGE_TAG STOREFRONT_IMAGE STOREFRONT_CORS_ORIGIN STOREFRONT_APP_URL \
-	MAILER_DSN BACKUP_RETENTION_DAYS)
+	MAILER_DSN BACKUP_RETENTION_DAYS WHATSAPP_PHONE_NUMBER)
 missing=()
 for key in "${required[@]}"; do
 	value=$(get_key "$key")
@@ -51,6 +51,34 @@ for key in "${required[@]}"; do
 	esac
 done
 [ "${#missing[@]}" -eq 0 ] || die "unset or placeholder values in $env_file: ${missing[*]}"
+
+# WHATSAPP_DEFAULT_MESSAGE may legitimately be empty (no prefilled text), so it only has to be
+# declared: an absent key would silently reach the container as the empty string anyway, and this
+# check is what tells the operator the key exists.
+[ -n "$(grep '^WHATSAPP_DEFAULT_MESSAGE=' "$env_file" || true)" ] ||
+	die "WHATSAPP_DEFAULT_MESSAGE is not declared in $env_file — declare it (it may be empty)"
+
+# The number is judged exactly as the application will parse it: WhatsAppNumber strips one leading
+# "+" and requires the rest to be 8-15 digits. Surrounding quotes are dropped, but internal spaces,
+# dashes or parentheses are refused rather than normalised away — a gate that accepts a value the
+# runtime cannot parse would green-light a stack whose every contact request answers 500.
+whatsapp_number=$(get_key WHATSAPP_PHONE_NUMBER)
+whatsapp_number=${whatsapp_number%\"}
+whatsapp_number=${whatsapp_number#\"}
+whatsapp_number=${whatsapp_number%\'}
+whatsapp_number=${whatsapp_number#\'}
+whatsapp_number=${whatsapp_number#+}
+[[ "$whatsapp_number" =~ ^[0-9]{8,15}$ ]] ||
+	die "WHATSAPP_PHONE_NUMBER must be 8 to 15 digits (optionally prefixed with +), got: $(get_key WHATSAPP_PHONE_NUMBER)"
+
+# A syntactically valid placeholder would still ship a link nobody answers: refuse it explicitly.
+[ "$whatsapp_number" != "21600000000" ] ||
+	die "WHATSAPP_PHONE_NUMBER is still the 21600000000 placeholder — set the real WhatsApp Business number in $env_file"
+
+# Ship exactly what was validated. A variable inherited from the shell would otherwise win over
+# --env-file at compose interpolation time and bypass every check above.
+unset WHATSAPP_PHONE_NUMBER WHATSAPP_DEFAULT_MESSAGE
+export WHATSAPP_PHONE_NUMBER=$whatsapp_number
 
 compose=(docker compose --env-file "$env_file" -f "$compose_file")
 "${compose[@]}" config --quiet || die "invalid compose configuration"
@@ -79,6 +107,12 @@ printf 'release: pulling %s\n' "$target"
 
 printf 'release: applying migrations\n'
 "${compose[@]}" run --rm app php bin/console doctrine:migrations:migrate -n --allow-no-migration
+
+# MIG-002: the approval migration is schema-only, so the rows that predate the workflow are approved
+# here, by the operator path, not by a migration that would redo it on every re-run. Idempotent: an
+# already-approved catalogue reports 0 and writes nothing.
+printf 'release: approving the catalogue that predates the approval workflow\n'
+"${compose[@]}" run --rm app php bin/console app:catalog:backfill-approval --apply
 
 printf 'release: rebuilding the storefront search index\n'
 "${compose[@]}" run --rm app php bin/console app:storefront:index-search

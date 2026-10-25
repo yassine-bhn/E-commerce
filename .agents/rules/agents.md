@@ -45,3 +45,10 @@ Rationale: Agents flailing on a hard behavior burn budget and produce contorted 
 BAD:  11 attempts rewriting both test and implementation alternately
 GOOD: attempt counter in the state file; at 3 → `ESCALATE` gate with hypothesis list.
 Enforced by: orchestrator gate logic + state-file schema check in harness-check.
+
+### AGT-007 — Every declared agent is reachable from a workflow
+Rule: Every agent in `.agents/agents/` MUST be named in `.agents/orchestration.md`, at the gate that dispatches it. An agent nobody can dispatch is a defect, not documentation.
+Rationale: A declared-but-unrouted agent passes the roster count and the subagent export while enforcing nothing — its rules silently fall to "review by nobody".
+BAD:  `solid-guardian` exists, owns OCP-*/ISP-*, and no workflow ever names it
+GOOD: the `## Review fan-out` section names it with the design-bearing predicate
+Enforced by: reachability loop in `bin/harness-check` + CI `harness` job.

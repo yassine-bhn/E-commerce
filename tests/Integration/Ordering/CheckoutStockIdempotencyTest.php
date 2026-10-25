@@ -60,10 +60,10 @@ final class CheckoutStockIdempotencyTest extends KernelTestCase
         $connection->executeStatement(
             'INSERT INTO storefront_product_view (
                 id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
-                stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
+                stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants, approval_status, published
             )
             SELECT :id, :slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
-                   stock, 5, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
+                   stock, 5, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants, approval_status, published
             FROM storefront_product_view
             WHERE slug = :source',
             [

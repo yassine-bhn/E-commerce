@@ -1,0 +1,14 @@
+2026-10-24T09:05:00+01:00 dispatch orchestrator — /spec "secure sessionToken using an HttpOnly cookie instead of localStorage"; spec-run-11 created
+2026-10-24T09:12:00+01:00 stage orchestrator — Stages 1-4 run single-agent (no general-purpose subagent available in this session); analyst files written to disk before the next pass
+2026-10-24T09:20:00+01:00 gate orchestrator — GATE: SPEC ok; spec-run-11/spec.md v2; BLOCKING question answered by user (this storefront, API + storefront)
+2026-10-24T09:22:00+01:00 gate orchestrator — GATE: PLAN ok; behaviours derived per R1-R13 in .agents/state/F-http-only-session-cookie.md
+2026-10-24T09:26:00+01:00 gate implementer — GATE: RED (negative control) cookie_httponly:false made SessionCookieTest + SessionCookiePolicyTest fail; config reverted
+2026-10-24T09:29:00+01:00 gate implementer — GATE: GREEN ok; tests/Functional/SessionCookieTest.php, tests/Integration/Identity/SessionCookiePolicyTest.php, Zidane_front_web/src/lib/store.tsx
+2026-10-24T09:30:00+01:00 gate integration-test-agent — GATE: SPEC-TESTS ok; prod kernel proves Secure + SameSite=None, test env proves Lax without Secure
+2026-10-24T09:31:00+01:00 run orchestrator — Functional 269 tests/1989 assertions, Integration 73/549, Unit 279/674, Architecture 14/96, phpstan 0 errors, php-cs-fixer 0/469, deptrac 0 violations
+2026-10-24T09:33:00+01:00 stage orchestrator — Stage 4 coverage table complete (R1-R13); Stage 3 worker paths: tests/Functional/SessionCookieTest.php, tests/Integration/Identity/SessionCookiePolicyTest.php, docs/adr/ADR-0013-session-cookie-credential.md, Zidane_front_web/src/lib/store.tsx
+2026-10-24T09:40:00+01:00 gate security-reviewer — GATE: REVIEW fail; F1 high (ADR claimed a CORS/content-type CSRF mitigation that does not exist), F2 med (SameSite=None justified by an unverified topology), F3 med (vacuous PHPSESSID assertion on register), F4 med (logout did not prove server-side revocation); F5-F12 low
+2026-10-24T09:52:00+01:00 gate implementer — GATE: FIXES ok; ADR-0013 CSRF/topology corrected, register test checks PHPSESSID+MOCKSESSID, logout replays pre-logout session id (401) and asserts remember-me clearing, dev kernel added to policy test, storefront drops orders/addresses + auth claim ref + Array.isArray guards
+2026-10-24T09:54:00+01:00 gate orchestrator — GATE: SPEC v3; R5 tightened to no account data in storage, R9 evidence downgraded to inspection
+2026-10-24T09:56:00+01:00 run orchestrator — post-fix re-run: Functional 269/1993, Integration 73/561, Unit 279/674, Architecture 14/96, phpstan 0 errors, php-cs-fixer 0/469, deptrac 0 violations; storefront npm run typecheck clean, npm run lint 0 errors (18 pre-existing warnings)
+2026-10-24T09:58:00+01:00 gate orchestrator — GATE: DONE; AGENTS.md Definition of Done satisfied (infection n/a: no touched Domain/Application PHP), F1-F12 dispositioned, state + audit complete

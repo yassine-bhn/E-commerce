@@ -110,8 +110,23 @@ services:
         arguments:
             $url: '%env(MEILISEARCH_URL)%'
 
+    # spec-run-9 (R1/R2) — the WhatsApp contact is configuration-only: the number and the default
+    # message reach the read handler through #[Autowire('%env(...)%')] on its constructor, so no
+    # value is hardcoded in src/** and the wiring lives with the class that needs it.
     App\Shared\Domain\Outbox\OutboxPort:
         alias: App\Shared\Infrastructure\Outbox\DoctrineOutbox
+
+    # spec-run-8 (ADR-0012): catalog audit rows are slugs, not user ids, so they cannot reuse
+    # identity_audit_log — the port keeps the handlers free of the table choice.
+    App\Catalog\Application\Port\CatalogAuditPort:
+        alias: App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter
+
+    # spec-run-12 (R18): the review write asks the read side through a port, so Application never
+    # names the SQL predicate. The container can resolve the interface on its own while there is one
+    # implementation; the binding is written out because a second implementation must be a visible
+    # decision, not a silent change of what the command side is talking to.
+    App\Catalog\Application\Port\ProductVisibilityPort:
+        alias: App\Catalog\Infrastructure\ReadModel\DbalProductVisibility
 
     # ADR-0011: the malformed-cookie guard must read the same cookie name the firewall writes.
     App\Identity\Infrastructure\Security\MalformedRememberMeCookieSubscriber:

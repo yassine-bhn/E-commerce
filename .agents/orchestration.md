@@ -56,6 +56,20 @@ APPROVED: <subject> — <name> — <ISO-8601>
   stop and escalate (AGT-006).
 - Audit: every dispatch, gate and blocked write is appended to `.agents/audit/<task-id>.log`.
 
+## Review fan-out
+
+`REVIEW` is one parallel fan-out, never a single reviewer:
+
+- Always: code-reviewer, architecture-reviewer, security-reviewer, performance-reviewer,
+  test-reviewer.
+- Additionally, when the change is design-bearing: **solid-guardian**. Design-bearing means a
+  new Domain or Application class, a new port (interface) or a changed port contract, a new
+  handler or subscriber attached to a bus, or a new strategy selected via a tagged iterator.
+  Small mechanical fixes skip it.
+- solid-guardian is read-only and owns the SOLID verdicts (SRP-*, OCP-*, LSP-*, ISP-*, DIP-* in
+  `.agents/rules/solid.md`). It never re-reports behavior, naming, error handling or layering
+  (the other reviewers own those) and never demands a behavior change.
+
 ## Workflows (state machines with gates)
 
 ### spec-then-feature
@@ -67,29 +81,31 @@ APPROVED: <subject> — <name> — <ISO-8601>
 ### feature
 `PLAN` (test-planner) → `PATTERN` (pattern-selector, only if a new pattern/boundary is
 involved) → `RED` (unit-test-writer) → `GREEN` (implementer) → `REFACTOR` (refactorer) →
-`SPEC-TESTS` (integration-test-agent, projection-test-agent, e2e-contract-test-agent — may be
-dispatched in parallel, they own disjoint paths) → `REVIEW` (code, architecture, security,
-performance, test reviewers — parallel) → `FIXES` (implementer, one dispatch per finding
-cluster) → `REVIEW` re-run on fixes → `DONE`.
+`SPEC-TESTS` (integration-test-agent, projection-test-agent, e2e-contract-test-agent,
+architecture-test-writer — may be dispatched in parallel, they own disjoint paths) →
+`REVIEW` (the fan-out above, parallel) →
+`FIXES` (implementer, one dispatch per finding cluster) → `REVIEW` re-run on fixes → `DONE`.
 Human gates inside: ADR approval, migration approval (MIG-001), new dependency, anything
 touching `src/Payment/**`.
 
 ### bugfix
 `INVESTIGATE` (investigator → root cause + reproducing-test proposal) → `RED`
 (unit-test-writer writes the reproducing test) → `GREEN` (implementer) → `REFACTOR` →
-`REVIEW` (parallel) → `DONE`.
+`REVIEW` (the fan-out above, parallel) → `DONE`.
 
 ### refactor
 Precondition: suite green, recorded in the state file. `REFACTOR` (refactorer, no behavior
-change, suite green after every step) → `REVIEW` (parallel) → `DONE`. No RED — but any
-behavior change found mid-refactor stops the workflow and re-enters as feature/bugfix.
+change, suite green after every step) → `REVIEW` (the fan-out above, parallel) → `DONE`. No
+RED — but any behavior change found mid-refactor stops the workflow and re-enters as
+feature/bugfix.
 
 ### investigation-only
 `INVESTIGATE` (investigator) → report handoff → `DONE`. No code, no tests written.
 
 ### review-only
-`REVIEW`: orchestrator fans out the 5 reviewers in parallel on the given paths/task →
-findings report → `DONE`. Fixes are routed as new feature/bugfix tasks, never done inline.
+`REVIEW`: orchestrator fans out the reviewers defined under **Review fan-out** in parallel on
+the given paths/task → findings report → `DONE`. Fixes are routed as new feature/bugfix tasks,
+never done inline.
 
 ### pattern-decision-only
 `PATTERN` (pattern-selector → ADR with rejected alternatives) → human approval gate → `DONE`.
@@ -98,7 +114,8 @@ ADR text travels in the handoff; the human gate commits it to `docs/adr/`.
 ## Delegation rules
 
 - The orchestrator never writes `src/**` or `tests/**` (AGT-004); it dispatches.
-- Parallel: the 5 reviewers; the 3 specialized test agents. Everything else is sequential.
+- Parallel: the 5 reviewers (plus solid-guardian on design-bearing diffs); the 4 specialized
+  test agents. Everything else is sequential.
 - The TDD cycle (RED→GREEN→REFACTOR) is strictly sequential, one behavior per cycle (TDD-003).
 - Max 3 RED→GREEN attempts per behavior, then `ESCALATE` with the full attempt log (AGT-006).
 - Reviewer conflicts: precedence = security > correctness > architecture > performance >

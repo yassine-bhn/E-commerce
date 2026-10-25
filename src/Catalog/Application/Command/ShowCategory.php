@@ -10,7 +10,10 @@ namespace App\Catalog\Application\Command;
  */
 final readonly class ShowCategory
 {
-    public function __construct(public string $slug)
-    {
+    public function __construct(
+        public string $slug,
+        public ?string $actorId = null,
+        public bool $actorIsSuperAdmin = false,
+    ) {
     }
 }

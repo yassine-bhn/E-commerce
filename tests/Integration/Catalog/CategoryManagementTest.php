@@ -6,11 +6,14 @@ namespace App\Tests\Integration\Catalog;
 
 use App\Catalog\Application\Command\AddCategorySubLevel;
 use App\Catalog\Application\Command\CreateCategory;
+use App\Catalog\Application\Command\DecideCatalogSubmission;
 use App\Catalog\Application\Command\DeleteCategory;
 use App\Catalog\Application\Command\HideCategory;
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Command\ShowCategory;
 use App\Catalog\Application\Query\ListCategories;
+use App\Catalog\Domain\Model\CatalogDecision;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CategoryNotEmptyException;
 use App\Catalog\Domain\Model\CategoryNotFoundException;
 use App\Catalog\Domain\Model\CategorySublevelException;
@@ -128,6 +131,7 @@ final class CategoryManagementTest extends KernelTestCase
     public function testHidingACategoryRemovesItAndItsSubtreeFromTheStorefrontNavigationOnly(): void
     {
         $this->write(new CreateCategory($this->slug, 'Intégration', [['label' => 'Alpha'], ['label' => 'Beta']]));
+        $this->approve();
         // A legacy pre-Q1 descendant row: it must go with the hidden ancestor too.
         $this->db()->insert(
             'storefront_category',
@@ -139,6 +143,7 @@ final class CategoryManagementTest extends KernelTestCase
                 'hidden' => false,
                 'sort_order' => 99,
                 'parent_slug' => $this->slug,
+                'approval_status' => 'APPROVED',
             ],
             ['quote_eligible' => ParameterType::BOOLEAN, 'hidden' => ParameterType::BOOLEAN],
         );
@@ -324,6 +329,20 @@ final class CategoryManagementTest extends KernelTestCase
         $this->commands()->dispatch($command);
     }
 
+    /**
+     * spec-run-8 R10/R22 — a created category is a pending submission, so anything that expects
+     * the storefront to serve it has to approve it first, through the real command.
+     */
+    private function approve(): void
+    {
+        $this->write(new DecideCatalogSubmission(
+            CatalogSubmissionKind::Category,
+            $this->slug,
+            CatalogDecision::Approve,
+            'int-super-admin',
+        ));
+    }
+
     private function commands(): MessageBusInterface
     {
         /** @var MessageBusInterface $bus */
@@ -395,6 +414,9 @@ final class CategoryManagementTest extends KernelTestCase
             'headrest' => false,
             'description' => 'Produit de test.',
             'variants' => '[]',
+            // spec-run-8 R28/R29 — the fixture represents a product the storefront may serve.
+            'approval_status' => 'APPROVED',
+            'published' => true,
         ];
     }
 }

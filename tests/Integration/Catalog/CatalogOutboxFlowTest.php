@@ -28,6 +28,11 @@ final class CatalogOutboxFlowTest extends KernelTestCase
         }
 
         $productId = '22222222-2222-2222-2222-222222222222';
+        // publishBatch() relays the 50 oldest rows and this database is shared with every other
+        // suite and every earlier run: a backlog left behind elsewhere would hide this product's
+        // event, and relaying it here would project rows other tests have since removed. Close the
+        // backlog without dispatching it, before the command adds the one event that matters.
+        $connection->executeStatement('UPDATE outbox SET published_at = now() WHERE published_at IS NULL');
         $connection->executeStatement('DELETE FROM catalog_product_view WHERE id = :id', ['id' => $productId]);
         $connection->executeStatement('DELETE FROM catalog_products WHERE id = :id', ['id' => $productId]);
 

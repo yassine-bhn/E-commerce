@@ -1,0 +1,670 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\MacroNamespace;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTestError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* @WebProfiler/Profiler/base_js.html.twig */
+class __TwigTemplate_f6aa00f44320912a14b007b4799084b8 extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, MacroNamespace>
+     */
+    private array $macros = [];
+    private \Twig\Runtime\EscaperRuntime $escaper;
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->escaper = $env->getRuntime('Twig\Runtime\EscaperRuntime');
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Profiler/base_js.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Profiler/base_js.html.twig"));
+
+        // line 3
+        yield "
+";
+        // line 7
+        yield "<script";
+        if ((array_key_exists("csp_script_nonce", $context) && (($tmp = (isset($context["csp_script_nonce"]) || array_key_exists("csp_script_nonce", $context) ? $context["csp_script_nonce"] : (function () { throw new RuntimeError('Variable "csp_script_nonce" does not exist.', 7, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp))) {
+            yield " nonce=\"";
+            yield (string) $this->escaper->escape((isset($context["csp_script_nonce"]) || array_key_exists("csp_script_nonce", $context) ? $context["csp_script_nonce"] : (function () { throw new RuntimeError('Variable "csp_script_nonce" does not exist.', 7, $this->source); })()), "html", null, true);
+            yield "\"";
+        }
+        yield ">
+    window.addEventListener(\x27DOMContentLoaded\x27, () => {
+        new SymfonyProfiler();
+    });
+
+    class SymfonyProfiler {
+        constructor() {
+            this.#createTabs();
+            this.#createTableSearchFields();
+            this.#createToggles();
+            this.#createCopyToClipboard();
+            this.#convertDateTimesToUserTimezone();
+        }
+
+        #createTabs() {
+            /* the accessibility options of this component have been defined according to: */
+            /* www.w3.org/WAI/ARIA/apg/example-index/tabs/tabs-manual.html */
+            const tabGroups = document.querySelectorAll(\x27.sf-tabs:not([data-processed=true])\x27);
+
+            /* create the tab navigation for each group of tabs */
+            tabGroups.forEach((tabGroup, i) => {
+                const tabs = tabGroup.querySelectorAll(\x27:scope > .tab\x27);
+                const tabNavigation = document.createElement(\x27div\x27);
+                tabNavigation.classList.add(\x27tab-navigation\x27);
+                tabNavigation.setAttribute(\x27role\x27, \x27tablist\x27);
+
+                let selectedTabId = null;
+                let firstEnabledTabId = null;
+                tabs.forEach((tab, j) => {
+                    const tabId = `tab-\${i}-\${j}`;
+                    const tabTitle = tab.querySelector(\x27.tab-title\x27).innerHTML;
+
+                    const tabNavigationItem = document.createElement(\x27button\x27);
+                    tabNavigationItem.classList.add(\x27tab-control\x27);
+                    tabNavigationItem.setAttribute(\x27data-tab-id\x27, tabId);
+                    tabNavigationItem.setAttribute(\x27role\x27, \x27tab\x27);
+                    tabNavigationItem.setAttribute(\x27aria-controls\x27, tabId);
+                    if (tab.classList.contains(\x27active\x27)) { selectedTabId = tabId; }
+                    if (tab.classList.contains(\x27disabled\x27)) {
+                        tabNavigationItem.classList.add(\x27disabled\x27);
+                    } else if (null === firstEnabledTabId) {
+                        firstEnabledTabId = tabId;
+                    }
+                    tabNavigationItem.innerHTML = tabTitle;
+                    tabNavigation.appendChild(tabNavigationItem);
+
+                    const tabContent = tab.querySelector(\x27.tab-content\x27);
+                    tabContent.parentElement.setAttribute(\x27id\x27, tabId);
+                });
+
+                tabGroup.insertBefore(tabNavigation, tabGroup.firstChild);
+                selectedTabId = selectedTabId || firstEnabledTabId || `tab-\${i}-0`;
+                document.querySelector(\x27[data-tab-id=\"\x27 + selectedTabId + \x27\"]\x27).classList.add(\x27active\x27);
+            });
+
+            /* display the active tab and add the \x27click\x27 event listeners */
+            tabGroups.forEach((tabGroup) => {
+                const tabs = tabGroup.querySelectorAll(\x27:scope > .tab-navigation .tab-control\x27);
+                tabs.forEach((tab) => {
+                    const tabId = tab.getAttribute(\x27data-tab-id\x27);
+                    const tabPanel = document.getElementById(tabId);
+                    tabPanel.setAttribute(\x27role\x27, \x27tabpanel\x27);
+                    tabPanel.setAttribute(\x27aria-labelledby\x27, tabId);
+                    tabPanel.querySelector(\x27.tab-title\x27).className = \x27hidden\x27;
+
+                    if (tab.classList.contains(\x27active\x27)) {
+                        tabPanel.className = \x27block\x27;
+                        tab.setAttribute(\x27aria-selected\x27, \x27true\x27);
+                        tab.removeAttribute(\x27tabindex\x27);
+                    } else {
+                        tabPanel.className = \x27hidden\x27;
+                        tab.removeAttribute(\x27aria-selected\x27);
+                        tab.setAttribute(\x27tabindex\x27, \x27-1\x27);
+                    }
+
+                    tab.addEventListener(\x27click\x27, function(e) {
+                        let activeTab = e.target;
+
+                        /* needed because when the tab contains HTML contents, user can click */
+                        /* on any of those elements instead of their parent \x27<button>\x27 element */
+                        while (\x27button\x27 !== activeTab.tagName.toLowerCase()) {
+                            activeTab = activeTab.parentNode;
+                        }
+
+                        /* get the full list of tabs through the parent of the active tab element */
+                        const tabs = Array.from(activeTab.parentNode.children);
+                        tabs.forEach((tab) => {
+                            const tabId = tab.getAttribute(\x27data-tab-id\x27);
+                            document.getElementById(tabId).className = \x27hidden\x27;
+                            tab.classList.remove(\x27active\x27);
+                            tab.removeAttribute(\x27aria-selected\x27);
+                            tab.setAttribute(\x27tabindex\x27, \x27-1\x27);
+                        });
+
+                        activeTab.classList.add(\x27active\x27);
+                        activeTab.setAttribute(\x27aria-selected\x27, \x27true\x27);
+                        activeTab.removeAttribute(\x27tabindex\x27);
+                        const activeTabId = activeTab.getAttribute(\x27data-tab-id\x27);
+                        document.getElementById(activeTabId).className = \x27block\x27;
+                    });
+                });
+
+                tabGroup.setAttribute(\x27data-processed\x27, \x27true\x27);
+            });
+        }
+
+        #createTableSearchFields() {
+            document.querySelectorAll(\x27div.table-with-search-field\x27).forEach((tableWrapper, i) => {
+                const searchField = document.createElement(\x27input\x27);
+                searchField.type = \x27search\x27;
+                searchField.placeholder = \x27search...\x27;
+                searchField.id = `table-search-field-\${i}`;
+                searchField.classList.add(`table-search-field-input`);
+                searchField.autocapitalize = \x27off\x27;
+                searchField.autocomplete = \x27off\x27;
+                searchField.autocorrect = \x27off\x27;
+                tableWrapper.insertBefore(searchField, tableWrapper.firstChild);
+
+                const labelField = document.createElement(\x27label\x27);
+                labelField.htmlFor = `table-search-field-\${i}`;
+                labelField.classList.add(`table-search-field-label`);
+                labelField.textContent = \x27Search inside the contents of the table\x27;
+                tableWrapper.insertBefore(labelField, tableWrapper.firstChild);
+
+                searchField.addEventListener(\x27input\x27, () => {
+                    const query = searchField.value.toLowerCase();
+                    let allRowsAreHidden = true;
+                    tableWrapper.querySelectorAll(\x27tbody tr\x27).forEach((row) => {
+                        const rowMatchesQuery = row.textContent.toLowerCase().includes(query);
+                        row.style.display = rowMatchesQuery ? \x27\x27 : \x27none\x27;
+
+                        if (rowMatchesQuery) {
+                            allRowsAreHidden = false;
+                        }
+                    });
+
+                    /* if there are no results and all rows are hidden, show a message to avoid confusion */
+                    const noResultsElement = tableWrapper.querySelector(\x27.no-results-message\x27);
+                    if (allRowsAreHidden) {
+                        if (null === noResultsElement) {
+                            const noResultsElement = document.createElement(\x27p\x27);
+                            noResultsElement.textContent = \x27No results found.\x27;
+                            noResultsElement.classList.add(\x27no-results-message\x27);
+                            tableWrapper.appendChild(noResultsElement);
+                        } else {
+                            noResultsElement.style.display = \x27\x27;
+                        }
+                    } else {
+                        if (null !== noResultsElement) {
+                            noResultsElement.style.display = \x27none\x27;
+                        }
+                    }
+                });
+            });
+        }
+
+        #createToggles() {
+            const toggles = document.querySelectorAll(\x27.sf-toggle:not([data-processed=true])\x27);
+            toggles.forEach((toggle) => {
+                const elementSelector = toggle.getAttribute(\x27data-toggle-selector\x27);
+                const element = document.querySelector(elementSelector);
+
+                element.classList.add(\x27sf-toggle-content\x27);
+
+                if (toggle.hasAttribute(\x27data-toggle-initial\x27) && \x27display\x27 === toggle.getAttribute(\x27data-toggle-initial\x27)) {
+                    toggle.classList.add(\x27sf-toggle-on\x27);
+                    element.classList.add(\x27sf-toggle-visible\x27);
+                } else {
+                    toggle.classList.add(\x27sf-toggle-off\x27);
+                    element.classList.add(\x27sf-toggle-hidden\x27);
+                }
+
+                toggle.addEventListener(\x27click\x27, (e) => {
+                    const toggle = e.currentTarget;
+
+                    if (e.target.closest(\x27a, .sf-toggle\x27) !== toggle) {
+                        return;
+                    }
+
+                    e.preventDefault();
+
+                    if (\x27\x27 !== window.getSelection().toString()) {
+                        /* Don\x27t do anything on text selection */
+                        return;
+                    }
+
+                    const element = document.querySelector(toggle.getAttribute(\x27data-toggle-selector\x27));
+
+                    toggle.classList.toggle(\x27sf-toggle-on\x27);
+                    toggle.classList.toggle(\x27sf-toggle-off\x27);
+                    element.classList.toggle(\x27sf-toggle-hidden\x27);
+                    element.classList.toggle(\x27sf-toggle-visible\x27);
+
+                    /* the toggle doesn\x27t change its contents when clicking on it */
+                    if (!toggle.hasAttribute(\x27data-toggle-alt-content\x27)) {
+                        return;
+                    }
+
+                    if (!toggle.hasAttribute(\x27data-toggle-original-content\x27)) {
+                        toggle.setAttribute(\x27data-toggle-original-content\x27, toggle.innerHTML);
+                    }
+
+                    const currentContent = toggle.innerHTML;
+                    const originalContent = toggle.getAttribute(\x27data-toggle-original-content\x27);
+                    const altContent = toggle.getAttribute(\x27data-toggle-alt-content\x27);
+                    toggle.innerHTML = currentContent !== altContent ? altContent : originalContent;
+                });
+
+                toggle.setAttribute(\x27data-processed\x27, \x27true\x27);
+            });
+        }
+
+        #createCopyToClipboard() {
+            if (!navigator.clipboard) {
+                return;
+            }
+
+            const copyToClipboardElements = document.querySelectorAll(\x27[data-clipboard-text]\x27);
+
+            copyToClipboardElements.forEach((copyToClipboardElement) => {
+                copyToClipboardElement.classList.remove(\x27hidden\x27);
+
+                copyToClipboardElement.addEventListener(\x27click\x27, (e) => {
+                    /* Prevents from disallowing clicks on \"copy to clipboard\" elements inside toggles */
+                    e.stopPropagation();
+
+                    navigator.clipboard.writeText(copyToClipboardElement.getAttribute(\x27data-clipboard-text\x27));
+
+                    let oldContent = copyToClipboardElement.textContent;
+
+                    copyToClipboardElement.textContent = `✅ Copied!`;
+                    copyToClipboardElement.disabled = true;
+
+                    setTimeout(() => {
+                        copyToClipboardElement.textContent = oldContent;
+                        copyToClipboardElement.disabled = false;
+                    }, 7000);
+                });
+            });
+        }
+
+        #convertDateTimesToUserTimezone() {
+            const userTimezoneName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            document.querySelectorAll(\x27time[data-convert-to-user-timezone]\x27).forEach((timeElement) => {
+                const iso8601Datetime = timeElement.getAttribute(\x27datetime\x27);
+                const dateInUserTimezone = new Date(iso8601Datetime);
+
+                let options = {};
+                if (timeElement.hasAttribute(\x27data-render-as-datetime\x27)) {
+                    options = {
+                        year: \x27numeric\x27, month: \x27long\x27, day: \x27numeric\x27,
+                        hour: \x27numeric\x27, minute: \x27numeric\x27, second: \x27numeric\x27
+                    };
+                } else if (timeElement.hasAttribute(\x27data-render-as-date\x27)) {
+                    options = { year: \x27numeric\x27, month: \x27long\x27, day: \x27numeric\x27 };
+                } else if (timeElement.hasAttribute(\x27data-render-as-time\x27)) {
+                    options = { hour: \x27numeric\x27, minute: \x27numeric\x27, second: \x27numeric\x27 };
+                }
+
+                if (timeElement.hasAttribute(\x27data-render-with-millisecond-precision\x27)) {
+                    options.fractionalSecondDigits = 3;
+                }
+
+                /* dates/times are always rendered in English to match the rest of the Profiler interface */
+                timeElement.textContent = dateInUserTimezone.toLocaleString(\x27en\x27, options);
+
+                if (undefined !== userTimezoneName) {
+                    const existingTitle = timeElement.getAttribute(\x27title\x27);
+                    const newTitle = null === existingTitle
+                        ? `Date/times shown in your timezone: \${userTimezoneName}`
+                        : existingTitle + ` (date/times shown in your timezone: \${userTimezoneName})`;
+                    timeElement.setAttribute(\x27title\x27, newTitle);
+                }
+            });
+        }
+    }
+</script>
+";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        return; yield;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "@WebProfiler/Profiler/base_js.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDefaultEscapeStrategy(): string|false
+    {
+        return "html";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  56 => 7,  53 => 3,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("{# This file is partially duplicated in src/Symfony/Component/ErrorHandler/Resources/assets/js/exception.js.
+   If you make any change in this file, verify the same change is needed in the other file. #}
+
+{# CAUTION: the contents of this file are processed by Twig before loading
+            them as JavaScript source code. Always use \x27/*\x27 comments instead
+            of \x27//\x27 comments to avoid impossible-to-debug side-effects #}
+<script{% if csp_script_nonce is defined and csp_script_nonce %} nonce=\"{{ csp_script_nonce }}\"{% endif %}>
+    window.addEventListener(\x27DOMContentLoaded\x27, () => {
+        new SymfonyProfiler();
+    });
+
+    class SymfonyProfiler {
+        constructor() {
+            this.#createTabs();
+            this.#createTableSearchFields();
+            this.#createToggles();
+            this.#createCopyToClipboard();
+            this.#convertDateTimesToUserTimezone();
+        }
+
+        #createTabs() {
+            /* the accessibility options of this component have been defined according to: */
+            /* www.w3.org/WAI/ARIA/apg/example-index/tabs/tabs-manual.html */
+            const tabGroups = document.querySelectorAll(\x27.sf-tabs:not([data-processed=true])\x27);
+
+            /* create the tab navigation for each group of tabs */
+            tabGroups.forEach((tabGroup, i) => {
+                const tabs = tabGroup.querySelectorAll(\x27:scope > .tab\x27);
+                const tabNavigation = document.createElement(\x27div\x27);
+                tabNavigation.classList.add(\x27tab-navigation\x27);
+                tabNavigation.setAttribute(\x27role\x27, \x27tablist\x27);
+
+                let selectedTabId = null;
+                let firstEnabledTabId = null;
+                tabs.forEach((tab, j) => {
+                    const tabId = `tab-\${i}-\${j}`;
+                    const tabTitle = tab.querySelector(\x27.tab-title\x27).innerHTML;
+
+                    const tabNavigationItem = document.createElement(\x27button\x27);
+                    tabNavigationItem.classList.add(\x27tab-control\x27);
+                    tabNavigationItem.setAttribute(\x27data-tab-id\x27, tabId);
+                    tabNavigationItem.setAttribute(\x27role\x27, \x27tab\x27);
+                    tabNavigationItem.setAttribute(\x27aria-controls\x27, tabId);
+                    if (tab.classList.contains(\x27active\x27)) { selectedTabId = tabId; }
+                    if (tab.classList.contains(\x27disabled\x27)) {
+                        tabNavigationItem.classList.add(\x27disabled\x27);
+                    } else if (null === firstEnabledTabId) {
+                        firstEnabledTabId = tabId;
+                    }
+                    tabNavigationItem.innerHTML = tabTitle;
+                    tabNavigation.appendChild(tabNavigationItem);
+
+                    const tabContent = tab.querySelector(\x27.tab-content\x27);
+                    tabContent.parentElement.setAttribute(\x27id\x27, tabId);
+                });
+
+                tabGroup.insertBefore(tabNavigation, tabGroup.firstChild);
+                selectedTabId = selectedTabId || firstEnabledTabId || `tab-\${i}-0`;
+                document.querySelector(\x27[data-tab-id=\"\x27 + selectedTabId + \x27\"]\x27).classList.add(\x27active\x27);
+            });
+
+            /* display the active tab and add the \x27click\x27 event listeners */
+            tabGroups.forEach((tabGroup) => {
+                const tabs = tabGroup.querySelectorAll(\x27:scope > .tab-navigation .tab-control\x27);
+                tabs.forEach((tab) => {
+                    const tabId = tab.getAttribute(\x27data-tab-id\x27);
+                    const tabPanel = document.getElementById(tabId);
+                    tabPanel.setAttribute(\x27role\x27, \x27tabpanel\x27);
+                    tabPanel.setAttribute(\x27aria-labelledby\x27, tabId);
+                    tabPanel.querySelector(\x27.tab-title\x27).className = \x27hidden\x27;
+
+                    if (tab.classList.contains(\x27active\x27)) {
+                        tabPanel.className = \x27block\x27;
+                        tab.setAttribute(\x27aria-selected\x27, \x27true\x27);
+                        tab.removeAttribute(\x27tabindex\x27);
+                    } else {
+                        tabPanel.className = \x27hidden\x27;
+                        tab.removeAttribute(\x27aria-selected\x27);
+                        tab.setAttribute(\x27tabindex\x27, \x27-1\x27);
+                    }
+
+                    tab.addEventListener(\x27click\x27, function(e) {
+                        let activeTab = e.target;
+
+                        /* needed because when the tab contains HTML contents, user can click */
+                        /* on any of those elements instead of their parent \x27<button>\x27 element */
+                        while (\x27button\x27 !== activeTab.tagName.toLowerCase()) {
+                            activeTab = activeTab.parentNode;
+                        }
+
+                        /* get the full list of tabs through the parent of the active tab element */
+                        const tabs = Array.from(activeTab.parentNode.children);
+                        tabs.forEach((tab) => {
+                            const tabId = tab.getAttribute(\x27data-tab-id\x27);
+                            document.getElementById(tabId).className = \x27hidden\x27;
+                            tab.classList.remove(\x27active\x27);
+                            tab.removeAttribute(\x27aria-selected\x27);
+                            tab.setAttribute(\x27tabindex\x27, \x27-1\x27);
+                        });
+
+                        activeTab.classList.add(\x27active\x27);
+                        activeTab.setAttribute(\x27aria-selected\x27, \x27true\x27);
+                        activeTab.removeAttribute(\x27tabindex\x27);
+                        const activeTabId = activeTab.getAttribute(\x27data-tab-id\x27);
+                        document.getElementById(activeTabId).className = \x27block\x27;
+                    });
+                });
+
+                tabGroup.setAttribute(\x27data-processed\x27, \x27true\x27);
+            });
+        }
+
+        #createTableSearchFields() {
+            document.querySelectorAll(\x27div.table-with-search-field\x27).forEach((tableWrapper, i) => {
+                const searchField = document.createElement(\x27input\x27);
+                searchField.type = \x27search\x27;
+                searchField.placeholder = \x27search...\x27;
+                searchField.id = `table-search-field-\${i}`;
+                searchField.classList.add(`table-search-field-input`);
+                searchField.autocapitalize = \x27off\x27;
+                searchField.autocomplete = \x27off\x27;
+                searchField.autocorrect = \x27off\x27;
+                tableWrapper.insertBefore(searchField, tableWrapper.firstChild);
+
+                const labelField = document.createElement(\x27label\x27);
+                labelField.htmlFor = `table-search-field-\${i}`;
+                labelField.classList.add(`table-search-field-label`);
+                labelField.textContent = \x27Search inside the contents of the table\x27;
+                tableWrapper.insertBefore(labelField, tableWrapper.firstChild);
+
+                searchField.addEventListener(\x27input\x27, () => {
+                    const query = searchField.value.toLowerCase();
+                    let allRowsAreHidden = true;
+                    tableWrapper.querySelectorAll(\x27tbody tr\x27).forEach((row) => {
+                        const rowMatchesQuery = row.textContent.toLowerCase().includes(query);
+                        row.style.display = rowMatchesQuery ? \x27\x27 : \x27none\x27;
+
+                        if (rowMatchesQuery) {
+                            allRowsAreHidden = false;
+                        }
+                    });
+
+                    /* if there are no results and all rows are hidden, show a message to avoid confusion */
+                    const noResultsElement = tableWrapper.querySelector(\x27.no-results-message\x27);
+                    if (allRowsAreHidden) {
+                        if (null === noResultsElement) {
+                            const noResultsElement = document.createElement(\x27p\x27);
+                            noResultsElement.textContent = \x27No results found.\x27;
+                            noResultsElement.classList.add(\x27no-results-message\x27);
+                            tableWrapper.appendChild(noResultsElement);
+                        } else {
+                            noResultsElement.style.display = \x27\x27;
+                        }
+                    } else {
+                        if (null !== noResultsElement) {
+                            noResultsElement.style.display = \x27none\x27;
+                        }
+                    }
+                });
+            });
+        }
+
+        #createToggles() {
+            const toggles = document.querySelectorAll(\x27.sf-toggle:not([data-processed=true])\x27);
+            toggles.forEach((toggle) => {
+                const elementSelector = toggle.getAttribute(\x27data-toggle-selector\x27);
+                const element = document.querySelector(elementSelector);
+
+                element.classList.add(\x27sf-toggle-content\x27);
+
+                if (toggle.hasAttribute(\x27data-toggle-initial\x27) && \x27display\x27 === toggle.getAttribute(\x27data-toggle-initial\x27)) {
+                    toggle.classList.add(\x27sf-toggle-on\x27);
+                    element.classList.add(\x27sf-toggle-visible\x27);
+                } else {
+                    toggle.classList.add(\x27sf-toggle-off\x27);
+                    element.classList.add(\x27sf-toggle-hidden\x27);
+                }
+
+                toggle.addEventListener(\x27click\x27, (e) => {
+                    const toggle = e.currentTarget;
+
+                    if (e.target.closest(\x27a, .sf-toggle\x27) !== toggle) {
+                        return;
+                    }
+
+                    e.preventDefault();
+
+                    if (\x27\x27 !== window.getSelection().toString()) {
+                        /* Don\x27t do anything on text selection */
+                        return;
+                    }
+
+                    const element = document.querySelector(toggle.getAttribute(\x27data-toggle-selector\x27));
+
+                    toggle.classList.toggle(\x27sf-toggle-on\x27);
+                    toggle.classList.toggle(\x27sf-toggle-off\x27);
+                    element.classList.toggle(\x27sf-toggle-hidden\x27);
+                    element.classList.toggle(\x27sf-toggle-visible\x27);
+
+                    /* the toggle doesn\x27t change its contents when clicking on it */
+                    if (!toggle.hasAttribute(\x27data-toggle-alt-content\x27)) {
+                        return;
+                    }
+
+                    if (!toggle.hasAttribute(\x27data-toggle-original-content\x27)) {
+                        toggle.setAttribute(\x27data-toggle-original-content\x27, toggle.innerHTML);
+                    }
+
+                    const currentContent = toggle.innerHTML;
+                    const originalContent = toggle.getAttribute(\x27data-toggle-original-content\x27);
+                    const altContent = toggle.getAttribute(\x27data-toggle-alt-content\x27);
+                    toggle.innerHTML = currentContent !== altContent ? altContent : originalContent;
+                });
+
+                toggle.setAttribute(\x27data-processed\x27, \x27true\x27);
+            });
+        }
+
+        #createCopyToClipboard() {
+            if (!navigator.clipboard) {
+                return;
+            }
+
+            const copyToClipboardElements = document.querySelectorAll(\x27[data-clipboard-text]\x27);
+
+            copyToClipboardElements.forEach((copyToClipboardElement) => {
+                copyToClipboardElement.classList.remove(\x27hidden\x27);
+
+                copyToClipboardElement.addEventListener(\x27click\x27, (e) => {
+                    /* Prevents from disallowing clicks on \"copy to clipboard\" elements inside toggles */
+                    e.stopPropagation();
+
+                    navigator.clipboard.writeText(copyToClipboardElement.getAttribute(\x27data-clipboard-text\x27));
+
+                    let oldContent = copyToClipboardElement.textContent;
+
+                    copyToClipboardElement.textContent = `✅ Copied!`;
+                    copyToClipboardElement.disabled = true;
+
+                    setTimeout(() => {
+                        copyToClipboardElement.textContent = oldContent;
+                        copyToClipboardElement.disabled = false;
+                    }, 7000);
+                });
+            });
+        }
+
+        #convertDateTimesToUserTimezone() {
+            const userTimezoneName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            document.querySelectorAll(\x27time[data-convert-to-user-timezone]\x27).forEach((timeElement) => {
+                const iso8601Datetime = timeElement.getAttribute(\x27datetime\x27);
+                const dateInUserTimezone = new Date(iso8601Datetime);
+
+                let options = {};
+                if (timeElement.hasAttribute(\x27data-render-as-datetime\x27)) {
+                    options = {
+                        year: \x27numeric\x27, month: \x27long\x27, day: \x27numeric\x27,
+                        hour: \x27numeric\x27, minute: \x27numeric\x27, second: \x27numeric\x27
+                    };
+                } else if (timeElement.hasAttribute(\x27data-render-as-date\x27)) {
+                    options = { year: \x27numeric\x27, month: \x27long\x27, day: \x27numeric\x27 };
+                } else if (timeElement.hasAttribute(\x27data-render-as-time\x27)) {
+                    options = { hour: \x27numeric\x27, minute: \x27numeric\x27, second: \x27numeric\x27 };
+                }
+
+                if (timeElement.hasAttribute(\x27data-render-with-millisecond-precision\x27)) {
+                    options.fractionalSecondDigits = 3;
+                }
+
+                /* dates/times are always rendered in English to match the rest of the Profiler interface */
+                timeElement.textContent = dateInUserTimezone.toLocaleString(\x27en\x27, options);
+
+                if (undefined !== userTimezoneName) {
+                    const existingTitle = timeElement.getAttribute(\x27title\x27);
+                    const newTitle = null === existingTitle
+                        ? `Date/times shown in your timezone: \${userTimezoneName}`
+                        : existingTitle + ` (date/times shown in your timezone: \${userTimezoneName})`;
+                    timeElement.setAttribute(\x27title\x27, newTitle);
+                }
+            });
+        }
+    }
+</script>
+", "@WebProfiler/Profiler/base_js.html.twig", "/app/vendor/symfony/web-profiler-bundle/Resources/views/Profiler/base_js.html.twig");
+    }
+}

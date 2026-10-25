@@ -1,0 +1,260 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\MacroNamespace;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTestError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* @NelmioApiDoc/Scalar/index.html.twig */
+class __TwigTemplate_476aa822c39f1349325158fc142e1e1b extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, MacroNamespace>
+     */
+    private array $macros = [];
+    private \Twig\Runtime\EscaperRuntime $escaper;
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->escaper = $env->getRuntime('Twig\Runtime\EscaperRuntime');
+
+        $this->parent = false;
+
+        $this->blocks = [
+            'meta' => [$this, 'block_meta'],
+            'title' => [$this, 'block_title'],
+            'swagger_ui' => [$this, 'block_swagger_ui'],
+            'swagger_initialization' => [$this, 'block_swagger_initialization'],
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@NelmioApiDoc/Scalar/index.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@NelmioApiDoc/Scalar/index.html.twig"));
+
+        // line 1
+        yield "<!DOCTYPE html>
+<html>
+<head>
+    ";
+        // line 4
+        yield from $this->unwrap()->yieldBlock('meta', $context, $blocks);
+        // line 8
+        yield "    <title>";
+        yield from $this->unwrap()->yieldBlock('title', $context, $blocks);
+        yield "</title>
+</head>
+<body>
+    ";
+        // line 11
+        yield from $this->unwrap()->yieldBlock('swagger_ui', $context, $blocks);
+        // line 15
+        yield "    ";
+        yield from $this->unwrap()->yieldBlock('swagger_initialization', $context, $blocks);
+        // line 25
+        yield "</body>
+</html>
+";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        return; yield;
+    }
+
+    // line 4
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_meta(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "meta"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "meta"));
+
+        // line 5
+        yield "        <meta charset=\"UTF-8\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">
+    ";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 8
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_title(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
+
+        yield (string) $this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["swagger_data"]) || array_key_exists("swagger_data", $context) ? $context["swagger_data"] : (function () { throw new RuntimeError('Variable "swagger_data" does not exist.', 8, $this->source); })()), "spec", [], "any", false, false, false, 8), "info", [], "any", false, false, false, 8), "title", [], "any", false, false, false, 8), "html", null, true);
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 11
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_swagger_ui(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "swagger_ui"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "swagger_ui"));
+
+        // line 12
+        yield "        <div id=\"scalar-api-reference\"></div>
+        <script id=\"scalar-api-reference-data\" type=\"application/json\">";
+        // line 13
+        yield (string) json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["swagger_data"]) || array_key_exists("swagger_data", $context) ? $context["swagger_data"] : (function () { throw new RuntimeError('Variable "swagger_data" does not exist.', 13, $this->source); })()), "spec", [], "any", false, false, false, 13), 65);
+        yield "</script>
+    ";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 15
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_swagger_initialization(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "swagger_initialization"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "swagger_initialization"));
+
+        // line 16
+        yield "        ";
+        yield (string) $this->extensions['Nelmio\ApiDocBundle\Render\Html\GetNelmioAsset']->__invoke((isset($context["assets_mode"]) || array_key_exists("assets_mode", $context) ? $context["assets_mode"] : (function () { throw new RuntimeError('Variable "assets_mode" does not exist.', 16, $this->source); })()), "scalar/scalar.standalone.js");
+        yield "
+        <script>
+            Scalar.createApiReference(\x27#scalar-api-reference\x27, {
+                title: ";
+        // line 19
+        yield (string) json_encode(((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, ($context["swagger_data"] ?? null), "spec", [], "any", false, true, false, 19), "info", [], "any", false, true, false, 19), "title", [], "any", true, true, false, 19)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["swagger_data"]) || array_key_exists("swagger_data", $context) ? $context["swagger_data"] : (function () { throw new RuntimeError('Variable "swagger_data" does not exist.', 19, $this->source); })()), "spec", [], "any", false, false, false, 19), "info", [], "any", false, false, false, 19), "title", [], "any", false, false, false, 19), "API")) : ("API")), 65);
+        yield ",
+                ...";
+        // line 20
+        yield (string) json_encode((isset($context["scalar_config"]) || array_key_exists("scalar_config", $context) ? $context["scalar_config"] : (function () { throw new RuntimeError('Variable "scalar_config" does not exist.', 20, $this->source); })()), 65);
+        yield ",
+                content: JSON.parse(document.getElementById(\x27scalar-api-reference-data\x27).textContent),
+            });
+        </script>
+    ";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "@NelmioApiDoc/Scalar/index.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDefaultEscapeStrategy(): string|false
+    {
+        return "html";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  191 => 20,  187 => 19,  180 => 16,  167 => 15,  154 => 13,  151 => 12,  138 => 11,  115 => 8,  102 => 5,  89 => 4,  76 => 25,  73 => 15,  71 => 11,  64 => 8,  62 => 4,  57 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<!DOCTYPE html>
+<html>
+<head>
+    {% block meta %}
+        <meta charset=\"UTF-8\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">
+    {% endblock meta %}
+    <title>{% block title %}{{ swagger_data.spec.info.title }}{% endblock title %}</title>
+</head>
+<body>
+    {% block swagger_ui %}
+        <div id=\"scalar-api-reference\"></div>
+        <script id=\"scalar-api-reference-data\" type=\"application/json\">{{ swagger_data.spec|json_encode(65)|raw }}</script>
+    {% endblock swagger_ui %}
+    {% block swagger_initialization %}
+        {{ nelmioAsset(assets_mode, \x27scalar/scalar.standalone.js\x27) }}
+        <script>
+            Scalar.createApiReference(\x27#scalar-api-reference\x27, {
+                title: {{ swagger_data.spec.info.title|default(\x27API\x27)|json_encode(65)|raw }},
+                ...{{ scalar_config|json_encode(65)|raw }},
+                content: JSON.parse(document.getElementById(\x27scalar-api-reference-data\x27).textContent),
+            });
+        </script>
+    {% endblock swagger_initialization %}
+</body>
+</html>
+", "@NelmioApiDoc/Scalar/index.html.twig", "/app/vendor/nelmio/api-doc-bundle/templates/Scalar/index.html.twig");
+    }
+}

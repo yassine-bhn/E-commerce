@@ -1,0 +1,12 @@
+Close task F-csrf-origin-guard (ADR-0013 CSRF Origin/Referer/Sec-Fetch-Site guard) to DONE.
+
+The guard shipped in `CrossSiteRequestGuardSubscriber`, but the round-1 security review failed with DO-NOT-SHIP: the guard keys on the raw `Request::getPathInfo()`, while Symfony's `UrlMatcher` matches `rawurldecode($pathinfo)`, so any percent-encoded spelling of `/api/v1` (e.g. `POST /api%2Fv1/storefront/orders`) routes normally and skips the guard — verified against the running stack: the plain path answers 403, the encoded spellings reach the firewall and answer 401.
+
+Continue the FIXES plan already recorded in `.agents/state/F-csrf-origin-guard.md` under "FIXES plan (round 1)", keeping its locked decisions:
+
+- FIX-2 (production): decode the path once with `rawurldecode()` in the guard, mirroring `UrlMatcher::doMatch()`; extract a shared `Origin` value object and `OriginAllowList` into `src/Shared/Domain/Http/`, consumed by both `CrossSiteRequestGuardSubscriber` and `CorsSubscriber` (CorsSubscriber keeps echoing the raw `Origin` header value so browser comparison is unchanged); move guard priority 16 → 14 (16 collides with `MalformedRememberMeCookieSubscriber` and `LocaleListener`); stop re-splitting/re-parsing the allow-list per request (P1); add unit tests for the two new Domain classes.
+- FIX-3 (docs): update `docs/adr/ADR-0013-session-cookie-credential.md` — S2: state the raw-path caveat instead of overstating the control; S4: the allow-listed origin becomes a write trust anchor; S5: "own origin" derives from `Host`/`X-Forwarded-Host`, trusted proxies decide.
+- FIX-1 (tests) is already written: `tests/Functional/CsrfOriginGuardTest.php` currently has 2 failures that are exactly the S1 bypass expectations (`/api%2Fv1/...` and `/api/%76%31/...` expecting 403); they must be green after FIX-2 without weakening the existing pins.
+- Then re-run the review fan-out (code, architecture, security, performance, test reviewers, plus solid-guardian on the design-bearing diff) and, if clean, close the task: GATE REVIEW ok, extended coverage table, GATE DONE per `.agents/orchestration.md` and the AGENTS.md Definition of Done.
+
+Out of scope (recorded in the task state, not to fix here): `LoginAuthenticator::supports()` raw-path comparison; the 20 leftover `csrf-*` rows in `app_test.processed_commands`; the OPTIONS preflight mutation limitation; infection (the image has no coverage driver).

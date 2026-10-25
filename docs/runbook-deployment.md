@@ -26,6 +26,7 @@ internet ── 80/443 ──► edge (caddy) ──► app:8080 (FrankenPHP) �
 git clone <backend-repo> /srv/ecommerce && cd /srv/ecommerce
 cp .env.prod.example .env.prod
 $EDITOR .env.prod            # domains, APP_SECRET, POSTGRES_PASSWORD, MEILI_MASTER_KEY, image names
+$EDITOR .env.prod            # WHATSAPP_PHONE_NUMBER (8-15 digits, real number) and WHATSAPP_DEFAULT_MESSAGE (may be empty)
 
 docker login ghcr.io -u <user>          # only for private packages
 docker compose --env-file .env.prod -f compose.prod.yaml config --quiet   # syntax check
@@ -33,9 +34,9 @@ docker compose --env-file .env.prod -f compose.prod.yaml config --quiet   # synt
 ```
 
 `release.sh` validates every required key (and rejects `change-me*` placeholders), records the
-running tag as `PREVIOUS_IMAGE_TAG`, pulls, applies migrations, rebuilds the Meilisearch index,
-starts the stack with `--wait`, and smoke-tests `/readyz` inside the app container. It stops on the
-first failure.
+running tag as `PREVIOUS_IMAGE_TAG`, pulls, applies migrations, approves the catalogue that predates
+the approval workflow (§3), rebuilds the Meilisearch index, starts the stack with `--wait`, and
+smoke-tests `/readyz` inside the app container. It stops on the first failure.
 
 ## 3. Releasing a new version
 
@@ -50,6 +51,41 @@ cd /srv/ecommerce
 `IMAGE_TAG` in `.env.prod` is rewritten to `<commit-sha>` and the previous tag is kept in
 `PREVIOUS_IMAGE_TAG`. Migrations run before the new image starts; keep them backward-compatible.
 
+Between the migrations and the search reindex the release runs
+`php bin/console app:catalog:backfill-approval --apply`. The approval migration is **schema only**
+(MIG-002): it adds the approval columns and the audit table but approves nothing, so without that
+step a catalogue that existed before the workflow would stay `PENDING_APPROVAL` and unpublished —
+invisible on the storefront. The command only touches rows that carry no workflow metadata at all
+(`submitted_*` and `reviewed_*` all null), so a submission or a decision is never overwritten; it
+reports how many products and categories it approved and writes nothing when there is nothing left
+to approve. Run it without `--apply` to see what it would do.
+
+### If the release stops on a duplicate e-mail
+
+`20261024000000` makes `customer_profile.email` unique **case-insensitively** — every identity
+lookup compares `lower(email)` — through the functional unique index
+`uniq_customer_profile_email_lower`. When two accounts already share an address, the migration
+**aborts with the list of duplicated addresses and changes no row**: nothing is deleted and no two
+accounts are merged, because that decision belongs to the operator, not to a migration. The release
+stops at the migration step with that list in its output.
+
+To see the rows to resolve:
+
+```sql
+SELECT id, name, email
+FROM customer_profile
+WHERE lower(email) IN (
+    SELECT lower(email) FROM customer_profile GROUP BY lower(email) HAVING count(*) > 1
+)
+ORDER BY lower(email), id;
+```
+
+Decide for each address which account keeps it, re-address every other account by hand
+(`UPDATE customer_profile SET email = '<new address>' WHERE id = '<id>'`), then run
+`./deploy/release.sh <commit-sha>` again: the index is created on that second attempt. Once it
+exists, the identity API answers **409** instead of creating a duplicate — registration, the Google
+account link and the profile update all map the violation to the same conflict.
+
 ## 4. Rollback
 
 ```bash
@@ -61,6 +97,19 @@ It swaps `IMAGE_TAG` and `PREVIOUS_IMAGE_TAG`, restarts with `--wait` and smoke-
 It refuses when no previous tag is recorded and never removes volumes. **Migrations are
 forward-only (D6):** rollback reverts images, not schema. If the new release added a migration, the
 old code must still run against the new schema — otherwise roll forward with a fix.
+
+### Rolling the approval workflow back
+
+`20261023000000` is reversible in **schema**, not in **state**. Its `down()` drops `approval_status`,
+the submitter/reviewer columns, `published` and `catalog_audit_log`; the re-executed `up()` recreates
+them, so every row comes back `PENDING_APPROVAL` and unpublished and the whole catalog trail is gone.
+That is the deliberately safe direction — a product a Super Admin rejected is never silently
+re-published — but it means a rollback of this feature is a **backup restore, not a migration**:
+restore the dump taken before the release (§5) if the decisions and the trail have to survive. No
+migration re-approves or re-publishes anything, so the storefront stays empty until
+`app:catalog:backfill-approval --apply` decides the legacy rows (but it will not un-reject a row it
+never touched: a rejected row keeps its metadata only if the schema survived, i.e. if you did not roll
+back).
 
 ## 5. Backups and restore
 
@@ -128,6 +177,10 @@ service. See `docs/observability.md`.
   ADR-0010 and `.agents/orchestration.md` follow-ups. No INF-003 violation is introduced: the
   runtime is still FrankenPHP.
 - Migrations are forward-only; rollback only reverts image tags (D6).
+- Rolling the approval workflow back discards approval and publication state and the catalog audit
+trail (§4): recovery from that is a backup restore, not a migration.
+- The e-mail uniqueness migration aborts on pre-existing duplicate addresses instead of resolving
+them (§3): the operator decides which account keeps the address.
 - Backups are local to the host (assumption 8).
 - The storefront image is published by `Zidane_front_web/.github/workflows/deploy.yml` (R32) with
   the same `IMAGE_TAG` convention; the backend `Deploy` workflow publishes the backend image only,

@@ -65,6 +65,23 @@ final class StorefrontProductRepository
 
     public function bySlug(string $slug): ?StorefrontProductView
     {
+        $row = $this->connection->fetchAssociative(
+            self::SELECT.' WHERE slug = :slug AND'.CatalogVisibility::PRODUCT_PUBLIC,
+            ['slug' => $slug],
+        );
+        if (false === $row) {
+            return null;
+        }
+
+        return StorefrontProductView::fromRow($row);
+    }
+
+    /**
+     * spec-run-8 R15 — the Super Admin reads the record whatever its approval and publication
+     * state, so the admin surface never goes through the public predicate.
+     */
+    public function adminBySlug(string $slug): ?StorefrontProductView
+    {
         $row = $this->connection->fetchAssociative(self::SELECT.' WHERE slug = :slug', ['slug' => $slug]);
         if (false === $row) {
             return null;
@@ -168,7 +185,7 @@ final class StorefrontProductRepository
      */
     private function sqlConditions(StorefrontProductFilters $filters): array
     {
-        $conditions = [];
+        $conditions = [CatalogVisibility::PRODUCT_PUBLIC];
         $params = [];
 
         if (null !== $filters->q) {
@@ -231,7 +248,7 @@ final class StorefrontProductRepository
             $params['stock'] = $filters->stock;
         }
 
-        return [] === $conditions ? ['', $params] : [' WHERE '.implode(' AND ', $conditions), $params];
+        return [' WHERE '.implode(' AND ', $conditions), $params];
     }
 
     private static function sqlOrderBy(?string $sort): string
@@ -257,7 +274,7 @@ final class StorefrontProductRepository
         }
 
         $rows = $this->connection->fetchAllAssociative(
-            self::SELECT.' WHERE slug IN (:slugs)',
+            self::SELECT.' WHERE slug IN (:slugs) AND'.CatalogVisibility::PRODUCT_PUBLIC,
             ['slugs' => $slugs],
             ['slugs' => ArrayParameterType::STRING],
         );
