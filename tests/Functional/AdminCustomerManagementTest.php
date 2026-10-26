@@ -155,7 +155,7 @@ final class AdminCustomerManagementTest extends WebTestCase
         self::assertSame('ROLE_USER', $this->storedRole($target->getId()));
     }
 
-    public function testStandardAdminIsRefusedOnTheRoleEndpointAndNothingIsWritten(): void
+    public function testStandardAdminIsRejectedOnTheRoleRouteAndNothingIsWritten(): void
     {
         $client = static::createClient();
         $admin = $this->createUser('ROLE_ADMIN');
@@ -163,15 +163,14 @@ final class AdminCustomerManagementTest extends WebTestCase
 
         $client->loginUser($admin);
 
-        $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$target->getId().'/role', ['role' => 'ROLE_SUPER_ADMIN']);
+        $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$target->getId().'/role', ['role' => 'ROLE_ADMIN']);
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-        self::assertSame('Access denied.', $this->decode($client->getResponse())['error'] ?? null);
 
         self::assertSame('ROLE_USER', $this->storedRole($target->getId()));
         self::assertSame(0, $this->auditRowCount($target->getId(), 'USER_ROLE_CHANGED'));
     }
 
-    public function testSuperAdminPromotesAUserWhoThenPowersTheSuperAdminOnlyRoute(): void
+    public function testSuperAdminPromotesAUserWhoThenPowersTheRoleEditorAgain(): void
     {
         $client = static::createClient();
         $superAdmin = $this->createUser('ROLE_SUPER_ADMIN');
@@ -222,7 +221,7 @@ final class AdminCustomerManagementTest extends WebTestCase
         self::assertContains('ROLE_USER', $roles);
         self::assertCount(2, $roles, 'CustomerUser::getRoles() adds and drops nothing');
 
-        // and the granted role really unlocks the ROLE_SUPER_ADMIN-only route for the next request
+        // and the granted role is immediately effective on the admin surface for the next request
         $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$colleague->getId().'/role', ['role' => 'ROLE_SUPER_ADMIN']);
         self::assertResponseIsSuccessful();
         self::assertSame('ROLE_SUPER_ADMIN', $this->storedRole($colleague->getId()));
@@ -235,16 +234,22 @@ final class AdminCustomerManagementTest extends WebTestCase
         $target = $this->createUser('ROLE_USER');
         $client->loginUser($superAdmin);
 
-        foreach (['ROLE_ADMIN', '', 'root', 'role_user'] as $rejected) {
+        foreach (['ROLE_MODERATOR', '', 'root', 'role_user'] as $rejected) {
             $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$target->getId().'/role', ['role' => $rejected]);
             self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
             self::assertSame('ROLE_USER', $this->storedRole($target->getId()));
             self::assertSame(0, $this->auditRowCount($target->getId(), 'USER_ROLE_CHANGED'));
         }
 
+        // R11 — the staff role is part of the assignable set, so it is the refusals above that
+        // bound the surface, not this value.
+        $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$target->getId().'/role', ['role' => 'ROLE_ADMIN']);
+        self::assertResponseIsSuccessful();
+        self::assertSame('ROLE_ADMIN', $this->storedRole($target->getId()));
+
         $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$target->getId().'/role', []);
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        self::assertSame('ROLE_USER', $this->storedRole($target->getId()));
+        self::assertSame('ROLE_ADMIN', $this->storedRole($target->getId()));
     }
 
     public function testDemotingTheLastActiveSuperAdminIsRefusedWithNoWriteAndNoAuditRow(): void

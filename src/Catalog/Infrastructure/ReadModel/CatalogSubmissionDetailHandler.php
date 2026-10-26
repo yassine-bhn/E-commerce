@@ -22,6 +22,6 @@ final class CatalogSubmissionDetailHandler
 
     public function __invoke(GetCatalogSubmission $query): ?CatalogSubmissionView
     {
-        return $this->finder->one($query->kind, $query->slug, $query->requesterId, $query->isSuperAdmin);
+        return $this->finder->one($query->kind, $query->slug, $query->requesterId, $query->isAdmin);
     }
 }

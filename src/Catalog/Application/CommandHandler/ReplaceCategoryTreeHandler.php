@@ -22,8 +22,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * is written, so the catalog can never disagree with an order snapshot (ECO-006).
  *
  * spec-run-8 R7/R8/R25/R35/R40 — the row is read through {@see SubmissionAccessPolicy} first,
- * so an Admin can only rewrite their own pending or rejected submission; a Super Admin editing
- * an approved category sends it back to `PENDING_APPROVAL`, review metadata included.
+ * so a caller outside the back office can only rewrite their own pending or rejected submission;
+ * a staff edit of an approved category sends it back to `PENDING_APPROVAL`, review metadata too.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class ReplaceCategoryTreeHandler
@@ -58,7 +58,7 @@ final class ReplaceCategoryTreeHandler
                 CatalogSubmissionKind::Category,
                 $command->slug,
                 $command->actorId,
-                $command->actorIsSuperAdmin,
+                $command->actorIsAdmin,
             );
 
             $category = Category::fromStoredRow(

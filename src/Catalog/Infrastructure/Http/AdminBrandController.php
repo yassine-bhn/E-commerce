@@ -17,12 +17,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * Super-admin management of the brand list shown in the storefront filters.
+ * Back-office management of the brand list shown in the storefront filters.
  * A brand name is also stored on every product, so renames are propagated and
  * deleting a brand that still has products is refused.
  */
 #[Route('/api/v1/admin/catalog/brands')]
-#[IsGranted('ROLE_SUPER_ADMIN')]
+#[IsGranted('ROLE_ADMIN')]
 final class AdminBrandController
 {
     public function __construct(

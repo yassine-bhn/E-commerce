@@ -13,7 +13,7 @@ final readonly class ShowCategory
     public function __construct(
         public string $slug,
         public ?string $actorId = null,
-        public bool $actorIsSuperAdmin = false,
+        public bool $actorIsAdmin = false,
     ) {
     }
 }

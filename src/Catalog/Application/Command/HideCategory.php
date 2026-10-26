@@ -16,7 +16,7 @@ final readonly class HideCategory
     public function __construct(
         public string $slug,
         public ?string $actorId = null,
-        public bool $actorIsSuperAdmin = false,
+        public bool $actorIsAdmin = false,
     ) {
     }
 }

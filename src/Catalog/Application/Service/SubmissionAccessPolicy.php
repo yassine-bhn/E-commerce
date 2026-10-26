@@ -13,10 +13,11 @@ use Doctrine\DBAL\Connection;
 /**
  * spec-run-8 R7/R8/R25/R35 — the one place that decides who may modify a catalog record.
  *
- * A Super Admin may write anything. A regular Admin may only write their own submission, and
- * only while it is still `PENDING_APPROVAL` or `REJECTED`: an approved record is out of their
- * reach until a Super Admin reopens it. The status the guard returns is the status the caller
- * must write back, so the reapproval rule (R25) is applied by the same read that authorised it.
+ * Back-office staff may write anything, which is what lets an Admin edit a row another Admin
+ * created. Outside the back office a caller may only write their own submission, and only while
+ * it is still `PENDING_APPROVAL` or `REJECTED`: an approved record is out of their reach until it
+ * is reopened. The status the guard returns is the status the caller must write back, so the
+ * reapproval rule (R25) is applied by the same read that authorised it.
  */
 final class SubmissionAccessPolicy
 {
@@ -28,7 +29,7 @@ final class SubmissionAccessPolicy
         CatalogSubmissionKind $kind,
         string $slug,
         ?string $actorId,
-        bool $actorIsSuperAdmin,
+        bool $actorIsAdmin,
     ): ApprovalStatus {
         $row = $this->connection->fetchAssociative(
             sprintf('SELECT approval_status, submitted_by FROM %s WHERE slug = :slug', $kind->table()),
@@ -39,7 +40,7 @@ final class SubmissionAccessPolicy
         }
 
         $status = ApprovalStatus::fromStorage((string) $row['approval_status']);
-        if ($actorIsSuperAdmin || null === $actorId) {
+        if ($actorIsAdmin || null === $actorId) {
             return $status;
         }
 

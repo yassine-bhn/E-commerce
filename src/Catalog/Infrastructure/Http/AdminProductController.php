@@ -39,14 +39,22 @@ use Symfony\Component\Uid\Uuid;
  * Prices are whole dinars, like every other product of the storefront.
  *
  * spec-run-8 R1/R10/R15/R17/R35 — every writer may create a product, but a creation is always a
- * `PENDING_APPROVAL` submission owned by its creator; only the Super Admin reads or rewrites
- * another Admin's record, and only the Super Admin decides approval or publication.
+ * `PENDING_APPROVAL` submission owned by its creator; the back office reads and rewrites any
+ * record, while the approval and publication decisions stay above a standard Admin.
  */
 #[Route('/api/v1/admin/catalog/products')]
 #[IsGranted('ROLE_ADMIN')]
 final class AdminProductController
 {
     private const array STOCKS = ['in', 'order', 'pickup', 'out'];
+
+    private const string IMAGE_PATTERN = '#^(/[A-Za-z0-9._/-]+|https?://\S+)$#';
+
+    /** A product carries `image` plus at most this many additional pictures. */
+    private const int MAX_ADDITIONAL_IMAGES = 3;
+
+    /** The back office: `getRoles()` carries no hierarchy, so both staff roles are listed. */
+    private const ADMIN_ROLES = ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
 
     public function __construct(
         private Connection $connection,
@@ -77,11 +85,11 @@ final class AdminProductController
                 $this->connection->executeStatement(
                     'INSERT INTO storefront_product_view (
                         id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
-                        stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants,
+                        stock, stock_quantity, material, dims, image_path, additional_images, rating, reviews, is_new, is_best, headrest, description, variants,
                         approval_status, submitted_by, submitted_at, published
                     ) VALUES (
                         :id, :slug, :name, :brand, :ref, :category, :sub, :price, :old_price, \'TND\',
-                        :stock, :stock_quantity, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants,
+                        :stock, :stock_quantity, :material, :dims, :image, :additional_images, 0, 0, :is_new, :is_best, :headrest, :description, :variants,
                         :approval, :submitted_by, :submitted_at, false
                     )',
                     ['id' => Uuid::v7()->toRfc4122(), 'approval' => ApprovalStatus::initial()->value,
@@ -109,8 +117,8 @@ final class AdminProductController
     }
 
     /**
-     * R15/R17/R25 — the Super Admin reads one product whatever its state, with its approval
-     * metadata; a regular Admin reads their own submission and nobody else's.
+     * R15/R17/R25 — one product whatever its state, with its approval metadata. Every back-office
+     * role reads every row, so an Admin can open a product another Admin submitted.
      */
     #[Route('/{slug}', name: 'admin_catalog_show_product', methods: ['GET'])]
     public function show(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
@@ -141,7 +149,7 @@ final class AdminProductController
                     CatalogSubmissionKind::Product,
                     $slug,
                     $admin->getId(),
-                    $this->isSuperAdmin($admin),
+                    $this->isAdmin($admin),
                 );
 
                 $next = $current->afterModification();
@@ -152,7 +160,8 @@ final class AdminProductController
                         name = :name, brand = :brand, ref = :ref, category_slug = :category, subcategory = :sub,
                         price_minor = :price, old_price_minor = :old_price, stock = :stock,
                         stock_quantity = COALESCE(:stock_quantity, stock_quantity), material = :material,
-                        dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
+                        dims = :dims, image_path = :image, additional_images = :additional_images,
+                        is_new = :is_new, is_best = :is_best, headrest = :headrest,
                         description = :description, variants = :variants'
                     .($reopens ? ',
                         approval_status = :approval, reviewed_by = NULL, reviewed_at = NULL, rejection_reason = NULL' : '')
@@ -230,7 +239,7 @@ final class AdminProductController
             CatalogSubmissionKind::Product,
             $slug,
             $admin->getId(),
-            $this->isSuperAdmin($admin),
+            $this->isAdmin($admin),
         ));
 
         if (null === $submission) {
@@ -242,9 +251,9 @@ final class AdminProductController
         return $payload;
     }
 
-    private function isSuperAdmin(CustomerUser $admin): bool
+    private function isAdmin(CustomerUser $admin): bool
     {
-        return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
+        return [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles());
     }
 
     private function domainFailure(\DomainException $error): JsonResponse
@@ -280,7 +289,7 @@ final class AdminProductController
      *
      * @param array<string, mixed> $body
      *
-     * @return array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>}|string
+     * @return array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, additionalImages: list<string>, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>}|string
      */
     private function validate(array $body, ?string $fixedSlug): array|string
     {
@@ -361,8 +370,13 @@ final class AdminProductController
         }
 
         $image = $this->text($body['image'] ?? null);
-        if ('' === $image || strlen($image) > 255 || 1 !== preg_match('#^(/[A-Za-z0-9._/-]+|https?://\S+)$#', $image)) {
+        if ('' === $image || strlen($image) > 255 || 1 !== preg_match(self::IMAGE_PATTERN, $image)) {
             return 'The image must be a site path (/photo.jpg) or an http(s) URL (255 characters max).';
+        }
+
+        $gallery = $this->gallery($body['additionalImages'] ?? [], $image);
+        if (is_string($gallery)) {
+            return $gallery;
         }
 
         $description = $this->text($body['description'] ?? null);
@@ -384,6 +398,7 @@ final class AdminProductController
             'material' => $material,
             'dims' => $dims,
             'image' => $image,
+            'additionalImages' => $gallery,
             'isNew' => true === ($body['isNew'] ?? false),
             'best' => true === ($body['best'] ?? false),
             'headrest' => true === ($body['headrest'] ?? false),
@@ -442,6 +457,40 @@ final class AdminProductController
         return is_string($value) ? trim($value) : '';
     }
 
+    /**
+     * The additional pictures of a product, kept in the order the back office sends them: `image`
+     * stays the primary one and the gallery only extends it, so a product never loses its thumbnail.
+     *
+     * @return list<string>|string The paths, or the error message.
+     */
+    private function gallery(mixed $raw, string $primary): array|string
+    {
+        $raw ??= [];
+        if (!is_array($raw)) {
+            return 'The additional images must be a list.';
+        }
+        if (count($raw) > self::MAX_ADDITIONAL_IMAGES) {
+            return sprintf('A product carries %d pictures at most.', self::MAX_ADDITIONAL_IMAGES + 1);
+        }
+
+        $images = [];
+        $seen = [$primary => true];
+        foreach (array_values($raw) as $index => $value) {
+            $path = $this->text($value);
+            if ('' === $path || strlen($path) > 255 || 1 !== preg_match(self::IMAGE_PATTERN, $path)) {
+                return sprintf('Picture #%d must be a site path (/photo.jpg) or an http(s) URL (255 characters max).', $index + 2);
+            }
+            if (isset($seen[$path])) {
+                return sprintf('Picture #%d is already attached to this product.', $index + 2);
+            }
+
+            $seen[$path] = true;
+            $images[] = $path;
+        }
+
+        return $images;
+    }
+
     private function integer(mixed $value): ?int
     {
         if (is_int($value)) {
@@ -458,7 +507,7 @@ final class AdminProductController
     }
 
     /**
-     * @param array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>} $product
+     * @param array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, additionalImages: list<string>, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>} $product
      *
      * @return array<string, mixed>
      */
@@ -478,6 +527,7 @@ final class AdminProductController
             'material' => $product['material'],
             'dims' => $product['dims'],
             'image' => $product['image'],
+            'additional_images' => json_encode($product['additionalImages'], JSON_THROW_ON_ERROR),
             'is_new' => $product['isNew'],
             'is_best' => $product['best'],
             'headrest' => $product['headrest'],
