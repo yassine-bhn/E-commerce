@@ -14,8 +14,8 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * R3/R4/R9/R24/R39 — puts a submission in front of a reviewer, and only the owner (or a Super
- * Admin acting for them) may do it.
+ * R3/R4/R9/R24/R39 — puts a submission in front of a reviewer, and only the owner or the back
+ * office acting for them may do it.
  *
  * The state change and its audit row commit together, so a refused submission leaves the record
  * exactly as it was and writes no history. Resubmission also clears the previous reviewer,
@@ -55,7 +55,7 @@ final class SubmitCatalogSubmissionHandler
 
             $current = ApprovalStatus::fromStorage((string) $row['approval_status']);
             $owner = is_string($row['submitted_by'] ?? null) ? $row['submitted_by'] : null;
-            if (!$command->actorIsSuperAdmin && $owner !== $command->actorId) {
+            if (!$command->actorIsAdmin && $owner !== $command->actorId) {
                 throw CatalogSubmissionNotOwnedException::for($command->kind, $command->slug);
             }
 

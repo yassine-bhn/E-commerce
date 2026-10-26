@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Makes a hidden category visible on the storefront again (spec R5): the same single
  * flag as hiding, so un-hiding cannot resurrect anything except the category itself.
  *
- * spec-run-8 R35 — same ownership rule as hiding: your own submission, or a Super Admin.
+ * spec-run-8 R35 — same ownership rule as hiding: your own submission, or back-office staff.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class ShowCategoryHandler
@@ -39,7 +39,7 @@ final class ShowCategoryHandler
                 CatalogSubmissionKind::Category,
                 $command->slug,
                 $command->actorId,
-                $command->actorIsSuperAdmin,
+                $command->actorIsAdmin,
             );
 
             $category = Category::fromStoredRow(

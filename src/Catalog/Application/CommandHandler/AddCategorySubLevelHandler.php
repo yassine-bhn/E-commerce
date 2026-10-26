@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * no child row is created, and a refused label leaves the parent exactly as it was.
  *
  * spec-run-8 R35/R40 — the write goes through the same ownership guard as a full tree rewrite,
- * and a Super Admin edit of an approved row reopens it for review.
+ * and any staff edit of an approved row reopens it for review.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class AddCategorySubLevelHandler
@@ -45,7 +45,7 @@ final class AddCategorySubLevelHandler
                 CatalogSubmissionKind::Category,
                 $command->slug,
                 $command->actorId,
-                $command->actorIsSuperAdmin,
+                $command->actorIsAdmin,
             );
 
             $category = Category::fromStoredRow(

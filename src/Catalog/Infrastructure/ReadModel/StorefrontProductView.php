@@ -8,6 +8,7 @@ final readonly class StorefrontProductView
 {
     /**
      * @param list<array{label: string, price: int}> $variants
+     * @param list<string>                           $additionalImages
      */
     public function __construct(
         public string $id,
@@ -32,6 +33,7 @@ final readonly class StorefrontProductView
         public string $description,
         public array $variants,
         public ?int $stockQuantity = null,
+        public array $additionalImages = [],
     ) {
     }
 
@@ -60,6 +62,7 @@ final readonly class StorefrontProductView
             'material' => $this->material,
             'dims' => $this->dims,
             'image' => $this->imagePath,
+            'additionalImages' => $this->additionalImages,
             'rating' => $this->rating,
             'reviews' => $this->reviews,
             'isNew' => $this->isNew,
@@ -87,6 +90,9 @@ final readonly class StorefrontProductView
         /** @var list<array{label: string, price: int}> $variants */
         $variants = json_decode((string) $row['variants'], true, 512, JSON_THROW_ON_ERROR);
 
+        /** @var list<string> $additionalImages */
+        $additionalImages = json_decode((string) ($row['additional_images'] ?? '[]'), true, 512, JSON_THROW_ON_ERROR);
+
         return new self(
             (string) $row['id'],
             (string) $row['slug'],
@@ -110,6 +116,7 @@ final readonly class StorefrontProductView
             (string) $row['description'],
             $variants,
             isset($row['stock_quantity']) ? (int) $row['stock_quantity'] : null,
+            $additionalImages,
         );
     }
 }

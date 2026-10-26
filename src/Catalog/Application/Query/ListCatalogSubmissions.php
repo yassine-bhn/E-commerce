@@ -11,8 +11,8 @@ use App\Shared\Application\Pagination\PageRequest;
 /**
  * spec-run-8 R5/R15/R16 — one bounded page of submissions for the caller.
  *
- * A regular Admin only ever sees their own rows; the Super Admin sees every row of the requested
- * kind, optionally narrowed to one approval state (the review queue is `PENDING_APPROVAL`).
+ * Back-office staff see every row of the requested kind; anybody outside it only ever sees the
+ * rows they submitted. Optionally narrowed to one approval state (queue is `PENDING_APPROVAL`).
  */
 final readonly class ListCatalogSubmissions
 {
@@ -22,7 +22,7 @@ final readonly class ListCatalogSubmissions
     public function __construct(
         public CatalogSubmissionKind $kind,
         public string $requesterId,
-        public bool $isSuperAdmin,
+        public bool $isAdmin,
         public PageRequest $page = new PageRequest(1, self::DEFAULT_SIZE, self::MAX_SIZE),
         public ?ApprovalStatus $approvalStatus = null,
         public ?string $q = null,

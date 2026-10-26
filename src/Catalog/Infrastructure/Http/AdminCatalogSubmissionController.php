@@ -41,6 +41,9 @@ final class AdminCatalogSubmissionController
 {
     private const int MAX_REASON_LENGTH = 2000;
 
+    /** The back office: `getRoles()` carries no hierarchy, so both staff roles are listed. */
+    private const ADMIN_ROLES = ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
+
     public function __construct(
         private MessengerQuery $queries,
         private MessageBusInterface $commandBus,
@@ -48,7 +51,7 @@ final class AdminCatalogSubmissionController
     }
 
     /**
-     * R5/R15/R16 — the review queue: every row for a Super Admin, only your own otherwise,
+     * R5/R15/R16 — the review queue: every row for back-office staff, only your own otherwise,
      * optionally narrowed to one approval state.
      */
     #[Route('/{kind}', name: 'admin_catalog_list_submissions', methods: ['GET'])]
@@ -65,7 +68,7 @@ final class AdminCatalogSubmissionController
         $page = $this->queries->dispatch(new ListCatalogSubmissions(
             kind: $type,
             requesterId: $admin->getId(),
-            isSuperAdmin: $this->isSuperAdmin($admin),
+            isAdmin: $this->isAdmin($admin),
             page: ListQueryParams::page($request, ListCatalogSubmissions::DEFAULT_SIZE, ListCatalogSubmissions::MAX_SIZE),
             approvalStatus: $status,
             q: ListQueryParams::text($request),
@@ -98,7 +101,7 @@ final class AdminCatalogSubmissionController
             $type,
             $slug,
             $admin->getId(),
-            $this->isSuperAdmin($admin),
+            $this->isAdmin($admin),
         ));
     }
 
@@ -192,7 +195,7 @@ final class AdminCatalogSubmissionController
             $type,
             $slug,
             $admin->getId(),
-            $this->isSuperAdmin($admin),
+            $this->isAdmin($admin),
         ));
 
         return $view?->toApi();
@@ -230,8 +233,8 @@ final class AdminCatalogSubmissionController
         return ApprovalStatus::tryFrom(strtoupper($status));
     }
 
-    private function isSuperAdmin(CustomerUser $admin): bool
+    private function isAdmin(CustomerUser $admin): bool
     {
-        return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
+        return [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles());
     }
 }
