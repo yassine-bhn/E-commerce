@@ -20,10 +20,9 @@ use Symfony\Component\Uid\Uuid;
  * R3 needs two things from one test: the row really changes category and the trail gains exactly one
  * `CATALOG_PRODUCT_UPDATED` entry for that move (asserted in the index-free test below), and the
  * storefront consequence is visible on both sides — the product leaves every public read while it sits
- * in a category nobody approved, and comes back once it is home again. The update path reopens an
- * approved record (`afterModification`), so the product is re-approved between the move and the
- * visibility assertions: otherwise "absent" would be explained by `PENDING_APPROVAL` and the category
- * gate would never be exercised.
+ * in a category nobody approved, and comes back once that category is approved. The move is made by
+ * the reviewer, so it never reopens the product (`afterReviewerModification`): the category gate alone
+ * explains every absence below.
  *
  * R4 is the refusal: a destination that does not exist is answered 422 by validation, before the
  * transaction, so neither the row nor the trail changes.
@@ -121,7 +120,7 @@ final class AdminProductCategoryMoveTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function testAMoveIsStoredAndAuditedOnceAndReopensTheRecord(): void
+    public function testAMoveIsStoredAndAuditedOnceAndKeepsTheRecordApproved(): void
     {
         $token = 'mv'.bin2hex(random_bytes(6));
         $slug = $this->createProduct($token);
@@ -138,9 +137,9 @@ final class AdminProductCategoryMoveTest extends WebTestCase
             'one move is exactly one modification entry on the trail',
         );
         self::assertSame(
-            'PENDING_APPROVAL',
+            'APPROVED',
             $this->storedStatus($slug),
-            'a modification of an approved record sends it back to review, which is why the storefront drops it',
+            'the move is the reviewer\'s own save, so it never pushes the record back into review',
         );
 
         $this->move($slug, self::HOME_CATEGORY);
@@ -151,7 +150,7 @@ final class AdminProductCategoryMoveTest extends WebTestCase
             $this->actions($slug, 'CATALOG_PRODUCT_UPDATED'),
             'moving back is a second modification, and only the first move wrote the first one',
         );
-        self::assertSame('PENDING_APPROVAL', $this->storedStatus($slug), 'the way back reopens the record too');
+        self::assertSame('APPROVED', $this->storedStatus($slug), 'the way back keeps it approved too');
     }
 
     public function testAMovedProductIsPrivateUntilItsCategoryIsApproved(): void
@@ -182,34 +181,33 @@ final class AdminProductCategoryMoveTest extends WebTestCase
 
         $target = $this->createCategory();
         $this->move($slug, $target);
-        // The trail and the reopened status belong to the index-free test above; what matters here is
-        // that the storefront stops serving the product.
+        // The trail and the still-approved status belong to the index-free test above; what matters
+        // here is that the storefront stops serving the product.
         $this->rebuild();
 
-        self::assertSame(Response::HTTP_NOT_FOUND, $this->detailStatus($slug), 'the reopened product has no public detail');
-        self::assertSame([], $this->browse($target), 'a reopened product is not browsable in its new category');
-        self::assertSame([], $this->searchFor($token), 'a reopened product is not searchable');
-
-        // Approving again isolates the category gate: approval and publication both hold, so only the
-        // destination category can keep the product out of the storefront.
-        $this->approve($slug);
-        $this->rebuild();
-
+        // The move is the reviewer's own save, so approval and publication both survive it: only the
+        // destination category's missing approval can explain the absences below.
         self::assertSame('APPROVED', $this->storedStatus($slug));
-        self::assertSame(Response::HTTP_NOT_FOUND, $this->detailStatus($slug), 'an approved product of an unapproved category is still private');
+        self::assertSame(Response::HTTP_NOT_FOUND, $this->detailStatus($slug), 'an approved product of an unapproved category is private');
         self::assertSame([], $this->browse($target), 'an unapproved category serves none of its products');
         self::assertSame([], $this->browse($target, sqlFallback: true), 'the SQL fallback applies the same category gate');
         self::assertNull($this->json()['facets'], 'the SQL fallback served this page, so the assertion above is about its own predicate');
         self::assertSame([], $this->searchFor($token), 'an approved product of an unapproved category is not searchable');
         self::assertNotContains($slug, $this->browse(self::HOME_CATEGORY), 'the product left the category it used to be browsed under');
 
-        $this->move($slug, self::HOME_CATEGORY);
-        $this->approve($slug);
+        $this->approveCategory($target);
         $this->rebuild();
 
-        self::assertSame(Response::HTTP_OK, $this->detailStatus($slug), 'back in an approved category, the product is public again');
-        self::assertContains($slug, $this->browse(self::HOME_CATEGORY), 'the storefront browse lists it again');
+        self::assertSame(Response::HTTP_OK, $this->detailStatus($slug), 'approving the destination opens it for the approved product');
+        self::assertContains($slug, $this->browse($target), 'the storefront browse serves it in its new category');
         self::assertSame([$slug], $this->searchFor($token), 'the search index carries it again');
+
+        $this->move($slug, self::HOME_CATEGORY);
+        $this->rebuild();
+
+        self::assertSame(Response::HTTP_OK, $this->detailStatus($slug), 'back in an approved category, the product stays public');
+        self::assertContains($slug, $this->browse(self::HOME_CATEGORY), 'the storefront browse lists it again');
+        self::assertSame([$slug], $this->searchFor($token), 'the search index still carries it');
 
         $client->request('GET', '/api/v1/admin/catalog/products/'.$slug);
         self::assertResponseIsSuccessful();
@@ -307,6 +305,12 @@ final class AdminProductCategoryMoveTest extends WebTestCase
     {
         $this->client()->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/approve');
         self::assertResponseIsSuccessful(sprintf('the Super Admin could not approve "%s"', $slug));
+    }
+
+    private function approveCategory(string $slug): void
+    {
+        $this->client()->jsonRequest('POST', '/api/v1/admin/catalog/submissions/categories/'.$slug.'/approve');
+        self::assertResponseIsSuccessful(sprintf('the Super Admin could not approve the category "%s"', $slug));
     }
 
     private function publish(string $slug): void

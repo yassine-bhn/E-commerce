@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * no child row is created, and a refused label leaves the parent exactly as it was.
  *
  * spec-run-8 R35/R40 — the write goes through the same ownership guard as a full tree rewrite,
- * and a Super Admin edit of an approved row reopens it for review.
+ * and a Super Admin's own save is the validation, so the row comes out approved.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class AddCategorySubLevelHandler
@@ -28,7 +28,7 @@ final class AddCategorySubLevelHandler
     private const STORE = 'UPDATE storefront_category SET subcategories = :subs WHERE slug = :slug';
 
     private const STORE_REOPEN = 'UPDATE storefront_category SET subcategories = :subs,
-            approval_status = :status, reviewed_by = NULL, reviewed_at = NULL, rejection_reason = NULL
+            approval_status = :status, reviewed_by = :reviewed_by, reviewed_at = :reviewed_at, rejection_reason = NULL
          WHERE slug = :slug';
 
     public function __construct(
@@ -53,13 +53,19 @@ final class AddCategorySubLevelHandler
                 $command->slug,
             )->withSubLevel($command->label, $command->parentLabel);
 
-            $next = $current->afterModification();
+            $next = $command->actorIsSuperAdmin
+                ? $current->afterReviewerModification()
+                : $current->afterModification();
             $reopens = $next !== $current;
 
             $this->connection->executeStatement(
                 $reopens ? self::STORE_REOPEN : self::STORE,
                 ['subs' => $category->subcategoriesJson(), 'slug' => $category->slug]
-                    + ($reopens ? ['status' => $next->value] : []),
+                    + ($reopens ? [
+                        'status' => $next->value,
+                        'reviewed_by' => $command->actorIsSuperAdmin ? $command->actorId : null,
+                        'reviewed_at' => $command->actorIsSuperAdmin ? (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP') : null,
+                    ] : []),
             );
 
             $this->audit->record(

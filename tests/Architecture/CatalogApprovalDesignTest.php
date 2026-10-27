@@ -14,13 +14,17 @@ use Symfony\Component\Finder\Finder;
  * each turned into an assertion that fails when the property stops holding.
  *
  * R58 — "no second approval mechanism". The decision type is spelled out in exactly three files
- * (the enum, the command that carries it, the controller that builds that command), and a review
- * decision has one writer: `DecideCatalogSubmissionHandler` through `targetStatus()`, plus the one
- * operator command R13 sanctions (`app:catalog:backfill-approval`), which is allow-listed by name
- * because it writes the same `APPROVED` literal and would otherwise slip past a check that only
- * looks for a method call. The routes that can produce the decision are declared by one controller.
- * A second command accepting a `CatalogDecision`, a third writer of either status or an `/approve`
- * route declared elsewhere all break the assertion.
+ * (the enum, the command that carries it, the controller that builds that command), and an approval
+ * outcome is named by the listed files only: `DecideCatalogSubmissionHandler` through
+ * `targetStatus()`, the three writers that approve a reviewer's own save through
+ * `afterReviewerModification()` (`AdminProductController`, `ReplaceCategoryTreeHandler`,
+ * `AddCategorySubLevelHandler`), their shared readers (`CatalogVisibility`, `CategoryFinder`,
+ * `StorefrontReferenceRepository`, which test the `APPROVED` literal), and the one operator command
+ * R13 sanctions (`app:catalog:backfill-approval`), which is allow-listed by name because it writes
+ * the same literal in raw SQL and would otherwise slip past a check that only looks for a method
+ * call. The routes that can produce the decision are declared by one controller. A second command
+ * accepting a `CatalogDecision`, a writer or reader of either status outside this list, or an
+ * `/approve` route declared elsewhere all break the assertion.
  *
  * R40 — "only the genuinely missing schema was added". The workflow's footprint on the two catalog
  * tables is exactly the documented columns, plus the two indexes and the two CHECK constraints that
@@ -86,7 +90,7 @@ final class CatalogApprovalDesignTest extends KernelTestCase
         self::bootKernel();
     }
 
-    public function testTheDecisionTypeIsAcceptedByOneCommandAndTurnedIntoAStatusByOneHandler(): void
+    public function testTheDecisionTypeIsAcceptedByOneCommandAndApprovedThroughTheListedWriters(): void
     {
         self::assertSame(
             [
@@ -100,11 +104,17 @@ final class CatalogApprovalDesignTest extends KernelTestCase
 
         self::assertSame(
             [
+                'Catalog/Application/CommandHandler/AddCategorySubLevelHandler.php',
                 'Catalog/Application/CommandHandler/DecideCatalogSubmissionHandler.php',
+                'Catalog/Application/CommandHandler/ReplaceCategoryTreeHandler.php',
                 'Catalog/Infrastructure/Console/BackfillCatalogApprovalCommand.php',
+                'Catalog/Infrastructure/Http/AdminProductController.php',
+                'Catalog/Infrastructure/ReadModel/CatalogVisibility.php',
+                'Catalog/Infrastructure/ReadModel/CategoryFinder.php',
+                'Shared/Infrastructure/ReadModel/StorefrontReferenceRepository.php',
             ],
-            self::filesMatching("/->targetStatus\\(\\)|approval_status\\s*=\\s*'(?:APPROVED|REJECTED)'/"),
-            'R58 — a review outcome has one writer, and the release backfill of pre-workflow rows (R13) is the one named exception. It is listed rather than trusted: it writes the same literal in raw SQL, so a check that only looked for targetStatus() would report this property closed while a second writer sat in the same tree.',
+            self::filesMatching("/->targetStatus\\(\\)|->afterReviewerModification\\(\\)|approval_status\\s*=\\s*'(?:APPROVED|REJECTED)'/"),
+            'R58 — every file that names an approval outcome is listed: the decision handler, the three writers of a reviewer\'s own save, the read models that test the APPROVED literal, and the release backfill of pre-workflow rows (R13), listed rather than trusted because it writes the same literal in raw SQL. A new writer or reader is a new way for a status to be produced or read, so it has to be added here deliberately.',
         );
     }
 

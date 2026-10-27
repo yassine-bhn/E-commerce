@@ -22,8 +22,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * is written, so the catalog can never disagree with an order snapshot (ECO-006).
  *
  * spec-run-8 R7/R8/R25/R35/R40 — the row is read through {@see SubmissionAccessPolicy} first,
- * so an Admin can only rewrite their own pending or rejected submission; a Super Admin editing
- * an approved category sends it back to `PENDING_APPROVAL`, review metadata included.
+ * so an Admin can only rewrite their own pending or rejected submission; a Super Admin's own save
+ * is the validation, so the record comes out approved instead of being queued for him.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class ReplaceCategoryTreeHandler
@@ -41,7 +41,7 @@ final class ReplaceCategoryTreeHandler
     private const STORE = 'UPDATE storefront_category SET label = :label, quote_eligible = :quote, subcategories = :subs WHERE slug = :slug';
 
     private const STORE_REOPEN = 'UPDATE storefront_category SET label = :label, quote_eligible = :quote, subcategories = :subs,
-            approval_status = :status, reviewed_by = NULL, reviewed_at = NULL, rejection_reason = NULL
+            approval_status = :status, reviewed_by = :reviewed_by, reviewed_at = :reviewed_at, rejection_reason = NULL
          WHERE slug = :slug';
 
     public function __construct(
@@ -68,7 +68,9 @@ final class ReplaceCategoryTreeHandler
 
             $category->coversSubLevels($this->usedSubLevels($category->slug));
 
-            $next = $current->afterModification();
+            $next = $command->actorIsSuperAdmin
+                ? $current->afterReviewerModification()
+                : $current->afterModification();
             $reopens = $next !== $current;
 
             $this->connection->executeStatement(
@@ -78,7 +80,11 @@ final class ReplaceCategoryTreeHandler
                     'quote' => $category->quoteEligible,
                     'subs' => $category->subcategoriesJson(),
                     'slug' => $category->slug,
-                ] + ($reopens ? ['status' => $next->value] : []),
+                ] + ($reopens ? [
+                    'status' => $next->value,
+                    'reviewed_by' => $command->actorIsSuperAdmin ? $command->actorId : null,
+                    'reviewed_at' => $command->actorIsSuperAdmin ? (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP') : null,
+                ] : []),
                 ['quote' => ParameterType::BOOLEAN],
             );
 

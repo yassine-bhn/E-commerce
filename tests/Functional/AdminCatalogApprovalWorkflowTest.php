@@ -237,9 +237,10 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
 
     /**
      * R15/R17/R19/R25/R40/R42 — the reviewer corrects, reads and deletes somebody else's
-     * submission, and no such operation approves it.
+     * submission, and his own save is the validation: the correction approves the record instead
+     * of queueing it for the reviewer himself.
      */
-    public function testTheSuperAdminCorrectsReadsAndDeletesAnotherAdminsSubmissionWithoutApprovingIt(): void
+    public function testTheSuperAdminCorrectsReadsAndDeletesAnotherAdminsSubmissionAndTheCorrectionApprovesIt(): void
     {
         $admin = $this->createUser('ROLE_ADMIN');
         $adminClient = $this->clientFor($admin);
@@ -264,16 +265,14 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         $corrected = $this->json($client);
         self::assertSame(140, $corrected['price']);
         self::assertSame('Produit corrigé', $corrected['name']);
-        self::assertSame('PENDING_APPROVAL', $corrected['approval']['approvalStatus'], 'a correction is never an approval');
-        self::assertNull($corrected['approval']['reviewedBy']);
+        self::assertSame('APPROVED', $corrected['approval']['approvalStatus'], 'the reviewer\'s own save is the validation');
+        self::assertSame($super->getId(), $corrected['approval']['reviewedBy']);
+        self::assertNotNull($corrected['approval']['reviewedAt']);
 
-        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/approve');
-        self::assertResponseIsSuccessful();
         $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
         self::assertResponseIsSuccessful();
-        $reopened = $this->json($client)['approval'];
-        self::assertSame('PENDING_APPROVAL', $reopened['approvalStatus'], 'editing an approved record reopens it');
-        self::assertNull($reopened['reviewedBy']);
+        $again = $this->json($client)['approval'];
+        self::assertSame('APPROVED', $again['approvalStatus'], 'an approved record the reviewer rewrites stays approved');
 
         $client->request('DELETE', '/api/v1/admin/catalog/products/'.$slug);
         self::assertResponseIsSuccessful();
@@ -283,7 +282,6 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
             [
                 ['CATALOG_SUBMISSION_CREATED', 'product', $admin->getId(), null],
                 ['CATALOG_PRODUCT_UPDATED', 'product', $super->getId(), null],
-                ['CATALOG_SUBMISSION_APPROVED', 'product', $super->getId(), null],
                 ['CATALOG_PRODUCT_UPDATED', 'product', $super->getId(), null],
                 ['CATALOG_PRODUCT_DELETED', 'product', $super->getId(), null],
             ],
@@ -320,7 +318,7 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $updated = $this->json($client);
         self::assertSame('Catégorie corrigée', $updated['label']);
-        self::assertSame('PENDING_APPROVAL', $updated['approvalStatus']);
+        self::assertSame('APPROVED', $updated['approvalStatus'], 'the reviewer\'s own save is the validation');
 
         $client->request('DELETE', '/api/v1/admin/catalog/categories/'.$category);
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY, 'a category holding a product cannot go');
@@ -492,10 +490,10 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
     }
 
     /**
-     * R14/R25 — the reviewer rewrites a rejected submission: the correction is stored, the record
-     * stays rejected (only the author may resubmit it), and the rejection the author reads survives.
+     * R14/R25 — the reviewer rewrites a rejected submission: the correction is stored and, because
+     * his own save is the validation, the record comes out approved with the rejection cleared.
      */
-    public function testTheSuperAdminEditsARejectedSubmissionAndItStaysRejected(): void
+    public function testTheSuperAdminEditsARejectedSubmissionAndTheEditApprovesIt(): void
     {
         $adminClient = $this->clientFor($this->createUser('ROLE_ADMIN'));
 
@@ -514,8 +512,8 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
 
         $edited = $this->json($client);
         self::assertSame('Produit repris par le réviseur', $edited['name']);
-        self::assertSame('REJECTED', $edited['approval']['approvalStatus'], 'an edit never re-enters the queue on its own');
-        self::assertSame('Photos floues', $edited['approval']['rejectionReason'], 'the author still reads why it was refused');
+        self::assertSame('APPROVED', $edited['approval']['approvalStatus'], 'the reviewer\'s own save is the validation');
+        self::assertNull($edited['approval']['rejectionReason'], 'an approved record carries no rejection reason');
         self::assertSame($super->getId(), $edited['approval']['reviewedBy']);
 
         self::assertSame(
