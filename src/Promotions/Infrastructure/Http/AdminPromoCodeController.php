@@ -17,11 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * Back-office management of promo codes. Discounts are integer basis points
+ * Super-admin management of promo codes. Discounts are integer basis points
  * (1000 = 10 %), never floats.
  */
 #[Route('/api/v1/admin/promotions/promo-codes')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_SUPER_ADMIN')]
 final class AdminPromoCodeController
 {
     public function __construct(

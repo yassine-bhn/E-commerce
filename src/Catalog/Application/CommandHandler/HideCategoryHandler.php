@@ -18,8 +18,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Only the visibility flag is written: the row, its sub-level tree and its products stay
  * in place, so hiding is always reversible and never destroys catalog data.
  *
- * spec-run-8 R35 — hiding goes through the same write guard as every other category edit: the
- * back office may hide any row, and hiding an approved one sends it back for review.
+ * spec-run-8 R35 — a regular Admin can only hide their own submission; hiding an approved
+ * category stays with the Super Admin, who is the only one allowed to write approved rows.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class HideCategoryHandler
@@ -42,7 +42,7 @@ final class HideCategoryHandler
                 CatalogSubmissionKind::Category,
                 $command->slug,
                 $command->actorId,
-                $command->actorIsAdmin,
+                $command->actorIsSuperAdmin,
             );
 
             $category = Category::fromStoredRow(

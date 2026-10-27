@@ -23,7 +23,7 @@ final readonly class ReplaceCategoryTree
         public array $subcategories = [],
         public bool $quoteEligible = false,
         public ?string $actorId = null,
-        public bool $actorIsAdmin = false,
+        public bool $actorIsSuperAdmin = false,
     ) {
     }
 }

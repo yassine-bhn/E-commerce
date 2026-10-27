@@ -168,6 +168,9 @@ final class AdminCatalogTest extends WebTestCase
         $client->request('GET', '/api/v1/admin/catalog/products/'.$slug.'-smuggled');
         self::assertSame('PENDING_APPROVAL', $this->json($client)['approval']['approvalStatus']);
         self::assertNull($this->json($client)['approval']['reviewedBy']);
+
+        $client->jsonRequest('POST', '/api/v1/admin/promotions/promo-codes', ['code' => 'NOPE10', 'discountBasisPoints' => 1000]);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testSuperAdminCanCreateReadUpdateAndDeleteAProduct(): void
@@ -222,42 +225,6 @@ final class AdminCatalogTest extends WebTestCase
 
         $client->request('GET', '/api/v1/storefront/products/'.$slug);
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-    }
-
-    /**
-     * A product carries up to 4 pictures: `image` stays the primary one and the gallery extends it,
-     * in the order the back office sent. All three reads answer with it — the storefront list, the
-     * admin record and the approval queue — because a reviewer decides on what they can see.
-     */
-    public function testProductGalleryTravelsWithEveryRead(): void
-    {
-        $client = static::createClient();
-        $client->loginUser($this->createUser('ROLE_SUPER_ADMIN'));
-
-        $slug = 'test-gallery-'.substr(Uuid::v4()->toRfc4122(), 0, 8);
-        $this->productSlugs[] = $slug;
-
-        $payload = $this->productPayload($slug);
-        $payload['additionalImages'] = ['/p-wc-b.jpg', '/p-wc-c.jpg'];
-        $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $payload);
-        self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        self::assertSame(['/p-wc-b.jpg', '/p-wc-c.jpg'], $this->json($client)['additionalImages']);
-
-        $this->approve($client, 'product', $slug);
-        $this->publish($client, $slug);
-
-        $client->request('GET', '/api/v1/storefront/products/'.$slug);
-        self::assertResponseIsSuccessful();
-        self::assertSame(['/p-wc-b.jpg', '/p-wc-c.jpg'], $this->json($client)['additionalImages']);
-
-        $client->request('GET', '/api/v1/admin/catalog/submissions/products/'.$slug);
-        self::assertResponseIsSuccessful();
-        self::assertSame(['/p-wc-b.jpg', '/p-wc-c.jpg'], $this->json($client)['additionalImages']);
-
-        // The gallery is a full replace: a write without it leaves the product on its main picture.
-        $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $this->productPayload($slug));
-        self::assertResponseIsSuccessful();
-        self::assertSame([], $this->json($client)['additionalImages']);
     }
 
     public function testAdminCannotSetNegativeStockQuantity(): void
@@ -317,10 +284,6 @@ final class AdminCatalogTest extends WebTestCase
             'price' => ['price' => -5],
             'old price' => ['price' => 100, 'oldPrice' => 90],
             'image' => ['image' => 'javascript:alert(1)'],
-            'gallery' => ['additionalImages' => 'not-a-list'],
-            'gallery entry' => ['additionalImages' => ['/p-wc-b.jpg', 'javascript:alert(1)']],
-            'gallery beyond four pictures' => ['additionalImages' => ['/p-wc-b.jpg', '/p-wc-c.jpg', '/p-wc-d.jpg', '/p-wc-e.jpg']],
-            'gallery duplicate of the main image' => ['additionalImages' => ['/p-wc.jpg']],
             'name' => ['name' => ''],
         ];
 

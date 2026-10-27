@@ -46,17 +46,13 @@ final class AdminSettingsTest extends WebTestCase
         self::assertSame('', $body['contactWhatsapp']);
     }
 
-    public function testRegularAdminReadsSettings(): void
+    public function testRegularAdminCannotReadSettings(): void
     {
         $client = static::createClient();
         $this->loginAs($client, self::ADMIN_ID, 'ROLE_ADMIN');
 
         $client->jsonRequest('GET', '/api/v1/admin/settings');
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        /** @var array<string, mixed> $body */
-        $body = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertArrayHasKey('contactPhone', $body);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testSuperAdminUpdatesPlatformSettings(): void
@@ -117,7 +113,7 @@ final class AdminSettingsTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    public function testRegularAdminUpdatesSettings(): void
+    public function testRegularAdminCannotUpdateSettings(): void
     {
         $client = static::createClient();
         $this->loginAs($client, self::ADMIN_ID, 'ROLE_ADMIN');
@@ -127,11 +123,11 @@ final class AdminSettingsTest extends WebTestCase
             'contactWhatsapp' => '+212611223344',
             'autoCancelMinutes' => 45,
         ]);
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
         /** @var Connection $connection */
         $connection = static::getContainer()->get(Connection::class);
-        self::assertSame(45, (int) $connection->fetchOne('SELECT auto_cancel_minutes FROM platform_setting WHERE id = 1'));
+        self::assertSame(30, (int) $connection->fetchOne('SELECT auto_cancel_minutes FROM platform_setting WHERE id = 1'));
     }
 
     private function loginAs(\Symfony\Bundle\FrameworkBundle\KernelBrowser $client, string $id, string $role): void

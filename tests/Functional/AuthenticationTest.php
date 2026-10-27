@@ -238,8 +238,10 @@ final class AuthenticationTest extends WebTestCase
         $admin = $this->createCustomerUser('ROLE_ADMIN', 'active');
         $client->loginUser($admin);
 
-        // Accepting a submission is the one decision that stays above ROLE_ADMIN.
-        $client->request('POST', '/api/v1/admin/catalog/submissions/products/whatever-slug/approve');
+        $target = $this->createCustomerUser('ROLE_USER', 'active');
+
+        // DELETE customer requires ROLE_SUPER_ADMIN
+        $client->request('DELETE', '/api/v1/admin/customers/'.$target->getId());
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertSame('Access denied.', $payload['error'] ?? null);

@@ -18,7 +18,7 @@ final readonly class AddCategorySubLevel
         public string $label,
         public ?string $parentLabel = null,
         public ?string $actorId = null,
-        public bool $actorIsAdmin = false,
+        public bool $actorIsSuperAdmin = false,
     ) {
     }
 }

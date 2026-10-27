@@ -19,7 +19,7 @@ use Symfony\Component\Uid\Uuid;
  * content, never from the client-supplied name or MIME type.
  */
 #[Route('/api/v1/admin/catalog/uploads')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_SUPER_ADMIN')]
 final class AdminUploadController
 {
     private const int MAX_BYTES = 2 * 1024 * 1024;

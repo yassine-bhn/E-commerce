@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Identity;
 use App\Identity\Application\Command\ChangeCustomerRole;
 use App\Identity\Application\CommandHandler\ChangeCustomerRoleHandler;
 use App\Identity\Domain\Model\AdminCustomerNotFoundException;
-use App\Identity\Domain\Model\AssignableCustomerRole;
 use App\Identity\Domain\Model\LastSuperAdminCannotBeDemotedException;
 use App\Identity\Domain\Model\RoleNotAssignableException;
 use Doctrine\DBAL\Connection;
@@ -31,19 +30,13 @@ final class ChangeCustomerRoleRulesTest extends TestCase
         $handler = new ChangeCustomerRoleHandler($connection);
 
         $this->expectException(RoleNotAssignableException::class);
-        $this->expectExceptionMessage('Only ROLE_USER, ROLE_ADMIN and ROLE_SUPER_ADMIN can be assigned to a user.');
+        $this->expectExceptionMessage('Only ROLE_USER and ROLE_SUPER_ADMIN can be assigned to a user.');
 
         $handler(new ChangeCustomerRole(
             customerId: self::TARGET,
             adminId: self::ACTOR,
-            role: 'ROLE_MODERATOR',
+            role: 'ROLE_ADMIN',
         ));
-    }
-
-    public function testTheStaffRoleIsAssignable(): void
-    {
-        self::assertSame('ROLE_ADMIN', AssignableCustomerRole::fromString('ROLE_ADMIN')->name());
-        self::assertFalse(AssignableCustomerRole::fromString('ROLE_ADMIN')->isSuperAdmin());
     }
 
     public function testAssigningAnEmptyRoleIsRefusedAndChangesNothing(): void

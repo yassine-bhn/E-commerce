@@ -125,11 +125,6 @@ final class AdminCustomerController
         return new JsonResponse(['success' => true, 'customerId' => $id, 'status' => 'active']);
     }
 
-    /**
-     * Granting a staff role is the super admin's decision: an admin who could edit roles would
-     * promote themselves to the one surface that outranks them. Every other route of this
-     * controller stays open to both staff roles.
-     */
     #[Route('/{id}/role', name: 'admin_customers_role_change', methods: ['PATCH'])]
     #[IsGranted('ROLE_SUPER_ADMIN')]
     public function changeRole(string $id, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
@@ -171,7 +166,7 @@ final class AdminCustomerController
     }
 
     #[Route('/{id}', name: 'admin_customers_delete', methods: ['DELETE'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function delete(string $id, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if (!Uuid::isValid($id)) {
