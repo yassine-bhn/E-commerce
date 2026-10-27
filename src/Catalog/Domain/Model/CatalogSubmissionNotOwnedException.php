@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Catalog\Domain\Model;
 
 /**
- * R35 — a caller outside the back office may only touch their own submission. A record with no
- * recorded submitter (a legacy row) is not theirs either.
+ * R35 — a regular Admin may only touch their own submission. A record with no recorded submitter
+ * (a legacy or Super-Admin-created row) is not theirs either.
  */
 final class CatalogSubmissionNotOwnedException extends \DomainException
 {

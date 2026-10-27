@@ -24,7 +24,7 @@ use Meilisearch\Client;
 final class StorefrontProductRepository
 {
     private const string SELECT = 'SELECT id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor,
-        currency, stock, stock_quantity, material, dims, image_path, additional_images, rating, reviews, is_new, is_best, headrest, description, variants
+        currency, stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
         FROM storefront_product_view';
 
     private const string SEARCH_PREDICATE = " (name ILIKE :q ESCAPE '\\' OR brand ILIKE :q ESCAPE '\\'
@@ -77,8 +77,8 @@ final class StorefrontProductRepository
     }
 
     /**
-     * spec-run-8 R15 — the admin surface reads the record whatever its approval and publication
-     * state, so it never goes through the public predicate.
+     * spec-run-8 R15 — the Super Admin reads the record whatever its approval and publication
+     * state, so the admin surface never goes through the public predicate.
      */
     public function adminBySlug(string $slug): ?StorefrontProductView
     {

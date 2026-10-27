@@ -82,7 +82,7 @@ final class AdminShippingPolicyTest extends WebTestCase
         self::assertSame(15, (int) $connection->fetchOne('SELECT delivery_fee_minor FROM storefront_shipping_policy WHERE id = 1'));
     }
 
-    public function testRegularAdminUpdatesTheShippingPolicy(): void
+    public function testRegularAdminCannotUpdateTheShippingPolicy(): void
     {
         $client = static::createClient();
         $this->loginAs($client, self::ADMIN_ID, 'ROLE_ADMIN');
@@ -91,11 +91,11 @@ final class AdminShippingPolicyTest extends WebTestCase
             'deliveryFee' => 25,
             'freeDeliveryThreshold' => 500,
         ]);
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
         /** @var Connection $connection */
         $connection = static::getContainer()->get(Connection::class);
-        self::assertSame(25, (int) $connection->fetchOne('SELECT delivery_fee_minor FROM storefront_shipping_policy WHERE id = 1'));
+        self::assertSame(15, (int) $connection->fetchOne('SELECT delivery_fee_minor FROM storefront_shipping_policy WHERE id = 1'));
     }
 
     private function loginAs(KernelBrowser $client, string $id, string $role): void

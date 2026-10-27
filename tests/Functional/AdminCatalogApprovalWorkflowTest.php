@@ -80,9 +80,9 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
 
     /**
      * R1/R3/R5 — a creation is a pending submission owned by its author: the author reads it,
-     * every back-office role reads it too, and submitting it for review is the author's move.
+     * another Admin does not, and submitting it for review is the author's move.
      */
-    public function testASubmissionStartsPendingAndEveryBackOfficeRoleReadsIt(): void
+    public function testASubmissionStartsPendingAndOnlyItsAuthorReadsIt(): void
     {
         $owner = $this->createUser('ROLE_ADMIN');
         $client = $this->clientFor($owner);
@@ -100,15 +100,14 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         self::assertNull($submission['rejectionReason']);
 
         $client->request('GET', '/api/v1/admin/catalog/submissions/products?status=pending_approval&q='.$slug);
-        self::assertSame([$slug], array_column($this->json($client)['items'], 'slug'), 'the author reads their own work in the queue');
+        self::assertSame([$slug], array_column($this->json($client)['items'], 'slug'), 'the queue is the author\'s own work');
 
-        // R5 — the review queue belongs to the back office: a colleague reads the same row.
+        // R5 — missing and foreign are the same answer, so nothing leaks through the detail route.
         $otherClient = $this->clientFor($this->createUser('ROLE_ADMIN'));
         $otherClient->request('GET', '/api/v1/admin/catalog/submissions/products/'.$slug);
-        self::assertResponseIsSuccessful();
-        self::assertSame($owner->getId(), $this->json($otherClient)['submittedBy'], 'reading is not restricted to the author');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         $otherClient->request('GET', '/api/v1/admin/catalog/submissions/products?q='.$slug);
-        self::assertSame([$slug], array_column($this->json($otherClient)['items'], 'slug'));
+        self::assertSame([], $this->json($otherClient)['items']);
 
         $client = $this->clientFor($owner);
         $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/submit');
@@ -343,10 +342,10 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
     }
 
     /**
-     * R34/R36/R52 — deciding and publishing stay above a standard Admin, while the dashboard
-     * writes are theirs: a colleague's submission may be rewritten and resubmitted, never approved.
+     * R34/R35/R36/R52 — a regular Admin cannot decide, publish, resubmit or rewrite a submission
+     * that belongs to somebody else, and nothing it attempted is persisted.
      */
-    public function testARegularAdminCannotDecideOrPublishAForeignSubmissionButMayRewriteIt(): void
+    public function testARegularAdminCannotDecidePublishOrTouchAForeignSubmission(): void
     {
         $owner = $this->createUser('ROLE_ADMIN');
         $ownerClient = $this->clientFor($owner);
@@ -360,20 +359,21 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/reject', ['reason' => 'mine']);
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/submit');
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN, 'a foreign submission is not the intruder\'s to submit');
         $client->jsonRequest('PATCH', '/api/v1/admin/catalog/products/'.$slug.'/publication', ['published' => true]);
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-
         $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $this->productPayload($slug));
-        self::assertResponseIsSuccessful();
-        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$slug.'/submit');
-        self::assertResponseIsSuccessful();
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $client->request('DELETE', '/api/v1/admin/catalog/products/'.$slug);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
         self::assertSame('PENDING_APPROVAL', $this->storedStatus($slug));
         self::assertFalse((bool) $this->db()->fetchOne('SELECT published FROM storefront_product_view WHERE slug = :s', ['s' => $slug]));
         self::assertSame(
-            ['CATALOG_SUBMISSION_CREATED', 'CATALOG_PRODUCT_UPDATED', 'CATALOG_SUBMISSION_SUBMITTED'],
-            array_column($this->audit($slug), 0),
-            'a refused decision leaves no trace, and only the writes a colleague may do are audited',
+            [['CATALOG_SUBMISSION_CREATED', 'product', $owner->getId(), null]],
+            $this->audit($slug),
+            'a refused action leaves no audit trace',
         );
     }
 

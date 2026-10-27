@@ -55,7 +55,7 @@ final class AdminCategoryController
 {
     private const int MAX_SLUG_LENGTH = 64;
 
-    /** The back office: `getRoles()` carries no hierarchy, so both staff roles are listed. */
+    /** Privileged accounts allowed to read the category tree exactly as the other admin surfaces. */
     private const ADMIN_ROLES = ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
 
     public function __construct(
@@ -107,7 +107,7 @@ final class AdminCategoryController
         /** @var Page $page */
         $page = $this->queries->dispatch(new ListCategories(
             requesterId: $admin->getId(),
-            isAdmin: $this->isAdmin($admin),
+            isAdmin: [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles()),
             page: ListQueryParams::page($request, ListCategories::DEFAULT_SIZE, ListCategories::MAX_SIZE),
             q: ListQueryParams::text($request),
             hidden: ListQueryParams::boolOrNull($request, 'hidden'),
@@ -197,7 +197,7 @@ final class AdminCategoryController
             $label,
             '' === $parentLabel ? null : $parentLabel,
             $admin->getId(),
-            $this->isAdmin($admin),
+            $this->isSuperAdmin($admin),
         ));
         if (null !== $failure) {
             return $failure;
@@ -246,7 +246,7 @@ final class AdminCategoryController
             $subcategories,
             $quoteEligible,
             $admin->getId(),
-            $this->isAdmin($admin),
+            $this->isSuperAdmin($admin),
         ));
         if (null !== $failure) {
             return $failure;
@@ -283,8 +283,8 @@ final class AdminCategoryController
         }
 
         $failure = $this->dispatch($hidden
-            ? new HideCategory($slug, $admin->getId(), $this->isAdmin($admin))
-            : new ShowCategory($slug, $admin->getId(), $this->isAdmin($admin)));
+            ? new HideCategory($slug, $admin->getId(), $this->isSuperAdmin($admin))
+            : new ShowCategory($slug, $admin->getId(), $this->isSuperAdmin($admin)));
         if (null !== $failure) {
             return $failure;
         }
@@ -298,11 +298,11 @@ final class AdminCategoryController
      * removed, a non-empty one is refused with its counts and nothing written, and deleting
      * it again answers not-found instead of a 500.
      *
-     * spec-run-8 R20/R34 — deleting a catalog record is a back-office decision, whatever its
+     * spec-run-8 R20/R34 — deleting a catalog record is a Super Admin decision, whatever its
      * approval state, so the role is checked here and again by `/api/v1/admin` access control.
      */
     #[Route('/categories/{slug}', name: 'admin_catalog_delete_category', methods: ['DELETE'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteCategory(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         $error = $this->checkSlug($slug);
@@ -319,11 +319,11 @@ final class AdminCategoryController
     }
 
     /**
-     * spec-run-8 R19/R20/R42 — deletion keeps its order-history guard and never touches the
-     * approval decision; only accepting or rejecting a submission stays above it.
+     * spec-run-8 R19/R20/R42 — deletion keeps its order-history guard, never touches the
+     * approval decision, and is the Super Admin's call alone.
      */
     #[Route('/products/{slug}', name: 'admin_catalog_delete_product', methods: ['DELETE'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteProduct(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         if (false === $this->connection->fetchOne(
@@ -363,9 +363,9 @@ final class AdminCategoryController
         return new JsonResponse(['success' => true, 'slug' => $slug, 'message' => 'Product deleted successfully']);
     }
 
-    private function isAdmin(CustomerUser $admin): bool
+    private function isSuperAdmin(CustomerUser $admin): bool
     {
-        return [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles());
+        return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
     }
 
     /**
@@ -449,7 +449,7 @@ final class AdminCategoryController
         /** @var Page $page */
         $page = $this->queries->dispatch(new ListCategories(
             requesterId: $admin->getId(),
-            isAdmin: $this->isAdmin($admin),
+            isAdmin: [] !== array_intersect(self::ADMIN_ROLES, $admin->getRoles()),
             page: new PageRequest(1, ListCategories::MAX_SIZE, ListCategories::MAX_SIZE),
             q: $q,
         ));

@@ -7,7 +7,7 @@ namespace App\Catalog\Application\Command;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 
 /**
- * R3/R4/R9/R24 — an Admin puts a submission in front of the reviewer, who is a Super Admin.
+ * R3/R4/R9/R24 — the owning Admin asks the Super Admin to review a submission.
  *
  * A record is already `PENDING_APPROVAL` from the moment it is created (R10), so submitting a
  * pending record is an explicit but idempotent act: it records the intent and nothing else. A
@@ -21,7 +21,7 @@ final readonly class SubmitCatalogSubmission
         public CatalogSubmissionKind $kind,
         public string $slug,
         public string $actorId,
-        public bool $actorIsAdmin = false,
+        public bool $actorIsSuperAdmin = false,
     ) {
     }
 }
