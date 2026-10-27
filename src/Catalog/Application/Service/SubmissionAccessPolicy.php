@@ -15,8 +15,11 @@ use Doctrine\DBAL\Connection;
  *
  * A Super Admin may write anything. A regular Admin may only write their own submission, and
  * only while it is still `PENDING_APPROVAL` or `REJECTED`: an approved record is out of their
- * reach until a Super Admin reopens it. The status the guard returns is the status the caller
- * must write back, so the reapproval rule (R25) is applied by the same read that authorised it.
+ * reach until it is reopened. The status the guard returns is the status the caller must write
+ * back, so the reapproval rule (R25) is applied by the same read that authorised it — through
+ * {@see ApprovalStatus::afterModification()} for an Admin's edit, or
+ * {@see ApprovalStatus::afterReviewerModification()} when the writer is the Super Admin, whose
+ * own save is the validation.
  */
 final class SubmissionAccessPolicy
 {

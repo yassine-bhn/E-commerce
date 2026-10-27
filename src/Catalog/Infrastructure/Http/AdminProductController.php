@@ -40,7 +40,8 @@ use Symfony\Component\Uid\Uuid;
  *
  * spec-run-8 R1/R10/R15/R17/R35 — every writer may create a product, but a creation is always a
  * `PENDING_APPROVAL` submission owned by its creator; only the Super Admin reads or rewrites
- * another Admin's record, and only the Super Admin decides approval or publication.
+ * another Admin's record, and only the Super Admin decides approval or publication. A Super Admin
+ * rewrites as the reviewer, so his own save is the approval instead of a new submission.
  */
 #[Route('/api/v1/admin/catalog/products')]
 #[IsGranted('ROLE_ADMIN')]
@@ -144,7 +145,9 @@ final class AdminProductController
                     $this->isSuperAdmin($admin),
                 );
 
-                $next = $current->afterModification();
+                // The reviewer validates by writing: his own save is never queued for himself.
+                $reviewer = $this->isSuperAdmin($admin);
+                $next = $reviewer ? $current->afterReviewerModification() : $current->afterModification();
                 $reopens = $next !== $current;
 
                 $this->connection->executeStatement(
@@ -155,9 +158,14 @@ final class AdminProductController
                         dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
                         description = :description, variants = :variants'
                     .($reopens ? ',
-                        approval_status = :approval, reviewed_by = NULL, reviewed_at = NULL, rejection_reason = NULL' : '')
+                        approval_status = :approval, reviewed_by = :reviewed_by, reviewed_at = :reviewed_at,
+                        rejection_reason = NULL' : '')
                     .' WHERE slug = :slug',
-                    $this->parameters($product) + ($reopens ? ['approval' => $next->value] : []),
+                    $this->parameters($product) + ($reopens ? [
+                        'approval' => $next->value,
+                        'reviewed_by' => $reviewer ? $admin->getId() : null,
+                        'reviewed_at' => $reviewer ? (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP') : null,
+                    ] : []),
                     $this->types(),
                 );
 
@@ -172,7 +180,7 @@ final class AdminProductController
             return $this->domainFailure($error);
         }
 
-        // Best-effort: a record that just went back to review leaves the index (ECO-008).
+        // Best-effort: the index follows what the save left publicly readable (ECO-008).
         $this->searchIndex->sync($slug);
 
         return new JsonResponse($this->adminPayload($slug, $admin));

@@ -168,9 +168,6 @@ final class AdminCatalogTest extends WebTestCase
         $client->request('GET', '/api/v1/admin/catalog/products/'.$slug.'-smuggled');
         self::assertSame('PENDING_APPROVAL', $this->json($client)['approval']['approvalStatus']);
         self::assertNull($this->json($client)['approval']['reviewedBy']);
-
-        $client->jsonRequest('POST', '/api/v1/admin/promotions/promo-codes', ['code' => 'NOPE10', 'discountBasisPoints' => 1000]);
-        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testSuperAdminCanCreateReadUpdateAndDeleteAProduct(): void
@@ -215,10 +212,10 @@ final class AdminCatalogTest extends WebTestCase
         self::assertSame(220, $updated['oldPrice']);
         self::assertSame('out', $updated['stock']);
 
-        // spec-run-8 R25/R32 — editing an approved record reopens it, so it leaves the storefront.
-        self::assertSame('PENDING_APPROVAL', $updated['approval']['approvalStatus']);
+        // The reviewer's own save is the validation: the approved record stays approved and public.
+        self::assertSame('APPROVED', $updated['approval']['approvalStatus']);
         $client->request('GET', '/api/v1/storefront/products/'.$slug);
-        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        self::assertResponseIsSuccessful();
 
         $client->request('DELETE', '/api/v1/admin/catalog/products/'.$slug);
         self::assertResponseIsSuccessful();

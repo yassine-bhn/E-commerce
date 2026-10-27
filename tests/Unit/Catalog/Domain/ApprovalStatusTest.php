@@ -63,6 +63,13 @@ final class ApprovalStatusTest extends TestCase
         self::assertSame(ApprovalStatus::Rejected, ApprovalStatus::Rejected->afterModification());
     }
 
+    public function testTheReviewersOwnEditIsTheValidation(): void
+    {
+        self::assertSame(ApprovalStatus::Approved, ApprovalStatus::Approved->afterReviewerModification());
+        self::assertSame(ApprovalStatus::Approved, ApprovalStatus::PendingApproval->afterReviewerModification());
+        self::assertSame(ApprovalStatus::Approved, ApprovalStatus::Rejected->afterReviewerModification());
+    }
+
     public function testOnlyAnApprovedSubmissionIsPubliclyVisible(): void
     {
         self::assertTrue(ApprovalStatus::Approved->isPubliclyVisible());

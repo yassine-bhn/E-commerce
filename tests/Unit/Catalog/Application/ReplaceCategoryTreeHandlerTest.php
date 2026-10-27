@@ -87,13 +87,13 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
     }
 
     /**
-     * spec-run-8 R25 — a Super Admin editing an approved category sends it back to review in the
-     * same statement, clearing the reviewer and the rejection reason it carried.
+     * The correction's rule — a Super Admin's own save is the validation, so a submission waiting
+     * for review comes out approved with the reviewer stamped on it.
      */
-    public function testASuperAdminEditOfAnApprovedCategoryReopensIt(): void
+    public function testASuperAdminEditOfAPendingCategoryApprovesIt(): void
     {
         $connection = new CategoryConnectionFake();
-        $connection->submission('APPROVED', 'other-admin');
+        $connection->submission('PENDING_APPROVAL', 'admin-1');
         $connection->rows = [[
             'slug' => 'wc',
             'label' => 'WC',
@@ -109,9 +109,36 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
-        self::assertStringContainsString('approval_status', $write['sql'], 'an approved row is reopened for review');
-        self::assertSame(ApprovalStatus::PendingApproval->value, $write['params']['status']);
-        self::assertStringContainsString('reviewed_by = NULL', $write['sql']);
+        self::assertStringContainsString('approval_status', $write['sql'], 'the reviewer\'s own save approves the row');
+        self::assertSame(ApprovalStatus::Approved->value, $write['params']['status']);
+        self::assertSame('super-admin', $write['params']['reviewed_by']);
+        self::assertNotNull($write['params']['reviewed_at']);
+        self::assertStringContainsString('rejection_reason = NULL', $write['sql']);
+    }
+
+    /**
+     * An approved row the reviewer rewrites stays approved: there is no queue to push it back into.
+     */
+    public function testASuperAdminEditOfAnApprovedCategoryLeavesItApproved(): void
+    {
+        $connection = new CategoryConnectionFake();
+        $connection->submission('APPROVED', 'admin-1');
+        $connection->rows = [[
+            'slug' => 'wc',
+            'label' => 'WC',
+            'subcategories' => '[]',
+            'quote_eligible' => false,
+            'hidden' => false,
+            'sort_order' => 1,
+            'parent_slug' => null,
+        ]];
+        $connection->rowLists = [[]];
+
+        $this->rewrite($connection, new ReplaceCategoryTree('wc', 'WC bis', [], false, 'super-admin', true));
+
+        $write = $connection->lastWrite();
+        self::assertNotNull($write);
+        self::assertStringNotContainsString('approval_status', $write['sql'], 'the approval is already where the reviewer wants it');
     }
 
     public function testRefusesToRemoveASubLevelAProductStillUsesAndWritesNothing(): void

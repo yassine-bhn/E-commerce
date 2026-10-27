@@ -65,6 +65,15 @@ enum ApprovalStatus: string
         return self::Approved === $this ? self::PendingApproval : $this;
     }
 
+    /**
+     * The reviewer validates by writing: a Super Admin's own save is never queued for himself, so
+     * the record comes out approved whatever state the edit found it in.
+     */
+    public function afterReviewerModification(): self
+    {
+        return self::Approved;
+    }
+
     public function isPubliclyVisible(): bool
     {
         return self::Approved === $this;
