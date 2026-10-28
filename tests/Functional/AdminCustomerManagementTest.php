@@ -235,7 +235,7 @@ final class AdminCustomerManagementTest extends WebTestCase
         $target = $this->createUser('ROLE_USER');
         $client->loginUser($superAdmin);
 
-        foreach (['ROLE_ADMIN', '', 'root', 'role_user'] as $rejected) {
+        foreach (['', 'root', 'role_user', 'ROLE_GUEST'] as $rejected) {
             $client->jsonRequest('PATCH', '/api/v1/admin/customers/'.$target->getId().'/role', ['role' => $rejected]);
             self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
             self::assertSame('ROLE_USER', $this->storedRole($target->getId()));

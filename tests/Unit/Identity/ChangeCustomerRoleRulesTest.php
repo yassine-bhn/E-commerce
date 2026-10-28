@@ -30,12 +30,12 @@ final class ChangeCustomerRoleRulesTest extends TestCase
         $handler = new ChangeCustomerRoleHandler($connection);
 
         $this->expectException(RoleNotAssignableException::class);
-        $this->expectExceptionMessage('Only ROLE_USER and ROLE_SUPER_ADMIN can be assigned to a user.');
+        $this->expectExceptionMessage('Only ROLE_USER and ROLE_ADMIN and ROLE_SUPER_ADMIN can be assigned to a user.');
 
         $handler(new ChangeCustomerRole(
             customerId: self::TARGET,
             adminId: self::ACTOR,
-            role: 'ROLE_ADMIN',
+            role: 'ROLE_GUEST',
         ));
     }
 
