@@ -146,7 +146,7 @@ final class ChangeCustomerRoleCommandTest extends KernelTestCase
             $this->commandBus()->dispatch(new ChangeCustomerRole(
                 customerId: $target,
                 adminId: $actor,
-                role: 'ROLE_ADMIN',
+                role: 'ROLE_GUEST',
             ));
             self::fail('the command bus must reject a role outside the assignable set');
         } catch (HandlerFailedException $e) {
