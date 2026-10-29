@@ -6,6 +6,7 @@ namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\DeleteCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
+use App\Catalog\Application\Port\CatalogSubmissionStore;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
 use Doctrine\DBAL\Connection;
@@ -35,6 +36,7 @@ final class DeleteCategoryHandler
     public function __construct(
         private readonly Connection $connection,
         private readonly CatalogAuditPort $audit,
+        private readonly CatalogSubmissionStore $submissions,
     ) {
     }
 
@@ -54,6 +56,9 @@ final class DeleteCategoryHandler
             );
 
             $this->connection->executeStatement(self::STORE, ['slug' => $category->slug]);
+
+            // Slug reuse must not inherit a previous approval (R11).
+            $this->submissions->delete(CatalogSubmissionKind::Category, $category->slug);
 
             $this->audit->record(
                 'CATALOG_CATEGORY_DELETED',

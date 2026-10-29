@@ -31,7 +31,6 @@ final class ProbingCatalogAudit implements CatalogAuditPort
         private readonly Connection $reader,
         private readonly Connection $writer,
         private readonly string $targetType,
-        private readonly string $table,
         private readonly string $slug,
     ) {
     }
@@ -56,7 +55,7 @@ final class ProbingCatalogAudit implements CatalogAuditPort
     private function status(Connection $connection): string
     {
         return (string) $connection->fetchOne(
-            sprintf('SELECT approval_status FROM %s WHERE slug = :slug', $this->table),
+            'SELECT approval_status FROM catalog_submission WHERE slug = :slug',
             ['slug' => $this->slug],
         );
     }

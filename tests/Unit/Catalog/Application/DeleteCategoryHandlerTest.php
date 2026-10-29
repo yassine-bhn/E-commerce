@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Catalog\Application;
 
 use App\Catalog\Application\Command\DeleteCategory;
 use App\Catalog\Application\CommandHandler\DeleteCategoryHandler;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CategoryNotEmptyException;
 use App\Catalog\Domain\Model\CategoryNotFoundException;
 use PHPUnit\Framework\TestCase;
@@ -51,7 +52,7 @@ final class DeleteCategoryHandlerTest extends TestCase
         $connection = $this->handler([$this->row([])], [['child_rows' => 0, 'products' => 0]]);
         $audit = new RecordingCatalogAudit();
 
-        (new DeleteCategoryHandler($connection, $audit))(new DeleteCategory('wc', 'super-admin'));
+        (new DeleteCategoryHandler($connection, $audit, $connection->submissions))(new DeleteCategory('wc', 'super-admin'));
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
@@ -60,6 +61,11 @@ final class DeleteCategoryHandlerTest extends TestCase
         self::assertSame(
             ['action' => 'CATALOG_CATEGORY_DELETED', 'target' => 'category', 'slug' => 'wc', 'actor' => 'super-admin', 'reason' => null],
             $audit->last(),
+        );
+        self::assertSame(
+            ['method' => 'delete', 'args' => [CatalogSubmissionKind::Category, 'wc']],
+            $connection->submissions->lastCall(),
+            'slug reuse must not inherit the deleted category approval',
         );
     }
 
@@ -73,10 +79,11 @@ final class DeleteCategoryHandlerTest extends TestCase
         $audit = new RecordingCatalogAudit();
 
         try {
-            (new DeleteCategoryHandler($connection, $audit))(new DeleteCategory('wc', 'super-admin'));
+            (new DeleteCategoryHandler($connection, $audit, $connection->submissions))(new DeleteCategory('wc', 'super-admin'));
             self::fail('a category that still owns a sub-level must not be deleted');
         } catch (CategoryNotEmptyException) {
             self::assertSame([], $audit->records, 'a refused deletion leaves no audit row (R45)');
+            self::assertSame([], $connection->submissions->calls, 'a refused deletion keeps the submission row');
         }
     }
 
@@ -91,7 +98,7 @@ final class DeleteCategoryHandlerTest extends TestCase
         $this->expectException(CategoryNotEmptyException::class);
         $this->expectExceptionMessage('Cannot delete category "wc": it contains 4 subcategories and 5 products.');
 
-        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit(), $connection->submissions))(new DeleteCategory('wc'));
     }
 
     public function testRefusesToDeleteACategoryThatOnlyHasSubLevels(): void
@@ -100,7 +107,7 @@ final class DeleteCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotEmptyException::class);
 
-        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit(), $connection->submissions))(new DeleteCategory('wc'));
     }
 
     public function testDeletingAnUnknownCategoryIsNotFoundRatherThanSuccessful(): void
@@ -109,7 +116,7 @@ final class DeleteCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotFoundException::class);
 
-        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit(), $connection->submissions))(new DeleteCategory('wc'));
     }
 
     public function testHidingACategoryNeverDeletesIt(): void
@@ -118,6 +125,6 @@ final class DeleteCategoryHandlerTest extends TestCase
 
         $this->expectException(CategoryNotEmptyException::class);
 
-        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit()))(new DeleteCategory('wc'));
+        (new DeleteCategoryHandler($connection, new RecordingCatalogAudit(), $connection->submissions))(new DeleteCategory('wc'));
     }
 }

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\CreateCategory;
-use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Domain\Model\ApprovalStatus;
+use App\Catalog\Application\Port\CatalogSubmissionStore;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryAlreadyExistsException;
@@ -27,13 +26,12 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(bus: 'command.bus')]
 final class CreateCategoryHandler
 {
-    private const SQL = 'INSERT INTO storefront_category (slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug,
-            approval_status, submitted_by, submitted_at)
-         VALUES (:slug, :label, :subs, :quote, :hidden, :ord, NULL, :approval, :submitted_by, :submitted_at)';
+    private const SQL = 'INSERT INTO storefront_category (slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug)
+         VALUES (:slug, :label, :subs, :quote, :hidden, :ord, NULL)';
 
     public function __construct(
         private readonly Connection $connection,
-        private readonly CatalogAuditPort $audit,
+        private readonly CatalogSubmissionStore $submissions,
     ) {
     }
 
@@ -59,9 +57,6 @@ final class CreateCategoryHandler
                         'quote' => $category->quoteEligible,
                         'hidden' => $category->isHidden(),
                         'ord' => $sortOrder,
-                        'approval' => ApprovalStatus::initial()->value,
-                        'submitted_by' => $command->actorId,
-                        'submitted_at' => (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP'),
                     ],
                     ['quote' => ParameterType::BOOLEAN, 'hidden' => ParameterType::BOOLEAN],
                 );
@@ -69,9 +64,8 @@ final class CreateCategoryHandler
                 throw CategoryAlreadyExistsException::forSlug($category->slug);
             }
 
-            $this->audit->record(
-                'CATALOG_SUBMISSION_CREATED',
-                CatalogSubmissionKind::Category->auditTarget(),
+            $this->submissions->create(
+                CatalogSubmissionKind::Category,
                 $category->slug,
                 $command->actorId ?? 'system',
             );

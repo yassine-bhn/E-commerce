@@ -103,6 +103,47 @@ final class CatalogRow
         );
     }
 
+    /**
+     * A row of the approval write model, for the tests that exercise a transition on a record the
+     * application did not create through its admin endpoint.
+     *
+     * @param array<string, mixed> $overrides See {@see self::product()}
+     */
+    public static function submission(
+        Connection $connection,
+        string $slug,
+        string $kind = 'products',
+        string $approvalStatus = self::STATUS_APPROVED,
+        array $overrides = [],
+    ): void {
+        $connection->insert(
+            'catalog_submission',
+            array_replace(
+                [
+                    'kind' => $kind,
+                    'slug' => $slug,
+                    'approval_status' => $approvalStatus,
+                    'submitted_by' => null,
+                    'submitted_at' => null,
+                    'reviewed_by' => null,
+                    'reviewed_at' => null,
+                    'rejection_reason' => null,
+                    'updated_at' => '2026-10-29 08:00:00.000000+00',
+                ],
+                $overrides,
+            ),
+        );
+    }
+
+    public static function deleteSubmissions(Connection $connection, string ...$slugs): void
+    {
+        $connection->executeStatement(
+            'DELETE FROM catalog_submission WHERE slug IN (:slugs)',
+            ['slugs' => $slugs],
+            ['slugs' => ArrayParameterType::STRING],
+        );
+    }
+
     public static function deleteProducts(Connection $connection, string ...$slugs): void
     {
         $connection->executeStatement(

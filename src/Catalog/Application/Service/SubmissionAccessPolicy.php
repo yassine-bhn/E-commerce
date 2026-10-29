@@ -8,22 +8,21 @@ use App\Catalog\Domain\Model\ApprovalStatus;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
-use Doctrine\DBAL\Connection;
+use App\Catalog\Domain\Repository\CatalogSubmissionRepository;
 
 /**
- * spec-run-8 R7/R8/R25/R35 — the one place that decides who may modify a catalog record.
+ * spec-run-8 R7/R8/R25/R35, spec-run-15 R2 — the one place that decides who may modify a catalog
+ * record.
  *
- * A Super Admin may write anything. A regular Admin may only write their own submission, and
- * only while it is still `PENDING_APPROVAL` or `REJECTED`: an approved record is out of their
- * reach until it is reopened. The status the guard returns is the status the caller must write
- * back, so the reapproval rule (R25) is applied by the same read that authorised it — through
- * {@see ApprovalStatus::afterModification()} for an Admin's edit, or
- * {@see ApprovalStatus::afterReviewerModification()} when the writer is the Super Admin, whose
- * own save is the validation.
+ * A Super Admin may write anything. A regular Admin may only write their own submission, and only
+ * while it is still `PENDING_APPROVAL` or `REJECTED`: an approved record is out of their reach until
+ * it is reopened. The state is read from the approval write model through
+ * {@see CatalogSubmissionRepository}, never from either view table, which is why a stale projection
+ * cannot transfer ownership or authorise an edit.
  */
 final class SubmissionAccessPolicy
 {
-    public function __construct(private readonly Connection $connection)
+    public function __construct(private readonly CatalogSubmissionRepository $submissions)
     {
     }
 
@@ -33,21 +32,17 @@ final class SubmissionAccessPolicy
         ?string $actorId,
         bool $actorIsSuperAdmin,
     ): ApprovalStatus {
-        $row = $this->connection->fetchAssociative(
-            sprintf('SELECT approval_status, submitted_by FROM %s WHERE slug = :slug', $kind->table()),
-            ['slug' => $slug],
-        );
-        if (false === $row) {
+        $submission = $this->submissions->find($kind, $slug);
+        if (null === $submission) {
             throw CatalogSubmissionNotFoundException::for($kind, $slug);
         }
 
-        $status = ApprovalStatus::fromStorage((string) $row['approval_status']);
+        $status = $submission->status();
         if ($actorIsSuperAdmin || null === $actorId) {
             return $status;
         }
 
-        $owner = is_string($row['submitted_by'] ?? null) ? $row['submitted_by'] : null;
-        if ($owner !== $actorId || !$status->canBeEditedByOwner()) {
+        if ($submission->submittedBy() !== $actorId || !$status->canBeEditedByOwner()) {
             throw CatalogSubmissionNotOwnedException::for($kind, $slug);
         }
 

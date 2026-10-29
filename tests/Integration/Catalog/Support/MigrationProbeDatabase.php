@@ -41,6 +41,9 @@ final class MigrationProbeDatabase
     /** The migration that makes the customer e-mail unique case-insensitively (spec-run-12 R7-R9). */
     public const string EMAIL_UNIQUENESS_MIGRATION = 'DoctrineMigrations\Version20261024000000';
 
+    /** The approval write model the store-backed backfill seeds (spec-run-15 WP2). */
+    public const string CATALOG_SUBMISSION_MIGRATION = 'DoctrineMigrations\Version20261029000001';
+
     private const string SUFFIX = '__migration_probe';
 
     private readonly string $name;
@@ -126,6 +129,14 @@ final class MigrationProbeDatabase
     public function migrateUpToTheApprovalMigration(): void
     {
         $this->migrateUpTo(self::APPROVAL_MIGRATION);
+    }
+
+    /**
+     * Runs the chain through the approval write model, so a store-backed command has its table.
+     */
+    public function migrateUpToTheCatalogSubmissionMigration(): void
+    {
+        $this->migrateUpTo(self::CATALOG_SUBMISSION_MIGRATION);
     }
 
     /**

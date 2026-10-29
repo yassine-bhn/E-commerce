@@ -13,18 +13,15 @@ use Symfony\Component\Finder\Finder;
  * spec-run-12 R1/R2 — the three design properties the approval-workflow report left at INSPECTED,
  * each turned into an assertion that fails when the property stops holding.
  *
- * R58 — "no second approval mechanism". The decision type is spelled out in exactly three files
- * (the enum, the command that carries it, the controller that builds that command), and an approval
- * outcome is named by the listed files only: `DecideCatalogSubmissionHandler` through
- * `targetStatus()`, the three writers that approve a reviewer's own save through
- * `afterReviewerModification()` (`AdminProductController`, `ReplaceCategoryTreeHandler`,
- * `AddCategorySubLevelHandler`), their shared readers (`CatalogVisibility`, `CategoryFinder`,
- * `StorefrontReferenceRepository`, which test the `APPROVED` literal), and the one operator command
- * R13 sanctions (`app:catalog:backfill-approval`), which is allow-listed by name because it writes
- * the same literal in raw SQL and would otherwise slip past a check that only looks for a method
- * call. The routes that can produce the decision are declared by one controller. A second command
- * accepting a `CatalogDecision`, a writer or reader of either status outside this list, or an
- * `/approve` route declared elsewhere all break the assertion.
+ * R4/R10 — "no second approval mechanism". After WP3 the write model is the authority: the decision
+ * type reaches persistence only through the enum that defines it, the command that carries it, the
+ * port and adapter that store it (the port is a WP3 deviation: its typed `decide()` signature must
+ * name the decision), the aggregate that applies it, the controller that builds the command and the
+ * operator backfill that replays it. `catalog_submission` is written by one adapter only, and the
+ * six approval columns of the two view tables are written by the two projections only. The routes
+ * that can produce the decision are declared by one controller. A second command accepting a
+ * `CatalogDecision`, a second submission writer, a handler that writes an approval column, or an
+ * `/approve` route declared elsewhere all break an assertion.
  *
  * R40 — "only the genuinely missing schema was added". The workflow's footprint on the two catalog
  * tables is exactly the documented columns, plus the two indexes and the two CHECK constraints that
@@ -90,31 +87,49 @@ final class CatalogApprovalDesignTest extends KernelTestCase
         self::bootKernel();
     }
 
-    public function testTheDecisionTypeIsAcceptedByOneCommandAndApprovedThroughTheListedWriters(): void
+    public function testTheDecisionTypeIsNamedOnlyByTheWriteModelAndItsEntryPoints(): void
     {
         self::assertSame(
             [
                 'Catalog/Application/Command/DecideCatalogSubmission.php',
+                'Catalog/Application/Port/CatalogSubmissionStore.php',
                 'Catalog/Domain/Model/CatalogDecision.php',
+                'Catalog/Domain/Model/CatalogSubmission.php',
+                'Catalog/Infrastructure/Console/BackfillCatalogApprovalCommand.php',
                 'Catalog/Infrastructure/Http/AdminCatalogSubmissionController.php',
+                'Catalog/Infrastructure/Persistence/DbalCatalogSubmissionStore.php',
             ],
             self::filesMentioning('CatalogDecision'),
-            'R58 — a review outcome reaches the database through one command only: a second command, handler or controller naming CatalogDecision would be a second approval mechanism.',
+            'R4/R10 — a review outcome reaches the database through one write model only: a second command, handler or adapter naming CatalogDecision would be a second approval mechanism.',
         );
+    }
+
+    public function testOnlyTheSubmissionStoreWritesTheSubmissionTable(): void
+    {
+        self::assertSame(
+            ['Catalog/Infrastructure/Persistence/DbalCatalogSubmissionStore.php'],
+            self::filesWithCodeMatching('/(?:INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+catalog_submission\b/i'),
+            'R4/R10 — the store is the only owner of catalog_submission; a handler or controller writing it would bypass the transition rules, the audit and the outbox.',
+        );
+    }
+
+    public function testOnlyTheProjectionsWriteApprovalColumnsToTheViewTables(): void
+    {
+        $writers = [];
+        foreach (self::sources() as $path => $contents) {
+            $code = self::code($contents);
+            if (self::updatesAViewApprovalColumn($code) || self::projectsDynamicApprovalColumns($code)) {
+                $writers[] = $path;
+            }
+        }
 
         self::assertSame(
             [
-                'Catalog/Application/CommandHandler/AddCategorySubLevelHandler.php',
-                'Catalog/Application/CommandHandler/DecideCatalogSubmissionHandler.php',
-                'Catalog/Application/CommandHandler/ReplaceCategoryTreeHandler.php',
-                'Catalog/Infrastructure/Console/BackfillCatalogApprovalCommand.php',
-                'Catalog/Infrastructure/Http/AdminProductController.php',
-                'Catalog/Infrastructure/ReadModel/CatalogVisibility.php',
-                'Catalog/Infrastructure/ReadModel/CategoryFinder.php',
-                'Shared/Infrastructure/ReadModel/StorefrontReferenceRepository.php',
+                'Catalog/Infrastructure/Projection/ProjectStorefrontApproval.php',
+                'Catalog/Infrastructure/Projection/ReplayCatalogSubmission.php',
             ],
-            self::filesMatching("/->targetStatus\\(\\)|->afterReviewerModification\\(\\)|approval_status\\s*=\\s*'(?:APPROVED|REJECTED)'/"),
-            'R58 — every file that names an approval outcome is listed: the decision handler, the three writers of a reviewer\'s own save, the read models that test the APPROVED literal, and the release backfill of pre-workflow rows (R13), listed rather than trusted because it writes the same literal in raw SQL. A new writer or reader is a new way for a status to be produced or read, so it has to be added here deliberately.',
+            $writers,
+            'R10 — the six approval columns of the views are projected from the write model by these two files only; a handler or controller writing them directly would be the second approval mechanism WP3 removed.',
         );
     }
 
@@ -177,6 +192,25 @@ final class CatalogApprovalDesignTest extends KernelTestCase
         yield 'categories' => [self::CATEGORY_TABLE, self::CATEGORY_WORKFLOW_COLUMNS];
     }
 
+    public function testTheSubmissionTableCarriesExactlyTheDocumentedColumns(): void
+    {
+        self::assertSame(
+            [
+                'kind',
+                'slug',
+                'approval_status',
+                'submitted_by',
+                'submitted_at',
+                'reviewed_by',
+                'reviewed_at',
+                'rejection_reason',
+                'updated_at',
+            ],
+            array_keys(self::columns('catalog_submission')),
+            'R40 — the write model is the six approval columns plus its key and update moment; a tenth column would be schema the workflow did not need.',
+        );
+    }
+
     #[DataProvider('approvalTableProvider')]
     public function testAnApprovalStatusIsMandatoryPendingByDefaultAndRangeConstrained(
         string $table,
@@ -205,6 +239,7 @@ final class CatalogApprovalDesignTest extends KernelTestCase
     {
         yield 'products' => [self::PRODUCT_TABLE, 'chk_storefront_product_approval_status'];
         yield 'categories' => [self::CATEGORY_TABLE, 'chk_storefront_category_approval_status'];
+        yield 'submissions' => ['catalog_submission', 'chk_catalog_submission_status'];
     }
 
     public function testCategoriesKeepHiddenAsTheirPublicationFlagAndGainNoPublishedColumn(): void
@@ -330,18 +365,86 @@ final class CatalogApprovalDesignTest extends KernelTestCase
     }
 
     /**
+     * A write to a view's approval columns, stated literally in the SQL.
+     *
+     * The tempered gaps stop at the next statement so a SELECT that mentions the columns before or
+     * after an unrelated UPDATE cannot be mistaken for the writer. `published` and `hidden` are
+     * deliberately absent: publication is a separate decision, written by its own command.
+     */
+    private static function updatesAViewApprovalColumn(string $code): bool
+    {
+        $view = '(?:'.self::PRODUCT_TABLE.'|'.self::CATEGORY_TABLE.')';
+        $column = '(?:approval_status|submitted_by|submitted_at|reviewed_by|reviewed_at|rejection_reason)';
+
+        // The statement boundary is applied to a slice of the source rather than repeated inside
+        // the pattern: two tempered `{0,800}` gaps overflow PCRE's compiled-pattern limit, which
+        // made the guard fail to compile and silently match nothing.
+        if (preg_match_all('/\bUPDATE\s+'.$view.'\b/i', $code, $matches, PREG_OFFSET_CAPTURE) > 0) {
+            foreach ($matches[0] as $match) {
+                $statement = substr($code, $match[1], 2000);
+                if (1 === preg_match('/;|\bUPDATE\b|\bINSERT\b|\bDELETE\b/i', $statement, $boundary, PREG_OFFSET_CAPTURE, strlen($match[0]))) {
+                    $statement = substr($statement, 0, $boundary[0][1]);
+                }
+                if (1 === preg_match('/\bSET\b.*?\b'.$column.'\b\s*=/is', $statement)) {
+                    return true;
+                }
+            }
+        }
+
+        $insert = sprintf(
+            '/\bINSERT\s+INTO\s+%s\s*\((?:(?!\)).){0,1200}?\b%s\b/is',
+            $view,
+            $column,
+        );
+
+        return 1 === preg_match($insert, $code);
+    }
+
+    /**
+     * A projection whose SET clause is interpolated at runtime: the template alone has no column
+     * names, so the rule is the pair "SET %s" plus an approval-column assignment in the same file.
+     */
+    private static function projectsDynamicApprovalColumns(string $code): bool
+    {
+        return 1 === preg_match('/\bSET\s+%s\b/i', $code)
+            && 1 === preg_match('/\b(?:approval_status|submitted_by|submitted_at|reviewed_by|reviewed_at|rejection_reason)\s*=/i', $code);
+    }
+
+    /**
      * @return list<string>
      */
-    private static function filesMatching(string $pattern): array
+    private static function filesWithCodeMatching(string $pattern): array
     {
         $files = [];
         foreach (self::sources() as $path => $contents) {
-            if (1 === preg_match($pattern, $contents)) {
+            if (1 === preg_match($pattern, self::code($contents))) {
                 $files[] = $path;
             }
         }
 
         return $files;
+    }
+
+    /**
+     * The PHP source without comments, preserving strings (where the SQL lives). A guard that reads
+     * docblocks would red on prose such as "this never touches approval_status".
+     */
+    private static function code(string $source): string
+    {
+        $code = '';
+        foreach (token_get_all($source) as $token) {
+            if (is_array($token)) {
+                if (T_COMMENT === $token[0] || T_DOC_COMMENT === $token[0]) {
+                    continue;
+                }
+                $code .= $token[1];
+
+                continue;
+            }
+            $code .= $token;
+        }
+
+        return $code;
     }
 
     /**

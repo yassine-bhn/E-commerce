@@ -6,6 +6,7 @@ namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Port\CatalogAuditPort;
+use App\Catalog\Application\Port\CatalogSubmissionStore;
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
@@ -40,21 +41,18 @@ final class ReplaceCategoryTreeHandler
 
     private const STORE = 'UPDATE storefront_category SET label = :label, quote_eligible = :quote, subcategories = :subs WHERE slug = :slug';
 
-    private const STORE_REOPEN = 'UPDATE storefront_category SET label = :label, quote_eligible = :quote, subcategories = :subs,
-            approval_status = :status, reviewed_by = :reviewed_by, reviewed_at = :reviewed_at, rejection_reason = NULL
-         WHERE slug = :slug';
-
     public function __construct(
         private readonly Connection $connection,
         private readonly SubmissionAccessPolicy $access,
         private readonly CatalogAuditPort $audit,
+        private readonly CatalogSubmissionStore $submissions,
     ) {
     }
 
     public function __invoke(ReplaceCategoryTree $command): void
     {
         $this->connection->transactional(function () use ($command): void {
-            $current = $this->access->authorize(
+            $this->access->authorize(
                 CatalogSubmissionKind::Category,
                 $command->slug,
                 $command->actorId,
@@ -68,23 +66,14 @@ final class ReplaceCategoryTreeHandler
 
             $category->coversSubLevels($this->usedSubLevels($category->slug));
 
-            $next = $command->actorIsSuperAdmin
-                ? $current->afterReviewerModification()
-                : $current->afterModification();
-            $reopens = $next !== $current;
-
             $this->connection->executeStatement(
-                $reopens ? self::STORE_REOPEN : self::STORE,
+                self::STORE,
                 [
                     'label' => $category->label,
                     'quote' => $category->quoteEligible,
                     'subs' => $category->subcategoriesJson(),
                     'slug' => $category->slug,
-                ] + ($reopens ? [
-                    'status' => $next->value,
-                    'reviewed_by' => $command->actorIsSuperAdmin ? $command->actorId : null,
-                    'reviewed_at' => $command->actorIsSuperAdmin ? (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP') : null,
-                ] : []),
+                ],
                 ['quote' => ParameterType::BOOLEAN],
             );
 
@@ -94,6 +83,16 @@ final class ReplaceCategoryTreeHandler
                 $category->slug,
                 $command->actorId ?? 'system',
             );
+
+            if ($command->actorIsSuperAdmin) {
+                $this->submissions->reviewerSave(
+                    CatalogSubmissionKind::Category,
+                    $category->slug,
+                    $command->actorId ?? 'system',
+                );
+            } else {
+                $this->submissions->ownerModified(CatalogSubmissionKind::Category, $category->slug);
+            }
         });
     }
 

@@ -57,6 +57,9 @@ final class CheckoutQuoteController
             'delivery' => $quote->delivery->minorUnits(),
             'total' => $quote->total->minorUnits(),
             'currency' => $quote->total->currency()->value,
+            'lines' => $quote->lines,
+            'promoCode' => $quote->promoCode,
+            'deliveryMethod' => $quote->deliveryMethod,
         ]);
     }
 }

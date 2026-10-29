@@ -6,10 +6,10 @@ namespace App\Catalog\Infrastructure\Http;
 
 use App\Catalog\Application\Command\SetProductPublication;
 use App\Catalog\Application\Port\CatalogAuditPort;
+use App\Catalog\Application\Port\CatalogSubmissionStore;
 use App\Catalog\Application\Query\GetCatalogSubmission;
 use App\Catalog\Application\Service\SubcategoryTree;
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
-use App\Catalog\Domain\Model\ApprovalStatus;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
@@ -17,6 +17,9 @@ use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
 use App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
+use App\Shared\Application\Port\InventoryStockPort;
+use App\Shared\Domain\Currency;
+use App\Shared\Domain\Money;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -36,7 +39,8 @@ use Symfony\Component\Uid\Uuid;
  * Admin product management (create / update / read / publication). Deletion lives in
  * {@see AdminCategoryController::deleteProduct()} (it protects order history).
  *
- * Prices are whole dinars, like every other product of the storefront.
+ * Prices are decimal DT on input (up to three decimals, e.g. `15.3` or `153894.32`) and integer
+ * millimes in storage and in this API's responses; TND's smallest unit is the millime.
  *
  * spec-run-8 R1/R10/R15/R17/R35 — every writer may create a product, but a creation is always a
  * `PENDING_APPROVAL` submission owned by its creator; only the Super Admin reads or rewrites
@@ -57,6 +61,8 @@ final class AdminProductController
         private MessengerQuery $queries,
         private MessageBusInterface $commandBus,
         private CatalogAuditPort $audit,
+        private InventoryStockPort $stock,
+        private CatalogSubmissionStore $submissions,
     ) {
     }
 
@@ -78,23 +84,26 @@ final class AdminProductController
                 $this->connection->executeStatement(
                     'INSERT INTO storefront_product_view (
                         id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
-                        stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants,
-                        approval_status, submitted_by, submitted_at, published
+                        stock, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants,
+                        published
                     ) VALUES (
                         :id, :slug, :name, :brand, :ref, :category, :sub, :price, :old_price, \'TND\',
-                        :stock, :stock_quantity, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants,
-                        :approval, :submitted_by, :submitted_at, false
+                        :stock, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants,
+                        false
                     )',
-                    ['id' => Uuid::v7()->toRfc4122(), 'approval' => ApprovalStatus::initial()->value,
-                        'submitted_by' => $admin->getId(),
-                        'submitted_at' => (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP'),
-                    ] + $this->parameters($product),
+                    ['id' => Uuid::v7()->toRfc4122()] + $this->parameters($product),
                     $this->types(),
                 );
 
-                $this->audit->record(
-                    'CATALOG_SUBMISSION_CREATED',
-                    CatalogSubmissionKind::Product->auditTarget(),
+                // The view row exists first, so the cache refresh finds it; `stockQuantity` is the
+                // available quantity and the Inventory port derives on_hand from it (R17).
+                if (null !== $product['stockQuantity']) {
+                    $this->stock->setAvailable($product['slug'], $product['stockQuantity']);
+                }
+
+                // The store owns the audit and the create event of the approval record (R2).
+                $this->submissions->create(
+                    CatalogSubmissionKind::Product,
                     $product['slug'],
                     $admin->getId(),
                 );
@@ -138,36 +147,28 @@ final class AdminProductController
 
         try {
             $this->connection->transactional(function () use ($slug, $product, $admin): void {
-                $current = $this->access->authorize(
+                $this->access->authorize(
                     CatalogSubmissionKind::Product,
                     $slug,
                     $admin->getId(),
                     $this->isSuperAdmin($admin),
                 );
 
-                // The reviewer validates by writing: his own save is never queued for himself.
-                $reviewer = $this->isSuperAdmin($admin);
-                $next = $reviewer ? $current->afterReviewerModification() : $current->afterModification();
-                $reopens = $next !== $current;
-
                 $this->connection->executeStatement(
                     'UPDATE storefront_product_view SET
                         name = :name, brand = :brand, ref = :ref, category_slug = :category, subcategory = :sub,
-                        price_minor = :price, old_price_minor = :old_price, stock = :stock,
-                        stock_quantity = COALESCE(:stock_quantity, stock_quantity), material = :material,
+                        price_minor = :price, old_price_minor = :old_price, stock = :stock, material = :material,
                         dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
-                        description = :description, variants = :variants'
-                    .($reopens ? ',
-                        approval_status = :approval, reviewed_by = :reviewed_by, reviewed_at = :reviewed_at,
-                        rejection_reason = NULL' : '')
-                    .' WHERE slug = :slug',
-                    $this->parameters($product) + ($reopens ? [
-                        'approval' => $next->value,
-                        'reviewed_by' => $reviewer ? $admin->getId() : null,
-                        'reviewed_at' => $reviewer ? (new \DateTimeImmutable())->format('Y-m-d H:i:s.uP') : null,
-                    ] : []),
+                        description = :description, variants = :variants
+                      WHERE slug = :slug',
+                    $this->parameters($product),
                     $this->types(),
                 );
+
+                if (null !== $product['stockQuantity']) {
+                    // The entered quantity is available, so an existing reservation is preserved.
+                    $this->stock->setAvailable($slug, $product['stockQuantity']);
+                }
 
                 $this->audit->record(
                     'CATALOG_PRODUCT_UPDATED',
@@ -175,6 +176,13 @@ final class AdminProductController
                     $slug,
                     $admin->getId(),
                 );
+
+                // The reviewer validates by writing: his own save is never queued for himself (R7).
+                if ($this->isSuperAdmin($admin)) {
+                    $this->submissions->reviewerSave(CatalogSubmissionKind::Product, $slug, $admin->getId());
+                } else {
+                    $this->submissions->ownerModified(CatalogSubmissionKind::Product, $slug);
+                }
             });
         } catch (\DomainException $error) {
             return $this->domainFailure($error);
@@ -334,18 +342,18 @@ final class AdminProductController
             // The storefront shows "from <lowest variant price>": keep the base price in sync.
             $price = min(array_column($variants, 'price'));
         } else {
-            $price = $this->integer($body['price'] ?? null);
-            if (null === $price || $price < 0) {
-                return 'The price must be a non-negative integer (in dinars).';
+            $price = $this->decimalMinor($body['price'] ?? null);
+            if (null === $price) {
+                return 'The price must be a non-negative decimal DT amount with up to 3 decimals.';
             }
         }
 
         $oldPrice = null;
         $rawOldPrice = $body['oldPrice'] ?? null;
         if (null !== $rawOldPrice && '' !== $rawOldPrice) {
-            $oldPrice = $this->integer($rawOldPrice);
+            $oldPrice = $this->decimalMinor($rawOldPrice);
             if (null === $oldPrice || $oldPrice <= $price) {
-                return 'The old price must be an integer greater than the price.';
+                return 'The old price must be a decimal DT amount with up to 3 decimals, greater than the price.';
             }
         }
 
@@ -429,10 +437,10 @@ final class AdminProductController
         $seen = [];
         foreach (array_values($raw) as $index => $variant) {
             $label = is_array($variant) ? $this->text($variant['label'] ?? null) : '';
-            $price = is_array($variant) ? $this->integer($variant['price'] ?? null) : null;
+            $price = is_array($variant) ? $this->decimalMinor($variant['price'] ?? null) : null;
 
-            if ('' === $label || mb_strlen($label) > 128 || null === $price || $price < 0) {
-                return sprintf('Variant #%d needs a label and a non-negative integer price.', $index + 1);
+            if ('' === $label || mb_strlen($label) > 128 || null === $price) {
+                return sprintf('Variant #%d needs a label and a non-negative decimal DT price with up to 3 decimals.', $index + 1);
             }
             if (isset($seen[$label])) {
                 return sprintf('The variant label "%s" is used twice.', $label);
@@ -450,19 +458,28 @@ final class AdminProductController
         return is_string($value) ? trim($value) : '';
     }
 
-    private function integer(mixed $value): ?int
+    /**
+     * A decimal DT amount (string, integer or JSON number) parsed exactly to millimes. JSON floats
+     * are only converted to PHP's shortest round-trip decimal representation, never used in
+     * arithmetic. Returns null for malformed input, negative values or more than three decimals.
+     */
+    private function decimalMinor(mixed $value): ?int
     {
         if (is_int($value)) {
-            return $value;
-        }
-        if (is_float($value) && floor($value) === $value) {
-            return (int) $value;
-        }
-        if (is_string($value) && 1 === preg_match('/^\d+$/', $value)) {
-            return (int) $value;
+            $value = (string) $value;
+        } elseif (is_float($value) && is_finite($value)) {
+            $value = (string) $value;
         }
 
-        return null;
+        if (!is_string($value)) {
+            return null;
+        }
+
+        try {
+            return Money::fromDecimalString($value, Currency::TND)->minorUnits();
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
     }
 
     /**
@@ -482,7 +499,6 @@ final class AdminProductController
             'price' => $product['price'],
             'old_price' => $product['oldPrice'],
             'stock' => $product['stock'],
-            'stock_quantity' => $product['stockQuantity'],
             'material' => $product['material'],
             'dims' => $product['dims'],
             'image' => $product['image'],
@@ -500,7 +516,6 @@ final class AdminProductController
         return [
             'price' => ParameterType::INTEGER,
             'old_price' => ParameterType::INTEGER,
-            'stock_quantity' => ParameterType::INTEGER,
             'is_new' => ParameterType::BOOLEAN,
             'is_best' => ParameterType::BOOLEAN,
             'headrest' => ParameterType::BOOLEAN,

@@ -66,6 +66,16 @@ final class AdminProductCategoryMoveTest extends WebTestCase
     {
         $connection = $this->connection;
         if ($connection instanceof Connection) {
+            $targets = array_merge($this->productSlugs, $this->categorySlugs);
+            if ([] !== $targets) {
+                // The write model survives the view row unless the test removes it, and a reused
+                // slug must not inherit this test's approval (WP3 R11).
+                $connection->executeStatement(
+                    'DELETE FROM catalog_submission WHERE slug IN (:slugs)',
+                    ['slugs' => $targets],
+                    ['slugs' => ArrayParameterType::STRING],
+                );
+            }
             if ([] !== $this->productSlugs) {
                 $connection->executeStatement(
                     'DELETE FROM storefront_product_view WHERE slug IN (:slugs)',
@@ -80,7 +90,6 @@ final class AdminProductCategoryMoveTest extends WebTestCase
                     ['slugs' => ArrayParameterType::STRING],
                 );
             }
-            $targets = array_merge($this->productSlugs, $this->categorySlugs);
             if ([] !== $targets) {
                 $connection->executeStatement(
                     'DELETE FROM catalog_audit_log WHERE target_slug IN (:slugs)',

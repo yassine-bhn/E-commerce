@@ -18,8 +18,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  *
  * DBAL-only (QRY-003), read-only (QRY-001), returns view DTOs (QRY-002) and authorizes inside the
  * SQL itself (QRY-004 / SEC-002): the requester must be a non-banned back-office role in the
- * database, even if the flag carried by the query were forged. It deliberately bypasses
- * {@see CatalogVisibility}: that predicate is what the PUBLIC surface applies (R33).
+ * database, even if the flag carried by the query were forged. It deliberately bypasses the
+ * public visibility predicate: that predicate is what the PUBLIC surface applies (R33).
  */
 #[AsMessageHandler(bus: 'query.bus')]
 final class AdminProductFinder

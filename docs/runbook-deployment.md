@@ -60,6 +60,15 @@ invisible on the storefront. The command only touches rows that carry no workflo
 reports how many products and categories it approved and writes nothing when there is nothing left
 to approve. Run it without `--apply` to see what it would do.
 
+The release also runs `php bin/console app:inventory:backfill-stock --apply`, which seeds
+`inventory_stock` from the existing `stock_quantity` cache (preserving current availability) for
+tracked products only. Untracked products (`stock_quantity IS NULL`) are left untouched. Run it
+without `--apply` to preview; a second run writes nothing.
+
+Projection read models can be rebuilt with `php bin/console projection:replay <name>` (names:
+`catalog-product-view`, `catalog-submission`, `inventory-stock`), with `--dry-run` to preview.
+Replays are idempotent, transactional and write no outbox or processed_events rows.
+
 ### If the release stops on a duplicate e-mail
 
 `20261024000000` makes `customer_profile.email` unique **case-insensitively** — every identity

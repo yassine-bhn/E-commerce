@@ -22,7 +22,7 @@ final class AdminSettingsTest extends WebTestCase
 
         $connection->executeStatement('DELETE FROM customer_profile WHERE id IN (:ids)', ['ids' => [self::SUPER_ADMIN_ID, self::ADMIN_ID]], ['ids' => \Doctrine\DBAL\ArrayParameterType::STRING]);
         $connection->executeStatement("UPDATE platform_setting SET contact_phone = '', contact_whatsapp = '', auto_cancel_minutes = 30, updated_at = NOW() WHERE id = 1");
-        $connection->executeStatement('UPDATE storefront_shipping_policy SET delivery_fee_minor = 15, free_delivery_threshold_minor = 1000 WHERE id = 1');
+        $connection->executeStatement('UPDATE storefront_shipping_policy SET delivery_fee_minor = 15000, free_delivery_threshold_minor = 1000000 WHERE id = 1');
 
         parent::tearDown();
     }

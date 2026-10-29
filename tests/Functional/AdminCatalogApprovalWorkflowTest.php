@@ -57,6 +57,11 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         $targets = array_merge($this->productSlugs, $this->categorySlugs);
         if ([] !== $targets) {
             $this->db()->executeStatement(
+                'DELETE FROM catalog_submission WHERE slug IN (:v)',
+                ['v' => $targets],
+                ['v' => ArrayParameterType::STRING],
+            );
+            $this->db()->executeStatement(
                 'DELETE FROM catalog_audit_log WHERE target_slug IN (:v)',
                 ['v' => $targets],
                 ['v' => ArrayParameterType::STRING],
@@ -89,6 +94,12 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
 
         $slug = $this->uniqueSlug('wf-owned');
         $this->createProduct($client, $slug);
+
+        self::assertSame(
+            ['kind' => 'products', 'approval_status' => 'PENDING_APPROVAL', 'submitted_by' => $owner->getId()],
+            $this->submissionRow($slug),
+            'R2 — the creation is a row of the approval write model, not only six view columns',
+        );
 
         $client->request('GET', '/api/v1/admin/catalog/submissions/products/'.$slug);
         self::assertResponseIsSuccessful();
@@ -263,7 +274,7 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
         self::assertResponseIsSuccessful();
         $corrected = $this->json($client);
-        self::assertSame(140, $corrected['price']);
+        self::assertSame(140000, $corrected['price']);
         self::assertSame('Produit corrigé', $corrected['name']);
         self::assertSame('APPROVED', $corrected['approval']['approvalStatus'], 'the reviewer\'s own save is the validation');
         self::assertSame($super->getId(), $corrected['approval']['reviewedBy']);
@@ -277,15 +288,18 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         $client->request('DELETE', '/api/v1/admin/catalog/products/'.$slug);
         self::assertResponseIsSuccessful();
         self::assertFalse($this->db()->fetchOne('SELECT 1 FROM storefront_product_view WHERE slug = :s', ['s' => $slug]));
+        self::assertFalse($this->db()->fetchOne('SELECT 1 FROM catalog_submission WHERE slug = :s', ['s' => $slug]), 'the submission is deleted with its content row');
 
         self::assertSame(
             [
                 ['CATALOG_SUBMISSION_CREATED', 'product', $admin->getId(), null],
                 ['CATALOG_PRODUCT_UPDATED', 'product', $super->getId(), null],
+                ['CATALOG_SUBMISSION_APPROVED', 'product', $super->getId(), null],
                 ['CATALOG_PRODUCT_UPDATED', 'product', $super->getId(), null],
                 ['CATALOG_PRODUCT_DELETED', 'product', $super->getId(), null],
             ],
             $this->audit($slug),
+            'the reviewer save audits the content first, then the approval it really performed; the second save approves nothing new',
         );
     }
 
@@ -328,14 +342,17 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $client->request('DELETE', '/api/v1/admin/catalog/categories/'.$category);
         self::assertResponseIsSuccessful();
+        self::assertFalse($this->db()->fetchOne('SELECT 1 FROM catalog_submission WHERE slug = :s', ['s' => $category]), 'the submission is deleted with its content row');
 
         self::assertSame(
             [
                 ['CATALOG_SUBMISSION_CREATED', 'category', $admin->getId(), null],
                 ['CATALOG_CATEGORY_UPDATED', 'category', $super->getId(), null],
+                ['CATALOG_SUBMISSION_APPROVED', 'category', $super->getId(), null],
                 ['CATALOG_CATEGORY_DELETED', 'category', $super->getId(), null],
             ],
             $this->audit($category),
+            'the category reviewer save audits the content first, then the approval it really performed',
         );
     }
 
@@ -435,7 +452,7 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
 
         $edited = $this->json($client);
         self::assertSame('Produit corrigé par son auteur', $edited['name']);
-        self::assertSame(180, $edited['price']);
+        self::assertSame(180000, $edited['price']);
         self::assertSame('PENDING_APPROVAL', $edited['approval']['approvalStatus'], 'an edit is not a decision');
         self::assertSame($admin->getId(), $edited['approval']['submittedBy'], 'the edit does not transfer authorship');
         self::assertNull($edited['approval']['reviewedBy']);
@@ -521,8 +538,10 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
                 ['CATALOG_SUBMISSION_CREATED', 'product', $edited['approval']['submittedBy'], null],
                 ['CATALOG_SUBMISSION_REJECTED', 'product', $super->getId(), 'Photos floues'],
                 ['CATALOG_PRODUCT_UPDATED', 'product', $super->getId(), null],
+                ['CATALOG_SUBMISSION_APPROVED', 'product', $super->getId(), null],
             ],
             $this->audit($slug),
+            'the rejected row moves to approved, and that transition is audited after the content save',
         );
     }
 
@@ -671,6 +690,62 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
     }
 
     /**
+     * R2/R5 — the write model, not the denormalized view, is what authorises and describes a
+     * submission: a stale view row can neither hand it to another owner nor change its state.
+     */
+    public function testAStaleViewRowNeitherAuthorisesAnotherOwnerNorChangesTheQueueState(): void
+    {
+        $owner = $this->createUser('ROLE_ADMIN');
+        $client = $this->clientFor($owner);
+
+        $slug = $this->uniqueSlug('wf-single-source');
+        $this->createProduct($client, $slug);
+
+        $this->db()->executeStatement(
+            "UPDATE storefront_product_view
+                SET approval_status = 'REJECTED', submitted_by = 'legacy-view-actor',
+                    reviewed_by = 'legacy-reviewer', rejection_reason = 'view only'
+              WHERE slug = :slug",
+            ['slug' => $slug],
+        );
+
+        $client->request('GET', '/api/v1/admin/catalog/submissions/products/'.$slug);
+        self::assertResponseIsSuccessful();
+        $submission = $this->json($client);
+        self::assertSame('PENDING_APPROVAL', $submission['approvalStatus'], 'the queue reads the submission row');
+        self::assertSame($owner->getId(), $submission['submittedBy'], 'ownership comes from the submission row');
+        self::assertNull($submission['reviewedBy']);
+
+        $update = $this->productPayload($slug);
+        $update['name'] = 'Produit édité malgré la vue périmée';
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
+        self::assertResponseIsSuccessful('the owner is authorised by the submission row, not by the stale view');
+        self::assertSame('PENDING_APPROVAL', $this->storedStatus($slug));
+    }
+
+    /**
+     * R28/R29 — publication refuses an unapproved submission even when its view row already says
+     * APPROVED: the approval state has one source, and it is the write model.
+     */
+    public function testPublicationReadsTheSubmissionStateNotTheViewStatus(): void
+    {
+        $adminClient = $this->clientFor($this->createUser('ROLE_ADMIN'));
+
+        $slug = $this->uniqueSlug('wf-publish-source');
+        $this->createProduct($adminClient, $slug);
+
+        $this->db()->executeStatement(
+            "UPDATE storefront_product_view SET approval_status = 'APPROVED' WHERE slug = :slug",
+            ['slug' => $slug],
+        );
+
+        $superClient = $this->clientFor($this->createUser('ROLE_SUPER_ADMIN'));
+        $superClient->jsonRequest('PATCH', '/api/v1/admin/catalog/products/'.$slug.'/publication', ['published' => true]);
+        self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT, 'the submission is still pending, whatever the view says');
+        self::assertFalse((bool) $this->db()->fetchOne('SELECT published FROM storefront_product_view WHERE slug = :s', ['s' => $slug]));
+    }
+
+    /**
      * @return list<array{0: string, 1: string, 2: string, 3: string|null}>
      */
     private function audit(string $slug): array
@@ -724,9 +799,25 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
     private function storedStatus(string $slug): string
     {
         return (string) $this->db()->fetchOne(
-            'SELECT approval_status FROM storefront_product_view WHERE slug = :slug',
+            'SELECT approval_status FROM catalog_submission WHERE slug = :slug',
             ['slug' => $slug],
         );
+    }
+
+    /** @return array{kind: string, approval_status: string, submitted_by: string} */
+    private function submissionRow(string $slug): array
+    {
+        $row = $this->db()->fetchAssociative(
+            'SELECT kind, approval_status, submitted_by FROM catalog_submission WHERE slug = :slug',
+            ['slug' => $slug],
+        );
+        self::assertIsArray($row, 'the approval write model must hold a row for '.$slug);
+
+        return [
+            'kind' => (string) $row['kind'],
+            'approval_status' => (string) $row['approval_status'],
+            'submitted_by' => (string) $row['submitted_by'],
+        ];
     }
 
     /** @param list<string> $subcategories */

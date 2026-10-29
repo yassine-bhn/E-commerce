@@ -13,6 +13,8 @@ services:
     _instanceof:
         App\Shared\Application\Port\HealthProbe:
             tags: ['app.health_probe']
+        App\Shared\Application\Projection\ProjectionReplayer:
+            tags: ['app.projection_replayer']
 
     App\:
         resource: '../src/'
@@ -121,6 +123,15 @@ services:
     App\Catalog\Application\Port\CatalogAuditPort:
         alias: App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter
 
+    # spec-run-15 WP2 (R2): one approval store owns catalog_submission. The alias is written out
+    # so a second adapter is a visible decision, not a silent change of the command side.
+    App\Catalog\Application\Port\CatalogSubmissionStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Domain\Repository\CatalogSubmissionRepository:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+
     # spec-run-12 (R18): the review write asks the read side through a port, so Application never
     # names the SQL predicate. The container can resolve the interface on its own while there is one
     # implementation; the binding is written out because a second implementation must be a visible
@@ -177,6 +188,12 @@ services:
     App\Shared\Application\Service\ReadinessService:
         arguments:
             $probes: !tagged_iterator app.health_probe
+
+    # spec-run-15 R30/R31 (ADR-0017): every context contributes its replay names through this tag,
+    # so Shared never names a context and the command cannot drift from the registered set.
+    App\Shared\Infrastructure\Projection\ProjectionRegistry:
+        arguments:
+            $replayers: !tagged_iterator app.projection_replayer
 
     App\Shared\Infrastructure\Health\MigrationsHealthProbe:
         arguments:

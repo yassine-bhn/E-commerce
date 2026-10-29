@@ -39,6 +39,7 @@ final class AdminCatalogTest extends WebTestCase
         $connection = static::getContainer()->get(Connection::class);
 
         if ([] !== $this->productSlugs) {
+            $connection->executeStatement('DELETE FROM inventory_stock WHERE product_slug IN (:v)', ['v' => $this->productSlugs], ['v' => ArrayParameterType::STRING]);
             $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug IN (:v)', ['v' => $this->productSlugs], ['v' => ArrayParameterType::STRING]);
         }
         if ([] !== $this->brandNames) {
@@ -194,7 +195,7 @@ final class AdminCatalogTest extends WebTestCase
         $this->publish($client, $slug);
         $client->request('GET', '/api/v1/storefront/products/'.$slug);
         self::assertResponseIsSuccessful();
-        self::assertSame(200, $this->json($client)['price']);
+        self::assertSame(200000, $this->json($client)['price']);
 
         // Same slug again is refused.
         $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $this->productPayload($slug));
@@ -208,8 +209,8 @@ final class AdminCatalogTest extends WebTestCase
         $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, $update);
         self::assertResponseIsSuccessful();
         $updated = $this->json($client);
-        self::assertSame(150, $updated['price']);
-        self::assertSame(220, $updated['oldPrice']);
+        self::assertSame(150000, $updated['price']);
+        self::assertSame(220000, $updated['oldPrice']);
         self::assertSame('out', $updated['stock']);
 
         // The reviewer's own save is the validation: the approved record stays approved and public.
@@ -308,7 +309,7 @@ final class AdminCatalogTest extends WebTestCase
         $client->jsonRequest('POST', '/api/v1/admin/catalog/products', $payload);
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $created = $this->json($client);
-        self::assertSame(385, $created['price']);
+        self::assertSame(385000, $created['price']);
         self::assertCount(2, $created['variants'] ?? []);
 
         $payload['variants'] = [['label' => '50 L', 'price' => 385], ['label' => '50 L', 'price' => 400]];

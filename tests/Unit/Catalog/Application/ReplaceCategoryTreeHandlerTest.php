@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Catalog\Application;
 
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\CommandHandler\ReplaceCategoryTreeHandler;
-use App\Catalog\Domain\Model\ApprovalStatus;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
 use App\Catalog\Domain\Model\CategoryLabelInvalidException;
 use App\Catalog\Domain\Model\CategoryNotFoundException;
@@ -37,7 +37,7 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
 
     private function rewrite(CategoryConnectionFake $connection, ReplaceCategoryTree $command): void
     {
-        (new ReplaceCategoryTreeHandler($connection, $connection->accessPolicy(), new RecordingCatalogAudit()))($command);
+        (new ReplaceCategoryTreeHandler($connection, $connection->accessPolicy(), new RecordingCatalogAudit(), $connection->submissions))($command);
     }
 
     public function testWritesTheNewLabelFlagsAndSubLevelTreeOfTheCategory(): void
@@ -69,6 +69,12 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
             [['label' => 'Cuvette'], ['label' => 'Baignoire']],
             json_decode((string) $write['params']['subs'], true),
         );
+        self::assertSame(
+            ['method' => 'ownerModified', 'args' => [CatalogSubmissionKind::Category, 'wc']],
+            $connection->submissions->lastCall(),
+            'a regular Admin edit leaves the approval status to the store',
+        );
+        self::assertStringNotContainsString('approval_status', $write['sql'], 'the handler writes content only');
     }
 
     /**
@@ -83,7 +89,11 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
 
         $this->expectException(CatalogSubmissionNotOwnedException::class);
 
-        $this->rewrite($connection, new ReplaceCategoryTree('wc', 'WC', [], false, 'admin-1'));
+        try {
+            $this->rewrite($connection, new ReplaceCategoryTree('wc', 'WC', [], false, 'admin-1'));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 
     /**
@@ -109,17 +119,19 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
-        self::assertStringContainsString('approval_status', $write['sql'], 'the reviewer\'s own save approves the row');
-        self::assertSame(ApprovalStatus::Approved->value, $write['params']['status']);
-        self::assertSame('super-admin', $write['params']['reviewed_by']);
-        self::assertNotNull($write['params']['reviewed_at']);
-        self::assertStringContainsString('rejection_reason = NULL', $write['sql']);
+        self::assertStringNotContainsString('approval_status', $write['sql'], 'the view write stays content-only');
+        self::assertSame(
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'super-admin']],
+            $connection->submissions->lastCall(),
+            'the reviewer\'s own save is applied by the store, which owns the audit and the status',
+        );
     }
 
     /**
-     * An approved row the reviewer rewrites stays approved: there is no queue to push it back into.
+     * An approved row the reviewer rewrites stays approved: the store is still asked, and it
+     * writes no second approval entry because the row is already where the reviewer wants it.
      */
-    public function testASuperAdminEditOfAnApprovedCategoryLeavesItApproved(): void
+    public function testASuperAdminEditOfAnApprovedCategoryStillDelegatesToTheReviewerSave(): void
     {
         $connection = new CategoryConnectionFake();
         $connection->submission('APPROVED', 'admin-1');
@@ -139,6 +151,11 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
         $write = $connection->lastWrite();
         self::assertNotNull($write);
         self::assertStringNotContainsString('approval_status', $write['sql'], 'the approval is already where the reviewer wants it');
+        self::assertSame(
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'super-admin']],
+            $connection->submissions->lastCall(),
+            'the store decides whether the already-approved save is a transition',
+        );
     }
 
     public function testRefusesToRemoveASubLevelAProductStillUsesAndWritesNothing(): void
@@ -160,7 +177,11 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
         $this->expectException(CategorySublevelInUseException::class);
         $this->expectExceptionMessage('Cuvette');
 
-        $this->rewrite($connection, new ReplaceCategoryTree('wc', 'WC', [['label' => 'Abattant']], false));
+        try {
+            $this->rewrite($connection, new ReplaceCategoryTree('wc', 'WC', [['label' => 'Abattant']], false));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 
     public function testRefusesADuplicatedSiblingLabelAndWritesNothing(): void
@@ -177,7 +198,11 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
 
         $this->expectException(\DomainException::class);
 
-        $this->rewrite($connection, new ReplaceCategoryTree('wc', 'WC', [['label' => 'A'], ['label' => 'A']], false));
+        try {
+            $this->rewrite($connection, new ReplaceCategoryTree('wc', 'WC', [['label' => 'A'], ['label' => 'A']], false));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 
     public function testRefusesAnEmptyLabelAndWritesNothing(): void
@@ -186,7 +211,11 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
 
         $this->expectException(CategoryLabelInvalidException::class);
 
-        $this->rewrite($connection, new ReplaceCategoryTree('wc', '', [], false));
+        try {
+            $this->rewrite($connection, new ReplaceCategoryTree('wc', '', [], false));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 
     public function testAnUnknownCategoryIsNotFoundAndWritesNothing(): void
@@ -195,6 +224,10 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
 
         $this->expectException(CategoryNotFoundException::class);
 
-        $this->rewrite($connection, new ReplaceCategoryTree('introuvable', 'WC', [], false));
+        try {
+            $this->rewrite($connection, new ReplaceCategoryTree('introuvable', 'WC', [], false));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 }

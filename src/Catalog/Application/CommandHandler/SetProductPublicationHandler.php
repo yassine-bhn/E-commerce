@@ -6,7 +6,7 @@ namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\SetProductPublication;
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Domain\Model\ApprovalStatus;
+use App\Catalog\Application\Port\CatalogSubmissionStore;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
@@ -27,21 +27,19 @@ final class SetProductPublicationHandler
     public function __construct(
         private readonly Connection $connection,
         private readonly CatalogAuditPort $audit,
+        private readonly CatalogSubmissionStore $submissions,
     ) {
     }
 
     public function __invoke(SetProductPublication $command): void
     {
         $this->connection->transactional(function () use ($command): void {
-            $stored = $this->connection->fetchOne(
-                'SELECT approval_status FROM storefront_product_view WHERE slug = :slug',
-                ['slug' => $command->slug],
-            );
-            if (!is_string($stored)) {
+            $submission = $this->submissions->find(CatalogSubmissionKind::Product, $command->slug);
+            if (null === $submission) {
                 throw CatalogSubmissionNotFoundException::for(CatalogSubmissionKind::Product, $command->slug);
             }
 
-            $status = ApprovalStatus::fromStorage($stored);
+            $status = $submission->status();
             if ($command->published && !$status->isPubliclyVisible()) {
                 throw ApprovalTransitionRefusedException::unapprovedCannotBePublished($command->slug, $status);
             }

@@ -34,12 +34,22 @@ final class AdminCategoryManagementTest extends WebTestCase
     {
         if ([] !== $this->productSlugs) {
             $this->db()->executeStatement(
+                'DELETE FROM catalog_submission WHERE slug IN (:v)',
+                ['v' => $this->productSlugs],
+                ['v' => ArrayParameterType::STRING],
+            );
+            $this->db()->executeStatement(
                 'DELETE FROM storefront_product_view WHERE slug IN (:v)',
                 ['v' => $this->productSlugs],
                 ['v' => ArrayParameterType::STRING],
             );
         }
         if ([] !== $this->categorySlugs) {
+            $this->db()->executeStatement(
+                'DELETE FROM catalog_submission WHERE slug IN (:v)',
+                ['v' => $this->categorySlugs],
+                ['v' => ArrayParameterType::STRING],
+            );
             $this->db()->executeStatement(
                 'DELETE FROM storefront_category WHERE slug IN (:v)',
                 ['v' => $this->categorySlugs],
@@ -130,17 +140,18 @@ final class AdminCategoryManagementTest extends WebTestCase
             'parentLabel' => 'Radiateurs',
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $saved = $this->json($client);
         self::assertSame(
             [['label' => 'Radiateurs', 'children' => [['label' => 'Radiateur à eau']]]],
-            $this->json($client)['subcategories'],
+            $saved['subcategories'],
         );
+        self::assertSame('APPROVED', $saved['approvalStatus'], 'the Super Admin\'s own save is the approval, so the category is not queued for another decision');
 
         // Q1: no child row was created, the node lives in the parent row's JSON tree.
         self::assertSame(
             0,
             (int) $this->db()->fetchOne('SELECT COUNT(*) FROM storefront_category WHERE parent_slug = :s', ['s' => $slug]),
         );
-        $this->approve($client, 'category', $slug);
         self::assertSame([$slug], $this->navigationSlugs($client, [$slug]));
     }
 

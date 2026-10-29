@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain;
 
+/**
+ * Integer money value object. The amount is expressed in the currency's smallest unit
+ * (millimes for TND, cents for EUR/USD/GBP), never as a float.
+ */
 final readonly class Money
 {
     public function __construct(
@@ -18,6 +22,60 @@ final readonly class Money
     public static function ofMinor(int $minorUnits, Currency $currency): self
     {
         return new self($minorUnits, $currency);
+    }
+
+    /**
+     * Parses a decimal amount (`15.3`, `153894.32`, `680`) exactly into the currency's smallest
+     * unit using string arithmetic only. Rejects malformed/negative input and more fractional
+     * digits than the currency declares (three for TND, two for EUR/USD/GBP).
+     */
+    public static function fromDecimalString(string $decimal, Currency $currency): self
+    {
+        if (str_starts_with($decimal, '-')) {
+            throw new \InvalidArgumentException('Money cannot be negative');
+        }
+
+        if (1 !== preg_match('/^(?<whole>\d+)(?:\.(?<fraction>\d+))?$/', $decimal, $matches)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid decimal amount', $decimal));
+        }
+
+        $scale = $currency->fractionalDigits();
+        $fraction = $matches['fraction'] ?? '';
+        if (strlen($fraction) > $scale) {
+            throw new \InvalidArgumentException(sprintf('"%s" has more than %d fractional digits for %s', $decimal, $scale, $currency->value));
+        }
+
+        $digits = ltrim($matches['whole'].str_pad($fraction, $scale, '0'), '0');
+        if ('' === $digits) {
+            return new self(0, $currency);
+        }
+
+        $max = (string) PHP_INT_MAX;
+        if (strlen($digits) > strlen($max) || (strlen($digits) === strlen($max) && strcmp($digits, $max) > 0)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is too large to represent', $decimal));
+        }
+
+        return new self((int) $digits, $currency);
+    }
+
+    /**
+     * The canonical decimal amount, dropping unnecessary trailing zeros:
+     * `15300` TND → `15.3`, `680000` TND → `680`, `153894320` TND → `153894.32`.
+     */
+    public function toDecimalString(): string
+    {
+        $scale = $this->currency->fractionalDigits();
+        $factor = 10 ** $scale;
+        $whole = intdiv($this->minorUnits, $factor);
+        $fraction = $this->minorUnits % $factor;
+
+        if (0 === $fraction) {
+            return (string) $whole;
+        }
+
+        $digits = rtrim(str_pad((string) $fraction, $scale, '0', STR_PAD_LEFT), '0');
+
+        return $whole.'.'.$digits;
     }
 
     public function minorUnits(): int

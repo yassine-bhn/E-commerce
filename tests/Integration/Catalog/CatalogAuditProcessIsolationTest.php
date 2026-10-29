@@ -6,14 +6,19 @@ namespace App\Tests\Integration\Catalog;
 
 use App\Catalog\Application\Command\DecideCatalogSubmission;
 use App\Catalog\Application\CommandHandler\DecideCatalogSubmissionHandler;
+use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Domain\Model\CatalogDecision;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter;
+use App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore;
+use App\Catalog\Infrastructure\Projection\ProjectStorefrontApproval;
+use App\Shared\Infrastructure\Outbox\DoctrineOutbox;
 use App\Tests\Integration\Catalog\Support\CatalogRow;
 use App\Tests\Integration\Catalog\Support\ProbingCatalogAudit;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * spec-run-12 R5/R6 — R38's transaction proven across a boundary, not between two statements.
@@ -43,6 +48,7 @@ final class CatalogAuditProcessIsolationTest extends KernelTestCase
         self::bootKernel();
         $this->removeRows(self::connection());
         CatalogRow::product(self::connection(), self::PRODUCT, 'PENDING_APPROVAL');
+        CatalogRow::submission(self::connection(), self::PRODUCT, 'products', 'PENDING_APPROVAL');
     }
 
     protected function tearDown(): void
@@ -66,10 +72,9 @@ final class CatalogAuditProcessIsolationTest extends KernelTestCase
             $observer,
             $writer,
             'product',
-            'storefront_product_view',
             self::PRODUCT,
         );
-        $handler = new DecideCatalogSubmissionHandler($writer, $audit);
+        $handler = new DecideCatalogSubmissionHandler($this->store($writer, $audit));
 
         $handler(new DecideCatalogSubmission(
             CatalogSubmissionKind::Product,
@@ -222,7 +227,7 @@ final class CatalogAuditProcessIsolationTest extends KernelTestCase
     private function approvalStatus(Connection $connection): string
     {
         return (string) $connection->fetchOne(
-            'SELECT approval_status FROM storefront_product_view WHERE slug = :slug',
+            'SELECT approval_status FROM catalog_submission WHERE slug = :slug',
             ['slug' => self::PRODUCT],
         );
     }
@@ -250,8 +255,22 @@ final class CatalogAuditProcessIsolationTest extends KernelTestCase
 
     private function removeRows(Connection $connection): void
     {
+        CatalogRow::deleteSubmissions($connection, self::PRODUCT);
         CatalogRow::deleteProducts($connection, self::PRODUCT);
         CatalogRow::deleteAuditEntries($connection, self::PRODUCT);
+    }
+
+    private function store(Connection $connection, CatalogAuditPort $audit): DbalCatalogSubmissionStore
+    {
+        /** @var SerializerInterface $serializer */
+        $serializer = static::getContainer()->get(SerializerInterface::class);
+
+        return new DbalCatalogSubmissionStore(
+            $connection,
+            new DoctrineOutbox($connection, $serializer),
+            $audit,
+            new ProjectStorefrontApproval($connection),
+        );
     }
 
     private static function connection(): Connection

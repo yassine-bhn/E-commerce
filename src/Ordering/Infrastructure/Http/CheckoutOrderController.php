@@ -13,6 +13,7 @@ use App\Ordering\Domain\Model\IllegalOrderStateTransitionException;
 use App\Ordering\Domain\Model\OptimisticLockException;
 use App\Ordering\Domain\Model\OrderNotFoundException;
 use App\Ordering\Domain\Model\OrderStatus;
+use App\Ordering\Domain\Model\PriceChangedException;
 use App\Shared\Application\Pagination\CursorPage;
 use App\Shared\Application\Pagination\InvalidCursorException;
 use App\Shared\Domain\Inventory\InsufficientStockException;
@@ -105,6 +106,18 @@ final class CheckoutOrderController
         }
 
         $promoCode = is_string($body['promoCode'] ?? null) ? $body['promoCode'] : null;
+
+        $confirmedQuote = null;
+        if (array_key_exists('confirmedQuote', $body)) {
+            if (null === $body['confirmedQuote']) {
+                $confirmedQuote = null;
+            } elseif (is_array($body['confirmedQuote'])) {
+                $confirmedQuote = $body['confirmedQuote'];
+            } else {
+                return new JsonResponse(['error' => 'confirmedQuote must be an object or null'], Response::HTTP_BAD_REQUEST);
+            }
+        }
+
         $orderId = Uuid::v7()->toRfc4122();
         $orderNumber = 'ZG-'.random_int(100000, 999999);
 
@@ -118,11 +131,25 @@ final class CheckoutOrderController
                 $deliveryMethod,
                 $paymentMethod,
                 $promoCode,
+                confirmedQuote: $confirmedQuote,
             ));
+        } catch (PriceChangedException $e) {
+            return new JsonResponse([
+                'error' => 'price-changed',
+                'quote' => $e->currentQuote,
+                'changedLines' => $e->changedLines,
+            ], Response::HTTP_CONFLICT);
         } catch (InsufficientStockException $e) {
             return $this->insufficientStock($e);
         } catch (HandlerFailedException $e) {
             $cause = $e->getPrevious();
+            if ($cause instanceof PriceChangedException) {
+                return new JsonResponse([
+                    'error' => 'price-changed',
+                    'quote' => $cause->currentQuote,
+                    'changedLines' => $cause->changedLines,
+                ], Response::HTTP_CONFLICT);
+            }
             if ($cause instanceof InsufficientStockException) {
                 return $this->insufficientStock($cause);
             }

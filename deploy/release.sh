@@ -114,6 +114,11 @@ printf 'release: applying migrations\n'
 printf 'release: approving the catalogue that predates the approval workflow\n'
 "${compose[@]}" run --rm app php bin/console app:catalog:backfill-approval --apply
 
+# H3: inventory_stock is the authority; the view is a cache. Seed balances from the existing
+# stock_quantity values (preserving current availability) before the app starts. Idempotent.
+printf 'release: seeding inventory balances that predate the stock authority\n'
+"${compose[@]}" run --rm app php bin/console app:inventory:backfill-stock --apply
+
 printf 'release: rebuilding the storefront search index\n'
 "${compose[@]}" run --rm app php bin/console app:storefront:index-search
 
