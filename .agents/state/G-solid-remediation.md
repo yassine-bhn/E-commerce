@@ -23,6 +23,11 @@ RED: tests/Architecture/SolidBoundariesTest.php — "Cart/Application/CommandHan
 ATTEMPTS: 1
 GREEN: tests/Unit/Cart (20 tests, incl. 8 new handler tests over in-memory fakes), tests/Functional/StorefrontCartTest (8 tests through the kernel) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Unit/Cart && vendor/bin/phpunit --testsuite=Functional --filter StorefrontCartTest → PASS; itAllowsOneHandlerPerClass no longer flags Cart (3 identity findings remain for 2.2-2.4); phpstan src/Cart clean.
 
+### Task 2.2 — split CustomerProfileCommandHandler
+RED: tests/Architecture/SolidBoundariesTest.php — "Identity/Application/CommandHandler/CustomerProfileCommandHandler.php has 3 AsMessageHandler attributes" — cmd: docker compose exec -T app vendor/bin/phpunit --testsuite=Architecture --filter itAllowsOneHandlerPerClass → FAIL
+ATTEMPTS: 1
+GREEN: tests/Integration/Identity/CustomerProfileHandlersTest (4 tests: upsert through command.bus, email-collision semantics, address upsert+update, delete) + Functional profile tests (4) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Identity/CustomerProfileHandlersTest && vendor/bin/phpunit --testsuite=Functional --filter 'CustomerProfile|CustomerAddress|Profile' → PASS; Connection kept per plan (Phase 3.1 removes it; its agents.dip003.noInfrastructure findings are the intended RED).
+
 - Architecture suite (SolidBoundariesTest): 68 failures —
   it_keeps_application_free_of_forbidden_types 37, it_keeps_controllers_thin 12,
   it_forbids_sql_in_http 7, it_limits_constructor_dependencies 5,
