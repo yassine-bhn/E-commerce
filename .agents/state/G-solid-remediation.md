@@ -16,6 +16,13 @@ Run record: tests/Unit/PhpStan — Tests: 18, Assertions: 18, Failures: 8 (every
 ## Gate RED (Task 1.7 — 2026-11-01)
 All gates exist and fail; failures match the audit. No production fix yet.
 
+## Phase 2 — structural fixes
+
+### Task 2.1 — split CartCommandHandler
+RED: tests/Architecture/SolidBoundariesTest.php — "Cart/Application/CommandHandler/CartCommandHandler.php has 4 AsMessageHandler attributes" — cmd: docker compose exec -T app vendor/bin/phpunit --testsuite=Architecture --filter itAllowsOneHandlerPerClass → FAIL
+ATTEMPTS: 1
+GREEN: tests/Unit/Cart (20 tests, incl. 8 new handler tests over in-memory fakes), tests/Functional/StorefrontCartTest (8 tests through the kernel) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Unit/Cart && vendor/bin/phpunit --testsuite=Functional --filter StorefrontCartTest → PASS; itAllowsOneHandlerPerClass no longer flags Cart (3 identity findings remain for 2.2-2.4); phpstan src/Cart clean.
+
 - Architecture suite (SolidBoundariesTest): 68 failures —
   it_keeps_application_free_of_forbidden_types 37, it_keeps_controllers_thin 12,
   it_forbids_sql_in_http 7, it_limits_constructor_dependencies 5,
