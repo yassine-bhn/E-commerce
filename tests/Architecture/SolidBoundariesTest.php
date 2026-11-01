@@ -183,6 +183,9 @@ final class SolidBoundariesTest extends TestCase
                 $cases[$class['file'].'#'.$class['name']] = [$class['file'], $mc];
             }
         }
+        if ([] === $cases) {
+            $cases['__none__'] = ['__none__', 0];
+        }
 
         return $cases;
     }
@@ -191,6 +194,11 @@ final class SolidBoundariesTest extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('oneHandlerProvider')]
     public function itAllowsOneHandlerPerClass(string $file, int $count): void
     {
+        if ('__none__' === $file) {
+            self::assertSame(0, $count, 'no class carries more than one AsMessageHandler');
+
+            return;
+        }
         self::fail(sprintf('%s has %d AsMessageHandler attributes', $file, $count));
     }
 

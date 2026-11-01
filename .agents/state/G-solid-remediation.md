@@ -33,6 +33,11 @@ RED: tests/Architecture/SolidBoundariesTest.php — "Identity/Application/Comman
 ATTEMPTS: 1
 GREEN: tests/Integration/Identity/WishlistHandlersTest (4 tests: insert through command.bus, duplicate add is a no-op, removal deletes the matching row, other slugs untouched) + Functional WishlistTest (7) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Identity/WishlistHandlersTest && vendor/bin/phpunit --testsuite=Functional --filter WishlistTest → PASS; Connection kept per plan (Phase 3.1 removes it).
 
+### Task 2.4 — split CustomerProfileFinder
+RED: tests/Architecture/SolidBoundariesTest.php — "Identity/Infrastructure/ReadModel/CustomerProfileFinder.php has 2 AsMessageHandler attributes" — cmd: docker compose exec -T app vendor/bin/phpunit --testsuite=Architecture --filter itAllowsOneHandlerPerClass → FAIL
+ATTEMPTS: 1
+GREEN: tests/Integration/Identity/CustomerProfileFinderHandlersTest (3 tests: profile row shape through query.bus, null for unknown, pagination + city search + LIKE escaping) + Functional CustomerProfileTest (2) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Identity/CustomerProfileFinderHandlersTest && vendor/bin/phpunit --testsuite=Functional --filter 'CustomerProfile' → PASS. itAllowsOneHandlerPerClass is now fully green (sentinel case added; Architecture count 68 → 67). SRP-001 has zero remaining violations.
+
 - Architecture suite (SolidBoundariesTest): 68 failures —
   it_keeps_application_free_of_forbidden_types 37, it_keeps_controllers_thin 12,
   it_forbids_sql_in_http 7, it_limits_constructor_dependencies 5,
