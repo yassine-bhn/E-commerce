@@ -46,6 +46,11 @@ RED: tests/Integration/Catalog/CatalogSubmissionStoreTest.php — "Error: Class 
 ATTEMPTS: 1
 GREEN: CatalogSubmissionStore (9 methods) replaced by six narrow ports + the existing repository — Creator (create+import), Submitter, Decider, Reviewer, OwnerEditor (ownerModified+move), Deleter; DbalCatalogSubmissionStore implements all, aliases in services.yaml public:true. All 11 consumers inject narrow ports (SetProductPublicationHandler now reads via CatalogSubmissionRepository). CatalogSubmissionStoreTest gains testEverySubmissionPortResolvesToTheSameAdapterInstance (7 ports = 1 adapter). CatalogApprovalDesignTest port inventory updated to CatalogSubmissionDecider.php (enumerated design files follow the intended split). Unit+Integration catalog 172 tests green, Functional catalog/product/brand 135 green, Architecture 66 (port-method-limit rule now green with sentinel). cmd: docker compose exec -T app vendor/bin/phpunit tests/Unit/Catalog tests/Integration/Catalog → PASS.
 
+### Task 2.6 — replace match(true) (OCP-002)
+RED: tests/Architecture/SolidBoundariesTest.php — "Catalog/Domain/Model/ApprovalStatus.php uses match (true)" and "Shared/Application/Service/ReadinessService.php uses match (true)" — cmd: docker compose exec -T app vendor/bin/phpunit --testsuite=Architecture --filter itForbidsMatchTrueInApplicationAndDomain → FAIL
+ATTEMPTS: 1
+GREEN: ApprovalStatus::canMoveTo uses explicit early returns (same transition table), ReadinessService uses ok/unavailable/degraded if-elseif — ApprovalStatusTest + ReadinessServiceTest + Unit (273) + Functional readiness (3) green; Architecture 66 → 64 (match-true rule green with sentinel). cmd: docker compose exec -T app vendor/bin/phpunit tests/Unit/Catalog tests/Unit/Shared && vendor/bin/phpunit --testsuite=Architecture → PASS (64 remaining are Phase 3/4 rules).
+
 - Architecture suite (SolidBoundariesTest): 68 failures —
   it_keeps_application_free_of_forbidden_types 37, it_keeps_controllers_thin 12,
   it_forbids_sql_in_http 7, it_limits_constructor_dependencies 5,

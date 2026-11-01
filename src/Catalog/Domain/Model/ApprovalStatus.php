@@ -81,11 +81,14 @@ enum ApprovalStatus: string
 
     public function canMoveTo(self $target): bool
     {
-        return match (true) {
-            self::PendingApproval === $this => self::Approved === $target || self::Rejected === $target,
-            self::Rejected === $this => self::PendingApproval === $target,
-            self::Approved === $this => self::PendingApproval === $target,
-        };
+        if (self::PendingApproval === $this) {
+            return self::Approved === $target || self::Rejected === $target;
+        }
+        if (self::Rejected === $this) {
+            return self::PendingApproval === $target;
+        }
+
+        return self::PendingApproval === $target; // Approved
     }
 
     public function assertCanMoveTo(self $target): void

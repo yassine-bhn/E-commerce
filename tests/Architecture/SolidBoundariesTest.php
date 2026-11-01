@@ -214,6 +214,9 @@ final class SolidBoundariesTest extends TestCase
                 $cases[$iface['file'].'#'.$iface['name']] = [$iface['file'], count($iface['methods'])];
             }
         }
+        if ([] === $cases) {
+            $cases['__none__'] = ['__none__', 0];
+        }
 
         return $cases;
     }
@@ -222,6 +225,11 @@ final class SolidBoundariesTest extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('portMethodLimitProvider')]
     public function itLimitsPortsToThreeMethods(string $file, int $count): void
     {
+        if ('__none__' === $file) {
+            self::assertSame(0, $count, 'no Domain/Application port exceeds 3 methods');
+
+            return;
+        }
         self::fail(sprintf('%s has %d methods', $file, $count));
     }
 
@@ -361,7 +369,7 @@ final class SolidBoundariesTest extends TestCase
         self::fail(sprintf('%s uses service location (%s)', $file, $reason));
     }
 
-    /** @return array<string, array{0:string}> */
+    /** @return array<string, array{0:string,1:int}> */
     public static function matchTrueProvider(): array
     {
         $cases = [];
@@ -371,8 +379,11 @@ final class SolidBoundariesTest extends TestCase
             }
             $code = self::tree()->read($file);
             if (str_contains($code, 'match (true)') || str_contains($code, 'match(true)')) {
-                $cases[$file] = [$file];
+                $cases[$file] = [$file, 1];
             }
+        }
+        if ([] === $cases) {
+            $cases['__none__'] = ['__none__', 0];
         }
 
         return $cases;
@@ -380,8 +391,13 @@ final class SolidBoundariesTest extends TestCase
 
     #[\PHPUnit\Framework\Attributes\Test]
     #[\PHPUnit\Framework\Attributes\DataProvider('matchTrueProvider')]
-    public function itForbidsMatchTrueInApplicationAndDomain(string $file): void
+    public function itForbidsMatchTrueInApplicationAndDomain(string $file, int $violations): void
     {
+        if ('__none__' === $file) {
+            self::assertSame(0, $violations, 'no Domain/Application code uses match (true)');
+
+            return;
+        }
         self::fail(sprintf('%s uses match (true)', $file));
     }
 
