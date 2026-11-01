@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace App\Catalog\Infrastructure\Persistence;
 
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionCreator;
+use App\Catalog\Application\Port\CatalogSubmissionDecider;
+use App\Catalog\Application\Port\CatalogSubmissionDeleter;
+use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
+use App\Catalog\Application\Port\CatalogSubmissionReviewer;
+use App\Catalog\Application\Port\CatalogSubmissionSubmitter;
 use App\Catalog\Domain\Event\CatalogSubmissionApproved;
 use App\Catalog\Domain\Event\CatalogSubmissionCreated;
 use App\Catalog\Domain\Event\CatalogSubmissionRejected;
@@ -32,7 +37,7 @@ use Symfony\Component\Uid\Uuid;
  * names, then project the six columns. Any failure rolls the whole call back, so the write model
  * and the read model cannot disagree.
  */
-final class DbalCatalogSubmissionStore implements CatalogSubmissionStore, CatalogSubmissionRepository
+final class DbalCatalogSubmissionStore implements CatalogSubmissionCreator, CatalogSubmissionDecider, CatalogSubmissionDeleter, CatalogSubmissionOwnerEditor, CatalogSubmissionReviewer, CatalogSubmissionSubmitter, CatalogSubmissionRepository
 {
     public function __construct(
         private readonly Connection $connection,

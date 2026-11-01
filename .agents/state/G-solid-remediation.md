@@ -33,10 +33,18 @@ RED: tests/Architecture/SolidBoundariesTest.php — "Identity/Application/Comman
 ATTEMPTS: 1
 GREEN: tests/Integration/Identity/WishlistHandlersTest (4 tests: insert through command.bus, duplicate add is a no-op, removal deletes the matching row, other slugs untouched) + Functional WishlistTest (7) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Identity/WishlistHandlersTest && vendor/bin/phpunit --testsuite=Functional --filter WishlistTest → PASS; Connection kept per plan (Phase 3.1 removes it).
 
+GREEN: tests/Integration/Identity/CustomerProfileFinderHandlersTest (3 tests: profile row shape through query.bus, null for unknown, pagination + city search + LIKE escaping) + Functional CustomerProfileTest (2) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Identity/CustomerProfileFinderHandlersTest && vendor/bin/phpunit --testsuite=Functional --filter 'CustomerProfile' → PASS. itAllowsOneHandlerPerClass is now fully green (sentinel case added; Architecture count 68 → 67). SRP-001 has zero remaining violations.
+
 ### Task 2.4 — split CustomerProfileFinder
 RED: tests/Architecture/SolidBoundariesTest.php — "Identity/Infrastructure/ReadModel/CustomerProfileFinder.php has 2 AsMessageHandler attributes" — cmd: docker compose exec -T app vendor/bin/phpunit --testsuite=Architecture --filter itAllowsOneHandlerPerClass → FAIL
 ATTEMPTS: 1
 GREEN: tests/Integration/Identity/CustomerProfileFinderHandlersTest (3 tests: profile row shape through query.bus, null for unknown, pagination + city search + LIKE escaping) + Functional CustomerProfileTest (2) — cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Identity/CustomerProfileFinderHandlersTest && vendor/bin/phpunit --testsuite=Functional --filter 'CustomerProfile' → PASS. itAllowsOneHandlerPerClass is now fully green (sentinel case added; Architecture count 68 → 67). SRP-001 has zero remaining violations.
+
+### Task 2.5 — split CatalogSubmissionStore (ISP-001)
+RED: tests/Architecture/SolidBoundariesTest.php — "Catalog/Application/Port/CatalogSubmissionStore.php has 9 methods" — cmd: docker compose exec -T app vendor/bin/phpunit --testsuite=Architecture --filter itLimitsPortsToThreeMethods → FAIL
+RED: tests/Integration/Catalog/CatalogSubmissionStoreTest.php — "Error: Class App\Catalog\Application\Port\CatalogSubmissionCreator not found (resolution test: each narrow port resolves to the same adapter)" — cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Catalog/CatalogSubmissionStoreTest.php → FAIL
+ATTEMPTS: 1
+GREEN: CatalogSubmissionStore (9 methods) replaced by six narrow ports + the existing repository — Creator (create+import), Submitter, Decider, Reviewer, OwnerEditor (ownerModified+move), Deleter; DbalCatalogSubmissionStore implements all, aliases in services.yaml public:true. All 11 consumers inject narrow ports (SetProductPublicationHandler now reads via CatalogSubmissionRepository). CatalogSubmissionStoreTest gains testEverySubmissionPortResolvesToTheSameAdapterInstance (7 ports = 1 adapter). CatalogApprovalDesignTest port inventory updated to CatalogSubmissionDecider.php (enumerated design files follow the intended split). Unit+Integration catalog 172 tests green, Functional catalog/product/brand 135 green, Architecture 66 (port-method-limit rule now green with sentinel). cmd: docker compose exec -T app vendor/bin/phpunit tests/Unit/Catalog tests/Integration/Catalog → PASS.
 
 - Architecture suite (SolidBoundariesTest): 68 failures —
   it_keeps_application_free_of_forbidden_types 37, it_keeps_controllers_thin 12,

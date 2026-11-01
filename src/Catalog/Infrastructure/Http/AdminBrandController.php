@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Catalog\Infrastructure\Http;
 
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionCreator;
+use App\Catalog\Application\Port\CatalogSubmissionDeleter;
+use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
+use App\Catalog\Application\Port\CatalogSubmissionReviewer;
 use App\Catalog\Application\Query\ListAdminBrands;
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
@@ -15,6 +18,7 @@ use App\Catalog\Domain\Model\BrandNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
+use App\Catalog\Domain\Repository\CatalogSubmissionRepository;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
@@ -47,7 +51,11 @@ final class AdminBrandController
         private MessengerQuery $queries,
         private SubmissionAccessPolicy $access,
         private CatalogAuditPort $audit,
-        private CatalogSubmissionStore $submissions,
+        private CatalogSubmissionCreator $submissions,
+        private CatalogSubmissionReviewer $reviews,
+        private CatalogSubmissionOwnerEditor $ownerEdits,
+        private CatalogSubmissionDeleter $deletes,
+        private CatalogSubmissionRepository $submissionsRead,
     ) {
     }
 
@@ -90,7 +98,7 @@ final class AdminBrandController
                 $this->connection->executeStatement('INSERT INTO storefront_brand (name) VALUES (:name)', ['name' => $name]);
 
                 $this->submissions->create(CatalogSubmissionKind::Brand, $name, $admin->getId());
-                $this->submissions->reviewerSave(CatalogSubmissionKind::Brand, $name, $admin->getId());
+                $this->reviews->reviewerSave(CatalogSubmissionKind::Brand, $name, $admin->getId());
             });
         } catch (\DomainException $error) {
             return $this->domainFailure($error);
@@ -150,12 +158,12 @@ final class AdminBrandController
                 // The submission follows its brand: the row keeps its whole state under the new
                 // key, an orphan at that key (a brand deleted before the workflow existed) cannot
                 // block it, and a legacy brand with no submission gets one, approved like a create.
-                if (null !== $this->submissions->find(CatalogSubmissionKind::Brand, $name)) {
-                    $this->submissions->move(CatalogSubmissionKind::Brand, $name, $newName);
+                if (null !== $this->submissionsRead->find(CatalogSubmissionKind::Brand, $name)) {
+                    $this->ownerEdits->move(CatalogSubmissionKind::Brand, $name, $newName);
                 } else {
                     $this->submissions->create(CatalogSubmissionKind::Brand, $newName, $admin->getId());
                 }
-                $this->submissions->reviewerSave(CatalogSubmissionKind::Brand, $newName, $admin->getId());
+                $this->reviews->reviewerSave(CatalogSubmissionKind::Brand, $newName, $admin->getId());
 
                 $this->audit->record(
                     'CATALOG_BRAND_RENAMED',
@@ -201,7 +209,7 @@ final class AdminBrandController
                     throw BrandNotFoundException::forName($name);
                 }
 
-                $this->submissions->delete(CatalogSubmissionKind::Brand, $name);
+                $this->deletes->delete(CatalogSubmissionKind::Brand, $name);
 
                 $this->audit->record(
                     'CATALOG_BRAND_DELETED',

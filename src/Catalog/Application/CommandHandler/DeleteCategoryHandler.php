@@ -6,7 +6,7 @@ namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\DeleteCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionDeleter;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
 use Doctrine\DBAL\Connection;
@@ -36,7 +36,7 @@ final class DeleteCategoryHandler
     public function __construct(
         private readonly Connection $connection,
         private readonly CatalogAuditPort $audit,
-        private readonly CatalogSubmissionStore $submissions,
+        private readonly CatalogSubmissionDeleter $submissions,
     ) {
     }
 

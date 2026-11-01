@@ -123,9 +123,30 @@ services:
     App\Catalog\Application\Port\CatalogAuditPort:
         alias: App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter
 
-    # spec-run-15 WP2 (R2): one approval store owns catalog_submission. The alias is written out
-    # so a second adapter is a visible decision, not a silent change of the command side.
-    App\Catalog\Application\Port\CatalogSubmissionStore:
+    # spec-run-15 WP2 (R2) + solid Task 2.5 (ISP-001): one adapter owns catalog_submission behind
+    # narrow per-transition ports. Every alias points at the same instance, written out so a second
+    # adapter is a visible decision, not a silent change of the command side.
+    App\Catalog\Application\Port\CatalogSubmissionCreator:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionSubmitter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionDecider:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionReviewer:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionOwnerEditor:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionDeleter:
         alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
         public: true
 

@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Catalog\Application;
 
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionCreator;
+use App\Catalog\Application\Port\CatalogSubmissionDecider;
+use App\Catalog\Application\Port\CatalogSubmissionDeleter;
+use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
+use App\Catalog\Application\Port\CatalogSubmissionReviewer;
+use App\Catalog\Application\Port\CatalogSubmissionSubmitter;
 use App\Catalog\Domain\Model\ApprovalStatus;
 use App\Catalog\Domain\Model\CatalogDecision;
 use App\Catalog\Domain\Model\CatalogSubmission;
@@ -18,7 +23,7 @@ use App\Catalog\Domain\Repository\CatalogSubmissionRepository;
  * answers the ownership policy from the same state the store would lock, so a unit test never
  * needs a database or a second approval mechanism.
  */
-final class CatalogSubmissionFake implements CatalogSubmissionStore, CatalogSubmissionRepository
+final class CatalogSubmissionFake implements CatalogSubmissionCreator, CatalogSubmissionDecider, CatalogSubmissionDeleter, CatalogSubmissionOwnerEditor, CatalogSubmissionReviewer, CatalogSubmissionSubmitter, CatalogSubmissionRepository
 {
     /** @var list<array{method: string, args: array<int, mixed>}> */
     public array $calls = [];

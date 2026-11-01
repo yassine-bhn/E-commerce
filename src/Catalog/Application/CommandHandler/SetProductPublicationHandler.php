@@ -6,10 +6,10 @@ namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\SetProductPublication;
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
+use App\Catalog\Domain\Repository\CatalogSubmissionRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -27,7 +27,7 @@ final class SetProductPublicationHandler
     public function __construct(
         private readonly Connection $connection,
         private readonly CatalogAuditPort $audit,
-        private readonly CatalogSubmissionStore $submissions,
+        private readonly CatalogSubmissionRepository $submissions,
     ) {
     }
 

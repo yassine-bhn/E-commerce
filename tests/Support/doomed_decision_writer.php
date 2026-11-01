@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 use App\Catalog\Application\Command\DecideCatalogSubmission;
 use App\Catalog\Application\CommandHandler\DecideCatalogSubmissionHandler;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionDecider;
 use App\Catalog\Domain\Model\CatalogDecision;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Kernel;
@@ -59,8 +59,8 @@ if (!$connection instanceof Connection) {
     exit(3);
 }
 
-$store = $container->get(CatalogSubmissionStore::class);
-if (!$store instanceof CatalogSubmissionStore) {
+$store = $container->get(CatalogSubmissionDecider::class);
+if (!$store instanceof CatalogSubmissionDecider) {
     fwrite(STDERR, "the approval store is not reachable\n");
     exit(3);
 }

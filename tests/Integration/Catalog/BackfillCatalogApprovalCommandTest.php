@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Catalog;
 
-use App\Catalog\Application\Port\CatalogSubmissionStore;
 use App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter;
 use App\Catalog\Infrastructure\Console\BackfillCatalogApprovalCommand;
 use App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore;
@@ -156,13 +155,13 @@ final class BackfillCatalogApprovalCommandTest extends KernelTestCase
      */
     private function runBackfill(array $options = []): CommandTester
     {
-        $tester = new CommandTester(new BackfillCatalogApprovalCommand(self::probe()->connection(), $this->store()));
+        $tester = new CommandTester(new BackfillCatalogApprovalCommand(self::probe()->connection(), $this->store(), $this->store()));
         $tester->execute($options);
 
         return $tester;
     }
 
-    private function store(): CatalogSubmissionStore
+    private function store(): DbalCatalogSubmissionStore
     {
         $connection = self::probe()->connection();
         /** @var SerializerInterface $serializer */

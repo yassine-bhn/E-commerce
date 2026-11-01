@@ -6,7 +6,9 @@ namespace App\Catalog\Infrastructure\Http;
 
 use App\Catalog\Application\Command\SetProductPublication;
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionCreator;
+use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
+use App\Catalog\Application\Port\CatalogSubmissionReviewer;
 use App\Catalog\Application\Query\GetCatalogSubmission;
 use App\Catalog\Application\Service\SubcategoryTree;
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
@@ -62,7 +64,9 @@ final class AdminProductController
         private MessageBusInterface $commandBus,
         private CatalogAuditPort $audit,
         private InventoryStockPort $stock,
-        private CatalogSubmissionStore $submissions,
+        private CatalogSubmissionCreator $submissions,
+        private CatalogSubmissionReviewer $reviews,
+        private CatalogSubmissionOwnerEditor $ownerEdits,
     ) {
     }
 
@@ -179,9 +183,9 @@ final class AdminProductController
 
                 // The reviewer validates by writing: his own save is never queued for himself (R7).
                 if ($this->isSuperAdmin($admin)) {
-                    $this->submissions->reviewerSave(CatalogSubmissionKind::Product, $slug, $admin->getId());
+                    $this->reviews->reviewerSave(CatalogSubmissionKind::Product, $slug, $admin->getId());
                 } else {
-                    $this->submissions->ownerModified(CatalogSubmissionKind::Product, $slug);
+                    $this->ownerEdits->ownerModified(CatalogSubmissionKind::Product, $slug);
                 }
             });
         } catch (\DomainException $error) {

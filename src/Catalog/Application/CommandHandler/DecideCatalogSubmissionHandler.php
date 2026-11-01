@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\DecideCatalogSubmission;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionDecider;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(bus: 'command.bus')]
 final class DecideCatalogSubmissionHandler
 {
-    public function __construct(private readonly CatalogSubmissionStore $submissions)
+    public function __construct(private readonly CatalogSubmissionDecider $submissions)
     {
     }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
@@ -310,8 +310,8 @@ final class AdminProductCategoryMoveTest extends WebTestCase
      */
     private function demoteToPending(string $slug): void
     {
-        $store = static::getContainer()->get(CatalogSubmissionStore::class);
-        self::assertInstanceOf(CatalogSubmissionStore::class, $store);
+        $store = static::getContainer()->get(CatalogSubmissionOwnerEditor::class);
+        self::assertInstanceOf(CatalogSubmissionOwnerEditor::class, $store);
         $store->ownerModified(CatalogSubmissionKind::Category, $slug);
         self::assertSame('PENDING_APPROVAL', (string) $this->db()->fetchOne(
             'SELECT approval_status FROM storefront_category WHERE slug = :slug',

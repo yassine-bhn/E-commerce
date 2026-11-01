@@ -19,7 +19,7 @@ final class CreateCategoryHandlerTest extends TestCase
         $connection = new CategoryConnectionFake();
         $connection->scalars = [5];
 
-        (new CreateCategoryHandler($connection, $connection->submissions))(new CreateCategory(
+        (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory(
             slug: 'test-cat',
             label: '  Test cat  ',
             subcategories: [['label' => 'Alpha', 'children' => [['label' => 'Alpha un']]]],
@@ -59,7 +59,7 @@ final class CreateCategoryHandlerTest extends TestCase
         $connection = new CategoryConnectionFake();
         $connection->scalars = [0];
 
-        (new CreateCategoryHandler($connection, $connection->submissions))(new CreateCategory(
+        (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory(
             slug: 'pompes',
             label: 'Pompes',
             actorId: 'admin-1',
@@ -84,7 +84,7 @@ final class CreateCategoryHandlerTest extends TestCase
         $this->expectException(\DomainException::class);
 
         try {
-            (new CreateCategoryHandler($connection, $connection->submissions))(new CreateCategory('vide', '   '));
+            (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory('vide', '   '));
         } finally {
             self::assertSame([], $connection->submissions->calls, 'a refused creation never reaches the store');
         }
@@ -107,7 +107,7 @@ final class CreateCategoryHandlerTest extends TestCase
         $this->expectExceptionMessage('A category with the slug "sanitaires" already exists.');
 
         try {
-            (new CreateCategoryHandler($connection, $connection->submissions))(new CreateCategory('sanitaires', 'Plomberie bis'));
+            (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory('sanitaires', 'Plomberie bis'));
         } finally {
             self::assertSame([], $connection->submissions->calls, 'a refused creation writes no submission (R45)');
         }

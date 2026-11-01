@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Console;
 
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionCreator;
+use App\Catalog\Application\Port\CatalogSubmissionDecider;
 use App\Catalog\Domain\Model\ApprovalStatus;
 use App\Catalog\Domain\Model\CatalogDecision;
 use App\Catalog\Domain\Model\CatalogSubmission;
@@ -49,7 +50,8 @@ final class BackfillCatalogApprovalCommand extends Command
 
     public function __construct(
         private readonly Connection $connection,
-        private readonly CatalogSubmissionStore $submissions,
+        private readonly CatalogSubmissionCreator $submissions,
+        private readonly CatalogSubmissionDecider $decisions,
     ) {
         parent::__construct();
     }
@@ -206,7 +208,7 @@ final class BackfillCatalogApprovalCommand extends Command
     {
         $approved = 0;
         foreach ($this->approvalCandidates($kind) as $slug) {
-            $this->submissions->decide($kind, $slug, CatalogDecision::Approve, self::ACTOR);
+            $this->decisions->decide($kind, $slug, CatalogDecision::Approve, self::ACTOR);
             if (CatalogSubmissionKind::Product === $kind) {
                 $this->connection->executeStatement(
                     'UPDATE storefront_product_view SET published = true WHERE slug = :slug',

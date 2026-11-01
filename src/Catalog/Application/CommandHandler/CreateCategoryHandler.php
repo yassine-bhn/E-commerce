@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\CreateCategory;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionCreator;
+use App\Catalog\Application\Port\CatalogSubmissionReviewer;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryAlreadyExistsException;
@@ -30,7 +31,8 @@ final class CreateCategoryHandler
 
     public function __construct(
         private readonly Connection $connection,
-        private readonly CatalogSubmissionStore $submissions,
+        private readonly CatalogSubmissionCreator $submissions,
+        private readonly CatalogSubmissionReviewer $reviews,
     ) {
     }
 
@@ -69,7 +71,7 @@ final class CreateCategoryHandler
                 $category->slug,
                 $actorId,
             );
-            $this->submissions->reviewerSave(
+            $this->reviews->reviewerSave(
                 CatalogSubmissionKind::Category,
                 $category->slug,
                 $actorId,

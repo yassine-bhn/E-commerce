@@ -11,7 +11,7 @@ use App\Catalog\Application\Command\HideCategory;
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Command\ShowCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionDeleter;
 use App\Catalog\Application\Query\ListCategories;
 use App\Catalog\Application\Service\CategoryHierarchyValidator;
 use App\Catalog\Application\Service\ProductDeletionGuard;
@@ -69,7 +69,7 @@ final class AdminCategoryController
         private StorefrontProductSearchIndexer $searchIndex,
         private CatalogAuditPort $audit,
         private InventoryStockPort $stock,
-        private CatalogSubmissionStore $submissions,
+        private CatalogSubmissionDeleter $submissions,
     ) {
     }
 

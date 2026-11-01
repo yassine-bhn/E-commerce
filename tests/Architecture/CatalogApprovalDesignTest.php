@@ -92,7 +92,7 @@ final class CatalogApprovalDesignTest extends KernelTestCase
         self::assertSame(
             [
                 'Catalog/Application/Command/DecideCatalogSubmission.php',
-                'Catalog/Application/Port/CatalogSubmissionStore.php',
+                'Catalog/Application/Port/CatalogSubmissionDecider.php',
                 'Catalog/Domain/Model/CatalogDecision.php',
                 'Catalog/Domain/Model/CatalogSubmission.php',
                 'Catalog/Infrastructure/Console/BackfillCatalogApprovalCommand.php',

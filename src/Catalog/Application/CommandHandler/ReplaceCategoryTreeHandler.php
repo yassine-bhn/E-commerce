@@ -6,7 +6,7 @@ namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionReviewer;
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
@@ -44,7 +44,7 @@ final class ReplaceCategoryTreeHandler
         private readonly Connection $connection,
         private readonly SubmissionAccessPolicy $access,
         private readonly CatalogAuditPort $audit,
-        private readonly CatalogSubmissionStore $submissions,
+        private readonly CatalogSubmissionReviewer $submissions,
     ) {
     }
 

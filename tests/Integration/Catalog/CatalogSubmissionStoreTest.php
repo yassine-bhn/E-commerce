@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Catalog;
 
-use App\Catalog\Application\Port\CatalogSubmissionStore;
+use App\Catalog\Application\Port\CatalogSubmissionCreator;
+use App\Catalog\Application\Port\CatalogSubmissionDecider;
+use App\Catalog\Application\Port\CatalogSubmissionDeleter;
+use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
+use App\Catalog\Application\Port\CatalogSubmissionReviewer;
+use App\Catalog\Application\Port\CatalogSubmissionSubmitter;
 use App\Catalog\Domain\Model\ApprovalStatus;
 use App\Catalog\Domain\Model\CatalogSubmission;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
+use App\Catalog\Domain\Repository\CatalogSubmissionRepository;
 use App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter;
 use App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore;
 use App\Catalog\Infrastructure\Projection\ProjectStorefrontApproval;
@@ -39,7 +45,7 @@ final class CatalogSubmissionStoreTest extends KernelTestCase
 
     private ?Connection $connection = null;
 
-    private ?CatalogSubmissionStore $store = null;
+    private ?DbalCatalogSubmissionStore $store = null;
 
     protected function setUp(): void
     {
@@ -49,8 +55,8 @@ final class CatalogSubmissionStoreTest extends KernelTestCase
         $connection = static::getContainer()->get(Connection::class);
         $this->connection = $connection;
 
-        /** @var CatalogSubmissionStore $store */
-        $store = static::getContainer()->get(CatalogSubmissionStore::class);
+        /** @var DbalCatalogSubmissionStore $store */
+        $store = static::getContainer()->get(DbalCatalogSubmissionStore::class);
         $this->store = $store;
 
         $this->removeRows();
@@ -627,6 +633,29 @@ final class CatalogSubmissionStoreTest extends KernelTestCase
         CatalogRow::deleteProducts($connection, self::CREATED_PRODUCT);
     }
 
+    /**
+     * solid Task 2.5 (ISP-001) — the six narrow ports and the read repository are aliases over
+     * the one adapter, so every transition still shares the single catalog_submission writer.
+     */
+    public function testEverySubmissionPortResolvesToTheSameAdapterInstance(): void
+    {
+        $adapter = static::getContainer()->get(DbalCatalogSubmissionStore::class);
+
+        foreach ([
+            CatalogSubmissionCreator::class,
+            CatalogSubmissionSubmitter::class,
+            CatalogSubmissionDecider::class,
+            CatalogSubmissionReviewer::class,
+            CatalogSubmissionOwnerEditor::class,
+            CatalogSubmissionDeleter::class,
+            CatalogSubmissionRepository::class,
+        ] as $port) {
+            $resolved = static::getContainer()->get($port);
+            self::assertInstanceOf($port, $resolved, sprintf('%s resolves', $port));
+            self::assertSame($adapter, $resolved, sprintf('%s is the one adapter', $port));
+        }
+    }
+
     private function connection(): Connection
     {
         $connection = $this->connection;
@@ -637,10 +666,10 @@ final class CatalogSubmissionStoreTest extends KernelTestCase
         return $connection;
     }
 
-    private function store(): CatalogSubmissionStore
+    private function store(): DbalCatalogSubmissionStore
     {
         $store = $this->store;
-        if (!$store instanceof CatalogSubmissionStore) {
+        if (!$store instanceof DbalCatalogSubmissionStore) {
             throw new \LogicException('The store was not resolved from the container by setUp().');
         }
 
