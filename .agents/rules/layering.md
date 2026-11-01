@@ -6,9 +6,10 @@ paths: ["src/**"]
 
 ### LAY-001 — Domain is dependency-free
 Scope: `src/*/Domain/**`
-Rule: Domain code MUST NOT import from Application, Infrastructure, Symfony HttpKernel/HttpFoundation, or Doctrine ORM.
+Rule: Domain code MUST NOT import from Application, Infrastructure, Symfony HttpKernel/HttpFoundation, PSR, Meilisearch, or Doctrine — except the ORM mapping attributes (`Doctrine\ORM\Mapping`), Doctrine collections (`Doctrine\Common\Collections\`) for OneToMany associations, and `Symfony\Component\Uid` for identity value objects.
 Rationale: The domain model is the stable core; framework coupling makes unit tests slow and rules unverifiable.
 BAD:  `use Symfony\Component\HttpFoundation\Request;` inside `src/Ordering/Domain/Model/Order.php`
+BAD:  `use Doctrine\DBAL\Connection;` inside `src/Catalog/Domain/Model/Category.php`
 GOOD: `Order` depends only on `OrderId`, `Money`, `OrderLine` (Domain) and `Shared\Domain` types.
 Enforced by: Deptrac layers `Domain`/`Application`/`Infrastructure` + `guard-domain-imports.sh` hook.
 

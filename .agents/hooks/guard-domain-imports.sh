@@ -23,6 +23,17 @@ report_matches() {
   done < <(grep "$flags" "$pattern" "$target" || true)
 }
 
+# same as report_matches, but silently allows lines matching $3 (the LAY-001 allowlist lives
+# in .agents/rules/layering.md: ORM mapping attributes, Doctrine collections, Symfony Uid)
+report_matches_except() {
+  local flags=$1 target=$2 pattern=$3 exclude=$4 rule=$5 message=$6 line
+  while IFS= read -r line; do
+    if [ -n "$line" ]; then
+      report_line "$target" "${line%%:*}" "$rule" "$message"
+    fi
+  done < <(grep "$flags" "$pattern" "$target" 2>/dev/null | grep -vE '^([^:]*:)?[0-9]+:use +(Doctrine\\ORM\\Mapping|Doctrine\\Common\\Collections\\|Symfony\\Component\\Uid\\)' || true)
+}
+
 if [ "$#" -gt 0 ]; then
   files=$(printf '%s\n' "$@")
 else
@@ -35,7 +46,10 @@ while IFS= read -r file; do
   fi
   case "$file" in
     src/*/Domain/*.php)
-      report_matches -nE "$file" '^use +(Symfony|Doctrine|Psr|Meilisearch)|^use [^;]*\\Infrastructure\\' "LAY-001" "Domain must not import framework or infrastructure namespaces"
+      report_matches_except -nE "$file" \
+        '^use +(Symfony|Doctrine|Psr|Meilisearch)|^use [^;]*\\(Infrastructure|Application)\\' \
+        '^use +(Doctrine\\ORM\\Mapping|Doctrine\\Common\\Collections\\|Symfony\\Component\\Uid\\)' \
+        "LAY-001" "Domain must not import framework, Doctrine (beyond ORM mapping attributes and collections), PSR or infrastructure namespaces; Symfony Uid is allowed"
       ;;
     src/*/Application/*.php)
       report_matches -nE "$file" '^use +(Symfony\\Component\\Http|Doctrine)|^use [^;]*\\Infrastructure\\' "LAY-002" "Application must not import Doctrine, Symfony HTTP, or infrastructure namespaces"
