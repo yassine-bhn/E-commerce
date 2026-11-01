@@ -157,9 +157,9 @@ final class StorefrontProductRepository
 
     private function viaSql(StorefrontProductFilters $filters, PageRequest $page): StorefrontProductPage
     {
-        [$where, $params] = $this->sqlConditions($filters);
+        [$where, $params, $types] = $this->sqlConditions($filters);
 
-        $total = (int) $this->connection->fetchOne('SELECT COUNT(*) FROM storefront_product_view'.$where, $params);
+        $total = (int) $this->connection->fetchOne('SELECT COUNT(*) FROM storefront_product_view'.$where, $params, $types);
 
         $rows = $this->connection->fetchAllAssociative(
             self::SELECT.$where
@@ -167,6 +167,7 @@ final class StorefrontProductRepository
             .' LIMIT '.$page->effectiveSize()
             .' OFFSET '.$page->effectiveOffset(),
             $params,
+            $types,
         );
 
         return new StorefrontProductPage(
@@ -181,12 +182,13 @@ final class StorefrontProductRepository
     }
 
     /**
-     * @return array{0: string, 1: array<string, mixed>}
+     * @return array{0: string, 1: array<string, mixed>, 2: array<string, int|string|ArrayParameterType>}
      */
     private function sqlConditions(StorefrontProductFilters $filters): array
     {
         $conditions = [CatalogVisibility::PRODUCT_PUBLIC];
         $params = [];
+        $types = [];
 
         if (null !== $filters->q) {
             $conditions[] = self::SEARCH_PREDICATE;
@@ -203,8 +205,18 @@ final class StorefrontProductRepository
         }
 
         if (null !== $filters->subcategory) {
-            $conditions[] = 'subcategory = :sub';
-            $params['sub'] = $filters->subcategory;
+            $leaves = $this->resolveSubcategoryLeaves($filters->categorySlug, $filters->subcategory);
+            if (null !== $leaves && count($leaves) > 1) {
+                $conditions[] = 'subcategory IN (:sub_leaves)';
+                $params['sub_leaves'] = $leaves;
+                $types['sub_leaves'] = ArrayParameterType::STRING;
+            } elseif (null !== $leaves && 1 === count($leaves)) {
+                $conditions[] = 'subcategory = :sub';
+                $params['sub'] = $leaves[0];
+            } else {
+                $conditions[] = 'subcategory = :sub';
+                $params['sub'] = $filters->subcategory;
+            }
         }
 
         if (null !== $filters->brand) {
@@ -248,7 +260,96 @@ final class StorefrontProductRepository
             $params['stock'] = $filters->stock;
         }
 
-        return [' WHERE '.implode(' AND ', $conditions), $params];
+        return [' WHERE '.implode(' AND ', $conditions), $params, $types];
+    }
+
+    /**
+     * @return list<string>|null
+     */
+    private function resolveSubcategoryLeaves(?string $categorySlug, string $subcategory): ?array
+    {
+        if (null === $categorySlug || '' === trim($categorySlug)) {
+            return [$subcategory];
+        }
+
+        $raw = $this->connection->fetchOne(
+            'SELECT subcategories FROM storefront_category WHERE slug = :slug',
+            ['slug' => $categorySlug],
+        );
+        if (false === $raw || null === $raw) {
+            return [$subcategory];
+        }
+
+        try {
+            /** @var list<mixed> $tree */
+            $tree = json_decode((string) $raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Throwable) {
+            return [$subcategory];
+        }
+
+        $node = $this->findSubcategoryNode($tree, $subcategory);
+        if (null === $node) {
+            return [$subcategory];
+        }
+
+        if (isset($node['children']) && is_array($node['children']) && [] !== $node['children']) {
+            $leaves = $this->extractLeafLabels($node['children']);
+
+            return [] !== $leaves ? $leaves : [$subcategory];
+        }
+
+        return [$subcategory];
+    }
+
+    /**
+     * @param list<mixed> $nodes
+     *
+     * @return array<string, mixed>|null
+     */
+    private function findSubcategoryNode(array $nodes, string $label): ?array
+    {
+        foreach ($nodes as $node) {
+            if (!is_array($node) || !isset($node['label'])) {
+                continue;
+            }
+            if (0 === strcasecmp(trim((string) $node['label']), trim($label))) {
+                return $node;
+            }
+            if (isset($node['children']) && is_array($node['children'])) {
+                $found = $this->findSubcategoryNode($node['children'], $label);
+                if (null !== $found) {
+                    return $found;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param list<mixed> $nodes
+     *
+     * @return list<string>
+     */
+    private function extractLeafLabels(array $nodes): array
+    {
+        $leaves = [];
+        foreach ($nodes as $node) {
+            if (is_string($node)) {
+                $leaves[] = $node;
+                continue;
+            }
+            if (!is_array($node) || !isset($node['label'])) {
+                continue;
+            }
+            if (isset($node['children']) && is_array($node['children']) && [] !== $node['children']) {
+                array_push($leaves, ...$this->extractLeafLabels($node['children']));
+            } else {
+                $leaves[] = (string) $node['label'];
+            }
+        }
+
+        return array_values(array_unique($leaves));
     }
 
     private static function sqlOrderBy(?string $sort): string

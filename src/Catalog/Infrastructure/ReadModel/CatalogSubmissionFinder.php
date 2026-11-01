@@ -103,6 +103,7 @@ final class CatalogSubmissionFinder
             $conditions[] = match ($query->kind) {
                 CatalogSubmissionKind::Product => "(s.slug ILIKE :q ESCAPE '\\' OR c.name ILIKE :q ESCAPE '\\')",
                 CatalogSubmissionKind::Category => "(s.slug ILIKE :q ESCAPE '\\' OR c.label ILIKE :q ESCAPE '\\')",
+                CatalogSubmissionKind::Brand => "(s.slug ILIKE :q ESCAPE '\\' OR c.name ILIKE :q ESCAPE '\\')",
             };
             $params['q'] = '%'.self::escapeLike($term).'%';
         }
@@ -126,6 +127,8 @@ final class CatalogSubmissionFinder
                 JOIN storefront_product_view c ON c.slug = s.slug',
             CatalogSubmissionKind::Category => ' FROM catalog_submission s
                 JOIN storefront_category c ON c.slug = s.slug',
+            CatalogSubmissionKind::Brand => ' FROM catalog_submission s
+                JOIN storefront_brand c ON c.name = s.slug',
         };
     }
 
@@ -136,6 +139,9 @@ final class CatalogSubmissionFinder
                     s.submitted_at, s.reviewed_by, s.reviewed_at, s.rejection_reason, c.published'
                 .$this->from($kind),
             CatalogSubmissionKind::Category => 'SELECT s.slug, c.label, NULL::text AS category_slug, s.approval_status, s.submitted_by,
+                    s.submitted_at, s.reviewed_by, s.reviewed_at, s.rejection_reason, NULL::boolean AS published'
+                .$this->from($kind),
+            CatalogSubmissionKind::Brand => 'SELECT s.slug, c.name AS label, NULL::text AS category_slug, s.approval_status, s.submitted_by,
                     s.submitted_at, s.reviewed_by, s.reviewed_at, s.rejection_reason, NULL::boolean AS published'
                 .$this->from($kind),
         };

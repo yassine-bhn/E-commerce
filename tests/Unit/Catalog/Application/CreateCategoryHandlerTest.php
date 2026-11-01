@@ -42,15 +42,17 @@ final class CreateCategoryHandlerTest extends TestCase
             json_decode((string) $write['params']['subs'], true),
         );
         self::assertSame(
-            ['method' => 'create', 'args' => [CatalogSubmissionKind::Category, 'test-cat', 'admin-1']],
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'test-cat', 'admin-1']],
             $connection->submissions->lastCall(),
-            'the store creates the pending submission in the same transaction',
+            'the store creates the submission and approves it, in the same transaction',
         );
+        self::assertSame(['create', 'reviewerSave'], $connection->submissions->methods(), 'the handler does not audit or decide on its own');
     }
 
     /**
-     * spec-run-8 R2/R10/R39, spec-run-15 WP3 — a new category is a pending submission owned by
-     * its creator; the store, not the handler, writes the audit entry and the outbox event.
+     * spec-run-8 R2/R10/R39, spec-run-15 WP3 — a new category is a submission owned by its
+     * creator, approved by the same write so it can reach the storefront at once; the store,
+     * not the handler, writes the audit entries and the outbox events.
      */
     public function testANewCategoryIsAPendingSubmissionOwnedByItsCreator(): void
     {
@@ -67,11 +69,11 @@ final class CreateCategoryHandlerTest extends TestCase
         self::assertNotNull($write);
         self::assertArrayNotHasKey('approval', $write['params'], 'no handler-written approval column');
         self::assertSame(
-            ['method' => 'create', 'args' => [CatalogSubmissionKind::Category, 'pompes', 'admin-1']],
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'pompes', 'admin-1']],
             $connection->submissions->lastCall(),
-            'the creator becomes the owner of a fresh pending submission',
+            'the creator becomes the owner of the submission and its immediate approval',
         );
-        self::assertSame(['create'], $connection->submissions->methods(), 'the handler does not audit or decide on its own');
+        self::assertSame(['create', 'reviewerSave'], $connection->submissions->methods(), 'the handler does not audit or decide on its own');
     }
 
     public function testAnEmptyLabelIsRefusedBeforeAnythingIsWritten(): void

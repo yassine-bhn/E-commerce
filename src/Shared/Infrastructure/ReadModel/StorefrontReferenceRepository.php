@@ -187,7 +187,9 @@ final class StorefrontReferenceRepository
     {
         return array_map(
             static fn (array $row): string => (string) $row['name'],
-            $this->connection->fetchAllAssociative('SELECT name FROM storefront_brand ORDER BY name ASC'),
+            $this->connection->fetchAllAssociative(
+                "SELECT name FROM storefront_brand WHERE approval_status = 'APPROVED' ORDER BY name ASC",
+            ),
         );
     }
 

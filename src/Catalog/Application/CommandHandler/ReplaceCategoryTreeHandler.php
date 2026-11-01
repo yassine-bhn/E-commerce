@@ -22,9 +22,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * a tree that would drop a sub-level a product still points at is refused before anything
  * is written, so the catalog can never disagree with an order snapshot (ECO-006).
  *
- * spec-run-8 R7/R8/R25/R35/R40 — the row is read through {@see SubmissionAccessPolicy} first,
- * so an Admin can only rewrite their own pending or rejected submission; a Super Admin's own save
- * is the validation, so the record comes out approved instead of being queued for him.
+ * Taxonomy writes (Admin or Super Admin) go through {@see SubmissionAccessPolicy} and are
+ * applied as a reviewer save so the category tree stays approved for the storefront.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class ReplaceCategoryTreeHandler
@@ -84,15 +83,11 @@ final class ReplaceCategoryTreeHandler
                 $command->actorId ?? 'system',
             );
 
-            if ($command->actorIsSuperAdmin) {
-                $this->submissions->reviewerSave(
-                    CatalogSubmissionKind::Category,
-                    $category->slug,
-                    $command->actorId ?? 'system',
-                );
-            } else {
-                $this->submissions->ownerModified(CatalogSubmissionKind::Category, $category->slug);
-            }
+            $this->submissions->reviewerSave(
+                CatalogSubmissionKind::Category,
+                $category->slug,
+                $command->actorId ?? 'system',
+            );
         });
     }
 

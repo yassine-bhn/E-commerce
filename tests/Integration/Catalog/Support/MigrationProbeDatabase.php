@@ -44,6 +44,9 @@ final class MigrationProbeDatabase
     /** The approval write model the store-backed backfill seeds (spec-run-15 WP2). */
     public const string CATALOG_SUBMISSION_MIGRATION = 'DoctrineMigrations\Version20261029000001';
 
+    /** The brands joined the approval workflow; the backfill reads their columns too. */
+    public const string BRAND_APPROVAL_MIGRATION = 'DoctrineMigrations\Version20261101000000';
+
     private const string SUFFIX = '__migration_probe';
 
     private readonly string $name;

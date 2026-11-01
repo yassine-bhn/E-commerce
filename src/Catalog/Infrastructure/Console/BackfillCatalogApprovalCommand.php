@@ -70,17 +70,16 @@ final class BackfillCatalogApprovalCommand extends Command
 
         // R11 asks for both halves of the report: what the step changed, and what it left alone. The
         // second number is the operator's only signal that the one-off step is complete.
-        $imports = [
-            CatalogSubmissionKind::Product->value => $this->importCandidates(CatalogSubmissionKind::Product),
-            CatalogSubmissionKind::Category->value => $this->importCandidates(CatalogSubmissionKind::Category),
-        ];
-        $approvals = [
-            CatalogSubmissionKind::Product->value => $this->approvalCandidates(CatalogSubmissionKind::Product),
-            CatalogSubmissionKind::Category->value => $this->approvalCandidates(CatalogSubmissionKind::Category),
-        ];
+        $kinds = [CatalogSubmissionKind::Product, CatalogSubmissionKind::Category, CatalogSubmissionKind::Brand];
+        $imports = [];
+        $approvals = [];
+        foreach ($kinds as $kind) {
+            $imports[$kind->value] = $this->importCandidates($kind);
+            $approvals[$kind->value] = $this->approvalCandidates($kind);
+        }
 
-        $importCount = count($imports[CatalogSubmissionKind::Product->value]) + count($imports[CatalogSubmissionKind::Category->value]);
-        $approvalCount = count($approvals[CatalogSubmissionKind::Product->value]) + count($approvals[CatalogSubmissionKind::Category->value]);
+        $importCount = array_sum(array_map('count', $imports));
+        $approvalCount = array_sum(array_map('count', $approvals));
         $untouched = $this->untouched($imports, $approvals);
 
         if (!$apply) {
@@ -95,21 +94,23 @@ final class BackfillCatalogApprovalCommand extends Command
             return Command::SUCCESS;
         }
 
-        [$imported, $approvedProducts, $approvedCategories] = $this->connection->transactional(function () use ($imports): array {
+        [$imported, $approvedProducts, $approvedCategories, $approvedBrands] = $this->connection->transactional(function () use ($imports): array {
             $imported = $this->importAll($imports);
 
             return [
                 $imported,
                 $this->approve(CatalogSubmissionKind::Product),
                 $this->approve(CatalogSubmissionKind::Category),
+                $this->approve(CatalogSubmissionKind::Brand),
             ];
         });
 
         $output->writeln(sprintf(
-            'Imported %d submission(s); approved %d product(s) (published) and %d category/categories; %d row(s) left untouched.',
+            'Imported %d submission(s); approved %d product(s) (published), %d category/categories and %d brand(s); %d row(s) left untouched.',
             $imported,
             $approvedProducts,
             $approvedCategories,
+            $approvedBrands,
             $untouched,
         ));
 
@@ -122,6 +123,7 @@ final class BackfillCatalogApprovalCommand extends Command
 
     /**
      * Every view row that has no submission yet, with the metadata the import must preserve.
+     * The row is always selected as `slug`, whatever column the table is keyed by.
      *
      * @return list<array<string, mixed>>
      */
@@ -129,13 +131,14 @@ final class BackfillCatalogApprovalCommand extends Command
     {
         return $this->connection->fetchAllAssociative(
             sprintf(
-                'SELECT v.slug, v.approval_status, v.submitted_by, v.submitted_at, v.reviewed_by, v.reviewed_at,
+                'SELECT v.%2$s AS slug, v.approval_status, v.submitted_by, v.submitted_at, v.reviewed_by, v.reviewed_at,
                         v.rejection_reason
-                   FROM %s v
-                   LEFT JOIN catalog_submission s ON s.kind = :kind AND s.slug = v.slug
+                   FROM %1$s v
+                   LEFT JOIN catalog_submission s ON s.kind = :kind AND s.slug = v.%2$s
                   WHERE s.slug IS NULL
-                  ORDER BY v.slug ASC',
+                  ORDER BY slug ASC',
                 $kind->table(),
+                $kind->keyColumn(),
             ),
             ['kind' => $kind->value],
         );
@@ -153,13 +156,15 @@ final class BackfillCatalogApprovalCommand extends Command
             static fn (array $row): string => (string) $row['slug'],
             $this->connection->fetchAllAssociative(
                 sprintf(
-                    "SELECT v.slug
+                    "SELECT v.%s AS slug
                        FROM %s v
-                       LEFT JOIN catalog_submission s ON s.kind = :kind AND s.slug = v.slug
+                       LEFT JOIN catalog_submission s ON s.kind = :kind AND s.slug = v.%s
                       WHERE %s AND v.approval_status = 'PENDING_APPROVAL'
                         AND (s.slug IS NULL OR s.approval_status = 'PENDING_APPROVAL')
-                      ORDER BY v.slug ASC",
+                      ORDER BY slug ASC",
+                    $kind->keyColumn(),
                     $kind->table(),
+                    $kind->keyColumn(),
                     self::LEGACY_ROW,
                 ),
                 ['kind' => $kind->value],
@@ -233,7 +238,8 @@ final class BackfillCatalogApprovalCommand extends Command
         }
 
         $total = (int) $this->connection->fetchOne('SELECT count(*) FROM storefront_product_view')
-            + (int) $this->connection->fetchOne('SELECT count(*) FROM storefront_category');
+            + (int) $this->connection->fetchOne('SELECT count(*) FROM storefront_category')
+            + (int) $this->connection->fetchOne('SELECT count(*) FROM storefront_brand');
 
         return $total - count($touched);
     }

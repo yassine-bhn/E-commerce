@@ -17,8 +17,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Adds one node to the `subcategories` JSON tree of the parent row (spec R2, ADR-0006):
  * no child row is created, and a refused label leaves the parent exactly as it was.
  *
- * spec-run-8 R35/R40 — the write goes through the same ownership guard as a full tree rewrite,
- * and a Super Admin's own save is the validation, so the row comes out approved.
+ * Taxonomy writes (Admin or Super Admin) go through the same access guard as a full tree rewrite
+ * and are applied as a reviewer save so the category stays approved for the storefront.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class AddCategorySubLevelHandler
@@ -63,15 +63,11 @@ final class AddCategorySubLevelHandler
                 $command->actorId ?? 'system',
             );
 
-            if ($command->actorIsSuperAdmin) {
-                $this->submissions->reviewerSave(
-                    CatalogSubmissionKind::Category,
-                    $category->slug,
-                    $command->actorId ?? 'system',
-                );
-            } else {
-                $this->submissions->ownerModified(CatalogSubmissionKind::Category, $category->slug);
-            }
+            $this->submissions->reviewerSave(
+                CatalogSubmissionKind::Category,
+                $category->slug,
+                $command->actorId ?? 'system',
+            );
         });
     }
 }

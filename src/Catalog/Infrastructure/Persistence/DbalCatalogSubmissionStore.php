@@ -307,6 +307,48 @@ final class DbalCatalogSubmissionStore implements CatalogSubmissionStore, Catalo
         });
     }
 
+    public function move(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug): ?CatalogSubmission
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->connection->transactional(function () use ($kind, $fromSlug, $toSlug, $now): ?CatalogSubmission {
+            // A row at the target key belongs to a record that no longer exists (the caller
+            // refuses a rename onto a live brand): it is an orphan and must not block the move.
+            // Never the source row itself, so a no-op move cannot destroy its own submission.
+            $this->connection->executeStatement(
+                'DELETE FROM catalog_submission WHERE kind = :kind AND slug = :slug AND slug <> :from',
+                ['kind' => $kind->value, 'slug' => $toSlug, 'from' => $fromSlug],
+            );
+
+            $moved = $this->connection->executeStatement(
+                'UPDATE catalog_submission
+                    SET slug = :to, updated_at = :updated_at
+                  WHERE kind = :kind AND slug = :from',
+                ['kind' => $kind->value, 'from' => $fromSlug, 'to' => $toSlug, 'updated_at' => $now->format('Y-m-d H:i:s.uP')],
+            );
+
+            if (0 === $moved) {
+                return null;
+            }
+
+            $row = $this->connection->fetchAssociative(
+                'SELECT slug, approval_status, submitted_by, submitted_at, reviewed_by, reviewed_at,
+                        rejection_reason, updated_at
+                   FROM catalog_submission
+                  WHERE kind = :kind AND slug = :slug',
+                ['kind' => $kind->value, 'slug' => $toSlug],
+            );
+            if (false === $row) {
+                return null;
+            }
+
+            $submission = $this->hydrate($kind, $row);
+            $this->projector->project($submission);
+
+            return $submission;
+        });
+    }
+
     public function delete(CatalogSubmissionKind $kind, string $slug): void
     {
         $this->connection->transactional(function () use ($kind, $slug): void {

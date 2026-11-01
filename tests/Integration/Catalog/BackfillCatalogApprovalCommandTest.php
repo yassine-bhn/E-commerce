@@ -55,6 +55,9 @@ final class BackfillCatalogApprovalCommandTest extends KernelTestCase
         $probe = self::probe();
         $probe->create();
         $probe->migrateUpToTheCatalogSubmissionMigration();
+        // The backfill also reads the brand columns, which only the brands-join-the-workflow
+        // migration adds; the chain runs past the write model to include it.
+        $probe->migrateUpTo(MigrationProbeDatabase::BRAND_APPROVAL_MIGRATION);
         $this->seedLegacyCatalogue();
 
         self::assertSame(0, $this->submissionCount(), 'the migration itself seeds nothing; that is this command\'s job');

@@ -153,16 +153,16 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
 
         $superClient->request('GET', '/api/v1/admin/catalog/submissions/products?status=PENDING_APPROVAL&q='.$product);
         self::assertSame([$product], array_column($this->json($superClient)['items'], 'slug'), 'the reviewer reads the whole queue');
-        $superClient->request('GET', '/api/v1/admin/catalog/submissions/categories?q='.$category);
-        self::assertSame([$category], array_column($this->json($superClient)['items'], 'slug'));
 
+        // A taxonomy create is approved as it is written, so the category enters the queue
+        // already decided: the reviewer finds it APPROVED, with the author as reviewer of record.
+        $superClient->request('GET', '/api/v1/admin/catalog/submissions/categories?q='.$category);
+        $queuedCategory = $this->json($superClient)['items'][0] ?? [];
+        self::assertSame($category, $queuedCategory['slug'] ?? null);
+        self::assertSame('APPROVED', $queuedCategory['approvalStatus'] ?? null);
+        self::assertSame($admin->getId(), $queuedCategory['reviewedBy'] ?? null);
         $superClient->jsonRequest('POST', '/api/v1/admin/catalog/submissions/categories/'.$category.'/approve');
-        self::assertResponseIsSuccessful();
-        $approved = $this->json($superClient);
-        self::assertSame('APPROVED', $approved['approvalStatus']);
-        self::assertSame($super->getId(), $approved['reviewedBy']);
-        self::assertNotNull($approved['reviewedAt']);
-        self::assertNull($approved['rejectionReason']);
+        self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT, 'an approved record cannot be decided again');
 
         $superClient->jsonRequest('POST', '/api/v1/admin/catalog/submissions/products/'.$product.'/reject', ['reason' => 'Photo manquante']);
         self::assertResponseIsSuccessful();
@@ -179,9 +179,10 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         self::assertSame(
             [
                 ['CATALOG_SUBMISSION_CREATED', 'category', $admin->getId(), null],
-                ['CATALOG_SUBMISSION_APPROVED', 'category', $super->getId(), null],
+                ['CATALOG_SUBMISSION_APPROVED', 'category', $admin->getId(), null],
             ],
             $this->audit($category),
+            'the create is approved as it is written, by its author',
         );
         self::assertSame(
             [
@@ -347,12 +348,12 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         self::assertSame(
             [
                 ['CATALOG_SUBMISSION_CREATED', 'category', $admin->getId(), null],
+                ['CATALOG_SUBMISSION_APPROVED', 'category', $admin->getId(), null],
                 ['CATALOG_CATEGORY_UPDATED', 'category', $super->getId(), null],
-                ['CATALOG_SUBMISSION_APPROVED', 'category', $super->getId(), null],
                 ['CATALOG_CATEGORY_DELETED', 'category', $super->getId(), null],
             ],
             $this->audit($category),
-            'the category reviewer save audits the content first, then the approval it really performed',
+            'the create is approved as it is written, and the reviewer\'s later save approves nothing new',
         );
     }
 
@@ -546,8 +547,9 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
     }
 
     /**
-     * R28 — approving a category publishes none of its products: the category decision writes one
-     * table, and each product still needs its own approval and its own publication.
+     * R28 — approving a category publishes none of its products: the category decision (now
+     * taken as the create itself is written) touches one table, and each product still needs
+     * its own approval and its own publication.
      */
     public function testApprovingACategoryPublishesNoneOfItsProducts(): void
     {
@@ -558,15 +560,13 @@ final class AdminCatalogApprovalWorkflowTest extends WebTestCase
         $this->createCategory($adminClient, $category);
         $this->createProductIn($adminClient, $product, $category);
 
-        $client = $this->clientFor($this->createUser('ROLE_SUPER_ADMIN'));
-        $client->jsonRequest('POST', '/api/v1/admin/catalog/submissions/categories/'.$category.'/approve');
-        self::assertResponseIsSuccessful();
-        self::assertSame('APPROVED', $this->json($client)['approvalStatus']);
-
+        self::assertSame('APPROVED', $this->storedStatus($category), 'a taxonomy create is approved as it is written');
         self::assertFalse(
             (bool) $this->db()->fetchOne('SELECT published FROM storefront_product_view WHERE slug = :s', ['s' => $product]),
             'the category decision never touches the publication flag',
         );
+
+        $client = $this->clientFor($this->createUser('ROLE_SUPER_ADMIN'));
         $client->request('GET', '/api/v1/storefront/products/'.$product);
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, 'its own approval is still pending');
 

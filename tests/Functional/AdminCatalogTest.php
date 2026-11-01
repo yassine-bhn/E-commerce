@@ -44,6 +44,8 @@ final class AdminCatalogTest extends WebTestCase
         }
         if ([] !== $this->brandNames) {
             $connection->executeStatement('DELETE FROM storefront_brand WHERE name IN (:v)', ['v' => $this->brandNames], ['v' => ArrayParameterType::STRING]);
+            $connection->executeStatement("DELETE FROM catalog_submission WHERE kind = 'brands' AND slug IN (:v)", ['v' => $this->brandNames], ['v' => ArrayParameterType::STRING]);
+            $connection->executeStatement("DELETE FROM catalog_audit_log WHERE target_type = 'brand' AND target_slug IN (:v)", ['v' => $this->brandNames], ['v' => ArrayParameterType::STRING]);
         }
         if ([] !== $this->promoCodes) {
             $connection->executeStatement('DELETE FROM storefront_promo_code WHERE code IN (:v)', ['v' => $this->promoCodes], ['v' => ArrayParameterType::STRING]);
@@ -415,21 +417,15 @@ final class AdminCatalogTest extends WebTestCase
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-        // It is still a submission: the admin listing carries it with its state, the public
-        // reference data does not (spec-run-8 R16/R31/R33).
+        // A taxonomy create is approved as it is written: the admin listing carries that state
+        // and the public reference data offers the category without a second step (R16/R31/R33).
         $client->request('GET', '/api/v1/admin/catalog/categories?q='.$slug);
         $listed = $this->json($client)['items'][0] ?? [];
         self::assertSame($slug, $listed['slug'] ?? null);
-        self::assertSame('PENDING_APPROVAL', $listed['approvalStatus'] ?? null);
+        self::assertSame('APPROVED', $listed['approvalStatus'] ?? null);
 
         $client->request('GET', '/api/v1/storefront/reference');
-        self::assertNotContains($slug, array_column($this->json($client)['categories'] ?? [], 'slug'), 'a pending category must not reach the storefront');
-
-        // Approving the category — and only approving it — makes it public reference data.
-        $this->approve($client, 'category', $slug);
-        $client->request('GET', '/api/v1/storefront/reference');
-        $slugs = array_column($this->json($client)['categories'] ?? [], 'slug');
-        self::assertContains($slug, $slugs);
+        self::assertContains($slug, array_column($this->json($client)['categories'] ?? [], 'slug'), 'an approved category is public reference data');
 
         // A product in the category pins its subcategory.
         $productSlug = 'test-cat-product-'.substr(Uuid::v4()->toRfc4122(), 0, 8);

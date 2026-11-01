@@ -11,7 +11,8 @@ use Doctrine\DBAL\Connection;
  * spec-run-15 WP2 (R2/R3) — the only writer of the six approval columns in the two view tables.
  *
  * It runs inside the store's transaction, so the admin read model shows the new state as soon as
- * the command returns. It only updates by slug and never inserts: a missing view row is a content
+ * the command returns. It only updates by the kind's key column (slug, or the brand name) and
+ * never inserts: a missing view row is a content
  * problem the owner fixes, and inserting one here would fabricate a product or category. Publication
  * (`published`, `hidden`) is deliberately out of scope — approval is not publishing.
  */
@@ -32,9 +33,10 @@ final class ProjectStorefrontApproval
     {
         $this->connection->executeStatement(
             sprintf(
-                'UPDATE %s SET %s WHERE slug = :slug',
+                'UPDATE %s SET %s WHERE %s = :slug',
                 $submission->kind()->table(),
                 self::COLUMNS,
+                $submission->kind()->keyColumn(),
             ),
             [
                 'status' => $submission->status()->value,

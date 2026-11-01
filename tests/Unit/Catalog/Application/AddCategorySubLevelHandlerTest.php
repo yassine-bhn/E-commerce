@@ -69,9 +69,9 @@ final class AddCategorySubLevelHandlerTest extends TestCase
             json_decode((string) $write['params']['subs'], true),
         );
         self::assertSame(
-            ['method' => 'ownerModified', 'args' => [CatalogSubmissionKind::Category, 'wc']],
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],
             $connection->submissions->lastCall(),
-            'a regular Admin edit leaves the status to the store',
+            'the write is applied as a reviewer save so the tree stays approved',
         );
         self::assertStringNotContainsString('approval_status', $write['sql'], 'the handler writes content only');
     }
@@ -89,7 +89,7 @@ final class AddCategorySubLevelHandlerTest extends TestCase
             json_decode((string) $write['params']['subs'], true),
         );
         self::assertSame(
-            ['method' => 'ownerModified', 'args' => [CatalogSubmissionKind::Category, 'wc']],
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],
             $connection->submissions->lastCall(),
         );
     }

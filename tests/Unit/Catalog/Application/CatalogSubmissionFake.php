@@ -122,6 +122,32 @@ final class CatalogSubmissionFake implements CatalogSubmissionStore, CatalogSubm
         return $this->submissions[$this->key($kind, $slug)] ?? CatalogSubmission::create($kind, $slug, 'system', new \DateTimeImmutable());
     }
 
+    public function move(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug): ?CatalogSubmission
+    {
+        $this->record(__FUNCTION__, [$kind, $fromSlug, $toSlug]);
+
+        $source = $this->key($kind, $fromSlug);
+        if (!isset($this->submissions[$source])) {
+            return null;
+        }
+
+        $submission = $this->submissions[$source];
+        unset($this->submissions[$source]);
+        $this->submissions[$this->key($kind, $toSlug)] = CatalogSubmission::reconstitute(
+            $submission->kind(),
+            $toSlug,
+            $submission->status(),
+            $submission->submittedBy(),
+            $submission->submittedAt(),
+            $submission->reviewedBy(),
+            $submission->reviewedAt(),
+            $submission->rejectionReason(),
+            new \DateTimeImmutable(),
+        );
+
+        return $this->submissions[$this->key($kind, $toSlug)];
+    }
+
     public function delete(CatalogSubmissionKind $kind, string $slug): void
     {
         $this->record(__FUNCTION__, [$kind, $slug]);

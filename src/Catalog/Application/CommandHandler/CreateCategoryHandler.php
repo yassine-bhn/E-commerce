@@ -19,9 +19,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * (CMD-005): the row is inserted once, visible by default, and a slug that is already
  * taken leaves nothing behind.
  *
- * spec-run-8 R2/R10/R39 — the row lands as a `PENDING_APPROVAL` submission owned by its creator,
- * and the creation is audited in the same transaction, so no category can appear without its
- * audit row and none can be created approved.
+ * Admin and Super Admin taxonomy creates are approved immediately so the category (and its
+ * sub-levels) can appear on the storefront without a second approval step.
  */
 #[AsMessageHandler(bus: 'command.bus')]
 final class CreateCategoryHandler
@@ -64,10 +63,16 @@ final class CreateCategoryHandler
                 throw CategoryAlreadyExistsException::forSlug($category->slug);
             }
 
+            $actorId = $command->actorId ?? 'system';
             $this->submissions->create(
                 CatalogSubmissionKind::Category,
                 $category->slug,
-                $command->actorId ?? 'system',
+                $actorId,
+            );
+            $this->submissions->reviewerSave(
+                CatalogSubmissionKind::Category,
+                $category->slug,
+                $actorId,
             );
         });
     }
