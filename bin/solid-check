@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+fast=0
+if [ "${1:-}" = "--fast" ]; then fast=1; fi
+
+if [ "$fast" -eq 0 ]; then
+  php vendor/bin/phpunit --testsuite=Architecture
+fi
+php vendor/bin/phpstan analyse --no-progress
+php vendor/bin/deptrac analyse --config-file=deptrac.yaml
+mapfile -t files < <(find src -name '*.php' | sort)
+bash .agents/hooks/guard-domain-imports.sh "${files[@]}"
+bash .agents/hooks/guard-cqrs.sh "${files[@]}"

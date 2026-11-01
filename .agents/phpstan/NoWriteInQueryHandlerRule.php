@@ -31,7 +31,7 @@ final class NoWriteInQueryHandlerRule implements Rule
         }
 
         $class = $scope->getClassReflection();
-        if ($class === null || !self::isQuerySide($class->getName())) {
+        if (null === $class || !self::isQuerySide($class->getName())) {
             return [];
         }
 

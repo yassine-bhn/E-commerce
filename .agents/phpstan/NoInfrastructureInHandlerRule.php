@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace Agents\PhpStan;
 
 use PhpParser\Node;
+use PhpParser\Node\IntersectionType;
+use PhpParser\Node\Name;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\UnionType as NodeTypeUnion;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
  * DIP-003 — Application handlers/sagas depend on ports, not Doctrine or Infrastructure concretes.
  *
- * @implements Rule<ClassMethod>
+ * @implements Rule<Node>
  */
 final class NoInfrastructureInHandlerRule implements Rule
 {
@@ -24,42 +29,73 @@ final class NoInfrastructureInHandlerRule implements Rule
         'DocumentManager',
     ];
 
+    private const FORBIDDEN_PREFIXES = [
+        'Doctrine\DBAL\\',
+        'Doctrine\Persistence\\',
+        'Doctrine\ORM\\',
+        'Symfony\Component\HttpFoundation\\',
+    ];
+
     public function getNodeType(): string
     {
-        return ClassMethod::class;
+        return Node::class;
     }
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if (!$node instanceof ClassMethod || $node->name->toString() !== '__construct') {
-            return [];
-        }
-
         $class = $scope->getClassReflection();
-        if ($class === null || !self::isApplicationHandler($class->getName())) {
+        if (null === $class || !self::isApplicationHandler($class->getName())) {
             return [];
         }
 
+        if ($node instanceof Param) {
+            return self::paramErrors($node);
+        }
+
+        if ($node instanceof Property) {
+            return self::typeErrors(self::typeNames($node->type), $node->getStartLine());
+        }
+
+        return [];
+    }
+
+    private static function paramErrors(Param $param): array
+    {
         $errors = [];
-        foreach ($node->params as $param) {
-            if (!$param instanceof Param) {
-                continue;
-            }
-            $type = $param->type?->toString() ?? '';
-            if ($type === '') {
-                continue;
-            }
+        foreach (self::typeNames($param->type) as $type) {
             if (self::isForbiddenType($type) || self::isInfrastructureConcrete($type)) {
-                $errors[] = RuleErrorBuilder::message(
-                    'DIP-003: handler constructor must type-hint domain/application ports, not infrastructure or ORM',
-                )
-                    ->identifier('agents.dip003.noInfrastructure')
-                    ->line($param->getStartLine())
-                    ->build();
+                $errors[] = self::error($param->getStartLine());
             }
         }
 
         return $errors;
+    }
+
+    /**
+     * @param string[] $names
+     *
+     * @return RuleError[]
+     */
+    private static function typeErrors(array $names, int $line): array
+    {
+        $errors = [];
+        foreach ($names as $type) {
+            if (self::isForbiddenType($type) || self::isInfrastructureConcrete($type)) {
+                $errors[] = self::error($line);
+            }
+        }
+
+        return $errors;
+    }
+
+    private static function error(int $line): RuleError
+    {
+        return RuleErrorBuilder::message(
+            'DIP-003: handler constructor must type-hint domain/application ports, not infrastructure or ORM',
+        )
+            ->identifier('agents.dip003.noInfrastructure')
+            ->line($line)
+            ->build();
     }
 
     private static function isApplicationHandler(string $className): bool
@@ -77,11 +113,43 @@ final class NoInfrastructureInHandlerRule implements Rule
             }
         }
 
+        foreach (self::FORBIDDEN_PREFIXES as $prefix) {
+            if (str_starts_with($type, $prefix)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     private static function isInfrastructureConcrete(string $type): bool
     {
         return str_contains($type, '\\Infrastructure\\');
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function typeNames(?Node $type): array
+    {
+        if (null === $type) {
+            return [];
+        }
+        if ($type instanceof NullableType) {
+            return self::typeNames($type->type);
+        }
+        if ($type instanceof NodeTypeUnion || $type instanceof IntersectionType) {
+            $names = [];
+            foreach ($type->types as $inner) {
+                $names = [...$names, ...self::typeNames($inner)];
+            }
+
+            return $names;
+        }
+        if ($type instanceof Name) {
+            return [$type->toString()];
+        }
+
+        return [];
     }
 }

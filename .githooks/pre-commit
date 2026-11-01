@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit — fast SOLID gate (no DB: skips the Architecture suite)
+set -euo pipefail
+docker compose exec -T app bin/solid-check --fast

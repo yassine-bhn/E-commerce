@@ -24,17 +24,17 @@ final class HandlerReturnVoidRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if (!$node instanceof ClassMethod || $node->name->toString() !== '__invoke') {
+        if (!$node instanceof ClassMethod || '__invoke' !== $node->name->toString()) {
             return [];
         }
 
         $class = $scope->getClassReflection();
-        if ($class === null || !self::isCommandHandler($class->getName())) {
+        if (null === $class || !self::isCommandHandler($class->getName())) {
             return [];
         }
 
         $returnType = $node->getReturnType();
-        if ($returnType !== null && $returnType->toString() === 'void') {
+        if (null !== $returnType && 'void' === $returnType->toString()) {
             return [];
         }
 
