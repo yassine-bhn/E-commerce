@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace App\Ordering\Application\CommandHandler;
 
 use App\Ordering\Application\Command\PlaceOrder;
+use App\Ordering\Application\Port\OrderPlacementStore;
 use App\Ordering\Domain\Model\Order;
 use App\Ordering\Domain\Model\OrderId;
 use App\Ordering\Domain\Model\OrderLine;
 use App\Ordering\Domain\Model\PriceChangedException;
-use App\Ordering\Domain\Repository\OrderRepository;
 use App\Shared\Application\Port\PaymentInitiationPort;
 use App\Shared\Application\Port\StockReservationPort;
 use App\Shared\Application\Service\StorefrontQuoteService;
 use App\Shared\Domain\Money;
 use App\Shared\Domain\Outbox\OutboxPort;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
 
@@ -23,22 +22,17 @@ use Symfony\Component\Uid\Uuid;
 final class PlaceOrderHandler
 {
     public function __construct(
-        private Connection $connection,
         private StorefrontQuoteService $quotes,
         private StockReservationPort $stock,
         private PaymentInitiationPort $payments,
-        private OrderRepository $orders,
+        private OrderPlacementStore $placements,
         private OutboxPort $outbox,
     ) {
     }
 
     public function __invoke(PlaceOrder $command): void
     {
-        $inserted = $this->connection->executeStatement(
-            'INSERT INTO processed_commands (key) VALUES (:key) ON CONFLICT DO NOTHING',
-            ['key' => $command->idempotencyKey],
-        );
-        if (0 === $inserted) {
+        if (!$this->placements->claim($command->idempotencyKey)) {
             return;
         }
 
@@ -111,7 +105,7 @@ final class PlaceOrderHandler
             new \DateTimeImmutable(),
         );
 
-        $this->orders->save($order);
+        $this->placements->save($order);
 
         // ADR-0004 — only the *record* is synchronous; authorizing the card stays off the
         // request path, so the customer never waits on a gateway to get an order number.

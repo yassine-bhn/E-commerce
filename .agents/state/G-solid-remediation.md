@@ -51,6 +51,11 @@ RED: tests/Architecture/SolidBoundariesTest.php — "Catalog/Domain/Model/Approv
 ATTEMPTS: 1
 GREEN: ApprovalStatus::canMoveTo uses explicit early returns (same transition table), ReadinessService uses ok/unavailable/degraded if-elseif — ApprovalStatusTest + ReadinessServiceTest + Unit (273) + Functional readiness (3) green; Architecture 66 → 64 (match-true rule green with sentinel). cmd: docker compose exec -T app vendor/bin/phpunit tests/Unit/Catalog tests/Unit/Shared && vendor/bin/phpunit --testsuite=Architecture → PASS (64 remaining are Phase 3/4 rules).
 
+### Task 2.7 — PlaceOrderHandler → OrderPlacementStore (ISP-003)
+RED: tests/Architecture/SolidBoundariesTest.php — "Ordering/Application/CommandHandler/PlaceOrderHandler.php has 6 class-typed constructor params" — cmd: docker compose exec -T app vendor/bin/phpunit --testsuite=Architecture --filter itLimitsConstructorDependencies → FAIL
+ATTEMPTS: 1
+GREEN: New OrderPlacementStore port (claim + save) and DbalOrderPlacementStore adapter (processed_commands INSERT ON CONFLICT DO NOTHING moved verbatim; save delegates to OrderRepository); PlaceOrderHandler at 5 deps (quotes, stock, payments, placements, outbox); alias in services.yaml. New tests/Integration/Ordering/OrderPlacementStoreTest (claim/duplicate-claim, save-through-repository) — Ordering integration 11 green, checkout Functional 53 green; itLimitsConstructorDependencies now flags only the four Phase 4 controllers. cmd: docker compose exec -T app vendor/bin/phpunit tests/Integration/Ordering && vendor/bin/phpunit --testsuite=Functional --filter 'Order|Checkout' → PASS.
+
 - Architecture suite (SolidBoundariesTest): 68 failures —
   it_keeps_application_free_of_forbidden_types 37, it_keeps_controllers_thin 12,
   it_forbids_sql_in_http 7, it_limits_constructor_dependencies 5,
