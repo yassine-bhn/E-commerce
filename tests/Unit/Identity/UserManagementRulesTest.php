@@ -8,17 +8,20 @@ use App\Identity\Application\Command\BanCustomer;
 use App\Identity\Application\Command\DeleteCustomerWithAnonymization;
 use App\Identity\Application\CommandHandler\BanCustomerHandler;
 use App\Identity\Application\CommandHandler\DeleteCustomerWithAnonymizationHandler;
+use App\Identity\Application\Dto\CustomerRecord;
 use App\Identity\Domain\Model\CannotBanAdminException;
 use App\Identity\Domain\Model\LastSuperAdminCannotBeRemovedException;
-use Doctrine\DBAL\Connection;
+use App\Tests\Unit\Identity\Support\InMemoryCustomerAccounts;
+use App\Tests\Unit\Identity\Support\InMemoryIdentityAudit;
 use PHPUnit\Framework\TestCase;
 
 final class UserManagementRulesTest extends TestCase
 {
     public function testBanCustomerRequiresNonEmptyReason(): void
     {
-        $connection = $this->createStub(Connection::class);
-        $handler = new BanCustomerHandler($connection);
+        $accounts = new InMemoryCustomerAccounts();
+        $audit = new InMemoryIdentityAudit();
+        $handler = new BanCustomerHandler($accounts, $accounts, $audit);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('A valid reason must be provided when banning a user.');
@@ -33,13 +36,16 @@ final class UserManagementRulesTest extends TestCase
 
     public function testBanCustomerThrowsWhenTargetIsAnAdmin(): void
     {
-        $connection = $this->createMock(Connection::class);
-
-        $connection->expects(self::once())
-            ->method('fetchAssociative')
-            ->willReturn(['id' => '01926b00-0000-7000-8000-000000000002', 'role' => 'ROLE_ADMIN']);
-
-        $handler = new BanCustomerHandler($connection);
+        $accounts = new InMemoryCustomerAccounts();
+        $accounts->record = new CustomerRecord(
+            id: '01926b00-0000-7000-8000-000000000002',
+            email: 'admin@example.com',
+            role: 'ROLE_ADMIN',
+            status: 'active',
+            googleId: null,
+        );
+        $audit = new InMemoryIdentityAudit();
+        $handler = new BanCustomerHandler($accounts, $accounts, $audit);
 
         $this->expectException(CannotBanAdminException::class);
         $this->expectExceptionMessage('Admins and SuperAdmins cannot be banned by standard administrative action.');
@@ -54,96 +60,79 @@ final class UserManagementRulesTest extends TestCase
 
     public function testBanCustomerUpdatesStatusAndWritesAuditLog(): void
     {
-        $connection = $this->createMock(Connection::class);
+        $accounts = new InMemoryCustomerAccounts();
+        $accounts->record = new CustomerRecord(
+            id: '01926b00-0000-7000-8000-000000000003',
+            email: 'customer@example.com',
+            role: 'ROLE_USER',
+            status: 'active',
+            googleId: null,
+        );
+        $audit = new InMemoryIdentityAudit();
+        $handler = new BanCustomerHandler($accounts, $accounts, $audit);
 
-        $connection->expects(self::once())
-            ->method('fetchAssociative')
-            ->willReturn(['id' => '01926b00-0000-7000-8000-000000000003', 'role' => 'ROLE_USER']);
-
-        $connection->expects(self::exactly(2))
-            ->method('executeStatement')
-            ->willReturnCallback(function (string $sql, array $params): int {
-                if (str_contains($sql, 'UPDATE customer_profile')) {
-                    self::assertSame('banned', $params['status']);
-                    self::assertSame('Payment chargeback abuse', $params['ban_reason']);
-                    self::assertSame('admin-01', $params['banned_by']);
-                }
-                if (str_contains($sql, 'INSERT INTO identity_audit_log')) {
-                    self::assertSame('USER_BANNED', $params['action']);
-                    self::assertSame('admin-01', $params['actor_admin_id']);
-                }
-
-                return 1;
-            });
-
-        $handler = new BanCustomerHandler($connection);
-        $command = new BanCustomer(
+        $handler(new BanCustomer(
             customerId: '01926b00-0000-7000-8000-000000000003',
             adminId: 'admin-01',
             reason: 'Payment chargeback abuse',
-        );
-        $handler($command);
+        ));
+
+        self::assertCount(1, $accounts->bans, 'exactly one ban write');
+        self::assertSame('01926b00-0000-7000-8000-000000000003', $accounts->bans[0]['customerId']);
+        self::assertSame('Payment chargeback abuse', $accounts->bans[0]['reason']);
+        self::assertSame('admin-01', $accounts->bans[0]['adminId']);
+
+        self::assertCount(1, $audit->rows, 'exactly one audit row');
+        self::assertSame('USER_BANNED', $audit->rows[0]['action']);
+        self::assertSame('admin-01', $audit->rows[0]['actorAdminId']);
     }
 
     public function testDeleteCustomerAnonymizesProfileWhenOrdersExist(): void
     {
-        $connection = $this->createMock(Connection::class);
+        $accounts = new InMemoryCustomerAccounts();
+        $accounts->record = new CustomerRecord(
+            id: '01926b00-0000-7000-8000-000000000004',
+            email: 'customer@example.com',
+            role: 'ROLE_USER',
+            status: 'active',
+            googleId: null,
+        );
+        $accounts->orders = 2;
+        $audit = new InMemoryIdentityAudit();
+        $handler = new DeleteCustomerWithAnonymizationHandler($accounts, $accounts, $accounts, $audit);
 
-        // Check if user is super admin
-        $connection->expects(self::once())
-            ->method('fetchAssociative')
-            ->willReturn(['id' => '01926b00-0000-7000-8000-000000000004', 'role' => 'ROLE_USER']);
-
-        // Check order count
-        $connection->expects(self::once())
-            ->method('fetchOne')
-            ->willReturn(2); // Has 2 orders!
-
-        $connection->expects(self::exactly(3))
-            ->method('executeStatement')
-            ->willReturnCallback(function (string $sql, array $params): int {
-                if (str_contains($sql, 'UPDATE customer_profile')) {
-                    self::assertSame('Utilisateur anonymisé', $params['name']);
-                    self::assertStringContainsString('anonymized-', $params['email']);
-                    self::assertSame('anonymized', $params['status']);
-                }
-                if (str_contains($sql, 'INSERT INTO identity_audit_log')) {
-                    self::assertSame('USER_ANONYMIZED_WITH_ORDERS', $params['action']);
-                }
-
-                return 1;
-            });
-
-        $handler = new DeleteCustomerWithAnonymizationHandler($connection);
-        $command = new DeleteCustomerWithAnonymization(
+        $handler(new DeleteCustomerWithAnonymization(
             customerId: '01926b00-0000-7000-8000-000000000004',
             adminId: 'admin-01',
-        );
-        $handler($command);
+        ));
+
+        self::assertCount(1, $accounts->anonymizations, 'the profile is anonymized, not deleted');
+        self::assertStringContainsString('anonymized-', $accounts->anonymizations[0]['anonEmail']);
+        self::assertSame([], $accounts->hardDeletes, 'a customer with orders is never hard-deleted');
+        self::assertCount(1, $audit->rows);
+        self::assertSame('USER_ANONYMIZED_WITH_ORDERS', $audit->rows[0]['action']);
     }
 
     public function testCannotRemoveLastSuperAdmin(): void
     {
-        $connection = $this->createMock(Connection::class);
-
-        $connection->expects(self::once())
-            ->method('fetchAssociative')
-            ->willReturn(['id' => 'super-01', 'role' => 'ROLE_SUPER_ADMIN']);
-
-        // Only 1 super admin exists
-        $connection->expects(self::once())
-            ->method('fetchOne')
-            ->willReturn(1);
-
-        $handler = new DeleteCustomerWithAnonymizationHandler($connection);
+        $accounts = new InMemoryCustomerAccounts();
+        $accounts->record = new CustomerRecord(
+            id: 'super-01',
+            email: 'super@example.com',
+            role: 'ROLE_SUPER_ADMIN',
+            status: 'active',
+            googleId: null,
+        );
+        $accounts->activeSuperAdmins = 1;
+        $audit = new InMemoryIdentityAudit();
+        $handler = new DeleteCustomerWithAnonymizationHandler($accounts, $accounts, $accounts, $audit);
 
         $this->expectException(LastSuperAdminCannotBeRemovedException::class);
         $this->expectExceptionMessage('The platform must retain at least one active SuperAdmin account.');
 
-        $command = new DeleteCustomerWithAnonymization(
+        $handler(new DeleteCustomerWithAnonymization(
             customerId: 'super-01',
             adminId: 'super-01',
-        );
-        $handler($command);
+        ));
     }
 }

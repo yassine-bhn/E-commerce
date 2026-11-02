@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace App\Identity\Application\CommandHandler;
 
 use App\Identity\Application\Command\RequestPasswordReset;
-use Doctrine\DBAL\Connection;
+use App\Identity\Application\Port\PasswordResetStore;
+use App\Identity\Application\Port\PasswordResetTokenStore;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Uid\Uuid;
 
 #[AsMessageHandler(bus: 'command.bus')]
 final class RequestPasswordResetHandler
 {
     public function __construct(
-        private Connection $connection,
+        private PasswordResetStore $passwords,
+        private PasswordResetTokenStore $tokens,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         #[Autowire('%env(STOREFRONT_APP_URL)%')]
@@ -29,35 +30,19 @@ final class RequestPasswordResetHandler
 
     public function __invoke(RequestPasswordReset $command): void
     {
-        $customer = $this->connection->fetchAssociative(
-            'SELECT id, email FROM customer_profile WHERE lower(email) = lower(:email) LIMIT 1',
-            ['email' => $command->email],
-        );
+        $customer = $this->passwords->customerByEmail($command->email);
 
-        if (false === $customer) {
+        if (null === $customer) {
             return;
         }
 
-        $customerId = (string) $customer['id'];
-        $email = (string) $customer['email'];
+        $customerId = $customer['id'];
+        $email = $customer['email'];
 
-        $this->connection->executeStatement(
-            'UPDATE customer_password_reset_token SET used_at = CURRENT_TIMESTAMP
-             WHERE customer_id = :customer AND used_at IS NULL',
-            ['customer' => $customerId],
-        );
+        $this->tokens->invalidateActive($customerId);
 
         $token = bin2hex(random_bytes(32));
-
-        $this->connection->executeStatement(
-            'INSERT INTO customer_password_reset_token (id, customer_id, token_hash, expires_at, created_at)
-             VALUES (:id, :customer, :token_hash, CURRENT_TIMESTAMP + INTERVAL \'1 hour\', CURRENT_TIMESTAMP)',
-            [
-                'id' => Uuid::v7()->toRfc4122(),
-                'customer' => $customerId,
-                'token_hash' => hash('sha256', $token),
-            ],
-        );
+        $this->tokens->issue($customerId, hash('sha256', $token));
 
         $resetUrl = sprintf('%s/reset-password?token=%s', rtrim($this->storefrontAppUrl, '/'), $token);
 

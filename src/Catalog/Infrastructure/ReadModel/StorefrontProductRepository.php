@@ -9,6 +9,7 @@ use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchQuery;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Application\Pagination\PageRequest;
+use App\Shared\Application\Port\ProductExistencePort;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Meilisearch\Client;
@@ -21,7 +22,7 @@ use Meilisearch\Client;
  * zero hits for a query-less browse while the catalog has products — is served by
  * {@see self::viaSql()} so the storefront never shows a silently empty catalog.
  */
-final class StorefrontProductRepository
+final class StorefrontProductRepository implements ProductExistencePort
 {
     private const string SELECT = 'SELECT id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor,
         currency, stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
@@ -61,6 +62,11 @@ final class StorefrontProductRepository
         }
 
         return $this->viaSql($filters, $page);
+    }
+
+    public function exists(string $slug): bool
+    {
+        return null !== $this->bySlug($slug);
     }
 
     public function bySlug(string $slug): ?StorefrontProductView

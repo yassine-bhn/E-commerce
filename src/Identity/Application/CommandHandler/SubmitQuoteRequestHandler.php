@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace App\Identity\Application\CommandHandler;
 
 use App\Identity\Application\Command\SubmitQuoteRequest;
+use App\Identity\Application\Dto\QuoteRequestData;
+use App\Identity\Application\Port\QuoteRequestStore;
 use App\Shared\Application\Port\StorefrontCategoryPort;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(bus: 'command.bus')]
 final class SubmitQuoteRequestHandler
 {
     public function __construct(
-        private Connection $connection,
+        private QuoteRequestStore $requests,
         private StorefrontCategoryPort $categories,
     ) {
     }
@@ -24,21 +25,16 @@ final class SubmitQuoteRequestHandler
             throw new \InvalidArgumentException('Invalid quote category');
         }
 
-        $this->connection->executeStatement(
-            'INSERT INTO identity_quote_requests (id, user_id, full_name, email, phone, city, category, subcategories, message, status)
-             VALUES (:id, :user_id, :full_name, :email, :phone, :city, :category, :subcategories, :message, :status)',
-            [
-                'id' => $command->quoteId,
-                'user_id' => $command->userId,
-                'full_name' => $command->fullName,
-                'email' => $command->email,
-                'phone' => $command->phone,
-                'city' => $command->city,
-                'category' => $command->category,
-                'subcategories' => json_encode($command->subcategories, JSON_THROW_ON_ERROR),
-                'message' => $command->message,
-                'status' => 'nouveau',
-            ],
-        );
+        $this->requests->store(new QuoteRequestData(
+            quoteId: $command->quoteId,
+            userId: $command->userId,
+            fullName: $command->fullName,
+            email: $command->email,
+            phone: $command->phone,
+            city: $command->city,
+            category: $command->category,
+            subcategories: $command->subcategories,
+            message: $command->message,
+        ));
     }
 }

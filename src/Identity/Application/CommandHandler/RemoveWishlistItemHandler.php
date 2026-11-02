@@ -5,24 +5,18 @@ declare(strict_types=1);
 namespace App\Identity\Application\CommandHandler;
 
 use App\Identity\Application\Command\RemoveWishlistItem;
-use Doctrine\DBAL\Connection;
+use App\Identity\Application\Port\WishlistStore;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 final class RemoveWishlistItemHandler
 {
-    public function __construct(private Connection $connection)
+    public function __construct(private WishlistStore $wishlist)
     {
     }
 
     #[AsMessageHandler(bus: 'command.bus')]
     public function __invoke(RemoveWishlistItem $command): void
     {
-        $this->connection->executeStatement(
-            'DELETE FROM storefront_wishlist_item WHERE customer_id = :customer AND product_slug = :slug',
-            [
-                'customer' => $command->customerId,
-                'slug' => $command->productSlug,
-            ],
-        );
+        $this->wishlist->remove($command->customerId, $command->productSlug);
     }
 }

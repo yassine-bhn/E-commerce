@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Identity\Application;
+namespace App\Identity\Infrastructure\Persistence;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
