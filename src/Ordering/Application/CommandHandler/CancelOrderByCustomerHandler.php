@@ -6,10 +6,10 @@ namespace App\Ordering\Application\CommandHandler;
 
 use App\Ordering\Application\Command\CancelOrderByCustomer;
 use App\Ordering\Application\Command\TransitionOrderStatus;
+use App\Ordering\Application\Port\OrderCustomerReader;
 use App\Ordering\Domain\Model\OrderNotFoundException;
 use App\Ordering\Domain\Model\OrderStatus;
 use App\Shared\Application\Port\StockReservationPort;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class CancelOrderByCustomerHandler
 {
     public function __construct(
-        private Connection $connection,
+        private OrderCustomerReader $orders,
         private MessageBusInterface $commandBus,
         private StockReservationPort $stock,
     ) {
@@ -26,20 +26,16 @@ final class CancelOrderByCustomerHandler
 
     public function __invoke(CancelOrderByCustomer $command): void
     {
-        $order = $this->connection->fetchAssociative(
-            'SELECT customer_id, status FROM ordering_orders WHERE id = :id',
-            ['id' => $command->orderId],
-        );
+        $order = $this->orders->find($command->orderId);
 
-        if (false === $order) {
+        if (null === $order) {
             throw new OrderNotFoundException($command->orderId);
         }
-        if ((string) $order['customer_id'] !== $command->customerId) {
+        if ($order->customerId !== $command->customerId) {
             throw new AccessDeniedException('This order belongs to another customer.');
         }
 
-        $status = OrderStatus::from((string) $order['status']);
-        $status->ensureCanTransitionTo(OrderStatus::CANCELLED);
+        $order->status->ensureCanTransitionTo(OrderStatus::CANCELLED);
 
         $this->commandBus->dispatch(new TransitionOrderStatus(
             orderId: $command->orderId,

@@ -162,6 +162,31 @@ services:
     App\Identity\Application\Port\IdentityAuditPort:
         alias: App\Identity\Infrastructure\Persistence\DbalIdentityAuditPort
 
+    # solid Task 3.3 (DIP-003): the Ordering handlers read and transition through narrow ports;
+    # the customer read has its own adapter because both ports declare `find`.
+    App\Ordering\Application\Port\OrderStateReader:
+        alias: App\Ordering\Infrastructure\Persistence\DbalOrderStateAdapter
+
+    App\Ordering\Application\Port\OrderTransitionStore:
+        alias: App\Ordering\Infrastructure\Persistence\DbalOrderStateAdapter
+
+    App\Ordering\Application\Port\OrderCustomerReader:
+        alias: App\Ordering\Infrastructure\Persistence\DbalOrderCustomerAdapter
+
+    App\Ordering\Application\Port\AdminProxyOrderStore:
+        alias: App\Ordering\Infrastructure\Persistence\DbalAdminProxyOrderStore
+
+    # solid Task 3.4 (DIP-003): the payment confirm/refund guards read through the snapshot port.
+    App\Payment\Application\Port\PaymentStateReader:
+        alias: App\Payment\Infrastructure\Persistence\DbalPaymentStateAdapter
+
+    # solid Task 3.5 (DIP-003): the settings writers own their singleton upserts.
+    App\Shared\Application\Port\PlatformSettingsWriter:
+        alias: App\Shared\Infrastructure\Persistence\DbalPlatformSettingsWriter
+
+    App\Shared\Application\Port\ShippingPolicyWriter:
+        alias: App\Shared\Infrastructure\Persistence\DbalShippingPolicyWriter
+
     # ADR-0001 — the payment row and its ledger move together, through one guarded write.
     App\Payment\Domain\Model\PaymentLedger:
         alias: App\Payment\Infrastructure\Persistence\DbalPaymentLedger
