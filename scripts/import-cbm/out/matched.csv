@@ -1,0 +1,737 @@
+cbm_ref,slug,cbm_name,cbm_brand,csv_ref,csv_name,score,method,category_slug,subcategory,cls_confidence,csv_price_ht,csv_price_ttc,csv_vat,csv_stock_qty,csv_ean,csv_description,cbm_description,cbm_image,cbm_images,cbm_attributes,cbm_colors,cbm_labels,multi_match
+102R/5VSK,102r-5vsk,102R/5VSK,FERPLAST,002050,SIPHON A L'ITALIENNE 10X10 AVEC GRILLE 102R/5VSK,1.0,exact,plomberie,accessoirs,0.8,43.05000000,51.22950000,19.0000,3,,,SIPHON A L’ITALIENNE 10X10 AVEC GRILLE,https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/102r.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/102r.png'],"{'Marque': 'FERPLAST', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+152R/VSK,152r-vsk,152R/VSK,FERPLAST,002318,SIPHON A L'ITALIENNE 15X15AVEC GRILLE 152R/VSK,1.0,exact,plomberie,accessoirs,0.8,93.00200000,110.67238000,19.0000,2,,,SIPHON A L’ITALIENNE 15/15 AVEC GRILLE,https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/152r.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/152r.png'],"{'Marque': 'FERPLAST', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+156/VSK,156-vsk,156/VSK,FERPLAST,002049,SIPHON A L'ITALIENNE 15/15 AVEC COUVERCLE LISSE POLI 156/VSK,1.0,exact,plomberie,accessoirs,0.8,98.73500000,117.49465000,19.0000,13,,,SIPHON A L’ITALIENNE 15/15 AVEC COUVERCLE LISSE POLI,https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/156.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/156.png'],"{'Marque': 'FERPLAST', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AB87100CR,ab87100cr,AB87100CR,Nobili,001442,MITIGEUR BAIN DOUCHE A ENCASTRER ABC AB87100CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,335.96500000,399.79835000,19.0000,2,,,"MITIGEUR BAIN DOUCHE A ENCASTRER ABC
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER 2 SORTIES
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sorties ø 1/2”
+Inverseur avec retour automatique
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili7.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili7.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AB87108CR,ab87108cr,AB87108CR,Nobili,001441,MITIGEUR DOUCHE A ENCASTRER ABC AB87108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,176.61000000,210.16590000,19.0000,6,,,"MITIGEUR DOUCHE A ENCASTRER ABC
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER 1 SORTIE
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili6.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili6.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AB87110CR,ab87110cr,AB87110CR,Nobili,001438,MITIGEUR BAIN DOUCHE MURAL ABC AB87110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,291.29100000,346.63629000,19.0000,1,,,"MITIGEUR BAIN DOUCHE MURAL ABC
+BAIN-DOUCHE, MITIGEUR MONOCOMMANDE MURAL COMPLET
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili4.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili4.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],"['Gris chrome', 'Blanc lait']",False
+AB87118/1CR,ab87118-1cr,AB87118/1CR,Nobili,001312,MITIGEUR LAVABO AVEC VIDAGE ABC AB87118/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,192.78000000,229.40820000,19.0000,3,,,"MITIGEUR LAVABO AVEC VIDAGE ABC
+LAVABO, MITIGEUR MONOCOMMANDE À ÉCONOMIES D’EAU ET D’ÉNERGIE
+Limiteur d’énergie avec ouverture en eau froide
+Mousseur anticalcaire M 24 x 1, débit 5 l/min
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/PRODUII1.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/PRODUII1.png'],{'Marque': 'Nobili'},[],"['Blanc lait', 'Gris chrome']",False
+AB87119/1CR,ab87119-1cr,AB87119/1CR,Nobili,001436,MITIGEUR BIDET AVEC VIDAGE ABC AB87119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,221.55000000,263.64450000,19.0000,0,,,"MITIGEUR BIDET AVEC VIDAGE ABC
+BIDET, MITIGEUR MONOCOMMANDE
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 16,5 x 1
+Jet orientable
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/PRODUI2.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/PRODUI2.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Blanc lait'],False
+AB87128/2CR,ab87128-2cr,AB87128/2CR,Nobili,001437,MITIGEUR LAVABO AVEC VIDAGE REAHAUSSE ABC AB87128/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,518.66500000,617.21135000,19.0000,0,,,"MITIGEUR LAVABO AVEC VIDAGE REHAUSSE ABC
+LAVABO, MITIGEUR MONOCOMMANDE REHAUSSÉ
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili3.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili3.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Blanc lait'],False
+AB87130/30CR,ab87130-30cr,AB87130/30CR,Nobili,001445,COLONNE DE DOUCHE AVEC MITIGEUR ABC AB87130/30CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1502.92800000,1788.48432000,19.0000,0,,,"Colonne de douche avec mitigeur ABC
+Cartouche à 50 % en deux étapes pour économiser l’eau
+Pomme de douche pivotante ø 200 mm abs
+Système anti calcaire
+Support de douchette orientable coulissant
+Douchette à jet unique et flexible de 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm1.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm1.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AB87130CR,ab87130cr,AB87130CR,Nobili,001439,MITIGEUR DOUCHE MURAL ABC AB87130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,251.25100000,298.98869000,19.0000,3,,,"MITIGEUR DOUCHE MURAL ABC
+DOUCHE, MITIGEUR MONOCOMMANDE MURAL
+Cartouche à double position et limiteur de débit 50 %
+Sortie ø 1/2”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili5-1.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili5-1.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Blanc lait'],False
+AB87133CR,ab87133cr,AB87133CR,Nobili,001440,MITIGEUR EVIER ABC,1.0,exact,plomberie,Mitigeur cuisine,0.9,314.59400000,374.36686000,19.0000,0,,,"Mitigeur de cuisine à levier unique – chrome
+Le mitigeur de cuisine Nobili AB87133CR est fabriqué avec des matériaux qui maintiennent l’eau toujours parfaitement intacte dans son PH et aseptisé.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm5.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm5.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm4.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AB87211/1CR,ab87211-1cr,AB87211/1CR,Nobili,001444,MITIGEUR LAVABO 3 TROUS ABC AB87211/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,701.36500000,834.62435000,19.0000,0,,,"Mitigeur lavabo 3 trous ABC
+Le mitigeur de lavabo Nobili AB87211 / 1CR appartient à la gamme ABC, capable d’optimiser les ressources de la planète, d’aider le consommateur à économiser de l’eau et de l’énergie au quotidien, d’ouvrir l’alimentation du flux d’eau froide, d’éviter l’allumage accidentel de la chaudière.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm2.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm2.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/538862-1.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AD138/24BM,ad138-24bm,AD138/24BM,Nobili,001414,BRAS DE DOUCHE CARRE 350 NOIR MATT AD138/24BM,1.0,exact,plomberie,Acessoir salle de bain,0.8,499.49900000,594.40381000,19.0000,0,,,"Bras de douche carre 350 noir matt
+BRAS DE DOUCHE, BRAS DE DOUCHE
+Longueur 350 mm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD138-24BM-1.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD138-24BM-1.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+AD139/122BM,ad139-122bm,AD139/122BM,Nobili,000273,POMME DE DOUCHE CARRE 245X245 NOIR MATT AD139/122BM,1.0,exact,plomberie,Acessoir salle de bain,0.8,891.89100000,1061.35029000,19.0000,1,,,"POMME DE DOUCHE, DOUCHE DE TÊTE 245*245
+Dimension 245 x 245 mm
+Jet pluie",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD139-122BM-1.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD139-122BM-1.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+AD140/37BM,ad140-37bm,AD140/37BM,Nobili,001543,BARRE DE DOUCHE MURAL COMPLET AVEC SUOOPRT AMOVIBLE YOYO NOIR MATT AD140/37BM,1.0,exact,plomberie,Acessoir salle de bain,0.8,508.51500000,605.13285000,19.0000,,,,"BARRE DE DOUCHE, BARRE DE DOUCHE
+Support douchette coulissant et orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p5.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p5.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+AD146/24BM,ad146-24bm,AD146/24BM,Nobili,001417,ENSEMBLE DE DOUCHE (SUPPORT AJUSTABLE +FLEXIBLE 1.50+ DOUCHETTE CARRE ) NOIR MATT AD146/24BM,1.0,exact,plomberie,Acessoir salle de bain,0.8,481.48100000,572.96239000,19.0000,,,,"ENSEMBLE DE DOUCHE, ENSEMBLE DE DOUCHE
+Support de douchette réglable
+Douchette à jet unique et flexible de 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD146-24BM-2.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD146-24BM-2.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+AD146/26BM,ad146-26bm,AD146/26BM,Nobili,001548,SUPPORT MURAL AVEC DOUCHETTE ET FLEXIBLE NOIR YOYO AD146/26BM,1.0,exact,plomberie,Acessoir salle de bain,0.8,335.96500000,399.79835000,19.0000,,,,"SET DE DOUCHE, SET DE DOUCHE
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p6.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p6.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+AD146/26CR,ad146-26cr,AD146/26CR,Nobili,001430,SUPPORT MURAL AVEC DOUCHETTE ET FLEXIBLE YOYO AD146/26CR,1.0,exact,plomberie,Acessoir salle de bain,0.8,196.53900000,233.88141000,19.0000,,,,"SET DE DOUCHE, SET DE DOUCHE
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/pdt19.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/pdt19.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/pdt1919.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AD146/26CR,ad146-26cr,AD146/26CR,Nobili,001430,SUPPORT MURAL AVEC DOUCHETTE ET FLEXIBLE YOYO AD146/26CR,1.0,exact,plomberie,Acessoir salle de bain,0.8,196.53900000,233.88141000,19.0000,,,,"SET DE DOUCHE, SET DE DOUCHE
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_115727808.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_115727808.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AD146/30BM,ad146-30bm,AD146/30BM,Nobili,001413,ENSEMBLE PRISE D'EAU +FLEXIBLE +DOUCHETTE NOIR MATT SEVEN AD146/30BM,1.0,exact,plomberie,Acessoir salle de bain,0.8,599.59900000,713.52281000,19.0000,0,,,"SET DE DOUCHE, SET DE DOUCHE AVEC PRISE D’EAU
+Prise d’eau ø 1/2”
+Support douchette fixe
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD146-30BM-1.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD146-30BM-1.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+AD147/5CR,ad147-5cr,AD147/5CR,Nobili,002383,PRISE D'EAU ENCASTREE POUR ACCROCHE AD147/5CR,1.0,exact,plomberie,Acessoir salle de bain,0.8,92.36500000,109.91435000,19.0000,6,,,"PRISE D’EAU ENCASTREE POUR ACCROCHE
+Chrome
+Support de douchette fixe
+Sortie 1/2″
+Emballage : 0,4 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1475CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1475CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1475CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AD150/12CR,ad150-12cr,AD150/12CR,Nobili,001429,PRISE D 'EAU YOYO AD150/12CR,1.0,exact,plomberie,Acessoir salle de bain,0.8,106.05000000,126.19950000,19.0000,,,,"PRISE D’EAU
+Sortie ø 1/2”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_120140982.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_120140982.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AD150/1CR,ad150-1cr,AD150/1CR,Nobili,002385,PRISE D'EAU ENCASTREE AD150/1CR,1.0,exact,plomberie,Acessoir salle de bain,0.8,61.91500000,73.67885000,19.0000,,,,"PRISE D’EAU ENCASTREE
+Douche
+Raccordement à l’eau
+Finition : Chromé
+Sortie 1/2″",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1501CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1501CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1501CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AD150/82CR,ad150-82cr,AD150/82CR,Nobili,002384,PRISE D'EAU CARRE ENCASTREE POUR ACCROCHE AD150/82CR,1.0,exact,plomberie,Acessoir salle de bain,0.8,163.41500000,194.46385000,19.0000,,,,"PRISE D’EAU CARRE ENCASTREE POUR ACCROCHE
+Chrome
+Support de douchette fixe
+Sortie 1/2″
+Emballage : 13,8 x 8,8 x 5,8 cm / 0,0007 m³ / 0,3 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD15082CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD15082CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD15082CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+AD150/9BM,ad150-9bm,AD150/9BM,Nobili,001415,PRISE D'EAU CARRE NOIR MATT AD150/9BM,1.0,exact,plomberie,Acessoir salle de bain,0.8,284.28400000,338.29796000,19.0000,2,,,"PRISE D’EAU, PRISE D’EAU AVEC SUPPORT
+Support douchette fixe
+Sortie ø 1/2”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD150-9BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD150-9BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD150-9BMSCHEMA.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+AT18513CR,at18513cr,AT18513CR,Nobili,003206,MITIGEUR EVIER NOBILIS CHROME ANTICA AT18513CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,791.79100000,942.23129000,19.0000,,,,"MITIGEUR EVIER CHROME ANTICA
+Chrome
+Bec pivotant à 360°
+Aérateur anticalcaire M 22 x 1
+Tuyau flexible en acier inoxydable ø 3/8″
+Emballage : 56,5 x 29 x 7,1 cm / 0,01163 m³ / 2,57 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AT18513CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AT18513CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AT18513gallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/AT18513BR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/AT18513CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/AT18513RA.jpg']","{'Marque': 'Nobili', 'Couleur': 'Bronze antique, Gris chrome, Toscane rouge'}","['Bronze antique', 'Gris chrome', 'Toscane rouge']","['Bronze antique', 'Gris chrome', 'Toscane rouge']",False
+AT18513RA,at18513ra,AT18513RA,Nobili,002788,MITIGEUR EVIER NOBILIS ANTICA RED AT18513RA,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1107.36500000,1317.76435000,19.0000,,,,"MITIGEUR EVIER ANTICA RED
+Bronze antique
+Bec pivotant à 360°
+Aérateur anticalcaire M 22 x 1
+Tuyau flexible en acier inoxydable ø 3/8″
+Emballage : 56,5 x 29 x 7,1 cm / 0,01163 m³ / 2,57 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AT18513RA.jpg,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AT18513RA.jpg'],"{'Marque': 'Nobili', 'Couleur': 'Toscane rouge'}",['Toscane rouge'],['Toscane rouge'],False
+AV00600CR,av00600cr,AV00600CR,Nobili,002390,MITIGEUR TOILETTE MONOCOMMANDE A ENCASTRER AV00600CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,500.78000000,595.92820000,19.0000,,,,"MITIGEUR TOILETTE MONICOMMANDE A ENCASTRER
+Chrome
+Partie externe et partie affleurante
+Support de douchette fixe
+Douchette à jet unique avec bouton d’ouverture/fermeture
+tuyau de 100cm
+Emballage : 24 x 25 x 8 cm / 0,0048 m³ / 2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AV00600CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AV00600CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AV00600CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+BS101100CR,bs101100cr,BS101100CR,Nobili,001452,MITIGEUR DE DOUCHE AVEC INVERSEUR A ENCASTRER BLUES BS101100CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,362.35500000,431.20245000,19.0000,-1,,,"MITIGEUR BAIN DOUCHE A ENCASTRER BLUES
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER 2 SORTIES
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sorties ø 1/2”
+Inverseur avec retour automatique
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE6.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE6.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+BS101108CR,bs101108cr,BS101108CR,Nobili,001451,MITIGEUR DE DOUCHE A ENCASTRER BLUES BS101108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,202.89500000,241.44505000,19.0000,1,,,"MITIGEUR DE DOUCHE A ENCASTRER BLUES
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER 1 SORTIE
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE5.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE5.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+BS101110CR,bs101110cr,BS101110CR,Nobili,001448,MITIGEUR BAIN DOUCHE MURAL BLUES BS101110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,322.19600000,383.41324000,19.0000,,,,"MITIGEUR BAIN DOUCHE MURAL BLUES
+BAIN-DOUCHE, MITIGEUR MONOCOMMANDE MURAL COMPLET
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE3.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE3.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+BS101118/1CR,bs101118-1cr,BS101118/1CR,Nobili,001446,MITIGEUR LAVABO AVEC VIDAGE BLUES BS101118/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,232.43500000,276.59765000,19.0000,0,,,"MITIGEUR LAVABO AVEC VIDAGE BLUES
+LAVABO, MITIGEUR MONOCOMMANDE
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/blue1.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/blue1.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+BS101119/1CR,bs101119-1cr,BS101119/1CR,Nobili,001447,MITIGEUR BIDET AVEC VIDAGE BLUES BS101119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,228.95600000,272.45764000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE BLUES
+BIDET, MITIGEUR MONOCOMMANDE
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 16,5 x 1
+Jet orientable
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/blue2.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/blue2.png'],"{'Couleur': 'Gris chrome', 'Marque': 'Nobili'}",['Gris chrome'],['Gris chrome'],False
+BS101130CR,bs101130cr,BS101130CR,Nobili,001449,MITIGEUR DOUCHE MURAL BLUES BS101130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,320.01900000,380.82261000,19.0000,0,,,"MITIGEUR DOUCHE MURAL BLUES
+DOUCHE, MITIGEUR MONOCOMMANDE MURAL
+Cartouche à double position et limiteur de débit 50 %
+Sortie ø 1/2”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE4.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE4.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+BS101133CR,bs101133cr,BS101133CR,Nobili,001450,MITIGEUR EVIER BEC HAUT BLUES BS101133CR,1.0,exact,plomberie,Mitigeur cuisine,0.9,316.82000000,377.01580000,19.0000,,,,"Mitigeur de cuisine à levier BEC HAUT BLUES –
+chromeLe mitigeur de cuisine Nobili BS101133CR appartient à la gamme Blues, qui promeut une philosophie à impact zéro pour l’environnement, avec un maximum d’économies d’eau et d’énergie: le mitigeur ouvre l’alimentation en eau froide, empêchant l’activation de la chaudière .",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm8.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm8.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm-7.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+CP230CR,cp230cr,CP230CR,Nobili,002366,MELANGEUR DOUCHE CARLOS PRIMERO CHROME CP230CR,1.0,exact,plomberie,Acessoir salle de bain,0.8,407.01500000,484.34785000,19.0000,,,,"DOUCHE, MÉLANGEUR MURAL
+Sortie ø 1/2”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/produit8.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/produit8.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/produit88-1.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/bronze8.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/diamond8.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/noir8.jpg']","{'Marque': 'Nobili', 'Couleur': 'Ancient bronze, Diamond smoke PVD, Gris chrome, Noir'}","['Ancient bronze', 'Diamond smoke PVD', 'Gris chrome', 'Noir']","['Ancient bronze', 'Diamond smoke PVD', 'Gris chrome', 'Noir']",False
+CP298CR,cp298cr,CP298CR,Nobili,002367,MELANGEUR LAVABO MURAL 3 TROUS CARLOS PRIMERO CP298CR,1.0,exact,plomberie,lavabo et lavabo long,0.85,650.61500000,774.23185000,19.0000,,,,"LAVABO, BATTERIE MÉLANGEUR 3 TROUS MURAL
+Mousseur anticalcaire M 16,5 x 1
+Sans vidage
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/produit4.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/produit4.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/produit44-1.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/bronze4.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/diamond4.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/noir4.jpg']","{'Marque': 'Nobili', 'Couleur': 'Ancient bronze, Diamond smoke PVD, Gris chrome, Noir'}","['Ancient bronze', 'Diamond smoke PVD', 'Gris chrome', 'Noir']","['Ancient bronze', 'Diamond smoke PVD', 'Gris chrome', 'Noir']",False
+KDS001NE,kds001ne,KDS001NE,NUOVA OSMO,002932,KIT SHUT-OFF NOIR MATTE,1.0,exact,plomberie,tubes,0.8,92.36500000,109.91435000,19.0000,7,,,"KIT SHUT-OFF NOIR MATT
+Shut-off avec position d’écoulement continu, support fixe en ABS, flexible en PVC renforcé 1200 mm.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS001BI-1.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS001BI-1.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS001BIgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'NUOVA OSMO', 'Couleur': 'Noir mat'}",['Noir mat'],['Blanc lait'],False
+KDS003CR,kds003cr,KDS003CR,NUOVA OSMO,000674,KIT ANTEA PLUS SHUT -OFF ABS CHROME,1.0,exact,plomberie,tubes,0.8,88.30500000,105.08295000,19.0000,4,,,"KIT ANTEA PLUS SHUT-OFF ABS CHROME
+Shut-off avec position d’écoulement continu, support fixe en ABS, flexible en PVC renforcé 1200 mm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS003CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS003CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS003CRgallery.jpg']","{'Marque': 'NUOVA OSMO', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Blanc lait'],False
+KDS007CR,kds007cr,KDS007CR,NUOVA OSMO,000671,KIT STELLA PLUS SHUT-OFF LAITON CHROME,1.0,exact,plomberie,tubes,0.8,316.03000000,376.07570000,19.0000,,,,"KIT STELLA PLUS SHUT-OFF LAITON CHROME
+Shut-off avec support fixe en ABS, flexible PVC ULTRAFLEX 1200 mm.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS007CR-1.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS007CR-1.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS007CRgallery.jpg']","{'Marque': 'NUOVA OSMO', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Blanc lait'],False
+KDS100BI,kds100bi,KDS100BI,NUOVA OSMO,000675,KIT SHUT-OFF ABS BLANC,1.0,exact,plomberie,tubes,0.8,43.05000000,51.22950000,19.0000,5,,,"KIT SHUT-OFF ABS BLANC
+Shut-off avec position d’écoulement continu, support fixe en ABS, flexible en PVC renforcé 1200 mm.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS100BI.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS100BI.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS100BIgallery.jpg']","{'Marque': 'NUOVA OSMO', 'Couleur': 'Blanc lait'}",['Blanc lait'],['Blanc lait'],False
+KFL010N,kfl010n,KFL010N,NUOVA OSMO,001830,KIT KETTY FLEXIBLE DE TOILETTE + FIXATION CHROME,1.0,exact,plomberie,toilettes,0.7,91.09100000,108.39829000,19.0000,-1,,,"KIT KETTY FLEXIBLE DE TOILETTE + FIXATION CHROME
+Shut-off tournant avec valve de non retour, support fixe en ABS, flexible PVC ULTRAFLEX 1200 mm.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KFL010N.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KFL010N.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KFL010Ngallery.jpg']","{'Marque': 'NUOVA OSMO', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Blanc lait'],False
+OSDRCL0120950G4,osdrcl0120950g4,OSDRCL0120950G4,DL RADIATORS,001535,SECHE SERVIETTE ELECTRIQUE FANTASIA 1041L.500 400 W OSDRCL0120950G4,1.0,exact,chaufferie,Séche serviette,0.9,671.67100000,799.28849000,19.0000,,,,"Seche serviette electrique fantasia 961L.500 400w
+Fantasia Electric est un
+sèche-serviettes électrique
+aux lignes arrondies qui garantit un confort rapide et flexible indépendamment du circuit de chauffage hydronique.
+Ce
+sèche-serviettes électrique
+fabriqué avec des tubes ronds horizontaux et des collecteurs semi-ovales, qui lui donnent une silhouette douce et polyvalente, est disponible dans la version Linea, plate et essentielle, ou en version Parentesi, douce et séduisante. Les deux se déclinent en versions blanches et chromées.
+Haut rendement énergétique, gage d’un confort idéal, et simplicité absolue d’installation ne sont que quelques atouts du sèche-serviettes Fantasia Electric.
+Fantasia Electric est un sèche-serviettes électrique adaptable à tout type de décor, qui promet une chaleur rapide et flexible.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm6.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm6.png'],"{'Marque': 'DL RADIATORS', 'Couleur': 'Blanc lait'}",['Blanc lait'],['Blanc lait'],False
+P20/5VBTC,p20-5vbtc,P20/5VBTC,FERPLAST,002051,SIPHON A L'ITALIENNE 20/20 REVERSIBLE P20/5VBTC,1.0,exact,plomberie,accessoirs,0.8,138.04000000,164.26760000,19.0000,-4,,,SIPHON A L’ITALIENNE 20X20 REVERSIBLE,https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/Sans-titre-1.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/Sans-titre-1.png'],"{'Marque': 'FERPLAST', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+PM01221,pm01221,PM01221,NDW,001695,BRAS DE DOUCHE ROND 35CM PM01221 NDW,1.0,exact,plomberie,robinet,0.85,141.14100000,167.95779000,19.0000,1,,,BRAS DE DOUCHE ROND 35 Cm,https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM01221.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM01221.png'],"{'Marque': 'NDW', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+PM01237,pm01237,PM01237,NDW,002491,BRAS DE DOUCHE CARRE VERTICALE PM01237 NDW,1.0,exact,plomberie,robinet,0.85,131.13100000,156.04589000,19.0000,,,,BRAS DE DOUCHE CARRE VERTICALE,https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM01237.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM01237.png'],"{'Marque': 'NDW', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+PM06025/CH,pm06025-ch,PM06025/CH,NDW,001697,DOUCHETTE ROND NOBILIS,1.0,exact,plomberie,robinet,0.85,67.62000000,80.46780000,19.0000,0,,,"Douchette Light 1 fonction – buses noires PM06025/CH
+CARACTÉRISTIQUE :
+Diamètre ø 101 mm
+buses noires
+disque blanc
+1 fonction (jet : pluie)",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM06025.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM06025.png'],"{'Marque': 'NDW', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+PM07013,pm07013,PM07013,NDW,002489,POMME DE DOUCHE CARRE 400 MM PM07013 NDW,1.0,exact,plomberie,robinet,0.85,577.39500000,687.10005000,19.0000,,,,POMME DE DOUCHE CARRE 400 MM,https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM07010.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM07010.png'],"{'Marque': 'NDW', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+PM07016,pm07016,PM07016,NDW,002487,POMME DE DOUCHE CIRCULAIRE Ø 300 mm PM07016 NDW,1.0,exact,plomberie,robinet,0.85,391.39100000,465.75529000,19.0000,1,,,"Product Code – PM07016
+Made in Switzerland
+15 year manufacturers warranty
+Quality chrome finish
+3 Star 8 Lpm
+300mm shower head",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM070014.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM070014.png'],"{'Marque': 'NDW', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+PM07017,pm07017,PM07017,NDW,002488,POMME DE DOUCHE CIRCULAIRE Ø 400 mm PM07017 NDW,1.0,exact,plomberie,robinet,0.85,511.24500000,608.38155000,19.0000,,,,"Product Code – PM07017
+Made in Switzerland
+15 year manufacturers warranty
+Quality chrome finish
+3 Star 8 Lpm
+400mm shower head",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM070014.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM070014.png'],"{'Marque': 'NDW', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RD00100CR,rd00100cr,RD00100CR,Nobili,001479,MITIGEUR BAIN DOUCHE A ENCASTRE NEW ROAD RD00100CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,386.71500000,460.19085000,19.0000,,,,"MITIGEUR BAIN DOUCHE A ENCASTRE NEW ROAD
+Chrome
+Entrée eau chaude et eau froide ø 1/2”
+Sorties ø 1/2”
+Inverseur avec retour automatique
+Façade apparente et corps à encastrer
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 22 x 15,5 x 15 cm / 0,00512 m³ / 2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00100CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00100CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00100CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RD00110CR,rd00110cr,RD00110CR,Nobili,001475,MITIGEUR BAIN DOUCHE MURAL NEW ROAD RD00110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,396.86500000,472.26935000,19.0000,,,,"MITIGEUR BAIN DOUCHE MURAL NEW ROAD
+Chrome
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 25,4 x 21,2 x 17 cm / 0,00915 m³ / 2,9 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00110CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00110CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00110CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RD00130CR,rd00130cr,RD00130CR,Nobili,001476,MITIGEUR DE DOUCHE MURAL NEW ROAD RD00130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,325.81500000,387.71985000,19.0000,,,,"MITIGEUR DE DOUCHE MURAL NEW ROAD
+Chrome
+Sortie ø 1/2”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 21 x 17,3 x 7,2 cm / 0,00262 m³ / 1,64 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00130CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00130CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00130CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RD00133CR,rd00133cr,RD00133CR,Nobili,001477,MITIGEUR EVIER NEW ROAD RD00133CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,295.36500000,351.48435000,19.0000,,,,"MITIGEUR EVIER NEW ROAD
+Chrome
+Bec pivotant
+Cartouche ø 35 mm
+Limiteur de débit dynamique (-50%)
+Limiteur de température
+Aerator Neoperl® M 16 x 1
+Flexible Parigi® SPX® inox ø 3/8”
+Emballage : 56,5 x 29 x 7,1 cm / 0,011633 m’ / 2,3 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00133CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00133CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00133CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RD00198/1CR,rd00198-1cr,RD00198/1CR,Nobili,001481,FACADE MITIGEUR LAVABO ENCASTRE NEW ROAD RD00198/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,417.16500000,496.42635000,19.0000,,,,"FACADE MITIGEUR LAVABO ENCASTRE NEW ROAD
+Chrome
+Mousseur anticalcaire M 18 x 1
+Longueur du bec 200 mm
+Sans vidage
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 32 x 16,5 x 7 cm / 0,0037 m³ / 2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD001981CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD001981CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD001981CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RD00300/3CR,rd00300-3cr,RD00300/3CR,Nobili,001480,MITIGEUR EVIER AVEC DOUCHETTE NEW ROAD RD00300/3CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,661.66100000,787.37659000,19.0000,0,,,"MITIGEUR EVIER AVEC DOUCHETTE NEW ROAD
+Chrome
+Bec pivotant
+Douchette orientable à 2 jets
+Limiteur de débit dynamique (-50%)
+Limiteur de température
+Flexible Parigi® SPX® inox ø 3/8”
+Emballage : 56,5 x 29 x 7,1 cm / 0,011633 m³ / 3,3 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD003003CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD003003CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD003003CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RDC0118/2CR,rdc0118-2cr,RDC0118/2CR,Nobili,001474,MITIGEUR LAVABO CASCADE AVEC VIDAGE NEW ROAD RDC0118/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,640.46500000,762.15335000,19.0000,,,,"MITIGEUR LAVABO CASCADE AVEC VIDAGE NEW ROAD
+Chrome
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 21,2 x 7,8 cm / 0,00686 m³ / 2,1 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01182CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01182CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01182CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RDC0128/2CR,rdc0128-2cr,RDC0128/2CR,Nobili,001472,MITIGEUR LAVABO HAUT CASCADE AVEC VIDAGE NEW ROAD RDC0128/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,912.48500000,1085.85715000,19.0000,,,,"MITIGEUR LAVABO HAUT CASCADE AVEC VIDAGE NEW ROAD
+Chrome
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 56,5 x 29 x 7,1 cm / 0,01163 m³ / 2,98 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01282CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01282CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01282CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+RDE0119/1CR,rde0119-1cr,RDE0119/1CR,Nobili,001473,MITIGEUR BIDET AVEC VIDAGE NEW ROAD RDE0119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,303.48500000,361.14715000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE NEW ROAD
+Bidet
+Monocommande ECO
+Finition chrome
+Jet pivotant
+Cartouche ø 35 mm
+Économie d’énergie (ouverture en eau froide avec levier central
+position)
+Limiteur de débit dynamique (-50%)
+Limiteur de température
+Aerator Neoperl® M 22 x 1
+Flexible Parigi® SPX® inox ø 3/8”
+Emballage : 41,5 x 16 x 7,5 cm / 0,00498 m³ / 1,67 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDE01191CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDE01191CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDE01191CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SA99100CR,sa99100cr,SA99100CR,Nobili,001460,MITIGEUR BAIN DOUCHE A ENCASTRE SAND SA99100CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,361.17900000,429.80301000,19.0000,,,,"MITIGEUR BAIN DOUCHE A ENCASTRE SAND
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER 2 SORTIES
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sorties ø 1/2”
+Inverseur avec retour automatique
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand7.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand7.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SA99108CR,sa99108cr,SA99108CR,Nobili,001459,MITIGEUR DE DOUCHE A ENCASTRER SAND SA99108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,208.23600000,247.80084000,19.0000,,,,"MITIGEUR DE DOUCHE A ENCASTRE SAND
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER 1 SORTIE
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand6.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand6.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SA99110CR,sa99110cr,SA99110CR,Nobili,001456,MITIGEUR BAIN DOUCHE MURAL SAND SA99110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,339.01000000,403.42190000,19.0000,,,,"MITIGEUR BAIN DOUCHE MURAL SAND
+BAIN-DOUCHE, MITIGEUR MONOCOMMANDE MURAL COMPLET
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand4.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand4.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SA99119/1CR,sa99119-1cr,SA99119/1CR,Nobili,001454,MITIGEUR BIDET AVEC VIDAGE SAND SA99119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,244.61500000,291.09185000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE SAND
+BIDET, MITIGEUR MONOCOMMANDE
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 16,5 x 1
+Jet orientable
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand2.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand2.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SA99130CR,sa99130cr,SA99130CR,Nobili,001457,MITIGEUR DE DOUCHE MURAL SAND SA99130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,299.43900000,356.33241000,19.0000,,,,"MITIGEUR DE DOUCHE MURAL SAND
+DOUCHE, MITIGEUR MONOCOMMANDE MURAL
+Cartouche à double position et limiteur de débit 50 %
+Sortie ø 1/2”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand5.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand5.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SA99133CR,sa99133cr,SA99133CR,Nobili,001458,MITIGEUR EVIER SAND SA99133CR,1.0,exact,plomberie,Mitigeur cuisine,0.9,356.26500000,423.95535000,19.0000,,,,"Mitigeur evier SAND
+Le mélangeur de cuisine Nobili SA99133CR appartient à la ligne Sand, avec des lignes simples et linéaires. Sa technologie est au service de la planète : elle permet d’économiser de l’eau et de l’énergie au quotidien en ouvrant le débit à l’eau froide, évitant l’activation de la chaudière.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm9.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm9.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm10-2.png']","{'Couleur': 'Gris chrome', 'Marque': 'Nobili'}",['Gris chrome'],['Gris chrome'],False
+SE124108BM,se124108bm,SE124108BM,Nobili,000645,MITIGEUR DOUCHE A ENCASTRER 1 VOIE NOIR MATT SEVEN SE124108BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,491.49100000,584.87429000,19.0000,7,,,"MITIGEUR DOUCHE A ENCASTRER 1 VOIE NOIR MATT SEVEN
+Velvet black
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,006066 m³ / 2,32 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124108BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124108BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124108BMgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SE124108CR,se124108cr,SE124108CR,Nobili,001333,MITIGEUR DOUCHE A ENCASTRER 1 VOIE CHROME SEVEN SE124108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,303.48500000,361.14715000,19.0000,1,,MITIGEUR TOILETTE OU MITIGEUR DOUCHE 1 SORTIE,"MITIGEUR DOUCHE A ENCASTRER 1 VOIE SEVEN
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,006066 m³ / 2,32 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124108CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124108CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124108CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-douche-a-encastrer-1-voie-chrome.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-douche-a-encastrer-1-voie-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+SE124110BM,se124110bm,SE124110BM,Nobili,001410,MITIGEUR BAIN DOUCHE MURAL AVEC DUPLEX NOIR MATT SEVEN SE124110BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1172.17100000,1394.88349000,19.0000,0,,,"MITIGEUR BAIN DOUCHE MURAL AVEC DUPLEX NOIR MATT SEVEN
+Velvet black
+Mousseur anticalcaire M 28 x 1
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 25,1 x 21 x 17 cm / 0,00896 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124110BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124110BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124110BMgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SE124110CR,se124110cr,SE124110CR,Nobili,001434,MITIGEUR BAIN DOUCHE AVEC DUPLEX CHROME SEVEN SE124110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,741.96500000,882.93835000,19.0000,1,,,"MITIGEUR BAIN DOUCHE AVEC DUPLEX SEVEN
+Mousseur anticalcaire M 28 x 1
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 25,1 x 21 x 17 cm / 0,00896 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124110CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124110CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124110CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-de-douche-duplex-chrome.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-de-douche-duplex-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+SE124128/2BM,se124128-2bm,SE124128/2BM,Nobili,001407,MITIGEUR LAVABO REHAUSSE AVEC VIDAGE CLIC CLAC NOIR MATT SEVEN SE124128/2BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1208.86500000,1438.54935000,19.0000,,,,"MITIGEUR LAVABO REHAUSSE AVEC VIDAGE CLIC CLAC NOIR MATT SEVEN
+Velvet black
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 56,5 x 29 x 7,1 cm / 0,011633 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE1241282BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE1241282BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE1241282BMgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SE124128/2CR,se124128-2cr,SE124128/2CR,Nobili,001432,MITIGEUR LAVABO CORPS HAUT AVEC VIDAGE CLIC CLAC CHROME SEVEN SE124128/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,843.46500000,1003.72335000,19.0000,,,,"MITIGEUR LAVABO CORPS HAUT AVEC VIDAGE CLIC CLAC SEVEN
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 56,5 x 29 x 7,1 cm / 0,011633 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE1241282CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE1241282CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE1241282CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-lavabo-corps-haut-chrome.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-lavabo-corps-haut-noir-1.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+SE124130BM,se124130bm,SE124130BM,Nobili,001411,MITIGEUR DE DOUCHE MURAL NOIR MATT SEVEN SE124130BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,699.69900000,832.64181000,19.0000,0,,,"MITIGEUR DE DOUCHE MURAL NOIR MATT SEVEN
+Velvet black
+Sortie ø 1/2”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,006066 m³ / 1,80 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124130BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124130BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124130BMgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SE124130CR,se124130cr,SE124130CR,Nobili,001435,MITIGEUR DE DOUCHE MURAL CHROME SEVEN SE124130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,741.96500000,882.93835000,19.0000,,,,"MITIGEUR DE DOUCHE MURAL SEVEN
+Sortie ø 1/2”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,006066 m³ / 1,80 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124130CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124130CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124130CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-mural-chrome.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-mural-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+SE124198BM,se124198bm,SE124198BM,Nobili,001409,FACADE MITIGEUR LAVABO ENCASTRER NOIR MATT SEVEN SE124198BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1122.12100000,1335.32399000,19.0000,2,,,"FACADE MITIGEUR LAVABO ENCASTRER NOIR MATT SEVEN
+Velvet black
+Mousseur anticalcaire M 24 x 1
+Longueur du bec 150 mm
+Sans vidage
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 32 x 16,5 x 7 cm / 0,0037 m³ / 1,6 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124198BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124198BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124198BMgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SE124198CR,se124198cr,SE124198CR,Nobili,001328,FACADE MITIGEUR LAVABO ENCASTRER SEVEN SE124198CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,782.56500000,931.25235000,19.0000,1,,,"FACADE MITIGEUR LAVABO ENCASTRER SEVEN
+Mousseur anticalcaire M 24 x 1
+Longueur du bec 150 mm
+Sans vidage
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 32 x 16,5 x 7 cm / 0,0037 m³ / 1,6 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124198CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124198CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124198CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-encastrer-chrome.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-encastrer-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+SEE124118/2BM,see124118-2bm,SEE124118/2BM,Nobili,001406,MITIGEUR LAVABO AVEC VIDGE CLI CLAC NOIR MATT SEVEN SEE124118/2BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,752.11500000,895.01685000,19.0000,-2,,,"MITIGEUR LAVABO AVEC VIDAGE CLI CLAC NOIR MATT SEVEN
+Velvet black
+Mousseur anticalcaire M 24 x 1
+Aérateur 5 l/min inclus dans l’emballage
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Limiteur d’énergie avec ouverture en eau froide
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 16 x 7,5 cm / 0,00498 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241182BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241182BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241182BMgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SEE124118/2CR,see124118-2cr,SEE124118/2CR,Nobili,001431,MITIGEUR LAVABO AVEC VIDAGE CLIC CLAC CHROME SEVEN SEE124118/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,478.06500000,568.89735000,19.0000,1,,,"MITIGEUR LAVABO AVEC VIDAGE CLIC CLAC SEVEN
+Mousseur anticalcaire M 24 x 1
+Aérateur 5 l/min inclus dans l’emballage
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Limiteur d’énergie avec ouverture en eau froide
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 16 x 7,5 cm / 0,00498 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241182CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241182CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241182CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidage-clic-clac-chrome.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidage-clic-clac-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+SEE124119/1BM,see124119-1bm,SEE124119/1BM,Nobili,001408,MITIGEUR BIDET AVEC VIDAGE NOIR MATT SEVEN SEE124119/1BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,661.66100000,787.37659000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE NOIR MATT SEVEN
+Velvet black
+Mousseur anticalcaire M 16,5 x 1
+Aérateur 5 l/min inclus dans l’emballage
+Jet orientable
+Vidage 1 1/4”
+Flexibles inox ø 3/8”
+Limiteur d’énergie avec ouverture en eau froide
+Cartouche à double position et limiteur de débit 50 %",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SEE124119/1BM,see124119-1bm,SEE124119/1BM,Nobili,001408,MITIGEUR BIDET AVEC VIDAGE NOIR MATT SEVEN SEE124119/1BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,661.66100000,787.37659000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE NOIR MATT SEVEN
+Velvet black
+Mousseur anticalcaire M 16,5 x 1
+Aérateur 5 l/min inclus dans l’emballage
+Jet orientable
+Vidage 1 1/4”
+Flexibles inox ø 3/8”
+Limiteur d’énergie avec ouverture en eau froide
+Cartouche à double position et limiteur de débit 50 %",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191BM.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191BM.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191BMgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SEE124119/1CR,see124119-1cr,SEE124119/1CR,Nobili,001433,MITIGEUR BIDET AVEC VIDAGE SEVEN SEE124119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,457.76500000,544.74035000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE SEVEN
+Mousseur anticalcaire M 16,5 x 1
+Aérateur 5 l/min inclus dans l’emballage
+Jet orientable
+Vidage 1 1/4”
+Flexibles inox ø 3/8”
+Limiteur d’énergie avec ouverture en eau froide
+Cartouche à double position et limiteur de débit 50 %",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-avec-vidage-chrome.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-avec-vidage-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+SEE124119/1CR,see124119-1cr,SEE124119/1CR,Nobili,001433,MITIGEUR BIDET AVEC VIDAGE SEVEN SEE124119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,457.76500000,544.74035000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE SEVEN
+Chrome
+Mousseur anticalcaire M 16,5 x 1
+Aérateur 5 l/min inclus dans l’emballage
+Jet orientable
+Vidage 1 1/4”
+Flexibles inox ø 3/8”
+Limiteur d’énergie avec ouverture en eau froide
+Cartouche à double position et limiteur de débit 50 %",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191CR.jpg,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191CR.jpg'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98108CR,si98108cr,SI98108CR,Nobili,002338,MITIGEUR DE DOUCHE A ENCASTRER SOFI SI98108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,746.92800000,888.84432000,19.0000,,,,"MITIGEUR DE DOUCHE A ENCASTRER SOFI
+Chrome
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 17,1 x 10,8 x 11 cm / 0,00203 m³ / 1 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98108CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98108CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98108CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98110CR,si98110cr,SI98110CR,Nobili,002336,MITIGEUR BAIN DOUCHE MURAL SOFI SI98110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1906.12800000,2268.29232000,19.0000,,,,"MITIGEUR BAIN DOUCHE MURAL SOFI
+Chrome
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 25,1 x 21 x 17 cm / 0,00896 m³ / 3,1 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98110CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98110CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98110CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98113CR,si98113cr,SI98113CR,Nobili,003194,MITIGEUR EVIER NOBILIS SOFI SI98113CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,601.60100000,715.90519000,19.0000,,,,"MITIGEUR EVIER SOFI
+Chrome
+Bec pivotant à 360°
+Aérateur anticalcaire M 24 x 1
+Tuyau flexible en acier inoxydable ø 3/8″
+Cartouche à 50 % en deux étapes pour économiser l’eau
+Emballage : 56,5 x 29 x 7,1 cm / 0,01163 m³ / 2,17 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98113CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98113CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98113CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98118/1CR,si98118-1cr,SI98118/1CR,Nobili,002333,MITIGEUR LAVABO SOFI SI98118/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,867.88800000,1032.78672000,19.0000,,,,"MITIGEUR LAVABO SOFI
+Chrome
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4”
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41 x 21 x 7 cm / 0,00603 m³ / 2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981181CR.jpg,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981181CR.jpg'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98118/1CR,si98118-1cr,SI98118/1CR,Nobili,002333,MITIGEUR LAVABO SOFI SI98118/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,867.88800000,1032.78672000,19.0000,,,,"MITIGEUR LAVABO SOFI
+Chrome
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4”
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41 x 21 x 7 cm / 0,00603 m³ / 2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981181CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981181CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981181CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98128/2CR,si98128-2cr,SI98128/2CR,Nobili,002334,MITIGEUR LAVABO SOFI SI98128/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1200.52800000,1428.62832000,19.0000,,,,"MITIGEUR LAVABO SOFI
+Chrome
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 56,5 x 29 x 7,1 cm / 0,01163 m³ / 3,1 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981282CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981282CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981282CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98130CR,si98130cr,SI98130CR,Nobili,002337,MITIGEUR DE DOUCHE A ENCASTRER MURAL SOFI SI98130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,757.00800000,900.83952000,19.0000,,,,"MITIGEUR DE DOUCHE MURAL SOFI
+Chrome
+Sortie ø 1/2”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,00607 m³ / 1,66 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98130CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98130CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98130CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SI98198CR,si98198cr,SI98198CR,Nobili,002339,FACADE MITIGEUR LAVABO ENCASTRE SOFI SI98198CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,716.68800000,852.85872000,19.0000,,,,"FACADE MITIGEUR LAVABO ENCASTRE SOFI
+Chrome
+Mousseur anticalcaire M 24 x 1
+Longueur du bec 150 mm
+Sans vidage
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 32 x 16,5 x 7 cm / 0,0037 m³ / 2,4 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98198CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98198CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98198CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SY97100CR,sy97100cr,SY97100CR,Nobili,001469,MITIGEUR BAIN DOUCHE A ENCASTRE SKY SY97100CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,386.71500000,460.19085000,19.0000,0,,,"MITIGEUR BAIN DOUCHE A ENCASTRE SKY
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sorties ø 1/2”
+Inverseur avec retour automatique
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/01-6.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/01-6.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SY97108CR,sy97108cr,SY97108CR,Nobili,001468,MITIGEUR DE DOUCHE A ENCASTRER SKY SY97108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,201.98500000,240.36215000,19.0000,0,,,"MITIGEUR DE DOUCHE A ENCASTRE SKY
+DOUCHE, MITIGEUR MONOCOMMANDE À ENCASTRER
+Cartouche à double position et limiteur de débit 50 %
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/02-6.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/02-6.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SY97110CR,sy97110cr,SY97110CR,Nobili,001465,MITIGEUR BAIN DOUCHE AVEC SUPPORT DOUCHETTE SKY SY97110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,437.46500000,520.58335000,19.0000,,,,"MITIGEUR BAIN DOUCHE AVEC SUPPORT DOUCHETTE SKY
+BAIN-DOUCHE, MITIGEUR MONOCOMMANDE MURAL COMPLET
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/04-2.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/04-2.png'],"{'Couleur': 'Gris chrome', 'Marque': 'Nobili'}",['Gris chrome'],['Gris chrome'],False
+SY97130CR,sy97130cr,SY97130CR,Nobili,001466,MITIGEUR DOUCHE CHROME SKY SY97130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,356.26500000,423.95535000,19.0000,1,,,"MITIGEUR DOUCHE CHROME SKY
+DOUCHE, MITIGEUR MONOCOMMANDE MURAL
+Cartouche à double position et limiteur de débit 50 %
+Sortie ø 1/2”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/515lOShn1L._AC_SY450_.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/515lOShn1L._AC_SY450_.png'],"{'Couleur': 'Gris chrome', 'Marque': 'Nobili'}",['Gris chrome'],['Gris chrome'],False
+SY97134CR,sy97134cr,SY97134CR,Nobili,001467,MITIGEUR EVIER CHROME BEC HAUT CARRER SKY,1.0,exact,plomberie,Mitigeur cuisine,0.9,367.56700000,437.40473000,19.0000,,,,"Mitigeur evier chrome bec haut carrer sky
+Le mélangeur de cuisine Nobili SY97134CR appartient à la ligne Sky, qui optimise les ressources de la planète en aidant à économiser de l’eau et de l’énergie en ouvrant le débit à l’eau froide, empêchant ainsi l’activation accidentelle de la chaudière.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm-13.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm-13.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm14-1.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SYE97118/1CR,sye97118-1cr,SYE97118/1CR,Nobili,001463,MITIGEUR LAVABO AVEC VIDAGE ECO ENERGIE SKY SYE97118/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,278.85900000,331.84221000,19.0000,,,,"Mitigeur lavabo avec vidage eco energie sky
+Qualité et fiabilité Made in Italy
+Laiton depiombato et certificat
+Chromage nobles à haute résistance et brillance
+meccannisco levier à économie d’énergie",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm12.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm12.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm11.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+SYE97119/1CR,sye97119-1cr,SYE97119/1CR,Nobili,001464,MITIGEUR BIDET AVEC VIDAGE ECO ENERGIE SKY SYE97119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,258.27900000,307.35201000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE ECO ENERGIE SKY
+BIDET, MITIGEUR MONOCOMMANDE
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 16,5 x 1
+Jet orientable
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sque-1.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sque-1.png'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+TW00010CR,tw00010cr,TW00010CR,Nobili,002342,MITIGEUR BAIN DOUCHE THERMOSTATIQUE CHROME TOWER TW00010CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,888.04800000,1056.77712000,19.0000,,,,"MITIGEUR BAIN DOUCHE THERMOSTATIQUE CHROME TOWER
+Chrome
+Interruption de sécurité à 38° C
+Clapets anti-retour
+Aérateur anticalcaire M 24 x 1
+Support de douchette réglable
+Douchette à jet unique et flexible de 150 cm
+Robinet avec technologie « warm shell »
+Emballage : 24,2 x 24,7 x 7,7 cm / 0,0046 m³ / 3,6 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00010CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00010CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00010CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+TW00010CR,tw00010cr,TW00010CR,Nobili,002342,MITIGEUR BAIN DOUCHE THERMOSTATIQUE CHROME TOWER TW00010CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,888.04800000,1056.77712000,19.0000,,,,"MITIGEUR BAIN DOUCHE THERMOSTATIQUE CHROME TOWER
+Chrome
+Interruption de sécurité à 38° C
+Clapets anti-retour
+Aérateur anticalcaire M 24 x 1
+Support de douchette réglable
+Douchette à jet unique et flexible de 150 cm
+Robinet avec technologie « warm shell »
+Emballage : 24,2 x 24,7 x 7,7 cm / 0,0046 m³ / 3,6 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00010CR.jpg,['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00010CR.jpg'],"{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+TW00030CR,tw00030cr,TW00030CR,Nobili,002343,MITIGEUR BAIN DOUCHE THERMOSTATIQUE TW00030CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,787.24800000,936.82512000,19.0000,,,,"MITIGEUR BAIN DOUCHE THERMOSTATIQUE
+Douche
+Mitigeur thermostatique extérieur
+Finition : Chromé
+Arrêt de sécurité à 38°C
+Clapets anti-retour
+Système anti calcaire
+Sortie 1/2″
+Cartouche thermostatique
+Clapet à vis disque céramique.180°
+Emballage : 24 x 25 x 8 cm / 0,0048 m³ / 3,2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00030CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00030CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00030CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+TW00118/1CR,tw00118-1cr,TW00118/1CR,Nobili,002341,MITIGEUR LAVABO AVEC VIDAGE CHROME TOWER TW00118/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,797.32800000,948.82032000,19.0000,,,,"MITIGEUR LAVABO AVEC VIDAGE CHROME TOWER
+Lavabo
+Contrôle unique
+Finition : Chromé
+Cartouche ø 25 mm
+Aérateur Neoperl® caché M 16,5 x 1
+Flexible Parigi® SPX® inox ø 3/8”
+Emballage : 41,2 x 16,4 x 7,1 cm / 0,004797 m³ / 2,4 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW001181CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW001181CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW001181CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+VV103108CR,vv103108cr,VV103108CR,Nobili,001490,MITIGEUR DE DOUCHE A ENCASTRER ACQUAVIVA VV103108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,273.03500000,324.91165000,19.0000,0,,,"MITIGEUR DE DOUCHE A ENCASTRER ACQUAVIVA
+Chrome
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 14 x 12,5 x 8 cm / 0,0014 m³ / 1,19 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103108CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103108CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103108CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-polar-blanc.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-london-gris.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Blanc lait, Gris chrome, London grey, Noir'}","['Blanc lait', 'Gris chrome', 'London grey', 'Noir']",['Blanc lait'],False
+VV103110CR,vv103110cr,VV103110CR,Nobili,001487,MITIGEUR BAIN DOUCHE MURAL ACQUAVIVA VV103110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,630.31500000,750.07485000,19.0000,,,,"MITIGEUR BAIN DOUCHE MURAL ACQUAVIVA
+Chrome
+Mousseur anticalcaire M 28 x 1
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 25,4 x 21,2 x 17 cm / 0,00915 m³ / 2,86 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103110CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103110CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103110CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-murale-blanc.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-murale-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-murale-london-grey.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-murale-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Blanc lait, Gris chrome, London grey, Noir'}","['Blanc lait', 'Gris chrome', 'London grey', 'Noir']",['Blanc lait'],False
+VV103113CR,vv103113cr,VV103113CR,Nobili,001489,MITIGEUR EVIER ACQUAVIVA VV103113CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,550.55000000,655.15450000,19.0000,,,,"MITIGEUR EVIER ACQUAVIVA
+Évier
+Mitigeur monocommande
+Finition: Chromé
+Bec mobile
+Cartouche ø 28 mm
+Limiteur dynamique de débit (-50%)
+Limiteur de température
+Aérateur Neoperl® cascade M 24 x 1
+Flexible Parigi® SPX® acier inox ø 3/8”",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103113CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103113CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103113CRgallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Blanc lait'],False
+VV103118/2CR,vv103118-2cr,VV103118/2CR,Nobili,001485,MITIGEUR LAVABO AVEC VIDAGE ACQUAVIVA VV103118/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,417.16500000,496.42635000,19.0000,,,,"MITIGEUR LAVABO AVEC VIDAGE ACQUAVIVA
+Chrome
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 16 x 7,5 cm / 0,00498 m³ / 2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031182CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031182CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031182CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidaga-blanc.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidaga-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidaga-london-grey.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidage-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Blanc lait, Gris chrome, London grey, Noir'}","['Blanc lait', 'Gris chrome', 'London grey', 'Noir']",['Blanc lait'],False
+VV103119/1CR,vv103119-1cr,VV103119/1CR,Nobili,001492,MITIGEUR BIDET AVEC VIDAGE ACQUAVIVA VV103119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,417.16500000,496.42635000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE ACQUAVIVA
+Chrome
+Mousseur anticalcaire M 16,5 x 1
+Jet orientable
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 16 x 7,5 cm / 0,00498 m³ / 1,71 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031191CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031191CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031191CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-blanc.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-chrome-1.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-london-grey.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-noir-1.png']","{'Marque': 'Nobili', 'Couleur': 'Blanc lait, Gris chrome, London grey, Noir'}","['Blanc lait', 'Gris chrome', 'London grey', 'Noir']",['Blanc lait'],False
+VV103128/2CR,vv103128-2cr,VV103128/2CR,Nobili,001486,MITIGEUR LAVABO AVEC VIDAGE REHAUSSE ACQUAVIVA VV103128/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,701.36500000,834.62435000,19.0000,,,,"MITIGEUR LAVABO AVEC VIDAGE REHAUSSE ACQUAVIVA
+Chrome
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 56,5 x 29 x 7,1 cm / 0,01163 m³ / 3,2 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031282CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031282CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV1031282CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-blanc.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-london-grey-1.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-london-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Blanc lait, Gris chrome, London grey, Noir'}","['Blanc lait', 'Gris chrome', 'London grey', 'Noir']",['Blanc lait'],False
+VV103130CR,vv103130cr,VV103130CR,Nobili,001488,MITIGEUR DE DOUCHE MURAL ACQUAVIVA VV103130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,427.31500000,508.50485000,19.0000,,,,"MITIGEUR DE DOUCHE MURAL ACQUAVIVA
+Chrome
+Sortie ø 1/2”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 21 x 17,3 x 7,2 cm / 0,00262 m³ / 1,49 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103130CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103130CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103130CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-mural-blanc.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-mural-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-mural-london-grey.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-mural-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Blanc lait, Gris chrome, London grey, Noir'}","['Blanc lait', 'Gris chrome', 'London grey', 'Noir']",['Blanc lait'],False
+VV103198CR,vv103198cr,VV103198CR,Nobili,001329,FACADE MITIGEUR LAVABO ENCASTRE ACQUAVIVA VV103198CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,721.66500000,858.78135000,19.0000,4,,,"FACADE MITIGEUR LAVABO ENCASTRE ACQUAVIVA
+Chrome
+Mousseur anticalcaire M 24 x 1
+Longueur du bec 150 mm
+Sans vidage
+Cartouche à double position et limiteur de débit 50 %
+Emballage : 32 x 16,5 x 7 cm / 0,0037 m³ / 1,57 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103198CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103198CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103198CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-blanc.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-london-grey.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Blanc lait, Gris chrome, London grey, Noir'}","['Blanc lait', 'Gris chrome', 'London grey', 'Noir']",['Blanc lait'],False
+WE00180/QCR,we00180-qcr,WE00180/QCR,Nobili,002325,MITIGEUR BAIN DOUCHE SOL CHROME WE00180/QCR,1.0,exact,plomberie,Acessoir salle de bain,0.8,5065.86500000,6028.37935000,19.0000,,,,"BAIN-DOUCHE, PARTIE APPARENTE MONOCOMMANDE À 2 VOIES
+Cartouche à double position et limiteur de débit 50 %
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette fixe
+Douchette à 1 jet et flexible 150 cm",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/15-1.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/15-1.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/70.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/15.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Inox, Noir'}","['Gris chrome', 'Inox', 'Noir']","['Gris chrome', 'Inox', 'Noir']",False
+WE00198,we00198,WE00198,Nobili,001327,CORPS LAVABO ENCASTRER WE00198,1.0,exact,plomberie,lavabo et lavabo long,0.85,325.81500000,387.71985000,19.0000,0,,,"CORPS LAVABO A ENCASTRER
+Pièce affleurante requise
+Entrée eau chaude et froide ø 1/2”
+Sortie 1/2″
+Conditionnement : 16,5 x 12 x 5 cm / 0,00099 m³ / 0,98 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE00198.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE00198.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE00198gallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+WE00198,we00198,WE00198,Nobili,001327,CORPS LAVABO ENCASTRER WE00198,1.0,exact,plomberie,lavabo et lavabo long,0.85,325.81500000,387.71985000,19.0000,0,,,"CORPS LAVABO A ENCASTRER
+Pièce affleurante requise
+Entrée eau chaude et froide ø 1/2”
+Sortie 1/2″
+Conditionnement : 16,5 x 12 x 5 cm / 0,00099 m³ / 0,98 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE00198.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE00198.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE00198gallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+WE81100,we81100,WE81100,Nobili,001330,CORPS BAIN DOUCHE ENCASTRE WE81100,1.0,exact,plomberie,Acessoir salle de bain,0.8,291.30500000,346.65295000,19.0000,5,,,"DOUCHE, PARTIE ENCASTRÉE NÉCESSAIRE
+Sorties ø 1/2”
+Également adapté au montage sur placoplâtre",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p4.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p4.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+WE81100,we81100,WE81100,Nobili,001330,CORPS BAIN DOUCHE ENCASTRE WE81100,1.0,exact,plomberie,Acessoir salle de bain,0.8,291.30500000,346.65295000,19.0000,5,,,"CORPS BAIN DOUCHE ENCASTRE
+Pièce affleurante requise
+Sorties ø 1/2″
+Convient également pour le montage sur plaque de plâtre
+Emballage : 19,5 x 10 x 15,5 cm / 0,003022 m³ / 1,4 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE81100.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE81100.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE81100gallery.jpg']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False
+YO126100/EBM,yo126100-ebm,YO126100/EBM,Nobili,001542,FACADE POUR MITIGEUR BAIN DOUCHE ENCASTRE 2 VOIES YOYO NOIR MATT YO126100/EBM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,518.66500000,617.21135000,19.0000,1,,,"Facade pour mitigeur bain douche encastre 2 voies yoyo noir matt
+Le mitigeur de douche Nobili YO126100 / EBM appartient à la ligne Yoyo simple et essentielle, qui exprime le caractère et la personnalité à travers une ligne douce et sinueuse, rendue possible par la cartouche d’immersion Nobili Widd",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p3.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p3.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p2.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+YO126100/ECR,yo126100-ecr,YO126100/ECR,Nobili,001426,FACADE POUR MITIGEUR BAIN DOUCHE ENCASTRE 2 VOIES YOYO CHROME YO126100/ECR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,356.26500000,423.95535000,19.0000,0,,,"FACADE POUR MITIGEUR BAIN DOUCHE ENCASTRE 2 VOIES YOYO CHROME
+Chrome
+Inverseur avec retour automatique
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,0060662 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126100ECR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126100ECR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126100ECRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126108BM,yo126108bm,YO126108BM,Nobili,001541,MITIGEUR DOUCHE ENCASTRE 1 VOIE YOYO NOIR MATT YO126108BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,396.86500000,472.26935000,19.0000,0,,,"Mitigeur douche encastre 1 voie yoyo noir matt
+Limiteur de débit avec frein à 50%
+Entrée eau chaude et eau froide ø 1/2 »
+sortie 1/2″
+Partie externe et partie encastrée",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod6.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod6.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod5.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+YO126108CR,yo126108cr,YO126108CR,Nobili,001425,MITIGEUR DOUCHE ENCASTRE 1 VOIE YOYO CHROME YO126108CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,231.23100000,275.16489000,19.0000,-1,,,"MITIGEUR DOUCHE ENCASTRE 1 VOIE YOYO CHROME
+Chrome
+Entrée eau chaude et eau froide ø 1/2”
+Sortie ø 1/2”
+Façade apparente et corps à encastrer
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,006066 m³ / 2,32 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126108CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126108CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126108CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-chrome2.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-noir2.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126110BM,yo126110bm,YO126110BM,Nobili,001540,MITIGEUR BAIN DOUCHE MURAL AVEC DUPLEX YOYO NOIR MATT YO126110BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1005.86500000,1196.97935000,19.0000,,,,"Mitigeur bain douche 2 voies avec duplex yoyo noir matt
+Le mitigeur de baignoire Nobili YO126110BM appartient à la ligne Yoyo simple et essentielle, qui exprime le caractère et la personnalité à travers une ligne douce et sinueuse, rendue possible par la cartouche d’immersion Nobili Widd.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod3.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod3.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod4.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+YO126110CR,yo126110cr,YO126110CR,Nobili,001423,MITIGEUR BAIN DOUCHE MURAL AVEC DUPLEX YOYO CHROME YO126110CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,631.63100000,751.64089000,19.0000,,,,"MITIGEUR BAIN DOUCHE MURAL AVEC DUPLEX YOYO CHROME
+Chrome
+Mousseur anticalcaire M 28 x 1
+Inverseur avec retour automatique
+Support douchette orientable
+Douchette à 1 jet et flexible 150 cm
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 25,1 x 21 x 17 cm / 0,00896 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126110CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126110CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126110CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126118/2CR,yo126118-2cr,YO126118/2CR,Nobili,001419,MITIGEUR LAVABO AVEC VIDAGE CLIC CLAC YOYO CHROME YO126118/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,441.44100000,525.31479000,19.0000,3,,,"MITIGEUR LAVABO YOYO CHROME AVEC VIDANGE CLIC CLAC
+Chrome
+Mousseur anticalcaire M 24 x 1
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 16 x 7,5 cm / 0,00498 m³ / 1,64 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261182CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261182CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261182CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-monocommande.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-monocommande-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126119/1BM,yo126119-1bm,YO126119/1BM,Nobili,001539,MITIGEUR BIDET AVEC VIDAGE YOYO NOIR MATT YO126119/1BM,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,670.91500000,798.38885000,19.0000,,,,"Mitigeur bidet avec vidage yoyo noir matt
+Le mitigeur de bidet Nobili YO126119 / 1BM appartient à la ligne Yoyo simple et essentielle, qui exprime le caractère et la personnalité à travers une ligne douce et sinueuse, rendue possible par la cartouche d’immersion Nobili Widd.",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod1.png,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod1.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod2.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'Nobili', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+YO126119/1CR,yo126119-1cr,YO126119/1CR,Nobili,001420,MITIGEUR BIDET AVEC VIDAGE YOYO CHROME YO126119/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,411.41100000,489.57909000,19.0000,,,,"MITIGEUR BIDET AVEC VIDAGE YOYO CHROME
+Chrome
+Mousseur anticalcaire M 16,5 x 1
+Jet orientable
+Vidage 1 1/4” avec système breveté SNAP
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 16 x 7,5 cm / 0,00498 m³",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261191CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261191CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261191CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126130/30CR,yo126130-30cr,YO126130/30CR,Nobili,001428,COLONNE DE DOUCHE AVEC MITIGEUR YOYO CHROME YO126130/30CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,1633.96800000,1944.42192000,19.0000,,,,"COLONNE DE DOUCHE AVEC MITIGEUR YOYO CHROME
+Chrome
+Douche de tête à rotule ø 200 mm abs
+Système anticalcaire
+Support douchette coulissant et orientable
+Douchette à 1 jet et flexible 150 cm
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 117 x 42 x 8,5 cm / 0,04177 m³ / 6,68 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO12613030CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO12613030CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO12613030CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO12613030CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO126130noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126130CR,yo126130cr,YO126130CR,Nobili,001424,MITIGEUR DOUCHE MURAL YOYO CHROME YO126130CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,371.37100000,441.93149000,19.0000,,,,"MITIGEUR DOUCHE MURAL YOYO CHROME
+Chrome
+Sortie ø 1/2”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 16,5 x 21,5 x 17,1 cm / 0,006066 m³ / 1,80 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126130CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126130CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126130CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-monocommande-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-monocommande-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126198/1CR,yo126198-1cr,YO126198/1CR,Nobili,001422,FACADE MITIGEUR LAVABO ENCASTRER BEC 200MM YOYO CHROME YO126198/1CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,521.52100000,620.60999000,19.0000,,,,"FACADE MITIGEUR LAVABO ENCASTRER BEC 200mm YOYO CHROME
+Chrome
+Mousseur anticalcaire M 24 x 1
+Longueur du bec 200 mm
+Sans vidage
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 32 x 16,5 x 7 cm / 0,0037 m³ / 1,9 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261981CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261981CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1261981CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-chroma.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126198CR,yo126198cr,YO126198CR,Nobili,001421,FACADE MITIGEUR LAVABO A ENCASTRER BEC 150MM YOYO CHROME YO126198CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,501.50100000,596.78619000,19.0000,,,,"FACADE MITIGEUR LAVABO A ENCASTRER BEC 150mm YOYO CHROME
+Chrome
+Mousseur anticalcaire M 24 x 1
+Longueur du bec 150 mm
+Sans vidage
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 32 x 16,5 x 7 cm / 0,0037 m³ / 1,6 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126198CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126198CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO126198CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-noir-1.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YO126338/2CR,yo126338-2cr,YO126338/2CR,Nobili,001427,MITIGEUR LAVABO BEC SIGOGNE YOYO CHROME YO126338/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,437.46500000,520.58335000,19.0000,,,,"MITIGEUR LAVABO BEC SIGOGNE YOYO CHROME
+Chrome
+Mousseur anticalcaire M 22 x 1
+Bec mobile 360°
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 56,5 x 29 x 7,1 cm / 0,01163 m³ / 2,63 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1263382CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1263382CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YO1263382CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO126338CHROME.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO126338NOIR.png']","{'Marque': 'Nobili', 'Couleur': 'Gris chrome, Noir'}","['Gris chrome', 'Noir']","['Gris chrome', 'Noir']",False
+YOE126128/2CR,yoe126128-2cr,YOE126128/2CR,Nobili,001418,MITIGEUR LAVABO CORPS HAUT AVEC VIDAGE CLIC CLAC YOYO CHROME YOE126128/2CR,1.0,exact,plomberie,Mitigeur douches et bains de douches,0.85,904.36500000,1076.19435000,19.0000,,,,"MITIGEUR LAVABO CORPS HAUT AVEC VIDAGE CLIC CLAC YOYO CHROME
+Chrome
+Mousseur anticalcaire M 24 x 1
+Aérateur 5 l/min inclus dans l’emballage
+Vidage 1 1/4” push
+Flexibles inox ø 3/8”
+Limiteur d’énergie avec ouverture en eau froide
+Cartouche à double position et limiteur de débit 50 %
+Emballage: 41,5 x 16 x 7,5 cm / 0,00498 m³ / 1,64 kg",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YOE1261282CR.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YOE1261282CR.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/YOE1261282CRgallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/MITIGEUR-LAVABO-CORPS-HAUT-chrome.png', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/MITIGEUR-LAVABO-CORPS-HAUT-noir.png']","{'Marque': 'Nobili', 'Couleur': 'Noir, Gris chrome'}","['Noir', 'Gris chrome']","['Noir', 'Gris chrome']",False
+MC04,mc04,ANNEAU PORTE SERVIETTE ROND CHROME,,003607,ANNEAU PORTE SERVIETTE ROND CHROME,1.0,exact,chaufferie,Séche serviette,0.9,78.15500000,93.00445000,19.0000,,,,ANNEAU PORTE SERVIETTE ROND CHROME,https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-4.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-4.png'],{},[],[],False
+MC04-MB,mc04-mb,ANNEAU PORTE SERVIETTE ROND NOIR MATT,,003614,ANNEAU PORTE SERVIETTE ROND NOIR MATT,1.0,exact,chaufferie,Séche serviette,0.9,143.22000000,170.43180000,19.0000,,,,ANNEAU PORTE SERVIETTE ROND NOIR MATT,https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/roue.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/roue.png'],{},[],[],False
+MC07-60,mc07-60,PORTE SERVIETTE ROND CHROME 60cm,,003611,PORTE SERVIETTE 60cm ROND CHROME,1.0,exact,chaufferie,Séche serviette,0.9,125.86000000,149.77340000,19.0000,,,,PORTE SERVIETTE ROND CHROME 60cm,https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/doigt.png,['https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/doigt.png'],{},[],[],False
+SK300.43,sk300-43,SK300.43,CGS,001851,BONDE CLIC CLAC ROND NOIR MATT,0.95,normalized,plomberie,lavabo et lavabo long,0.85,101.10100000,120.31019000,19.0000,0,,,"BONDE CLIC CLAC ROND NOIR MATT
+Bonde en laiton 1 ”1/4 pour lavabo",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SK300.43.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SK300.43.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SK300.43gallery.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'CGS', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SK400.43,sk400-43,SK400.43,CGS,003493,BONDE CLIC CLAC CARRE NOIR MATT SK400-43,0.95,normalized,plomberie,lavabo et lavabo long,0.85,153.26500000,182.38535000,19.0000,8,,,"BONDE CLIC CLAC CARRE NOIR MATT
+Bonde en laiton 1 ”1/4 pour lavabo
+Bouchon carré avec mécanisme de pression « Skip-up »",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SK400.43.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SK400.43.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp']","{'Marque': 'CGS', 'Couleur': 'Noir mat'}",['Noir mat'],['Noir mat'],False
+SKN550.01,skn550-01,SKN550.01,CGS,003190,BONDE CLIC CLAC CHROME SKN550.01,1.0,exact,plomberie,lavabo et lavabo long,0.85,67.09500000,79.84305000,19.0000,-1,,,"BONDE LAVABO CLIC-CLAC ROND LONG
+Bonde 1 ”1/4 en ABS pour lavabo mod. « Universel »
+Bouchon avec mécanisme de pression « Skip-up 2.0 » et adaptateur enfichable
+rapide pour la transformation en une version toujours ouverte",https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SKN550.01.jpg,"['https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SKN550.01.jpg', 'https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SKN550.01gallery.jpg']","{'Marque': 'CGS', 'Couleur': 'Gris chrome'}",['Gris chrome'],['Gris chrome'],False

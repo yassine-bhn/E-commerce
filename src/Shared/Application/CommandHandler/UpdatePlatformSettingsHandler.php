@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Application\CommandHandler;
 
 use App\Shared\Application\Command\UpdatePlatformSettings;
-use Doctrine\DBAL\Connection;
+use App\Shared\Application\Port\PlatformSettingsWriter;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -15,27 +15,17 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(bus: 'command.bus')]
 final class UpdatePlatformSettingsHandler
 {
-    public function __construct(private Connection $connection)
+    public function __construct(private PlatformSettingsWriter $settings)
     {
     }
 
     public function __invoke(UpdatePlatformSettings $command): void
     {
-        $this->connection->executeStatement(
-            'INSERT INTO platform_setting (id, contact_phone, contact_whatsapp, auto_cancel_minutes, payment_methods, updated_at)
-             VALUES (1, :phone, :whatsapp, :minutes, :methods, NOW())
-             ON CONFLICT (id) DO UPDATE SET
-                 contact_phone = EXCLUDED.contact_phone,
-                 contact_whatsapp = EXCLUDED.contact_whatsapp,
-                 auto_cancel_minutes = EXCLUDED.auto_cancel_minutes,
-                 payment_methods = EXCLUDED.payment_methods,
-                 updated_at = NOW()',
-            [
-                'phone' => $command->contactPhone,
-                'whatsapp' => $command->contactWhatsapp,
-                'minutes' => $command->autoCancelMinutes,
-                'methods' => json_encode($command->paymentMethods, JSON_THROW_ON_ERROR),
-            ],
+        $this->settings->save(
+            $command->contactPhone,
+            $command->contactWhatsapp,
+            $command->autoCancelMinutes,
+            $command->paymentMethods,
         );
     }
 }

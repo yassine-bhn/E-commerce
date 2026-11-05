@@ -51,16 +51,44 @@ final class StorefrontCartFinder
                 ? $row['variant_label']
                 : null;
             $unitPrice = (int) $row['unit_price_minor'];
+
+            $productExists = isset($row['name']) && is_string($row['name']);
+            if ($productExists) {
+                $variants = [];
+                if (isset($row['variants']) && is_string($row['variants']) && '' !== trim($row['variants'])) {
+                    $decoded = json_decode($row['variants'], true);
+                    if (is_array($decoded)) {
+                        $variants = $decoded;
+                    }
+                }
+                if (null === $variant) {
+                    $currentUnitPrice = (int) $row['price_minor'];
+                } else {
+                    $currentUnitPrice = (int) $row['price_minor'];
+                    foreach ($variants as $v) {
+                        if (is_array($v) && isset($v['label']) && $v['label'] === $variant) {
+                            $currentUnitPrice = isset($v['price']) ? (int) $v['price'] : $currentUnitPrice;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                $currentUnitPrice = $unitPrice;
+            }
+            $priceChanged = $productExists ? $currentUnitPrice !== $unitPrice : false;
+
             $item = [
                 'id' => (string) $row['cart_item_id'],
                 'slug' => (string) $row['product_slug'],
                 'variant' => $variant,
                 'quantity' => $qty,
                 'unitPrice' => $unitPrice,
+                'currentUnitPrice' => $currentUnitPrice,
+                'priceChanged' => $priceChanged,
                 'lineTotal' => $unitPrice * $qty,
                 'currency' => (string) $row['currency'],
             ];
-            if (isset($row['name']) && is_string($row['name'])) {
+            if ($productExists) {
                 $item['product'] = StorefrontProductView::fromRow($row)->toApi();
             }
             $items[] = $item;

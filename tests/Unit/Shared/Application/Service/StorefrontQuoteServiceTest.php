@@ -45,7 +45,7 @@ final class StorefrontQuoteServiceTest extends TestCase
 
             public function getBySlug(string $slug): StorefrontProductSnapshot
             {
-                return new StorefrontProductSnapshot('id', 'lavabo', 'Lavabo', 680, 'in', [], $this->stockQuantity);
+                return new StorefrontProductSnapshot('id', 'lavabo', 'Lavabo', 680000, 'in', [], $this->stockQuantity);
             }
         };
     }
@@ -55,7 +55,7 @@ final class StorefrontQuoteServiceTest extends TestCase
         return new class implements StorefrontPricingPort {
             public function deliveryPolicy(): DeliveryPolicy
             {
-                return new DeliveryPolicy(15, 1000);
+                return new DeliveryPolicy(15000, 1000000);
             }
 
             public function promoBasisPoints(?string $code): ?int

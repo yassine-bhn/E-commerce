@@ -27,3 +27,23 @@ services:
         class: Agents\PhpStan\NoInfrastructureInHandlerRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\NoDoctrineInApplicationRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\ControllerThinRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\OneHandlerPerClassRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\InterfaceMethodLimitRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Agents\PhpStan\ConstructorDependencyLimitRule
+        tags:
+            - phpstan.rules.rule

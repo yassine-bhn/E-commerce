@@ -13,6 +13,8 @@ services:
     _instanceof:
         App\Shared\Application\Port\HealthProbe:
             tags: ['app.health_probe']
+        App\Shared\Application\Projection\ProjectionReplayer:
+            tags: ['app.projection_replayer']
 
     App\:
         resource: '../src/'
@@ -101,6 +103,131 @@ services:
     App\Ordering\Domain\Repository\OrderRepository:
         alias: App\Ordering\Infrastructure\Persistence\DoctrineOrderRepository
 
+    # solid Task 2.7 (ISP-003): the placement port claims the idempotency key and saves the order
+    # behind one adapter, keeping PlaceOrderHandler at five dependencies.
+    App\Ordering\Application\Port\OrderPlacementStore:
+        alias: App\Ordering\Infrastructure\Persistence\DbalOrderPlacementStore
+
+    # solid Task 3.1 (DIP-003): the Identity handlers read and write through narrow ports; the
+    # adapters are the only DBAL holders left in the context. One alias per port, all over the
+    # adapter that owns the table.
+    App\Shared\Application\Port\ProductExistencePort:
+        alias: App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository
+
+    # solid Task 3.2 (DIP-003): the category, product and banner handlers read and write through
+    # narrow ports; one adapter per table owns the SQL.
+    App\Shared\Application\Port\ProductSearchIndexPort:
+        alias: App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer
+
+    App\Catalog\Application\Port\CategoryReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryCreator:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryTreeWriter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryVisibilityWriter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryDeletionReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryDeleter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryHierarchyReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\ProductPublicationStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
+    App\Catalog\Application\Port\ProductReviewStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
+    App\Catalog\Application\Port\ProductDeletionReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
+    App\Catalog\Application\Port\BannerSetReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
+
+    App\Catalog\Application\Port\BannerImageStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
+
+    App\Identity\Application\Port\CustomerAccountReader:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
+
+    App\Identity\Application\Port\CustomerDeletionReader:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
+
+    App\Identity\Application\Port\CustomerStatusStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
+
+    App\Identity\Application\Port\CustomerRoleStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
+
+    App\Identity\Application\Port\CustomerDeletionWriter:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
+
+    App\Identity\Application\Port\CustomerRegistrar:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
+
+    App\Identity\Application\Port\CustomerProfileStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
+
+    App\Identity\Application\Port\CustomerAddressStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalCustomerAddressStore
+
+    App\Identity\Application\Port\GoogleAccountLinker:
+        alias: App\Identity\Infrastructure\Persistence\DbalGoogleAccountLinker
+
+    App\Identity\Application\Port\PasswordResetStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalPasswordResetStore
+
+    App\Identity\Application\Port\PasswordResetTokenStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalPasswordResetStore
+
+    App\Identity\Application\Port\ContactMessageStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalIdentityIntakeStore
+
+    App\Identity\Application\Port\NewsletterStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalIdentityIntakeStore
+
+    App\Identity\Application\Port\QuoteRequestStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalQuoteRequestStore
+
+    App\Identity\Application\Port\WishlistStore:
+        alias: App\Identity\Infrastructure\Persistence\DbalWishlistStore
+
+    App\Identity\Application\Port\IdentityAuditPort:
+        alias: App\Identity\Infrastructure\Persistence\DbalIdentityAuditPort
+
+    # solid Task 3.3 (DIP-003): the Ordering handlers read and transition through narrow ports;
+    # the customer read has its own adapter because both ports declare `find`.
+    App\Ordering\Application\Port\OrderStateReader:
+        alias: App\Ordering\Infrastructure\Persistence\DbalOrderStateAdapter
+
+    App\Ordering\Application\Port\OrderTransitionStore:
+        alias: App\Ordering\Infrastructure\Persistence\DbalOrderStateAdapter
+
+    App\Ordering\Application\Port\OrderCustomerReader:
+        alias: App\Ordering\Infrastructure\Persistence\DbalOrderCustomerAdapter
+
+    App\Ordering\Application\Port\AdminProxyOrderStore:
+        alias: App\Ordering\Infrastructure\Persistence\DbalAdminProxyOrderStore
+
+    # solid Task 3.4 (DIP-003): the payment confirm/refund guards read through the snapshot port.
+    App\Payment\Application\Port\PaymentStateReader:
+        alias: App\Payment\Infrastructure\Persistence\DbalPaymentStateAdapter
+
+    # solid Task 3.5 (DIP-003): the settings writers own their singleton upserts.
+    App\Shared\Application\Port\PlatformSettingsWriter:
+        alias: App\Shared\Infrastructure\Persistence\DbalPlatformSettingsWriter
+
+    App\Shared\Application\Port\ShippingPolicyWriter:
+        alias: App\Shared\Infrastructure\Persistence\DbalShippingPolicyWriter
+
     # ADR-0001 — the payment row and its ledger move together, through one guarded write.
     App\Payment\Domain\Model\PaymentLedger:
         alias: App\Payment\Infrastructure\Persistence\DbalPaymentLedger
@@ -120,6 +247,36 @@ services:
     # identity_audit_log — the port keeps the handlers free of the table choice.
     App\Catalog\Application\Port\CatalogAuditPort:
         alias: App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter
+
+    # spec-run-15 WP2 (R2) + solid Task 2.5 (ISP-001): one adapter owns catalog_submission behind
+    # narrow per-transition ports. Every alias points at the same instance, written out so a second
+    # adapter is a visible decision, not a silent change of the command side.
+    App\Catalog\Application\Port\CatalogSubmissionCreator:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionSubmitter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionDecider:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionReviewer:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionOwnerEditor:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Application\Port\CatalogSubmissionDeleter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
+        public: true
+
+    App\Catalog\Domain\Repository\CatalogSubmissionRepository:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore
 
     # spec-run-12 (R18): the review write asks the read side through a port, so Application never
     # names the SQL predicate. The container can resolve the interface on its own while there is one
@@ -177,6 +334,12 @@ services:
     App\Shared\Application\Service\ReadinessService:
         arguments:
             $probes: !tagged_iterator app.health_probe
+
+    # spec-run-15 R30/R31 (ADR-0017): every context contributes its replay names through this tag,
+    # so Shared never names a context and the command cannot drift from the registered set.
+    App\Shared\Infrastructure\Projection\ProjectionRegistry:
+        arguments:
+            $replayers: !tagged_iterator app.projection_replayer
 
     App\Shared\Infrastructure\Health\MigrationsHealthProbe:
         arguments:

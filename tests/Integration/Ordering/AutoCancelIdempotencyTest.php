@@ -38,6 +38,7 @@ final class AutoCancelIdempotencyTest extends KernelTestCase
         }
         foreach ([$this->pendingSlug, $this->paidSlug] as $slug) {
             if (null !== $slug) {
+                $connection->executeStatement('DELETE FROM inventory_stock WHERE product_slug = :slug', ['slug' => $slug]);
                 $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug = :slug', ['slug' => $slug]);
             }
         }
@@ -77,6 +78,16 @@ final class AutoCancelIdempotencyTest extends KernelTestCase
             deliveryMethod: 'home',
             paymentMethod: 'Carte bancaire',
             promoCode: null,
+            confirmedQuote: [
+                'lines' => [['slug' => $this->pendingSlug, 'variant' => null, 'unitPrice' => 680000, 'quantity' => 2]],
+                'subtotal' => 1360000,
+                'discount' => 0,
+                'delivery' => 0,
+                'total' => 1360000,
+                'count' => 2,
+                'promoCode' => null,
+                'deliveryMethod' => 'home',
+            ],
         ));
 
         $this->paidOrderId = Uuid::v7()->toRfc4122();
@@ -89,6 +100,16 @@ final class AutoCancelIdempotencyTest extends KernelTestCase
             deliveryMethod: 'home',
             paymentMethod: 'Carte bancaire',
             promoCode: null,
+            confirmedQuote: [
+                'lines' => [['slug' => $this->paidSlug, 'variant' => null, 'unitPrice' => 680000, 'quantity' => 1]],
+                'subtotal' => 680000,
+                'discount' => 0,
+                'delivery' => 15000,
+                'total' => 695000,
+                'count' => 1,
+                'promoCode' => null,
+                'deliveryMethod' => 'home',
+            ],
         ));
 
         $connection->executeStatement('UPDATE ordering_orders SET status = :paid WHERE id = :id', ['paid' => '已支付', 'id' => $this->paidOrderId]);
@@ -139,6 +160,12 @@ final class AutoCancelIdempotencyTest extends KernelTestCase
                 'slug' => $slug,
                 'source' => 'baignoire-d-code',
             ],
+        );
+
+        // WP4/R14 — the view is only the cache: the tracked product needs its balance row.
+        $connection->executeStatement(
+            'INSERT INTO inventory_stock (product_slug, on_hand) VALUES (:slug, 5)',
+            ['slug' => $slug],
         );
 
         return $slug;

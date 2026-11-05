@@ -37,11 +37,12 @@ final class ReadinessService
             }
         }
 
-        $status = match (true) {
-            $unavailable => 'unavailable',
-            $degraded => 'degraded',
-            default => 'ok',
-        };
+        $status = 'ok';
+        if ($unavailable) {
+            $status = 'unavailable';
+        } elseif ($degraded) {
+            $status = 'degraded';
+        }
 
         return new ReadinessReport($status, $checks);
     }

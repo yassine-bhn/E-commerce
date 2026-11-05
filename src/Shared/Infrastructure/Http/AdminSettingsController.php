@@ -94,8 +94,10 @@ final class AdminSettingsController
     }
 
     /**
-     * I-16 — delivery is priced from operator data: fee in minor units plus the subtotal at which
-     * delivery becomes free. Negative amounts are a semantic rejection (422).
+     * I-16 — delivery is priced from operator data: the fee and the subtotal at which delivery
+     * becomes free, both in integer millimes (TND's smallest unit: 1000 millimes = 1 DT, so
+     * `15000` is 15 DT). The admin form shows DT; the API keeps integer millimes. Negative
+     * amounts are a semantic rejection (422).
      */
     #[Route('/shipping', name: 'admin_settings_shipping_update', methods: ['PUT'])]
     public function updateShipping(Request $request): JsonResponse
@@ -108,14 +110,14 @@ final class AdminSettingsController
 
         if (!is_int($deliveryFee) || !is_int($freeDeliveryThreshold)) {
             return new JsonResponse(
-                ['error' => 'deliveryFee and freeDeliveryThreshold (integers, minor units) are required'],
+                ['error' => 'deliveryFee and freeDeliveryThreshold are required as integer millimes (1000 millimes = 1 DT, e.g. 15000 = 15 DT)'],
                 Response::HTTP_BAD_REQUEST,
             );
         }
 
         if ($deliveryFee < 0 || $freeDeliveryThreshold < 0) {
             return new JsonResponse(
-                ['error' => 'deliveryFee and freeDeliveryThreshold must be zero or positive'],
+                ['error' => 'deliveryFee and freeDeliveryThreshold must be zero or positive integer millimes (e.g. 15000 = 15 DT)'],
                 Response::HTTP_UNPROCESSABLE_ENTITY,
             );
         }

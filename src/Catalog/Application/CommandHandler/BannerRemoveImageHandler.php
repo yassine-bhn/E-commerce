@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\BannerRemoveImage;
-use App\Catalog\Application\Service\BannerRules;
-use App\Catalog\Domain\Model\BannerSet;
-use Doctrine\DBAL\Connection;
+use App\Catalog\Application\Port\BannerImageStore;
+use App\Catalog\Application\Port\BannerSetReader;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -22,23 +21,15 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final class BannerRemoveImageHandler
 {
     public function __construct(
-        private BannerRules $rules,
-        private Connection $connection,
+        private BannerSetReader $banners,
+        private BannerImageStore $writes,
     ) {
     }
 
     public function __invoke(BannerRemoveImage $command): void
     {
-        $this->rules->currentSet()->remove($command->imageId);
+        $this->banners->current()->remove($command->imageId);
 
-        $this->connection->executeStatement(
-            'DELETE FROM storefront_banner_image WHERE id = :id AND banner_id = :banner',
-            ['id' => $command->imageId, 'banner' => BannerSet::SITE_BANNER_ID],
-        );
-
-        $this->connection->executeStatement(
-            'UPDATE storefront_banner SET updated_at = CURRENT_TIMESTAMP WHERE id = :id',
-            ['id' => BannerSet::SITE_BANNER_ID],
-        );
+        $this->writes->remove($command->imageId);
     }
 }

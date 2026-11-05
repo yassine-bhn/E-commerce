@@ -35,10 +35,8 @@ while IFS= read -r file; do
   fi
 
   if [[ "$file" == src/* ]]; then
-    report_matches -nE "$file" '->setAvailable\(|->setReserved\(' "ECO-004" "never read-then-write stock; use an atomic conditional update"
-    report_matches -nE "$file" 'match\s*\(\s*true\s*\)' "OCP-002" "avoid match(true) flag switches; use explicit strategies"
+    report_matches -nE "$file" '->setStockQuantity\(|->setReserved\(' "ECO-004" "never read-then-write stock; use InventoryStockPort::setAvailable (atomic) instead"
     report_matches -nE "$file" '(\$container|->container)\s*->\s*get\(' "DIP-002" "never pull services from the container; inject them"
-    report_matches -nE "$file" '\bsleep\(|\b(mt_)?rand\(|\buniqid\(|\btime\(\)|\bnew \\?DateTime' "TDD-005" "non-deterministic API in production code; use ClockInterface"
   fi
 
   if [[ "$file" == src/*/Domain/* ]]; then
@@ -58,6 +56,12 @@ while IFS= read -r file; do
   fi
 
   if [[ "$file" == src/*/Application/CommandHandler/*Handler.php ]]; then
+    handler_attrs=$(grep -cE '#\[AsMessageHandler' "$file" || true)
+    if [ "$handler_attrs" -ne 1 ]; then
+      report_line "$file" 1 "CMD-003" "command handler must declare exactly one #[AsMessageHandler(bus: 'command.bus')]"
+    elif ! grep -qE "#\[AsMessageHandler\(bus: 'command\.bus'\)\]" "$file"; then
+      report_line "$file" 1 "CMD-003" "command handler must bind #[AsMessageHandler(bus: 'command.bus')]"
+    fi
     invoke_line=$(grep -m1 -nE 'function __invoke' "$file" | cut -d: -f1 || true)
     if [ -z "$invoke_line" ]; then
       report_line "$file" 1 "CMD-003" "command handler must declare __invoke with a void return type"

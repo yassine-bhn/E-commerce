@@ -13,21 +13,21 @@ final class DeliveryPolicyTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->policy = new DeliveryPolicy(15, 1000);
+        $this->policy = new DeliveryPolicy(15000, 1000000);
     }
 
     public function testHomeDeliveryFeeBelowFreeThreshold(): void
     {
-        self::assertSame(15, $this->policy->deliveryFeeMinor(500, 'home'));
+        self::assertSame(15000, $this->policy->deliveryFeeMinor(500000, 'home'));
     }
 
     public function testFreeDeliveryAtThreshold(): void
     {
-        self::assertSame(0, $this->policy->deliveryFeeMinor(1000, 'home'));
+        self::assertSame(0, $this->policy->deliveryFeeMinor(1000000, 'home'));
     }
 
     public function testPickupIsAlwaysFree(): void
     {
-        self::assertSame(0, $this->policy->deliveryFeeMinor(100, 'pickup'));
+        self::assertSame(0, $this->policy->deliveryFeeMinor(100000, 'pickup'));
     }
 }

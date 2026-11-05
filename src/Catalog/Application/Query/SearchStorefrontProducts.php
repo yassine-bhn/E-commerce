@@ -12,7 +12,7 @@ use App\Shared\Application\Pagination\PageRequest;
  */
 final readonly class SearchStorefrontProducts
 {
-    public const int DEFAULT_SIZE = 24;
+    public const int DEFAULT_SIZE = 25;
 
     public const int MAX_SIZE = 100;
 

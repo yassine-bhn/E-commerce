@@ -55,6 +55,10 @@ Bootstrap: [docs/PROJECT-START-SPEC.md](docs/PROJECT-START-SPEC.md). Load on eve
     vendor/bin/deptrac analyse --config-file=deptrac.yaml
     vendor/bin/infection --threads=max --min-msi=85 --min-covered-msi=90
     bin/harness-check                                      # validates this harness
+    git config core.hooksPath .githooks                    # one-time setup: pre-commit runs `bin/solid-check --fast`,
+                                                           # commit-msg runs `bin/tdd-check --staged --message-file`
+    make solid                                             # SOLID gates (architecture, PHPStan, Deptrac, guard hooks)
+    make tdd                                               # TDD gate + all suites + infection
 
 ## TDD law
 No production code without a failing test that fails for the right reason

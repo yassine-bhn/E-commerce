@@ -34,12 +34,22 @@ final class AdminCategoryManagementTest extends WebTestCase
     {
         if ([] !== $this->productSlugs) {
             $this->db()->executeStatement(
+                'DELETE FROM catalog_submission WHERE slug IN (:v)',
+                ['v' => $this->productSlugs],
+                ['v' => ArrayParameterType::STRING],
+            );
+            $this->db()->executeStatement(
                 'DELETE FROM storefront_product_view WHERE slug IN (:v)',
                 ['v' => $this->productSlugs],
                 ['v' => ArrayParameterType::STRING],
             );
         }
         if ([] !== $this->categorySlugs) {
+            $this->db()->executeStatement(
+                'DELETE FROM catalog_submission WHERE slug IN (:v)',
+                ['v' => $this->categorySlugs],
+                ['v' => ArrayParameterType::STRING],
+            );
             $this->db()->executeStatement(
                 'DELETE FROM storefront_category WHERE slug IN (:v)',
                 ['v' => $this->categorySlugs],
@@ -82,13 +92,10 @@ final class AdminCategoryManagementTest extends WebTestCase
         self::assertSame('carrelage-60x60', $derived);
         $this->categorySlugs[] = $derived;
 
-        // R1: the admin list sees it at once; the storefront only after the Super Admin approves
-        // it (spec-run-8 R28 — approval and publication are separate from creation).
+        // R1: the admin list sees it at once, and a taxonomy create is approved as it is written,
+        // so the storefront navigation serves it without a second decision.
         self::assertContains($slug, $this->adminListSlugs($client));
-        self::assertNotContains($slug, $this->navigationSlugs($client), 'a pending submission is not navigable');
-
-        $this->approve($client, 'category', $slug);
-        self::assertContains($slug, $this->navigationSlugs($client));
+        self::assertContains($slug, $this->navigationSlugs($client), 'an approved create is navigable at once');
     }
 
     public function testAnInvalidLabelOrATakenSlugIsRefusedWithoutWritingARow(): void
@@ -130,17 +137,18 @@ final class AdminCategoryManagementTest extends WebTestCase
             'parentLabel' => 'Radiateurs',
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $saved = $this->json($client);
         self::assertSame(
             [['label' => 'Radiateurs', 'children' => [['label' => 'Radiateur à eau']]]],
-            $this->json($client)['subcategories'],
+            $saved['subcategories'],
         );
+        self::assertSame('APPROVED', $saved['approvalStatus'], 'the Super Admin\'s own save is the approval, so the category is not queued for another decision');
 
         // Q1: no child row was created, the node lives in the parent row's JSON tree.
         self::assertSame(
             0,
             (int) $this->db()->fetchOne('SELECT COUNT(*) FROM storefront_category WHERE parent_slug = :s', ['s' => $slug]),
         );
-        $this->approve($client, 'category', $slug);
         self::assertSame([$slug], $this->navigationSlugs($client, [$slug]));
     }
 
@@ -237,7 +245,7 @@ final class AdminCategoryManagementTest extends WebTestCase
     {
         $client = $this->loginAs('ROLE_SUPER_ADMIN');
         $slug = $this->category($client, 'Assainissement de test', [['label' => 'Regard'], ['label' => 'Tuyau', 'children' => [['label' => 'PEHD']]]]);
-        $this->approve($client, 'category', $slug);
+        // A taxonomy create is approved as it is written; the legacy descendant row is approved in its seed.
         $childSlug = $slug.'-legacy';
         $this->categorySlugs[] = $childSlug;
         $this->db()->insert('storefront_category', [

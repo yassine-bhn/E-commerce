@@ -25,12 +25,12 @@ final class NoEventBusInCommandHandlerRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if (!$node instanceof ClassMethod || $node->name->toString() !== '__construct') {
+        if (!$node instanceof ClassMethod || '__construct' !== $node->name->toString()) {
             return [];
         }
 
         $class = $scope->getClassReflection();
-        if ($class === null || !self::isWriteOrchestrator($class->getName())) {
+        if (null === $class || !self::isWriteOrchestrator($class->getName())) {
             return [];
         }
 

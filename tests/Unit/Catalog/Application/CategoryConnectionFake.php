@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Catalog\Application;
 
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
+use App\Catalog\Domain\Model\ApprovalStatus;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
@@ -30,14 +31,7 @@ final class CategoryConnectionFake extends Connection
     /** @var list<list<array<string, mixed>>> */
     public array $rowLists = [];
 
-    /**
-     * Rows answered by SQL fragment instead of by position, for the handlers that read the
-     * same row twice: once through {@see SubmissionAccessPolicy}
-     * and once for the content they rewrite. The policy statement is the one selected below.
-     *
-     * @var array<string, array<string, mixed>|false>
-     */
-    public array $rowsBySqlFragment = [];
+    public CatalogSubmissionFake $submissions;
 
     public ?\Throwable $failNextWrite = null;
 
@@ -56,6 +50,7 @@ final class CategoryConnectionFake extends Connection
     public function __construct(array $params = [], ?Driver $driver = null, ?Configuration $config = null)
     {
         parent::__construct($params, $driver ?? new PgSqlDriver(), $config);
+        $this->submissions = new CatalogSubmissionFake();
     }
 
     /**
@@ -92,32 +87,24 @@ final class CategoryConnectionFake extends Connection
 
     public function fetchAssociative(string $query, array $params = [], array $types = []): array|false
     {
-        foreach ($this->rowsBySqlFragment as $fragment => $row) {
-            if (str_contains($query, $fragment)) {
-                return $row;
-            }
-        }
-
         $row = array_shift($this->rows);
 
         return $row ?? false;
     }
 
     /**
-     * The approval row {@see SubmissionAccessPolicy} reads for
-     * the slug under test, so a handler test can stay about the write it makes.
+     * The approval row {@see SubmissionAccessPolicy} reads for the slug under test, so a
+     * handler test can stay about the write it makes. The policy reads the write model, not
+     * the view table; the fake therefore answers through the same store fake the handler uses.
      */
     public function submission(string $status = 'PENDING_APPROVAL', ?string $owner = null): void
     {
-        $this->rowsBySqlFragment['approval_status, submitted_by'] = [
-            'approval_status' => $status,
-            'submitted_by' => $owner,
-        ];
+        $this->submissions->any(ApprovalStatus::fromStorage($status), $owner);
     }
 
     public function accessPolicy(): SubmissionAccessPolicy
     {
-        return new SubmissionAccessPolicy($this);
+        return new SubmissionAccessPolicy($this->submissions);
     }
 
     /**

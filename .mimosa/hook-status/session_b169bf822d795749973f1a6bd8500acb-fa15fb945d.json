@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-11-01T20:13:05.409Z",
+  "sessionId": "session_b169bf822d795749973f1a6bd8500acb",
+  "event": "PostToolUse",
+  "toolName": "Edit",
+  "file": "/home/yassine/.zcode/cli/memories/projects/zidaine-groupe-352ec68fed18d3c8/memory/MEMORY.md",
+  "outcome": "clear",
+  "coverage": "complete",
+  "findingCount": 0,
+  "durationMs": 2,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

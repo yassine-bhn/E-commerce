@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Search;
 
+use App\Shared\Application\Port\ProductSearchIndexPort;
 use App\Catalog\Infrastructure\ReadModel\CatalogVisibility;
 use Doctrine\DBAL\Connection;
 use Meilisearch\Client;
@@ -23,7 +24,7 @@ use Meilisearch\Client;
  * write-side callers use the best-effort {@see self::sync()} / {@see self::forget()} so a
  * search outage never breaks an admin write.
  */
-final class StorefrontProductSearchIndexer
+final class StorefrontProductSearchIndexer implements ProductSearchIndexPort
 {
     public const string INDEX_NAME = 'storefront_products';
 

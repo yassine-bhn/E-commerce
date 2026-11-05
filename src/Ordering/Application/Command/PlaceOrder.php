@@ -8,6 +8,7 @@ final readonly class PlaceOrder
 {
     /**
      * @param list<array{slug: string, variant?: string|null, quantity: int}> $lines
+     * @param array<string, mixed>|null                                       $confirmedQuote
      */
     public function __construct(
         public string $orderId,
@@ -18,6 +19,7 @@ final readonly class PlaceOrder
         public string $deliveryMethod,
         public string $paymentMethod,
         public ?string $promoCode,
+        public ?array $confirmedQuote = null,
     ) {
     }
 }

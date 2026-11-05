@@ -93,9 +93,9 @@ final class StorefrontApiTest extends WebTestCase
         /** @var array<string, mixed> $quote */
         $quote = json_decode((string) $client->getResponse()->getContent(), true);
         self::assertSame(1, $quote['count']);
-        self::assertSame(680, $quote['subtotal']);
-        self::assertSame(68, $quote['discount']);
-        self::assertSame(627, $quote['total']);
+        self::assertSame(680000, $quote['subtotal']);
+        self::assertSame(68000, $quote['discount']);
+        self::assertSame(627000, $quote['total']);
     }
 
     public function testStorefrontReviewsFlow(): void
@@ -244,6 +244,16 @@ final class StorefrontApiTest extends WebTestCase
                 'deliveryMethod' => 'home',
                 'paymentMethod' => 'Carte bancaire',
                 'promoCode' => 'ZIDEN10',
+                'confirmedQuote' => [
+                    'lines' => [['slug' => 'baignoire-d-code', 'variant' => null, 'unitPrice' => 680000, 'quantity' => 1]],
+                    'subtotal' => 680000,
+                    'discount' => 68000,
+                    'delivery' => 15000,
+                    'total' => 627000,
+                    'count' => 1,
+                    'promoCode' => 'ZIDEN10',
+                    'deliveryMethod' => 'home',
+                ],
             ], JSON_THROW_ON_ERROR),
         );
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);

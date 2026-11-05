@@ -18,14 +18,13 @@ final class CartQuoteCalculatorTest extends TestCase
         $catalog = new class implements StorefrontCatalogPort {
             public function getBySlug(string $slug): StorefrontProductSnapshot
             {
-                return new StorefrontProductSnapshot('id', 'lavabo', 'Lavabo', 680, 'in', []);
+                return new StorefrontProductSnapshot('id', 'lavabo', 'Lavabo', 680000, 'in', []);
             }
         };
-
         $pricing = new class implements StorefrontPricingPort {
             public function deliveryPolicy(): DeliveryPolicy
             {
-                return new DeliveryPolicy(15, 1000);
+                return new DeliveryPolicy(15000, 1000000);
             }
 
             public function promoBasisPoints(?string $code): ?int
@@ -40,10 +39,44 @@ final class CartQuoteCalculatorTest extends TestCase
             'home',
         );
 
-        self::assertSame(680, $result['subtotal']->minorUnits());
-        self::assertSame(68, $result['discount']->minorUnits());
-        self::assertSame(15, $result['delivery']->minorUnits());
-        self::assertSame(627, $result['total']->minorUnits());
+        self::assertSame(680000, $result['subtotal']->minorUnits());
+        self::assertSame(68000, $result['discount']->minorUnits());
+        self::assertSame(15000, $result['delivery']->minorUnits());
+        self::assertSame(627000, $result['total']->minorUnits());
         self::assertSame(1, $result['itemCount']);
+    }
+
+    /** R24 — a 100 DT subtotal (100000) plus a 15 DT fee (15000) quotes 115 DT (115000). */
+    public function testMillimeShippingIsAddedDirectlyToTheSubtotal(): void
+    {
+        $catalog = new class implements StorefrontCatalogPort {
+            public function getBySlug(string $slug): StorefrontProductSnapshot
+            {
+                return new StorefrontProductSnapshot('id', 'lavabo', 'Lavabo', 100000, 'in', []);
+            }
+        };
+
+        $pricing = new class implements StorefrontPricingPort {
+            public function deliveryPolicy(): DeliveryPolicy
+            {
+                return new DeliveryPolicy(15000, 1000000);
+            }
+
+            public function promoBasisPoints(?string $code): ?int
+            {
+                return null;
+            }
+        };
+
+        $result = (new StorefrontQuoteService($catalog, $pricing))->quote(
+            [['slug' => 'lavabo', 'quantity' => 1]],
+            null,
+            'home',
+        );
+
+        self::assertSame(100000, $result['subtotal']->minorUnits());
+        self::assertSame(0, $result['discount']->minorUnits());
+        self::assertSame(15000, $result['delivery']->minorUnits());
+        self::assertSame(115000, $result['total']->minorUnits());
     }
 }

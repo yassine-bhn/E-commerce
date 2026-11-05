@@ -31,7 +31,7 @@ final class NoFloatInDomainRule implements Rule
             return [];
         }
 
-        $className = $scope->getNamespace()?->name . '\\' . $node->name->toString();
+        $className = $scope->getNamespace()?->name.'\\'.$node->name->toString();
         if (!self::isDomainOrApplication($className)) {
             return [];
         }
@@ -64,7 +64,7 @@ final class NoFloatInDomainRule implements Rule
     /** @return array<int, \PHPStan\Rules\RuleError> */
     private static function floatError(?string $type, int $line): array
     {
-        if ($type !== 'float') {
+        if ('float' !== $type) {
             return [];
         }
 

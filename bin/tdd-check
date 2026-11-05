@@ -1,0 +1,617 @@
+#!/usr/bin/env bash
+# TDD attribution gate (host-side; needs git).
+#
+# Modes:
+#   --staged                 check the staged diff (behavior mode unless --refactor/--message-file says otherwise)
+#   --range <base>...HEAD    check every non-merge commit with its own subject (refactor: commits → refactor mode)
+#   --refactor               force refactor mode for --staged
+#   --message-file <path>    read the pending subject; refactor: subject → refactor mode, else behavior mode
+#   --self-test              run the 15 fixture scenarios in temporary git repos
+#
+# Output: one "TDD-CHECK: <file> — <reason>" line per failure (prefixed with the short
+# commit hash in range mode); exit 1 on any failure, 0 otherwise.
+set -euo pipefail
+
+REFACTOR_SUBJECT_RE='^refactor(\([^)]*\))?!?:'
+
+mode="behavior"
+source_kind="staged"
+range=""
+message_file=""
+self_test=0
+declare -a failures=()
+
+usage() {
+  echo "usage: bin/tdd-check (--staged | --range <base>...HEAD) [--refactor] [--message-file <path>] | --self-test" >&2
+  exit 2
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --staged) source_kind="staged" ;;
+    --range) shift; [ $# -gt 0 ] || usage; range="$1"; source_kind="range" ;;
+    --refactor) mode="refactor" ;;
+    --message-file) shift; [ $# -gt 0 ] || usage; message_file="$1" ;;
+    --self-test) self_test=1 ;;
+    *) usage ;;
+  esac
+  shift
+done
+
+cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
+
+fail_line() { # $1 prefix ("" or "<hash> "), $2 file, $3 reason
+  failures+=("${1}${1:+ }TDD-CHECK: ${2} — ${3}")
+}
+
+# ---------------------------------------------------------------------------
+# classification helpers
+# ---------------------------------------------------------------------------
+
+path_layer() { # $1 = src path → class | http | readmodel | other
+  case "$1" in
+    src/*/Domain/*.php | src/*/Application/*.php | src/*/Infrastructure/Persistence/*.php) echo "class" ;;
+    src/*/Infrastructure/Http/*.php) echo "http" ;;
+    src/*/Infrastructure/ReadModel/*.php) echo "readmodel" ;;
+    *) echo "other" ;;
+  esac
+}
+
+path_context() { # src/Catalog/... → Catalog
+  printf '%s' "$1" | cut -d/ -f2
+}
+
+# writes the class-like declaration ("class|interface|enum <Name>") of $2 at rev "$1" ("disk" = working tree)
+decl_at() { # $1 rev, $2 path
+  local rev="$1" path="$2" tmp
+  tmp=$(mktemp)
+  if [ "$rev" = "disk" ]; then
+    cat "$path" >"$tmp" 2>/dev/null || { rm -f "$tmp"; return 1; }
+  else
+    git show "${rev}:${path}" >"$tmp" 2>/dev/null || { rm -f "$tmp"; return 1; }
+  fi
+  local line
+  line=$(grep -m1 -E '^[[:space:]]*(final[[:space:]]+|abstract[[:space:]]+|readonly[[:space:]]+)*(class|interface|enum)[[:space:]]+[A-Za-z0-9_]+' "$tmp" | sed -E 's/^[[:space:]]+//') || true
+  rm -f "$tmp"
+  if [ -z "$line" ]; then
+    return 1
+  fi
+  printf '%s\n' "$line" | grep -oE '(class|interface|enum)[[:space:]]+[A-Za-z0-9_]+' | head -n1
+}
+
+namespace_at() { # $1 rev, $2 path
+  local rev="$1" path="$2" tmp ns=""
+  tmp=$(mktemp)
+  if [ "$rev" = "disk" ]; then
+    cat "$path" >"$tmp" 2>/dev/null || { rm -f "$tmp"; echo ""; return; }
+  else
+    git show "${rev}:${path}" >"$tmp" 2>/dev/null || { rm -f "$tmp"; echo ""; return; }
+  fi
+  ns=$(grep -m1 -E '^[[:space:]]*namespace[[:space:]]+[A-Za-z0-9_\\]+;' "$tmp" | sed -E 's/.*namespace[[:space:]]+([A-Za-z0-9_\\]+);.*/\1/') || true
+  rm -f "$tmp"
+  printf '%s' "$ns"
+}
+
+# $1 = content file, $2 = short name, $3 = fqcn
+references_name() {
+  if [ -n "$2" ] && grep -qF -e "$2" "$1" 2>/dev/null; then
+    return 0
+  fi
+  if [ -n "$3" ] && grep -qF -e "$3" "$1" 2>/dev/null; then
+    return 0
+  fi
+  return 1
+}
+
+test_matches_context() { # $1 test path, $2 context
+  case "$1" in
+    tests/Unit/"$2"/[A-Za-z]* | tests/Integration/"$2"/[A-Za-z]* | tests/Projection/"$2"/[A-Za-z]* | tests/Contract/"$2"/[A-Za-z]* | tests/Architecture/"$2"/[A-Za-z]*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# does any test at $rev reference the name (short or fqcn)?
+covered_by_existing_tests() { # $1 rev, $2 short, $3 fqcn
+  local rev="$1" short="$2" fqcn="$3"
+  if [ "$rev" = "disk" ]; then
+    if [ -n "$short" ] && grep -rqF -e "$short" tests --include='*.php' 2>/dev/null; then return 0; fi
+    if [ -n "$fqcn" ] && grep -rqF -e "$fqcn" tests --include='*.php' 2>/dev/null; then return 0; fi
+    return 1
+  fi
+  if [ -n "$short" ] && git grep -qF -e "$short" "$rev" -- 'tests/*.php' 2>/dev/null; then return 0; fi
+  if [ -n "$fqcn" ] && git grep -qF -e "$fqcn" "$rev" -- 'tests/*.php' 2>/dev/null; then return 0; fi
+  return 1
+}
+
+# ---------------------------------------------------------------------------
+# changeset checking
+# $1 = rev ("disk" for staged/working tree, otherwise a commit), $2 = prefix
+# stdin = name-status lines
+# $3 = mode override ("behavior" | "refactor")
+# ---------------------------------------------------------------------------
+check_entries() {
+  local rev="$1" prefix="$2" check_mode="$3"
+  local -a src_entries=()
+  local -a changed_test_paths=()
+  local status path oldpath rest line has_src=0 has_test=0
+
+  while IFS=$'\t' read -r status rest; do
+    [ -n "$status" ] || continue
+    oldpath=""
+    case "$status" in
+      R*)
+        path=$(printf '%s' "$rest" | cut -f1)
+        oldpath=$(printf '%s' "$rest" | cut -f2)
+        ;;
+      *)
+        path="$rest"
+        ;;
+    esac
+    case "$path" in
+      src/Kernel.php) continue ;;
+    esac
+    case "$status" in
+      D*) continue ;;
+    esac
+    case "$path" in
+      src/*.php)
+        has_src=1
+        src_entries+=("${status}"$'\t'"${path}")
+        ;;
+      tests/*.php)
+        case "$path" in
+          *.php) has_test=1; changed_test_paths+=("$path") ;;
+        esac
+        ;;
+    esac
+  done
+
+  if [ "$has_src" -eq 1 ] && [ "$has_test" -eq 0 ] && [ "$check_mode" = "behavior" ]; then
+    fail_line "$prefix" "(global)" "src/** changed without any changed test"
+    return
+  fi
+
+  # combined content of every changed test, read from the working tree
+  local changed_tests_content
+  changed_tests_content=$(mktemp)
+  : >"$changed_tests_content"
+  local tp
+  for tp in "${changed_test_paths[@]:-}"; do
+    [ -n "$tp" ] || continue
+    if [ -f "$tp" ]; then
+      cat "$tp" >>"$changed_tests_content"
+    else
+      git show ":${tp}" >>"$changed_tests_content" 2>/dev/null || true
+    fi
+  done
+
+  local entry status2 path2 layer context short kind fqcn decl ok impl_short
+  for entry in "${src_entries[@]:-}"; do
+    [ -n "$entry" ] || continue
+    status2=$(printf '%s' "$entry" | cut -f1)
+    path2=$(printf '%s' "$entry" | cut -f2)
+    layer=$(path_layer "$path2")
+    context=$(path_context "$path2")
+
+    if [ "$layer" = "http" ]; then
+      if [ "$check_mode" = "behavior" ]; then
+        ok=0
+        for tp in "${changed_test_paths[@]:-}"; do
+          case "$tp" in
+            tests/Functional/*.php) ok=1 ;;
+          esac
+        done
+        if [ "$ok" -eq 0 ]; then
+          fail_line "$prefix" "$path2" "HTTP controller changed without a changed tests/Functional test"
+        fi
+      fi
+      continue
+    fi
+
+    if [ "$layer" = "readmodel" ]; then
+      if [ "$check_mode" = "behavior" ]; then
+        short=$(decl_at "$rev" "$path2" | sed -E 's/^[a-z]+[[:space:]]+//' || true)
+        ok=0
+        for tp in "${changed_test_paths[@]:-}"; do
+          case "$tp" in
+            tests/Functional/*.php) ok=1 ;;
+          esac
+          if test_matches_context "$tp" "$context"; then ok=1; fi
+        done
+        if [ "$ok" -eq 0 ]; then
+          fqcn=$(namespace_at "$rev" "$path2")
+          [ -z "$fqcn" ] || fqcn="${fqcn}\\${short}"
+          if [ -s "$changed_tests_content" ] && references_name "$changed_tests_content" "$short" "$fqcn"; then
+            ok=1
+          fi
+        fi
+        if [ "$ok" -eq 0 ]; then
+          fail_line "$prefix" "$path2" "ReadModel handler changed without a same-context, functional or referencing test"
+        fi
+      fi
+      continue
+    fi
+
+    if [ "$layer" != "class" ]; then
+      continue
+    fi
+
+    decl=$(decl_at "$rev" "$path2") || true
+    if [ -z "$decl" ]; then
+      continue
+    fi
+    kind=${decl%%[[:space:]]*}
+    short=${decl##*[[:space:]]}
+    fqcn=$(namespace_at "$rev" "$path2")
+    [ -z "$fqcn" ] || fqcn="${fqcn}\\${short}"
+
+    if [ "$status2" = "A" ]; then
+      if [ "$check_mode" = "refactor" ]; then
+        if [ "$kind" = "interface" ]; then
+          if [ "$rev" = "disk" ]; then
+            impl_file=$(grep -rEl "implements[^;{]*\b${short}\b" src --include='*.php' 2>/dev/null | head -n1 || true)
+          else
+            impl_file=$(git grep -lE "implements[^;{]*\b${short}\b" "$rev" -- 'src/*.php' 2>/dev/null | head -n1 | sed "s/^${rev}://" || true)
+          fi
+          if [ -z "$impl_file" ]; then
+            fail_line "$prefix" "$path2" "refactor adds interface ${short} without an implementing class"
+          else
+            impl_short=$(basename "$impl_file" .php)
+            impl_fqcn=$(namespace_at "$rev" "$impl_file")
+            [ -z "$impl_fqcn" ] || impl_fqcn="${impl_fqcn}\\${impl_short}"
+            if ! covered_by_existing_tests "$rev" "$impl_short" "$impl_fqcn"; then
+              fail_line "$prefix" "$path2" "refactor adds interface ${short} whose implementation ${impl_short} has no covering test"
+            fi
+          fi
+        else
+          fail_line "$prefix" "$path2" "refactor adds concrete class ${short}"
+        fi
+        continue
+      fi
+      if [ "$kind" = "interface" ]; then
+        if ! references_name "$changed_tests_content" "$short" "$fqcn"; then
+          # acceptable when a changed test references an implementation of it
+          impl_short=""
+          while IFS= read -r impl_file; do
+            [ -n "$impl_file" ] || continue
+            impl_short=$(basename "$impl_file" .php)
+            if references_name "$changed_tests_content" "$impl_short" ""; then
+              break
+            fi
+            impl_short=""
+          done < <(grep -rEl "implements[^;{]*\b${short}\b" src --include='*.php' 2>/dev/null || true)
+          if [ -z "$impl_short" ]; then
+            fail_line "$prefix" "$path2" "new ${kind} ${short} is not referenced by any changed test"
+          fi
+        fi
+      else
+        if ! references_name "$changed_tests_content" "$short" "$fqcn"; then
+          fail_line "$prefix" "$path2" "new ${kind} ${short} is not referenced by any changed test"
+        fi
+      fi
+      continue
+    fi
+
+    # modified class-layer file
+    if [ "$check_mode" = "refactor" ]; then
+      if ! covered_by_existing_tests "$rev" "$short" "$fqcn"; then
+        fail_line "$prefix" "$path2" "changed ${kind} ${short} has no covering test under tests/"
+      fi
+      continue
+    fi
+
+    ok=0
+    if references_name "$changed_tests_content" "$short" "$fqcn"; then
+      ok=1
+    else
+      for tp in "${changed_test_paths[@]:-}"; do
+        if test_matches_context "$tp" "$context"; then
+          ok=1
+          break
+        fi
+      done
+    fi
+    if [ "$ok" -eq 0 ]; then
+      fail_line "$prefix" "$path2" "changed ${kind} ${short} has no referencing or same-context changed test"
+    fi
+  done
+
+  rm -f "$changed_tests_content"
+}
+
+# ---------------------------------------------------------------------------
+# staged mode
+# ---------------------------------------------------------------------------
+run_staged() {
+  local entries subject
+  entries=$(git diff --cached --name-status || true)
+  if [ -z "$entries" ]; then
+    echo "TDD-CHECK: nothing staged" >&2
+    exit 0
+  fi
+  if [ -n "$message_file" ]; then
+    subject=$(head -n1 "$message_file" 2>/dev/null || echo "")
+    if printf '%s' "$subject" | grep -qE "$REFACTOR_SUBJECT_RE"; then
+      mode="refactor"
+    else
+      mode="behavior"
+    fi
+  fi
+  check_entries "disk" "" "$mode" < <(printf '%s\n' "$entries")
+}
+
+# ---------------------------------------------------------------------------
+# range mode
+# ---------------------------------------------------------------------------
+run_range() {
+  local commits commit subject short entries check_mode
+  commits=$(git rev-list --no-merges "$range") || { echo "TDD-CHECK: bad range ${range}" >&2; exit 2; }
+  for commit in $commits; do
+    short=$(git rev-parse --short "$commit")
+    subject=$(git log -1 --format=%s "$commit")
+    entries=$(git diff-tree --no-commit-id --name-status -r "$commit")
+    if printf '%s' "$subject" | grep -qE "$REFACTOR_SUBJECT_RE"; then
+      check_mode="refactor"
+    else
+      check_mode="behavior"
+    fi
+    check_entries "$commit" "$short" "$check_mode" < <(printf '%s\n' "$entries")
+  done
+}
+
+report() {
+  if [ "${#failures[@]}" -gt 0 ]; then
+    local f
+    for f in "${failures[@]}"; do
+      echo "$f"
+    done
+    exit 1
+  fi
+  exit 0
+}
+
+# ---------------------------------------------------------------------------
+# self test
+# ---------------------------------------------------------------------------
+SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+
+new_repo() { # $1 dir
+  mkdir -p "$1"
+  cd "$1"
+  git init -q
+  git config user.email tdd@example.com
+  git config user.name tdd
+}
+
+commit_all() { # $1 subject
+  git add -A
+  git commit -qm "$1"
+}
+
+expect_exit() { # $1 expected (0|1), $2 label, rest = args
+  local expected="$1" label="$2"
+  shift 2
+  local actual=0
+  "$SELF" "$@" >/dev/null 2>&1 || actual=$?
+  if [ "$actual" -ne "$expected" ]; then
+    echo "SELF-TEST FAILED: ${label} (expected exit ${expected}, got ${actual})" >&2
+    return 1
+  fi
+  echo "ok: ${label}"
+}
+
+run_self_test() {
+  work=$(mktemp -d)
+  trap 'rm -rf "$work"' EXIT
+  local rc=0
+
+  # baseline used by most scenarios
+  baseline() {
+    new_repo "$1"
+    mkdir -p src/Ordering/Application/CommandHandler tests/Unit/Ordering
+    cat >src/Ordering/Application/CommandHandler/SampleHandler.php <<'PHP'
+<?php
+final class SampleHandler
+{
+}
+PHP
+    cat >tests/Unit/Ordering/SampleHandlerTest.php <<'PHP'
+<?php
+final class SampleHandlerTest
+{
+}
+PHP
+    commit_all "feat: baseline"
+  }
+
+  # 1. src-only change → fail
+  baseline "$work/s1"
+  printf '\n// touch\n' >>src/Ordering/Application/CommandHandler/SampleHandler.php
+  git add -A
+  expect_exit 1 "s1 src-only change fails" --staged || rc=1
+
+  # 2. src+test referencing the class → pass
+  baseline "$work/s2"
+  printf '\n// touch\n' >>src/Ordering/Application/CommandHandler/SampleHandler.php
+  printf '\n// touch\n' >>tests/Unit/Ordering/SampleHandlerTest.php
+  git add -A
+  expect_exit 0 "s2 src+test referencing class passes" --staged || rc=1
+
+  # 3. new class + new test referencing it → pass
+  baseline "$work/s3"
+  cat >src/Ordering/Application/CommandHandler/ExtraHandler.php <<'PHP'
+<?php
+final class ExtraHandler
+{
+}
+PHP
+  cat >tests/Unit/Ordering/ExtraHandlerTest.php <<'PHP'
+<?php
+final class ExtraHandlerTest
+{
+    public function it_uses_extra_handler(): void
+    {
+        new \ExtraHandler();
+    }
+}
+PHP
+  git add -A
+  expect_exit 0 "s3 new class with referencing test passes" --staged || rc=1
+
+  # 4. new class + only a same-context test → fail
+  baseline "$work/s4"
+  cat >src/Ordering/Application/CommandHandler/OtherHandler.php <<'PHP'
+<?php
+final class OtherHandler
+{
+}
+PHP
+  printf '\n// touch\n' >>tests/Unit/Ordering/SampleHandlerTest.php
+  git add -A
+  expect_exit 1 "s4 new class with only same-context test fails" --staged || rc=1
+
+  # 5. refactor with pre-existing coverage + `refactor:` subject → pass
+  baseline "$work/s5"
+  printf '\n// touch\n' >>src/Ordering/Application/CommandHandler/SampleHandler.php
+  git add -A
+  expect_exit 0 "s5 staged refactor with coverage passes" --staged --refactor || rc=1
+
+  # 6. refactor with pre-existing coverage + `refactor(solid):` subject → pass
+  baseline "$work/s6"
+  printf '\n// touch\n' >>src/Ordering/Application/CommandHandler/SampleHandler.php
+  git add -A
+  printf 'refactor(solid): touch\n' >msg.txt
+  expect_exit 0 "s6 message-file refactor subject passes" --staged --message-file msg.txt || rc=1
+
+  # 7. refactor diff with `feat:` subject → fail (behavior mode sees no test change)
+  baseline "$work/s7"
+  printf '\n// touch\n' >>src/Ordering/Application/CommandHandler/SampleHandler.php
+  git add -A
+  printf 'feat: touch\n' >msg.txt
+  expect_exit 1 "s7 message-file feat subject fails without test" --staged --message-file msg.txt || rc=1
+
+  # 8. refactor adding a new concrete class → fail
+  baseline "$work/s8"
+  cat >src/Ordering/Application/CommandHandler/NewHandler.php <<'PHP'
+<?php
+final class NewHandler
+{
+}
+PHP
+  git add -A
+  expect_exit 1 "s8 refactor adding concrete class fails" --staged --refactor || rc=1
+
+  # 9. refactor adding only a new interface implemented by the existing adapter → pass
+  baseline "$work/s9"
+  cat >src/Ordering/Application/CommandHandler/SamplePort.php <<'PHP'
+<?php
+interface SamplePort
+{
+}
+PHP
+  sed -i 's/final class SampleHandler/final class SampleHandler implements \\SamplePort/' src/Ordering/Application/CommandHandler/SampleHandler.php
+  git add -A
+  expect_exit 0 "s9 refactor adding covered interface passes" --staged --refactor || rc=1
+
+  # 10. refactor without coverage → fail
+  baseline "$work/s10"
+  mkdir -p src/Ordering/Application/Service
+  cat >src/Ordering/Application/Service/UncoveredService.php <<'PHP'
+<?php
+final class UncoveredService
+{
+}
+PHP
+  git rm -q tests/Unit/Ordering/SampleHandlerTest.php
+  git add -A
+  expect_exit 1 "s10 refactor without coverage fails" --staged --refactor || rc=1
+
+  # 11. src/Kernel.php only → pass
+  baseline "$work/s11"
+  mkdir -p src
+  printf '<?php\n' >src/Kernel.php
+  git add -A
+  expect_exit 0 "s11 kernel-only change passes" --staged || rc=1
+
+  # 12. range with one feat: and one refactor: commit → pass
+  baseline "$work/s12"
+  printf '\n// touch\n' >>src/Ordering/Application/CommandHandler/SampleHandler.php
+  git add -A
+  commit_all "refactor: touch"
+  printf '\n// touch test\n' >>tests/Unit/Ordering/SampleHandlerTest.php
+  git add -A
+  commit_all "feat: touch test"
+  expect_exit 0 "s12 range feat+refactor passes" --range HEAD~2...HEAD || rc=1
+
+  # 13. --message-file with refactor(solid): → refactor mode; with feat: → behavior mode
+  baseline "$work/s13"
+  printf '\n// touch\n' >>src/Ordering/Application/CommandHandler/SampleHandler.php
+  git add -A
+  printf 'refactor(solid): touch\n' >msg.txt
+  expect_exit 0 "s13a message-file refactor passes" --staged --message-file msg.txt || rc=1
+  printf 'feat: touch\n' >msg.txt
+  expect_exit 1 "s13b message-file feat fails" --staged --message-file msg.txt || rc=1
+
+  # 14. HTTP controller change + changed functional test → pass
+  baseline "$work/s14"
+  mkdir -p src/Ordering/Infrastructure/Http tests/Functional
+  cat >src/Ordering/Infrastructure/Http/OrderController.php <<'PHP'
+<?php
+final class OrderController
+{
+}
+PHP
+  cat >tests/Functional/OrderFlowTest.php <<'PHP'
+<?php
+final class OrderFlowTest
+{
+}
+PHP
+  git add -A
+  commit_all "feat: controller"
+  printf '\n// touch\n' >>src/Ordering/Infrastructure/Http/OrderController.php
+  printf '\n// touch\n' >>tests/Functional/OrderFlowTest.php
+  git add -A
+  expect_exit 0 "s14 controller with functional test passes" --staged || rc=1
+
+  # 15. HTTP controller change + no test change in refactor mode with existing functional suite → pass
+  baseline "$work/s15"
+  mkdir -p src/Ordering/Infrastructure/Http tests/Functional
+  cat >src/Ordering/Infrastructure/Http/OrderController.php <<'PHP'
+<?php
+final class OrderController
+{
+}
+PHP
+  cat >tests/Functional/OrderFlowTest.php <<'PHP'
+<?php
+final class OrderFlowTest
+{
+}
+PHP
+  git add -A
+  commit_all "feat: controller"
+  printf '\n// touch\n' >>src/Ordering/Infrastructure/Http/OrderController.php
+  git add -A
+  expect_exit 0 "s15 controller refactor with existing functional suite passes" --staged --refactor || rc=1
+
+  if [ "$rc" -ne 0 ]; then
+    exit 1
+  fi
+  echo "self-test: all scenarios passed"
+}
+
+# ---------------------------------------------------------------------------
+
+if [ "$self_test" -eq 1 ]; then
+  run_self_test
+  exit $?
+fi
+
+case "$source_kind" in
+  staged) run_staged ;;
+  range) [ -n "$range" ] || usage; run_range ;;
+  *) usage ;;
+esac
+
+report

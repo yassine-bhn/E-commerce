@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 use App\Catalog\Application\Command\DecideCatalogSubmission;
 use App\Catalog\Application\CommandHandler\DecideCatalogSubmissionHandler;
+use App\Catalog\Application\Port\CatalogSubmissionDecider;
 use App\Catalog\Domain\Model\CatalogDecision;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
-use App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter;
 use App\Kernel;
 use Doctrine\DBAL\Connection;
 use Psr\Container\ContainerInterface;
@@ -59,11 +59,17 @@ if (!$connection instanceof Connection) {
     exit(3);
 }
 
+$store = $container->get(CatalogSubmissionDecider::class);
+if (!$store instanceof CatalogSubmissionDecider) {
+    fwrite(STDERR, "the approval store is not reachable\n");
+    exit(3);
+}
+
 // The outer transaction is the one that never ends: the handler joins it, so its own commit only
 // releases a savepoint and the two writes stay uncommitted on this connection.
 $connection->beginTransaction();
 
-(new DecideCatalogSubmissionHandler($connection, new DbalCatalogAuditWriter($connection)))(
+(new DecideCatalogSubmissionHandler($store))(
     new DecideCatalogSubmission(
         CatalogSubmissionKind::Product,
         $productSlug,
@@ -75,7 +81,7 @@ $connection->beginTransaction();
 // Proof that the writes really happened before the kill, otherwise the parent's "nothing was
 // committed" assertion would also pass on a writer that never wrote.
 $status = $connection->fetchOne(
-    'SELECT approval_status FROM storefront_product_view WHERE slug = :slug',
+    'SELECT approval_status FROM catalog_submission WHERE slug = :slug',
     ['slug' => $productSlug],
 );
 $trail = (int) $connection->fetchOne(

@@ -32,6 +32,7 @@ final readonly class StorefrontProductView
         public string $description,
         public array $variants,
         public ?int $stockQuantity = null,
+        public ?string $supplierReference = null,
     ) {
     }
 
@@ -69,7 +70,8 @@ final readonly class StorefrontProductView
     }
 
     /**
-     * Admin projection: the storefront fields plus the numeric quantity operators edit (O-01).
+     * Admin projection: the storefront fields plus the numeric quantity operators edit (O-01),
+     * and the supplier's own reference, which the customer-facing payload never carries.
      *
      * @return array<string, mixed>
      */
@@ -77,6 +79,7 @@ final readonly class StorefrontProductView
     {
         $payload = $this->toApi();
         $payload['stockQuantity'] = $this->stockQuantity;
+        $payload['supplierReference'] = $this->supplierReference;
 
         return $payload;
     }
@@ -110,6 +113,7 @@ final readonly class StorefrontProductView
             (string) $row['description'],
             $variants,
             isset($row['stock_quantity']) ? (int) $row['stock_quantity'] : null,
+            isset($row['supplier_reference']) ? (string) $row['supplier_reference'] : null,
         );
     }
 }

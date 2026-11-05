@@ -236,3 +236,40 @@ jobs:
       - name: Logs on failure
         if: failure()
         run: docker logs --tail=100 smoke-app || true
+
+  solid:
+    name: Solid gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
+      - run: docker compose up -d --wait app database meilisearch
+      - run: docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration
+      - run: docker compose exec -T app php bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+      - run: make solid
+
+  tdd:
+    name: TDD gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Fetch the base ref (pull requests only)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}" --depth=1
+          fi
+      - run: bin/tdd-check --self-test
+      - name: Attribute every commit in range
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            bin/tdd-check --range origin/${{ github.base_ref }}...HEAD
+          elif [ "${{ github.event_name }}" = "push" ] \
+            && [ -n "${{ github.event.before }}" ] \
+            && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            bin/tdd-check --range ${{ github.event.before }}...HEAD
+          else
+            bin/tdd-check --range HEAD~1...HEAD
+          fi

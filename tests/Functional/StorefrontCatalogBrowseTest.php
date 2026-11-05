@@ -55,7 +55,7 @@ final class StorefrontCatalogBrowseTest extends WebTestCase
         self::assertArrayHasKey('facets', $data);
 
         self::assertSame(1, $data['meta']['page']);
-        self::assertSame(24, $data['meta']['size'], 'the browse default size is 24');
+        self::assertSame(25, $data['meta']['size'], 'the browse default size is 25');
 
         // The storefront catalog is never assumed to hold a fixed number of rows: another
         // Functional test may have created a product for the length of its own test, and

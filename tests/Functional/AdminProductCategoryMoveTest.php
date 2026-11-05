@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use Doctrine\DBAL\ArrayParameterType;
@@ -66,6 +68,16 @@ final class AdminProductCategoryMoveTest extends WebTestCase
     {
         $connection = $this->connection;
         if ($connection instanceof Connection) {
+            $targets = array_merge($this->productSlugs, $this->categorySlugs);
+            if ([] !== $targets) {
+                // The write model survives the view row unless the test removes it, and a reused
+                // slug must not inherit this test's approval (WP3 R11).
+                $connection->executeStatement(
+                    'DELETE FROM catalog_submission WHERE slug IN (:slugs)',
+                    ['slugs' => $targets],
+                    ['slugs' => ArrayParameterType::STRING],
+                );
+            }
             if ([] !== $this->productSlugs) {
                 $connection->executeStatement(
                     'DELETE FROM storefront_product_view WHERE slug IN (:slugs)',
@@ -80,7 +92,6 @@ final class AdminProductCategoryMoveTest extends WebTestCase
                     ['slugs' => ArrayParameterType::STRING],
                 );
             }
-            $targets = array_merge($this->productSlugs, $this->categorySlugs);
             if ([] !== $targets) {
                 $connection->executeStatement(
                     'DELETE FROM catalog_audit_log WHERE target_slug IN (:slugs)',
@@ -180,6 +191,7 @@ final class AdminProductCategoryMoveTest extends WebTestCase
         self::assertSame([$slug], $this->searchFor($token), 'the product is indexed where the storefront searches');
 
         $target = $this->createCategory();
+        $this->demoteToPending($target);
         $this->move($slug, $target);
         // The trail and the still-approved status belong to the index-free test above; what matters
         // here is that the storefront stops serving the product.
@@ -285,13 +297,26 @@ final class AdminProductCategoryMoveTest extends WebTestCase
             'subcategories' => [],
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        self::assertSame('PENDING_APPROVAL', (string) $this->db()->fetchOne(
-            'SELECT approval_status FROM storefront_category WHERE slug = :slug',
-            ['slug' => $slug],
-        ), 'a new category awaits approval, which is what makes the destination hide its products');
         $this->categorySlugs[] = $slug;
 
         return $slug;
+    }
+
+    /**
+     * A taxonomy create is approved as it is written, so the storefront can no longer see an
+     * unapproved destination through the API alone: the destination is demoted to pending through
+     * the owner-edit transition (the one an approved record suffers when its owner edits it),
+     * which keeps the submission row the approve route below needs.
+     */
+    private function demoteToPending(string $slug): void
+    {
+        $store = static::getContainer()->get(CatalogSubmissionOwnerEditor::class);
+        self::assertInstanceOf(CatalogSubmissionOwnerEditor::class, $store);
+        $store->ownerModified(CatalogSubmissionKind::Category, $slug);
+        self::assertSame('PENDING_APPROVAL', (string) $this->db()->fetchOne(
+            'SELECT approval_status FROM storefront_category WHERE slug = :slug',
+            ['slug' => $slug],
+        ), 'a pending category is what makes the destination hide its products');
     }
 
     private function move(string $slug, string $category): void

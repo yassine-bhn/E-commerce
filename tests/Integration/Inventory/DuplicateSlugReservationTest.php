@@ -28,6 +28,7 @@ final class DuplicateSlugReservationTest extends KernelTestCase
             $connection->executeStatement('DELETE FROM inventory_reservation WHERE order_id = :id', ['id' => $this->orderId]);
         }
         if (null !== $this->slug) {
+            $connection->executeStatement('DELETE FROM inventory_stock WHERE product_slug = :slug', ['slug' => $this->slug]);
             $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug = :slug', ['slug' => $this->slug]);
         }
 
@@ -56,6 +57,12 @@ final class DuplicateSlugReservationTest extends KernelTestCase
                 'slug' => $this->slug,
                 'source' => 'baignoire-d-code',
             ],
+        );
+
+        // WP4/R14 — the view is only the cache: the tracked product needs its balance row.
+        $connection->executeStatement(
+            'INSERT INTO inventory_stock (product_slug, on_hand) VALUES (:slug, 5)',
+            ['slug' => $this->slug],
         );
 
         /** @var StockReservationPort $stock */

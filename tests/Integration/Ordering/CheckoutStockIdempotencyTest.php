@@ -42,6 +42,7 @@ final class CheckoutStockIdempotencyTest extends KernelTestCase
             $connection->executeStatement('DELETE FROM processed_commands WHERE key = :key', ['key' => $this->idempotencyKey]);
         }
         if (null !== $this->slug) {
+            $connection->executeStatement('DELETE FROM inventory_stock WHERE product_slug = :slug', ['slug' => $this->slug]);
             $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug = :slug', ['slug' => $this->slug]);
         }
         $connection->executeStatement('DELETE FROM customer_profile WHERE id = :id', ['id' => self::CUSTOMER_ID]);
@@ -71,6 +72,12 @@ final class CheckoutStockIdempotencyTest extends KernelTestCase
                 'slug' => $this->slug,
                 'source' => 'baignoire-d-code',
             ],
+        );
+
+        // WP4/R14 — the view is only the cache: the tracked product needs its balance row.
+        $connection->executeStatement(
+            'INSERT INTO inventory_stock (product_slug, on_hand) VALUES (:slug, 5)',
+            ['slug' => $this->slug],
         );
         $connection->insert('customer_profile', [
             'id' => self::CUSTOMER_ID,
@@ -123,6 +130,16 @@ final class CheckoutStockIdempotencyTest extends KernelTestCase
             deliveryMethod: 'home',
             paymentMethod: 'Carte bancaire',
             promoCode: null,
+            confirmedQuote: [
+                'lines' => [['slug' => (string) $this->slug, 'variant' => null, 'unitPrice' => 680000, 'quantity' => 2]],
+                'subtotal' => 1360000,
+                'discount' => 0,
+                'delivery' => 0,
+                'total' => 1360000,
+                'count' => 2,
+                'promoCode' => null,
+                'deliveryMethod' => 'home',
+            ],
         );
     }
 }

@@ -6,14 +6,19 @@ namespace App\Tests\Integration\Catalog;
 
 use App\Catalog\Application\Command\DecideCatalogSubmission;
 use App\Catalog\Application\CommandHandler\DecideCatalogSubmissionHandler;
+use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Domain\Model\CatalogDecision;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Infrastructure\Audit\DbalCatalogAuditWriter;
+use App\Catalog\Infrastructure\Persistence\DbalCatalogSubmissionStore;
+use App\Catalog\Infrastructure\Projection\ProjectStorefrontApproval;
+use App\Shared\Infrastructure\Outbox\DoctrineOutbox;
 use App\Tests\Integration\Catalog\Support\ApprovalAttempt;
 use App\Tests\Integration\Catalog\Support\CatalogRow;
 use App\Tests\Integration\Catalog\Support\FailingCatalogAuditPort;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * R38 — the decision and its audit entry are one write: the adapter joins the transaction the
@@ -37,6 +42,7 @@ final class CatalogAuditTransactionTest extends KernelTestCase
         $this->removeRows($connection);
 
         CatalogRow::product($connection, self::REVIEWED_PRODUCT, 'PENDING_APPROVAL');
+        CatalogRow::submission($connection, self::REVIEWED_PRODUCT, 'products', 'PENDING_APPROVAL');
     }
 
     protected function tearDown(): void
@@ -48,7 +54,7 @@ final class CatalogAuditTransactionTest extends KernelTestCase
 
     public function testAnApprovalWhoseAuditWriteFailsLeavesTheSubmissionPending(): void
     {
-        $handler = new DecideCatalogSubmissionHandler(self::connection(), new FailingCatalogAuditPort());
+        $handler = new DecideCatalogSubmissionHandler($this->store(new FailingCatalogAuditPort()));
         $command = new DecideCatalogSubmission(
             CatalogSubmissionKind::Product,
             self::REVIEWED_PRODUCT,
@@ -92,7 +98,7 @@ final class CatalogAuditTransactionTest extends KernelTestCase
     private function reviewedRow(): array
     {
         $row = self::connection()->fetchAssociative(
-            'SELECT approval_status, reviewed_by, reviewed_at FROM storefront_product_view WHERE slug = :slug',
+            'SELECT approval_status, reviewed_by, reviewed_at FROM catalog_submission WHERE slug = :slug',
             ['slug' => self::REVIEWED_PRODUCT],
         );
         self::assertIsArray($row, 'the pending fixture row must still exist');
@@ -110,8 +116,23 @@ final class CatalogAuditTransactionTest extends KernelTestCase
 
     private function removeRows(Connection $connection): void
     {
+        CatalogRow::deleteSubmissions($connection, self::REVIEWED_PRODUCT);
         CatalogRow::deleteProducts($connection, self::REVIEWED_PRODUCT);
         CatalogRow::deleteAuditEntries($connection, self::AUDIT_TARGET);
+    }
+
+    private function store(CatalogAuditPort $audit): DbalCatalogSubmissionStore
+    {
+        $connection = self::connection();
+        /** @var SerializerInterface $serializer */
+        $serializer = static::getContainer()->get(SerializerInterface::class);
+
+        return new DbalCatalogSubmissionStore(
+            $connection,
+            new DoctrineOutbox($connection, $serializer),
+            $audit,
+            new ProjectStorefrontApproval($connection),
+        );
     }
 
     private static function connection(): Connection

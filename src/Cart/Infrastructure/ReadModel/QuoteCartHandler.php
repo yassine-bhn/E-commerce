@@ -20,12 +20,25 @@ final class QuoteCartHandler
     {
         $result = $this->quotes->quote($query->lines, $query->promoCode, $query->deliveryMethod);
 
+        $lines = array_map(
+            static fn (array $line): array => [
+                'slug' => $line['slug'],
+                'variant' => $line['variant'],
+                'unitPrice' => $line['unitPriceMinor'],
+                'quantity' => $line['quantity'],
+            ],
+            $result['pricedLines'],
+        );
+
         return new CartQuote(
             $result['subtotal'],
             $result['discount'],
             $result['delivery'],
             $result['total'],
             $result['itemCount'],
+            $lines,
+            $query->promoCode,
+            $query->deliveryMethod,
         );
     }
 }

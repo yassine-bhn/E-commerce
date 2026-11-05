@@ -361,6 +361,9 @@ final class HttpApiContractTest extends WebTestCase
             'delivery' => 'int',
             'total' => 'int',
             'currency' => 'string',
+            'lines' => 'array',
+            'promoCode' => '?string',
+            'deliveryMethod' => 'string',
         ], $quote);
     }
 
@@ -546,6 +549,8 @@ final class HttpApiContractTest extends WebTestCase
             'variant' => '?string',
             'quantity' => 'int',
             'unitPrice' => 'int',
+            'currentUnitPrice' => 'int',
+            'priceChanged' => 'bool',
             'lineTotal' => 'int',
             'currency' => 'string',
             'product' => 'array',
@@ -649,6 +654,16 @@ final class HttpApiContractTest extends WebTestCase
             'deliveryMethod' => 'home',
             'paymentMethod' => 'Carte bancaire',
             'promoCode' => 'ZIDEN10',
+            'confirmedQuote' => [
+                'lines' => [['slug' => self::PRODUCT_SLUG, 'variant' => null, 'unitPrice' => 680000, 'quantity' => 1]],
+                'subtotal' => 680000,
+                'discount' => 68000,
+                'delivery' => 15000,
+                'total' => 627000,
+                'count' => 1,
+                'promoCode' => 'ZIDEN10',
+                'deliveryMethod' => 'home',
+            ],
         ];
     }
 

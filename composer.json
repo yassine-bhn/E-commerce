@@ -70,7 +70,10 @@
         "psr-4": {
             "App\\Tests\\": "tests/",
             "Agents\\PhpStan\\": ".agents/phpstan/"
-        }
+        },
+        "classmap": [
+            ".agents/phpstan/fixtures/"
+        ]
     },
     "replace": {
         "symfony/polyfill-ctype": "*",

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\SubmitProductReview;
+use App\Catalog\Application\Port\ProductReviewStore;
 use App\Catalog\Application\Port\ProductVisibilityPort;
 use App\Catalog\Domain\Model\ProductNotReviewableException;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -19,8 +19,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final class SubmitProductReviewHandler
 {
     public function __construct(
-        private readonly Connection $connection,
         private readonly ProductVisibilityPort $visibility,
+        private readonly ProductReviewStore $reviews,
     ) {
     }
 
@@ -30,16 +30,12 @@ final class SubmitProductReviewHandler
             throw ProductNotReviewableException::forSlug($command->slug);
         }
 
-        $this->connection->executeStatement(
-            'INSERT INTO storefront_product_review (id, product_slug, author_name, rating, comment)
-             VALUES (:id, :slug, :author, :rating, :comment)',
-            [
-                'id' => $command->id,
-                'slug' => $command->slug,
-                'author' => $command->authorName,
-                'rating' => max(1, min(5, $command->rating)),
-                'comment' => $command->comment,
-            ],
+        $this->reviews->store(
+            $command->id,
+            $command->slug,
+            $command->authorName,
+            $command->rating,
+            $command->comment,
         );
     }
 }

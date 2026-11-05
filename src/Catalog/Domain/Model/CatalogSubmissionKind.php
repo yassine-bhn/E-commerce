@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Catalog\Domain\Model;
 
 /**
- * The two record families the approval workflow covers. Both share one lifecycle and one audit
+ * The record families the approval workflow covers. All share one lifecycle and one audit
  * trail, so the kind travels with every command instead of being duplicated per aggregate.
  */
 enum CatalogSubmissionKind: string
 {
     case Product = 'products';
     case Category = 'categories';
+    case Brand = 'brands';
 
     public static function fromRoute(string $value): self
     {
@@ -23,6 +24,19 @@ enum CatalogSubmissionKind: string
         return match ($this) {
             self::Product => 'storefront_product_view',
             self::Category => 'storefront_category',
+            self::Brand => 'storefront_brand',
+        };
+    }
+
+    /**
+     * The column of {@see table()} a submission row points at. Products and categories are
+     * keyed by slug; the brand table is keyed by its name, which is also its primary key.
+     */
+    public function keyColumn(): string
+    {
+        return match ($this) {
+            self::Product, self::Category => 'slug',
+            self::Brand => 'name',
         };
     }
 
@@ -32,6 +46,7 @@ enum CatalogSubmissionKind: string
         return match ($this) {
             self::Product => 'product',
             self::Category => 'category',
+            self::Brand => 'brand',
         };
     }
 
@@ -40,6 +55,7 @@ enum CatalogSubmissionKind: string
         return match ($this) {
             self::Product => 'Product',
             self::Category => 'Category',
+            self::Brand => 'Brand',
         };
     }
 }

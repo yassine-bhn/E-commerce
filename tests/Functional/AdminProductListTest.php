@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
@@ -29,6 +30,9 @@ final class AdminProductListTest extends WebTestCase
         $connection = static::getContainer()->get(Connection::class);
 
         if ([] !== $this->slugs) {
+            foreach ($this->slugs as $slug) {
+                $this->indexer()->forget($slug);
+            }
             $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug IN (:v)', ['v' => $this->slugs], ['v' => ArrayParameterType::STRING]);
         }
         if ([] !== $this->userIds) {
@@ -96,6 +100,14 @@ final class AdminProductListTest extends WebTestCase
         $this->slugs[] = $slug;
     }
 
+    private function indexer(): StorefrontProductSearchIndexer
+    {
+        /** @var StorefrontProductSearchIndexer $indexer */
+        $indexer = static::getContainer()->get(StorefrontProductSearchIndexer::class);
+
+        return $indexer;
+    }
+
     /** @return array<string, mixed> */
     private function json(KernelBrowser $client): array
     {
@@ -136,6 +148,11 @@ final class AdminProductListTest extends WebTestCase
         $this->insertProduct($p.'-b', ['approval_status' => 'PENDING_APPROVAL', 'published' => false, 'brand' => 'Geberit', 'subcategory' => 'Lavabo', 'stock' => 'order', 'price_minor' => 100]);
         $this->insertProduct($p.'-c', ['approval_status' => 'REJECTED', 'published' => false, 'stock' => 'out', 'price_minor' => 200]);
         $this->insertProduct($p.'-d', ['published' => false, 'price_minor' => 400]);
+
+        // The public storefront query is Meilisearch-first, and a direct SQL insert bypasses the
+        // write-side sync. Rebuild and wait so the assertion sees the committed catalogue, not a
+        // pending indexing task.
+        $this->indexer()->rebuildAll();
 
         // The public list only sees A; the admin list sees all four.
         $client->request('GET', '/api/v1/storefront/products', ['q' => $p]);

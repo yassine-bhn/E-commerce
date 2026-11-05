@@ -46,6 +46,16 @@ final class PlaceOrderOutboxTest extends KernelTestCase
             deliveryMethod: 'home',
             paymentMethod: 'Carte bancaire',
             promoCode: null,
+            confirmedQuote: [
+                'lines' => [['slug' => 'baignoire-d-code', 'variant' => null, 'unitPrice' => 680000, 'quantity' => 1]],
+                'subtotal' => 680000,
+                'discount' => 0,
+                'delivery' => 15000,
+                'total' => 695000,
+                'count' => 1,
+                'promoCode' => null,
+                'deliveryMethod' => 'home',
+            ],
         ));
 
         $status = $connection->fetchOne('SELECT status FROM ordering_orders WHERE id = :id', ['id' => $orderId]);

@@ -21,7 +21,7 @@ ARGS ?=
 
 .PHONY: help build up down ps logs sh composer install console migrate migrate-test \
         test test-unit test-integration test-projection test-functional test-contract test-architecture test-all \
-        cs cs-fix phpstan deptrac infection harness ci db-backup db-restore urls
+        cs cs-fix solid tdd phpstan deptrac infection harness ci db-backup db-restore urls
 
 help: ## Show the available targets
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -92,6 +92,24 @@ test-all: up ## Run every suite, keep going after a failure, then list every fai
 
 cs: up ## Check the code style (php-cs-fixer --dry-run)
 	$(EXEC) vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
+
+solid: ## Run the SOLID gates (architecture, PHPStan, Deptrac, guard hooks)
+	$(EXEC) bin/solid-check
+
+tdd: ## Run the TDD gate, all suites and infection on changed Domain+Application files
+	@base=$$(cat .git/solid-base 2>/dev/null || echo HEAD~1); \
+	if git diff --cached --quiet; then \
+		./bin/tdd-check --range "$$base...HEAD"; \
+	else \
+		./bin/tdd-check --staged; \
+	fi
+	$(EXEC) vendor/bin/phpunit --testsuite=Unit
+	$(EXEC) vendor/bin/phpunit --testsuite=Integration
+	$(EXEC) vendor/bin/phpunit --testsuite=Projection
+	$(EXEC) vendor/bin/phpunit --testsuite=Functional
+	$(EXEC) vendor/bin/phpunit --testsuite=Contract
+	$(EXEC) vendor/bin/phpunit --testsuite=Architecture
+	$(EXEC) vendor/bin/infection --threads=max --min-msi=85 --min-covered-msi=90
 
 cs-fix: up ## Apply the code style fixes
 	$(EXEC) vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php

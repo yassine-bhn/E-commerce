@@ -1,0 +1,618 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261101T212442094Z-231382-79036ba82e6e",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "bash-discovery",
+      "target": "var/cache/remember-me-policy/prod-908c0ebf2bf123b14b17fee471ed0b02/ContainerDj2vfWT/getDoctrine_Orm_Command_EntityManagerProviderService.php",
+      "reason": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files"
+    },
+    {
+      "stage": "candidate-select",
+      "target": ".agents/phpstan/fixtures/ControllerThin/ControllerWithForbiddenDeps.php",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": ".agents/phpstan/fixtures/ControllerThin/ControllerWithAllowedDeps.php",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": ".agents/phpstan/fixtures/ConstructorDependencyLimit/HandlerWithSixDependencies.php",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": ".agents/phpstan/fixtures/ConstructorDependencyLimit/HandlerWithFiveDependencies.php",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "tests/Unit/PhpStan/ControllerThinRuleTest.php",
+      "reason": "candidate_limit_exceeded: 17 changed reviewable file(s) were not scanned because the limit is 20"
+    },
+    {
+      "stage": "baseline",
+      "target": ".",
+      "reason": "baseline_partial: baseline capture had enumeration or snapshot errors"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": false,
+      "captured_files": 41,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 37
+    },
+    "change_tracking": {
+      "touched_observed": 41,
+      "touched_retained": 41,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 2,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 37,
+      "selected_files": 20,
+      "limit": 20,
+      "truncated": true
+    },
+    "scanning": {
+      "required_files": 20,
+      "scanned_files": 20,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "bash_discovery_incomplete": 1,
+      "changed_file_unreadable": 4,
+      "candidate_limit_exceeded": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 7
+    },
+    "reasons": [
+      {
+        "code": "bash_discovery_incomplete",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-908c0ebf2bf123b14b17fee471ed0b02/ContainerDj2vfWT/getDoctrine_Orm_Command_EntityManagerProviderService.php",
+        "detail": "project enumeration exceeded 5000 reviewable files",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ControllerThin/ControllerWithForbiddenDeps.php",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ControllerThin/ControllerWithAllowedDeps.php",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ConstructorDependencyLimit/HandlerWithSixDependencies.php",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ConstructorDependencyLimit/HandlerWithFiveDependencies.php",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "tests/Unit/PhpStan/ControllerThinRuleTest.php",
+        "detail": "17 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-908c0ebf2bf123b14b17fee471ed0b02/ContainerDj2vfWT/getDoctrine_Orm_Command_EntityManagerProviderService.php",
+        "detail": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ControllerThin/ControllerWithForbiddenDeps.php",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ControllerThin/ControllerWithAllowedDeps.php",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ConstructorDependencyLimit/HandlerWithSixDependencies.php",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": ".agents/phpstan/fixtures/ConstructorDependencyLimit/HandlerWithFiveDependencies.php",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "tests/Unit/PhpStan/ControllerThinRuleTest.php",
+        "detail": "candidate_limit_exceeded: 17 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline_partial: baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-11-01T21:24:42.094Z",
+  "session_id": "session_bbe6552decfadaa8d52ddb9a48cd04cb",
+  "target": ".",
+  "revision": "660fb068363189b75c5659320a709b2c7d8b66c1",
+  "rules_version": "unavailable",
+  "diff_hash": "d927dcd1bbecd51447265cad0c12c404b14dc4117c718a844f53767e47f9a4f1",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 20,
+    "changed_files": [
+      {
+        "file": ".agents/phpstan/ConstructorDependencyLimitRule.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 113
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "09b3a2d7d2b3b126d8ffba08acc3fab455a2b47403dd0e2fd828cb44a8401e48"
+      },
+      {
+        "file": ".agents/phpstan/ControllerThinRule.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 102
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "a9c82e21932cceae57904f43ee036dfc43f6ce4f1b16f2be93971518e62f2d11"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/ConstructorDependencyLimit/NonServiceWithSixDependencies.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 18
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "1633042191bef54cbb6191d30c46a74abea514c1dee2315c1da30bbd929e9237"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/InterfaceMethodLimit/FatApplicationPort.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 16
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "702eb170949d785875b9252759d8b9cab688244f381c3fdebfcdea1a202b69cc"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/InterfaceMethodLimit/InfrastructureInterfaceWithFourMethods.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 16
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "3f47effe331c8d5a507b7e7592c97cf2278faa2b628660bb0dc3555d5bd4a6fc"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/InterfaceMethodLimit/LeanApplicationPort.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "97d82d554947d24ce789fbc9dc076578ab8a6ce40c9e3a83b62a3418394cc5e9"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoDoctrineInApplication/HandlerWithDbalConnectionParam.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "651ad9a0001c50e37c61fddb1cc4b5fb3e5ed4747b32633ccc379c2ca6b95bff"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoDoctrineInApplication/HandlerWithPortParam.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 16
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "19e49dc6bbabf3b03f6c6cf8f8cf0160dc679ed6ef214cbc97c3461119dd7cc0"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoDoctrineInApplication/InfrastructureClassWithConnection.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "7ff4abe72704a1a6a24ec96f09d4cc2b761d99f92a35353787a82beee6940a27"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoInfrastructureInHandler/HandlerWithDbalDriverParam.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "9667439f8fbd39263b83600233e1f1e6d12da9ca458e09d2ab2b3ef61b55645b"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoInfrastructureInHandler/HandlerWithOnlyPortParam.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 16
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "fe5d836de75727146a4d964f916639bf7569f654e83560d903049f90b8597e25"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoInfrastructureInHandler/HandlerWithRawConnectionParam.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "9444fa69a3e309303c00ab3840464c10decf1e4cbbce12eb25f43ebfa0d9a89b"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoInfrastructureInHandler/HandlerWithRequestParam.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "a4f9c6b59f7de19197b57e8d51a9931a01738c2302c57447a3ed2470b8112564"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/NoInfrastructureInHandler/InfrastructureRepoWithConnection.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "b6db3c02bd52bddacec81ffe9f68cbf1d394b43d53a72224f4b5dd7b6f1d3424"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/OneHandlerPerClass/ClassWithOneHandlerMethod.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 15
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "1bf8af710b4ac963d0642afb15a397f36f126f944ea78d56b37e718f939a5133"
+      },
+      {
+        "file": ".agents/phpstan/fixtures/OneHandlerPerClass/ClassWithTwoHandlerMethods.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 20
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "3e8b432a34e22149936de22f6d1e98cb4ab595dba840336955ed5bff47438ee6"
+      },
+      {
+        "file": ".agents/phpstan/InterfaceMethodLimitRule.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 63
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "bfeeba6a2c47e4c4059a269ca4e88dcde26c21bd90441327cbd79c0c65d1ea08"
+      },
+      {
+        "file": ".agents/phpstan/NoDoctrineInApplicationRule.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 151
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "f4e35eb69a57afa0feea54622a9d0b126ab278d555b904d58071e5ef4c65fa9b"
+      },
+      {
+        "file": ".agents/phpstan/OneHandlerPerClassRule.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 74
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "94078b7cd175d9de99b35d4290478aa1aea099a9d09ae5433b3b5d1b35b07395"
+      },
+      {
+        "file": "tests/Unit/PhpStan/NoDoctrineInApplicationRuleTest.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 48
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "631d23ec834e444d2daffd52e28459a0804c9b66c89080fe18da527a9437b592"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-11-01T21:24:41.302Z",
+    "completed_at": "2026-11-01T21:24:42.094Z",
+    "duration_ms": 792,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 792,
+    "peakMemoryBytes": 168681472,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 20,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [
+    {
+      "finding_id": "mimosa-2b4f66dc4b04d44f51faa414",
+      "file": "tests/Architecture/TddHarnessTest.php",
+      "line": 110,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "命令注入",
+      "status": "blocked",
+      "decision": "deny",
+      "at": "2026-11-01T21:14:38.788Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "358ba3f2223784d800ea2ba8df77338f4c08cb3b2c280ec8b3020925fa2bc4ef",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-5379610a238721a52b8cf406",
+      "file": "tests/Architecture/TddHarnessTest.php",
+      "line": 111,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "命令注入",
+      "status": "blocked",
+      "decision": "deny",
+      "at": "2026-11-01T21:14:38.788Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "f915bd01ff4f13ab4228af44cdfa3aab4b8d3fc270211d0f5fa3c7e7cc8aa483",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-2b4f66dc4b04d44f51faa414",
+      "file": "tests/Architecture/TddHarnessTest.php",
+      "line": 110,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "命令注入",
+      "status": "fixed_candidate",
+      "decision": "repair_observed",
+      "at": "2026-11-01T21:15:08.924Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "358ba3f2223784d800ea2ba8df77338f4c08cb3b2c280ec8b3020925fa2bc4ef",
+        "candidate_before_evidence_hash": "358ba3f2223784d800ea2ba8df77338f4c08cb3b2c280ec8b3020925fa2bc4ef",
+        "post_change_evidence_hash_at_previous_location": "07bbc18b764b3cbe1a605bf8f33bd801c11cd8982db8efe328f0448333709042",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-2b4f66dc4b04d44f51faa414",
+      "file": "tests/Architecture/TddHarnessTest.php",
+      "line": 110,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "命令注入",
+      "status": "static_verified",
+      "decision": "static_rescan_passed",
+      "at": "2026-11-01T21:15:08.924Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "observed",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "358ba3f2223784d800ea2ba8df77338f4c08cb3b2c280ec8b3020925fa2bc4ef",
+        "candidate_before_evidence_hash": "358ba3f2223784d800ea2ba8df77338f4c08cb3b2c280ec8b3020925fa2bc4ef",
+        "post_change_evidence_hash_at_previous_location": "07bbc18b764b3cbe1a605bf8f33bd801c11cd8982db8efe328f0448333709042",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-5379610a238721a52b8cf406",
+      "file": "tests/Architecture/TddHarnessTest.php",
+      "line": 111,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "命令注入",
+      "status": "fixed_candidate",
+      "decision": "repair_observed",
+      "at": "2026-11-01T21:15:08.924Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "f915bd01ff4f13ab4228af44cdfa3aab4b8d3fc270211d0f5fa3c7e7cc8aa483",
+        "candidate_before_evidence_hash": "f915bd01ff4f13ab4228af44cdfa3aab4b8d3fc270211d0f5fa3c7e7cc8aa483",
+        "post_change_evidence_hash_at_previous_location": "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-5379610a238721a52b8cf406",
+      "file": "tests/Architecture/TddHarnessTest.php",
+      "line": 111,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "命令注入",
+      "status": "static_verified",
+      "decision": "static_rescan_passed",
+      "at": "2026-11-01T21:15:08.924Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "observed",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "f915bd01ff4f13ab4228af44cdfa3aab4b8d3fc270211d0f5fa3c7e7cc8aa483",
+        "candidate_before_evidence_hash": "f915bd01ff4f13ab4228af44cdfa3aab4b8d3fc270211d0f5fa3c7e7cc8aa483",
+        "post_change_evidence_hash_at_previous_location": "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    }
+  ],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_bbe6552decfadaa8d52ddb9a48cd04cb-20261101T212442094Z-231382-79036ba82e6e.json",
+    "latest_report": ".mimosa/reports/task-review-session_bbe6552decfadaa8d52ddb9a48cd04cb.json",
+    "history_summary": ".mimosa/history/run-20261101T212442094Z-231382-79036ba82e6e.json"
+  }
+}

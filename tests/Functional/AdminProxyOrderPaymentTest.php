@@ -36,6 +36,7 @@ final class AdminProxyOrderPaymentTest extends WebTestCase
             $connection->executeStatement('DELETE FROM ordering_orders WHERE id = :id', ['id' => $this->orderId]);
         }
         if (null !== $this->slug) {
+            $connection->executeStatement('DELETE FROM inventory_stock WHERE product_slug = :slug', ['slug' => $this->slug]);
             $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug = :slug', ['slug' => $this->slug]);
         }
         $connection->executeStatement('DELETE FROM customer_profile WHERE id = :id', ['id' => self::ADMIN_ID]);
@@ -130,6 +131,12 @@ final class AdminProxyOrderPaymentTest extends WebTestCase
                 'slug' => $this->slug,
                 'source' => 'baignoire-d-code',
             ],
+        );
+
+        // WP4/R14 — the view is only the cache: the tracked product needs its balance row.
+        $connection->executeStatement(
+            'INSERT INTO inventory_stock (product_slug, on_hand) VALUES (:slug, 5)',
+            ['slug' => $this->slug],
         );
     }
 

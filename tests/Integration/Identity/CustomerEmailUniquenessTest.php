@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Identity;
 
-use App\Identity\Application\Command\RegisterCustomer;
-use App\Identity\Application\CommandHandler\RegisterCustomerHandler;
-use App\Identity\Application\EmailUniqueness;
+use App\Identity\Application\Dto\NewCustomer;
 use App\Identity\Domain\Model\EmailAlreadyUsedException;
+use App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter;
+use App\Identity\Infrastructure\Persistence\EmailUniqueness;
 use App\Tests\Integration\Catalog\Support\MigrationProbeDatabase;
 use App\Tests\Integration\Identity\Support\UnseeingEmailCheckConnection;
 use Doctrine\DBAL\Connection;
@@ -94,16 +94,20 @@ final class CustomerEmailUniquenessTest extends KernelTestCase
         $this->insertCustomer($address);
 
         // The pre-check is told to miss, which is what a concurrent registration sees between its
-        // SELECT and its INSERT; the insert itself runs against the real database.
-        $handler = new RegisterCustomerHandler(UnseeingEmailCheckConnection::wrapping(self::connection()));
+        // SELECT and its INSERT; the insert itself runs against the real database. The adapter is
+        // the collision mapper since the solid Task 3.1 split, so the race is replayed against it.
+        $registrar = new DbalCustomerAccountAdapter(UnseeingEmailCheckConnection::wrapping(self::connection()));
 
         try {
-            $handler(new RegisterCustomer(
+            $registrar->register(new NewCustomer(
                 id: Uuid::v7()->toRfc4122(),
                 name: 'Course',
                 email: strtoupper($address),
-                password: 'MotDePasse!2026',
                 phone: '',
+                accountType: 'particulier',
+                company: null,
+                mf: null,
+                passwordHash: password_hash('MotDePasse!2026', PASSWORD_BCRYPT),
             ));
             self::fail('the raced registration wrote a second account for one address');
         } catch (EmailAlreadyUsedException $exception) {

@@ -21,6 +21,7 @@ run_required() {
   fi
 }
 
+run_required "SOLID" "solid gates" bin/solid-check --fast
 run_required "LSP-002" "static analysis" vendor/bin/phpstan analyse --no-progress
 run_required "LAY-004" "layer boundaries" vendor/bin/deptrac analyse --config-file=deptrac.yaml
 run_required "LSP-001" "unit tests" vendor/bin/phpunit --testsuite=Unit

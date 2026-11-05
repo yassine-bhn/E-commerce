@@ -8,7 +8,7 @@ use App\Catalog\Application\Command\BannerRemoveImage;
 use App\Catalog\Application\Command\BannerReorderImages;
 use App\Catalog\Application\Command\BannerReplaceImages;
 use App\Catalog\Application\Query\GetBannerImages;
-use App\Catalog\Application\Service\BannerRules;
+use App\Catalog\Application\Service\BannerPayload;
 use App\Catalog\Domain\Model\BannerImageNotFoundException;
 use App\Catalog\Domain\Model\BannerRejectedException;
 use App\Catalog\Infrastructure\ReadModel\BannerView;
@@ -38,7 +38,7 @@ final class AdminBannerController
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
-        private BannerRules $rules,
+        private BannerPayload $rules,
     ) {
     }
 

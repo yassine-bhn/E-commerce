@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Catalog\Application;
 
 use App\Catalog\Application\Command\AddCategorySubLevel;
 use App\Catalog\Application\CommandHandler\AddCategorySubLevelHandler;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CategoryNotFoundException;
 use App\Catalog\Domain\Model\CategorySublevelException;
 use PHPUnit\Framework\TestCase;
@@ -31,7 +32,7 @@ final class AddCategorySubLevelHandlerTest extends TestCase
 
     private function add(CategoryConnectionFake $connection, AddCategorySubLevel $command): void
     {
-        (new AddCategorySubLevelHandler($connection, $connection->accessPolicy(), new RecordingCatalogAudit()))($command);
+        (new AddCategorySubLevelHandler($connection, $connection->accessPolicy(), new RecordingCatalogAudit(), $connection->submissions))($command);
     }
 
     /**
@@ -67,6 +68,12 @@ final class AddCategorySubLevelHandlerTest extends TestCase
             [['label' => 'Cuvette'], ['label' => 'Abattant']],
             json_decode((string) $write['params']['subs'], true),
         );
+        self::assertSame(
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],
+            $connection->submissions->lastCall(),
+            'the write is applied as a reviewer save so the tree stays approved',
+        );
+        self::assertStringNotContainsString('approval_status', $write['sql'], 'the handler writes content only');
     }
 
     public function testNestsASubLevelBelowAnExistingNode(): void
@@ -81,6 +88,10 @@ final class AddCategorySubLevelHandlerTest extends TestCase
             [['label' => 'Cuvette', 'children' => [['label' => 'Abattant']]]],
             json_decode((string) $write['params']['subs'], true),
         );
+        self::assertSame(
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],
+            $connection->submissions->lastCall(),
+        );
     }
 
     public function testASubLevelOfAnUnknownCategoryIsNotFoundAndWritesNothing(): void
@@ -89,7 +100,11 @@ final class AddCategorySubLevelHandlerTest extends TestCase
 
         $this->expectException(CategoryNotFoundException::class);
 
-        $this->add($connection, new AddCategorySubLevel('introuvable', 'Alpha'));
+        try {
+            $this->add($connection, new AddCategorySubLevel('introuvable', 'Alpha'));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 
     public function testASubLevelDuplicatingASiblingIsRefusedAndTheParentIsUnchanged(): void
@@ -99,7 +114,11 @@ final class AddCategorySubLevelHandlerTest extends TestCase
         $this->expectException(CategorySublevelException::class);
         $this->expectExceptionMessage('The subcategory "Abattant" already exists at this level.');
 
-        $this->add($connection, new AddCategorySubLevel('wc', 'Abattant'));
+        try {
+            $this->add($connection, new AddCategorySubLevel('wc', 'Abattant'));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 
     public function testASubLevelBelowAnUnknownNodeIsRefusedAndTheParentIsUnchanged(): void
@@ -108,6 +127,10 @@ final class AddCategorySubLevelHandlerTest extends TestCase
 
         $this->expectException(CategorySublevelException::class);
 
-        $this->add($connection, new AddCategorySubLevel('wc', 'Abattant', 'Introuvable'));
+        try {
+            $this->add($connection, new AddCategorySubLevel('wc', 'Abattant', 'Introuvable'));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+        }
     }
 }

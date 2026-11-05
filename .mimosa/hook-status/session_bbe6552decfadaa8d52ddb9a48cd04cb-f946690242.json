@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-11-02T01:00:48.207Z",
+  "sessionId": "session_bbe6552decfadaa8d52ddb9a48cd04cb",
+  "event": "PostToolUse",
+  "toolName": "Write",
+  "file": "src/Catalog/Application/CommandHandler/BannerRemoveImageHandler.php",
+  "outcome": "clear",
+  "coverage": "complete",
+  "findingCount": 0,
+  "durationMs": 11,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

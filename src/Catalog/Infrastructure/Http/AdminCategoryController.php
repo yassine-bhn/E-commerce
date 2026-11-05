@@ -11,9 +11,11 @@ use App\Catalog\Application\Command\HideCategory;
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Command\ShowCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
+use App\Catalog\Application\Port\CatalogSubmissionDeleter;
 use App\Catalog\Application\Query\ListCategories;
-use App\Catalog\Application\Service\CategoryHierarchyValidator;
-use App\Catalog\Application\Service\ProductDeletionGuard;
+use App\Catalog\Application\Port\CategoryHierarchyReader;
+use App\Catalog\Application\Service\CategoryHierarchy;
+use App\Catalog\Application\Port\ProductDeletionReader;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
@@ -30,6 +32,7 @@ use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Application\Pagination\PageRequest;
+use App\Shared\Application\Port\InventoryStockPort;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Doctrine\DBAL\Connection;
@@ -59,13 +62,15 @@ final class AdminCategoryController
     private const ADMIN_ROLES = ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
 
     public function __construct(
-        private CategoryHierarchyValidator $categoryValidator,
-        private ProductDeletionGuard $productGuard,
+        private CategoryHierarchy $categoryHierarchy,
+        private ProductDeletionReader $productDeletionReads,
         private Connection $connection,
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
         private StorefrontProductSearchIndexer $searchIndex,
         private CatalogAuditPort $audit,
+        private InventoryStockPort $stock,
+        private CatalogSubmissionDeleter $submissions,
     ) {
     }
 
@@ -344,10 +349,16 @@ final class AdminCategoryController
         }
 
         $this->connection->transactional(function () use ($slug, $admin): void {
+            // The balance row and the view row are one record: neither may outlive the other.
+            $this->stock->remove($slug);
+
             $this->connection->executeStatement(
                 'DELETE FROM storefront_product_view WHERE slug = :slug',
                 ['slug' => $slug],
             );
+
+            // Slug reuse must not inherit a previous approval (R11).
+            $this->submissions->delete(CatalogSubmissionKind::Product, $slug);
 
             $this->audit->record(
                 'CATALOG_PRODUCT_DELETED',

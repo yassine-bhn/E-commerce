@@ -44,6 +44,7 @@ final class RefundPaymentTest extends WebTestCase
             $connection->executeStatement('DELETE FROM ordering_orders WHERE id = :id', ['id' => $this->orderId]);
         }
         if (null !== $this->slug) {
+            $connection->executeStatement('DELETE FROM inventory_stock WHERE product_slug = :slug', ['slug' => $this->slug]);
             $connection->executeStatement('DELETE FROM storefront_product_view WHERE slug = :slug', ['slug' => $this->slug]);
         }
         $connection->executeStatement('DELETE FROM customer_profile WHERE id IN (:customer, :admin)', [
@@ -127,6 +128,16 @@ final class RefundPaymentTest extends WebTestCase
             'lines' => [['slug' => $this->slug, 'quantity' => 1]],
             'deliveryMethod' => 'home',
             'paymentMethod' => 'Carte bancaire',
+            'confirmedQuote' => [
+                'lines' => [['slug' => $this->slug, 'variant' => null, 'unitPrice' => 680000, 'quantity' => 1]],
+                'subtotal' => 680000,
+                'discount' => 0,
+                'delivery' => 15000,
+                'total' => 695000,
+                'count' => 1,
+                'promoCode' => null,
+                'deliveryMethod' => 'home',
+            ],
         ], ['HTTP_IDEMPOTENCY_KEY' => 'refund-payment-'.Uuid::v4()->toRfc4122()]);
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);
 
@@ -179,6 +190,12 @@ final class RefundPaymentTest extends WebTestCase
                 'slug' => $this->slug,
                 'source' => 'baignoire-d-code',
             ],
+        );
+
+        // WP4/R14 — the view is only the cache: the tracked product needs its balance row.
+        $connection->executeStatement(
+            'INSERT INTO inventory_stock (product_slug, on_hand) VALUES (:slug, 5)',
+            ['slug' => $this->slug],
         );
     }
 

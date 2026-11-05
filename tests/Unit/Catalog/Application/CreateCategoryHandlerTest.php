@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Catalog\Application;
 
 use App\Catalog\Application\Command\CreateCategory;
 use App\Catalog\Application\CommandHandler\CreateCategoryHandler;
-use App\Catalog\Domain\Model\ApprovalStatus;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CategoryAlreadyExistsException;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -18,9 +18,8 @@ final class CreateCategoryHandlerTest extends TestCase
     {
         $connection = new CategoryConnectionFake();
         $connection->scalars = [5];
-        $audit = new RecordingCatalogAudit();
 
-        (new CreateCategoryHandler($connection, $audit))(new CreateCategory(
+        (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory(
             slug: 'test-cat',
             label: '  Test cat  ',
             subcategories: [['label' => 'Alpha', 'children' => [['label' => 'Alpha un']]]],
@@ -37,23 +36,30 @@ final class CreateCategoryHandlerTest extends TestCase
         self::assertTrue($write['params']['quote']);
         self::assertFalse($write['params']['hidden'], 'a new category is visible (R5 default)');
         self::assertSame(6, $write['params']['ord'], 'the sort order follows the last category');
+        self::assertArrayNotHasKey('approval', $write['params'], 'the view insert writes content only');
         self::assertSame(
             [['label' => 'Alpha', 'children' => [['label' => 'Alpha un']]]],
             json_decode((string) $write['params']['subs'], true),
         );
+        self::assertSame(
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'test-cat', 'admin-1']],
+            $connection->submissions->lastCall(),
+            'the store creates the submission and approves it, in the same transaction',
+        );
+        self::assertSame(['create', 'reviewerSave'], $connection->submissions->methods(), 'the handler does not audit or decide on its own');
     }
 
     /**
-     * spec-run-8 R2/R10/R39 — a new category is a pending submission owned by its creator, and
-     * the creation is audited with the same actor.
+     * spec-run-8 R2/R10/R39, spec-run-15 WP3 — a new category is a submission owned by its
+     * creator, approved by the same write so it can reach the storefront at once; the store,
+     * not the handler, writes the audit entries and the outbox events.
      */
-    public function testANewCategoryIsAPendingSubmissionOwnedByItsCreatorAndAudited(): void
+    public function testANewCategoryIsAPendingSubmissionOwnedByItsCreator(): void
     {
         $connection = new CategoryConnectionFake();
         $connection->scalars = [0];
-        $audit = new RecordingCatalogAudit();
 
-        (new CreateCategoryHandler($connection, $audit))(new CreateCategory(
+        (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory(
             slug: 'pompes',
             label: 'Pompes',
             actorId: 'admin-1',
@@ -61,13 +67,13 @@ final class CreateCategoryHandlerTest extends TestCase
 
         $write = $connection->lastWrite();
         self::assertNotNull($write);
-        self::assertSame(ApprovalStatus::PendingApproval->value, $write['params']['approval'], 'no field of the request can make it approved');
-        self::assertSame('admin-1', $write['params']['submitted_by']);
-        self::assertNotNull($write['params']['submitted_at']);
+        self::assertArrayNotHasKey('approval', $write['params'], 'no handler-written approval column');
         self::assertSame(
-            ['action' => 'CATALOG_SUBMISSION_CREATED', 'target' => 'category', 'slug' => 'pompes', 'actor' => 'admin-1', 'reason' => null],
-            $audit->last(),
+            ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'pompes', 'admin-1']],
+            $connection->submissions->lastCall(),
+            'the creator becomes the owner of the submission and its immediate approval',
         );
+        self::assertSame(['create', 'reviewerSave'], $connection->submissions->methods(), 'the handler does not audit or decide on its own');
     }
 
     public function testAnEmptyLabelIsRefusedBeforeAnythingIsWritten(): void
@@ -77,7 +83,11 @@ final class CreateCategoryHandlerTest extends TestCase
 
         $this->expectException(\DomainException::class);
 
-        (new CreateCategoryHandler($connection, new RecordingCatalogAudit()))(new CreateCategory('vide', '   '));
+        try {
+            (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory('vide', '   '));
+        } finally {
+            self::assertSame([], $connection->submissions->calls, 'a refused creation never reaches the store');
+        }
     }
 
     public function testADuplicateSlugIsRefusedAndNothingIsWritten(): void
@@ -93,15 +103,13 @@ final class CreateCategoryHandlerTest extends TestCase
             },
             null,
         );
-        $audit = new RecordingCatalogAudit();
-
         $this->expectException(CategoryAlreadyExistsException::class);
         $this->expectExceptionMessage('A category with the slug "sanitaires" already exists.');
 
         try {
-            (new CreateCategoryHandler($connection, $audit))(new CreateCategory('sanitaires', 'Plomberie bis'));
+            (new CreateCategoryHandler($connection, $connection->submissions, $connection->submissions))(new CreateCategory('sanitaires', 'Plomberie bis'));
         } finally {
-            self::assertSame([], $audit->records, 'a refused creation writes no audit row (R45)');
+            self::assertSame([], $connection->submissions->calls, 'a refused creation writes no submission (R45)');
         }
     }
 }

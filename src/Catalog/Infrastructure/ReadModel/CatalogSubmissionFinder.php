@@ -29,17 +29,15 @@ final class CatalogSubmissionFinder
     {
         [$where, $params, $types] = $this->conditions($query);
 
-        $table = $query->kind->table();
-
         $total = (int) $this->connection->fetchOne(
-            sprintf('SELECT COUNT(*) FROM %s%s', $table, $where),
+            sprintf('SELECT COUNT(*)%s%s', $this->from($query->kind), $where),
             $params,
             $types,
         );
 
         $rows = $this->connection->fetchAllAssociative(
             sprintf(
-                '%s%s ORDER BY slug ASC LIMIT :limit OFFSET :offset',
+                '%s%s ORDER BY s.slug ASC LIMIT :limit OFFSET :offset',
                 $this->projection($query->kind),
                 $where,
             ),
@@ -66,10 +64,10 @@ final class CatalogSubmissionFinder
 
     public function one(CatalogSubmissionKind $kind, string $slug, string $requesterId, bool $isSuperAdmin): ?CatalogSubmissionView
     {
-        $conditions = ['slug = :slug'];
+        $conditions = ['s.slug = :slug'];
         $params = ['slug' => $slug];
         if (!$isSuperAdmin) {
-            $conditions[] = 'submitted_by = :requester';
+            $conditions[] = 's.submitted_by = :requester';
             $params['requester'] = $requesterId;
         }
 
@@ -91,20 +89,21 @@ final class CatalogSubmissionFinder
         $types = [];
 
         if (!$query->isSuperAdmin) {
-            $conditions[] = 'submitted_by = :requester';
+            $conditions[] = 's.submitted_by = :requester';
             $params['requester'] = $query->requesterId;
         }
 
         if (null !== $query->approvalStatus) {
-            $conditions[] = 'approval_status = :status';
+            $conditions[] = 's.approval_status = :status';
             $params['status'] = $query->approvalStatus->value;
         }
 
         $term = null === $query->q ? '' : trim($query->q);
         if ('' !== $term) {
             $conditions[] = match ($query->kind) {
-                CatalogSubmissionKind::Product => "(slug ILIKE :q ESCAPE '\\' OR name ILIKE :q ESCAPE '\\')",
-                CatalogSubmissionKind::Category => "(slug ILIKE :q ESCAPE '\\' OR label ILIKE :q ESCAPE '\\')",
+                CatalogSubmissionKind::Product => "(s.slug ILIKE :q ESCAPE '\\' OR c.name ILIKE :q ESCAPE '\\')",
+                CatalogSubmissionKind::Category => "(s.slug ILIKE :q ESCAPE '\\' OR c.label ILIKE :q ESCAPE '\\')",
+                CatalogSubmissionKind::Brand => "(s.slug ILIKE :q ESCAPE '\\' OR c.name ILIKE :q ESCAPE '\\')",
             };
             $params['q'] = '%'.self::escapeLike($term).'%';
         }
@@ -116,15 +115,35 @@ final class CatalogSubmissionFinder
         ];
     }
 
+    /**
+     * The approval state lives in `catalog_submission`; the content columns are joined from the
+     * view only for `label`, `category_slug` and `published`. Every predicate is qualified with
+     * `s.` so a stale content projection cannot answer a workflow filter.
+     */
+    private function from(CatalogSubmissionKind $kind): string
+    {
+        return match ($kind) {
+            CatalogSubmissionKind::Product => ' FROM catalog_submission s
+                JOIN storefront_product_view c ON c.slug = s.slug',
+            CatalogSubmissionKind::Category => ' FROM catalog_submission s
+                JOIN storefront_category c ON c.slug = s.slug',
+            CatalogSubmissionKind::Brand => ' FROM catalog_submission s
+                JOIN storefront_brand c ON c.name = s.slug',
+        };
+    }
+
     private function projection(CatalogSubmissionKind $kind): string
     {
         return match ($kind) {
-            CatalogSubmissionKind::Product => 'SELECT slug, name AS label, category_slug, approval_status, submitted_by,
-                    submitted_at, reviewed_by, reviewed_at, rejection_reason, published
-                FROM storefront_product_view',
-            CatalogSubmissionKind::Category => 'SELECT slug, label, NULL::text AS category_slug, approval_status, submitted_by,
-                    submitted_at, reviewed_by, reviewed_at, rejection_reason, NULL::boolean AS published
-                FROM storefront_category',
+            CatalogSubmissionKind::Product => 'SELECT s.slug, c.name AS label, c.category_slug, s.approval_status, s.submitted_by,
+                    s.submitted_at, s.reviewed_by, s.reviewed_at, s.rejection_reason, c.published'
+                .$this->from($kind),
+            CatalogSubmissionKind::Category => 'SELECT s.slug, c.label, NULL::text AS category_slug, s.approval_status, s.submitted_by,
+                    s.submitted_at, s.reviewed_by, s.reviewed_at, s.rejection_reason, NULL::boolean AS published'
+                .$this->from($kind),
+            CatalogSubmissionKind::Brand => 'SELECT s.slug, c.name AS label, NULL::text AS category_slug, s.approval_status, s.submitted_by,
+                    s.submitted_at, s.reviewed_by, s.reviewed_at, s.rejection_reason, NULL::boolean AS published'
+                .$this->from($kind),
         };
     }
 

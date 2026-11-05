@@ -58,6 +58,11 @@ final class CsrfOriginGuardTest extends WebTestCase
 
             if ([] !== $this->createdProductSlugs) {
                 $connection->executeStatement(
+                    'DELETE FROM inventory_stock WHERE product_slug IN (:slugs)',
+                    ['slugs' => $this->createdProductSlugs],
+                    ['slugs' => ArrayParameterType::STRING],
+                );
+                $connection->executeStatement(
                     'DELETE FROM storefront_product_view WHERE slug IN (:slugs)',
                     ['slugs' => $this->createdProductSlugs],
                     ['slugs' => ArrayParameterType::STRING],
@@ -601,6 +606,16 @@ final class CsrfOriginGuardTest extends WebTestCase
             'lines' => [['slug' => $slug, 'quantity' => 1]],
             'deliveryMethod' => 'home',
             'paymentMethod' => 'Carte bancaire',
+            'confirmedQuote' => [
+                'lines' => [['slug' => $slug, 'variant' => null, 'unitPrice' => 680000, 'quantity' => 1]],
+                'subtotal' => 680000,
+                'discount' => 0,
+                'delivery' => 15000,
+                'total' => 695000,
+                'count' => 1,
+                'promoCode' => null,
+                'deliveryMethod' => 'home',
+            ],
         ];
     }
 
@@ -671,6 +686,12 @@ final class CsrfOriginGuardTest extends WebTestCase
                 'slug' => $slug,
                 'source' => 'baignoire-d-code',
             ],
+        );
+
+        // WP4/R14 — the view is only the cache: the tracked product needs its balance row.
+        $connection->executeStatement(
+            'INSERT INTO inventory_stock (product_slug, on_hand) VALUES (:slug, 5)',
+            ['slug' => $slug],
         );
 
         $this->createdProductSlugs[] = $slug;

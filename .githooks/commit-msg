@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# .githooks/commit-msg — authoritative TDD check; the message file decides
+# behavior vs refactor mode for the staged diff.
+set -euo pipefail
+bin/tdd-check --staged --message-file "$1"

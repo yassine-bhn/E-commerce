@@ -17,7 +17,7 @@ expected_skills=14
 expected_rule_files=14
 expected_hook_scripts=8
 expected_hooks_yaml=8
-expected_phpstan_rules=5
+expected_phpstan_rules=10
 expected_superpowers_skills=14
 
 agents_dir=".agents/agents"
@@ -78,6 +78,11 @@ phpstan_rules=(
   NoEventBusInCommandHandlerRule.php
   NoFloatInDomainRule.php
   NoInfrastructureInHandlerRule.php
+  NoDoctrineInApplicationRule.php
+  ControllerThinRule.php
+  OneHandlerPerClassRule.php
+  InterfaceMethodLimitRule.php
+  ConstructorDependencyLimitRule.php
 )
 for rule in "${phpstan_rules[@]}"; do
   if [ ! -f "${phpstan_dir}/${rule}" ]; then
