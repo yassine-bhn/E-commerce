@@ -13,8 +13,9 @@ use App\Catalog\Application\Command\ShowCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\CatalogSubmissionDeleter;
 use App\Catalog\Application\Query\ListCategories;
-use App\Catalog\Application\Service\CategoryHierarchyValidator;
-use App\Catalog\Application\Service\ProductDeletionGuard;
+use App\Catalog\Application\Port\CategoryHierarchyReader;
+use App\Catalog\Application\Service\CategoryHierarchy;
+use App\Catalog\Application\Port\ProductDeletionReader;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
@@ -61,8 +62,8 @@ final class AdminCategoryController
     private const ADMIN_ROLES = ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
 
     public function __construct(
-        private CategoryHierarchyValidator $categoryValidator,
-        private ProductDeletionGuard $productGuard,
+        private CategoryHierarchy $categoryHierarchy,
+        private ProductDeletionReader $productDeletionReads,
         private Connection $connection,
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,

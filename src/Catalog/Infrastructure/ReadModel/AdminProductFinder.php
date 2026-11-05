@@ -34,7 +34,7 @@ final class AdminProductFinder
               AND requester_account.status != \'banned\'
         )';
 
-    private const string SELECT = 'SELECT id, slug, name, name AS label, brand, ref, category_slug, subcategory,
+    private const string SELECT = 'SELECT id, slug, name, name AS label, brand, ref, supplier_reference, category_slug, subcategory,
         price_minor, old_price_minor, currency, stock, stock_quantity, material, dims, image_path, additional_images, rating, reviews,
         is_new, is_best, headrest, description, variants,
         approval_status, published, submitted_by, submitted_at, reviewed_by, reviewed_at, rejection_reason

@@ -1,0 +1,2 @@
+/spec  in the backend there is only one reference for the product , you have to add aonther same reference but it's name is  supplierRefference or supplier-refference (choose the naming same of project) this field is optioanl it will get the refference of the supplier 
+in the front you have to consume this feature and the product will never show to the users the reference of the supplier , it's only showen in the admin or super admin interface

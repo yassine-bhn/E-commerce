@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20261101T201333519Z-140804-4392f7e282dd",
+  "runStatus": "inconclusive",
+  "errors": [
+    "bash-discovery:var/cache/remember-me-policy/prod-908c0ebf2bf123b14b17fee471ed0b02/ContainerDj2vfWT/getDoctrine_Orm_Command_EntityManagerProviderService.php: bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files",
+    "baseline:.: baseline_partial: baseline capture had enumeration or snapshot errors"
+  ],
+  "target": ".",
+  "revision": "f57ba958d3b9123f2d4fd1f9a9bf2d5bf735938a",
+  "diffHash": "deda7ec028a0368ff1017a4b8922facaac44c3cda9d54b36638ba6cdb9b7489d",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-11-01T20:13:33.519Z",
+  "timing": {
+    "startedAt": "2026-11-01T20:13:32.587Z",
+    "completedAt": "2026-11-01T20:13:33.519Z",
+    "durationMs": 932
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 0,
+    "bySeverity": {},
+    "byStatus": {}
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "bash_discovery_incomplete": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 2
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-session_b169bf822d795749973f1a6bd8500acb-20261101T201333519Z-140804-4392f7e282dd.json"
+}

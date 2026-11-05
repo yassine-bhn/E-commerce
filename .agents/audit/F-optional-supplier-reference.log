@@ -1,0 +1,3 @@
+GATE: SPEC ok — 2026-11-05T16:39:09+01:00 — orchestrator
+GATE: REVIEW ok — 2026-11-05T16:55:00+01:00 — orchestrator
+STATUS: supplier-reference feature complete; blocked from clean DONE by pre-existing baseline (Unit 39, Functional 9, phpstan 152, deptrac 2) from user WIP refactor — out of scope.

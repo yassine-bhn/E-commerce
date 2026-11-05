@@ -7,12 +7,9 @@ namespace App\Catalog\Application\CommandHandler;
 use App\Catalog\Application\Command\CreateCategory;
 use App\Catalog\Application\Port\CatalogSubmissionCreator;
 use App\Catalog\Application\Port\CatalogSubmissionReviewer;
+use App\Catalog\Application\Port\CategoryCreator;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
-use App\Catalog\Domain\Model\CategoryAlreadyExistsException;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\DBAL\ParameterType;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -26,11 +23,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(bus: 'command.bus')]
 final class CreateCategoryHandler
 {
-    private const SQL = 'INSERT INTO storefront_category (slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug)
-         VALUES (:slug, :label, :subs, :quote, :hidden, :ord, NULL)';
-
     public function __construct(
-        private readonly Connection $connection,
+        private readonly CategoryCreator $categories,
         private readonly CatalogSubmissionCreator $submissions,
         private readonly CatalogSubmissionReviewer $reviews,
     ) {
@@ -45,37 +39,18 @@ final class CreateCategoryHandler
             quoteEligible: $command->quoteEligible,
         );
 
-        $this->connection->transactional(function () use ($category, $command): void {
-            $sortOrder = (int) $this->connection->fetchOne('SELECT COALESCE(MAX(sort_order), 0) FROM storefront_category') + 1;
+        $this->categories->create($category);
 
-            try {
-                $this->connection->executeStatement(
-                    self::SQL,
-                    [
-                        'slug' => $category->slug,
-                        'label' => $category->label,
-                        'subs' => json_encode($category->subcategories(), JSON_THROW_ON_ERROR),
-                        'quote' => $category->quoteEligible,
-                        'hidden' => $category->isHidden(),
-                        'ord' => $sortOrder,
-                    ],
-                    ['quote' => ParameterType::BOOLEAN, 'hidden' => ParameterType::BOOLEAN],
-                );
-            } catch (UniqueConstraintViolationException) {
-                throw CategoryAlreadyExistsException::forSlug($category->slug);
-            }
-
-            $actorId = $command->actorId ?? 'system';
-            $this->submissions->create(
-                CatalogSubmissionKind::Category,
-                $category->slug,
-                $actorId,
-            );
-            $this->reviews->reviewerSave(
-                CatalogSubmissionKind::Category,
-                $category->slug,
-                $actorId,
-            );
-        });
+        $actorId = $command->actorId ?? 'system';
+        $this->submissions->create(
+            CatalogSubmissionKind::Category,
+            $category->slug,
+            $actorId,
+        );
+        $this->reviews->reviewerSave(
+            CatalogSubmissionKind::Category,
+            $category->slug,
+            $actorId,
+        );
     }
 }

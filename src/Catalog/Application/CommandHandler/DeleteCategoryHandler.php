@@ -7,9 +7,11 @@ namespace App\Catalog\Application\CommandHandler;
 use App\Catalog\Application\Command\DeleteCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\CatalogSubmissionDeleter;
+use App\Catalog\Application\Port\CategoryDeleter;
+use App\Catalog\Application\Port\CategoryDeletionReader;
+use App\Catalog\Application\Port\CategoryReader;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
-use App\Catalog\Domain\Model\Category;
-use Doctrine\DBAL\Connection;
+use App\Catalog\Domain\Model\CategoryNotFoundException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -25,47 +27,39 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(bus: 'command.bus')]
 final class DeleteCategoryHandler
 {
-    private const LOAD = 'SELECT slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug
-         FROM storefront_category WHERE slug = :slug';
-
-    private const COUNTS = 'SELECT (SELECT COUNT(*) FROM storefront_category WHERE parent_slug = :slug) AS child_rows,
-            (SELECT COUNT(*) FROM storefront_product_view WHERE category_slug = :slug) AS products';
-
-    private const STORE = 'DELETE FROM storefront_category WHERE slug = :slug';
-
     public function __construct(
-        private readonly Connection $connection,
-        private readonly CatalogAuditPort $audit,
+        private readonly CategoryReader $categories,
+        private readonly CategoryDeletionReader $deletionReads,
+        private readonly CategoryDeleter $deletions,
         private readonly CatalogSubmissionDeleter $submissions,
+        private readonly CatalogAuditPort $audit,
     ) {
     }
 
     public function __invoke(DeleteCategory $command): void
     {
-        $this->connection->transactional(function () use ($command): void {
-            $category = Category::fromStoredRow(
-                $this->connection->fetchAssociative(self::LOAD, ['slug' => $command->slug]),
-                $command->slug,
-            );
+        $category = $this->categories->find($command->slug);
+        if (null === $category) {
+            throw CategoryNotFoundException::forSlug($command->slug);
+        }
 
-            $counts = $this->connection->fetchAssociative(self::COUNTS, ['slug' => $category->slug]);
+        $counts = $this->deletionReads->counts($category->slug);
 
-            $category->ensureDeletable(
-                (int) ($counts['child_rows'] ?? 0),
-                (int) ($counts['products'] ?? 0),
-            );
+        $category->ensureDeletable(
+            $counts['children'],
+            $counts['products'],
+        );
 
-            $this->connection->executeStatement(self::STORE, ['slug' => $category->slug]);
+        $this->deletions->delete($category->slug);
 
-            // Slug reuse must not inherit a previous approval (R11).
-            $this->submissions->delete(CatalogSubmissionKind::Category, $category->slug);
+        // Slug reuse must not inherit a previous approval (R11).
+        $this->submissions->delete(CatalogSubmissionKind::Category, $category->slug);
 
-            $this->audit->record(
-                'CATALOG_CATEGORY_DELETED',
-                CatalogSubmissionKind::Category->auditTarget(),
-                $category->slug,
-                $command->actorId ?? 'system',
-            );
-        });
+        $this->audit->record(
+            'CATALOG_CATEGORY_DELETED',
+            CatalogSubmissionKind::Category->auditTarget(),
+            $category->slug,
+            $command->actorId ?? 'system',
+        );
     }
 }

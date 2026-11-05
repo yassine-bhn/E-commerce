@@ -1,0 +1,405 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261101T201333519Z-140804-4392f7e282dd",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "bash-discovery",
+      "target": "var/cache/remember-me-policy/prod-908c0ebf2bf123b14b17fee471ed0b02/ContainerDj2vfWT/getDoctrine_Orm_Command_EntityManagerProviderService.php",
+      "reason": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files"
+    },
+    {
+      "stage": "baseline",
+      "target": ".",
+      "reason": "baseline_partial: baseline capture had enumeration or snapshot errors"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": false,
+      "captured_files": 13,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 10,
+      "compensated_target_count": 13
+    },
+    "change_tracking": {
+      "touched_observed": 13,
+      "touched_retained": 13,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 0,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 13,
+      "selected_files": 13,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 13,
+      "scanned_files": 13,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "bash_discovery_incomplete": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 2
+    },
+    "reasons": [
+      {
+        "code": "bash_discovery_incomplete",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-908c0ebf2bf123b14b17fee471ed0b02/ContainerDj2vfWT/getDoctrine_Orm_Command_EntityManagerProviderService.php",
+        "detail": "project enumeration exceeded 5000 reviewable files",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-908c0ebf2bf123b14b17fee471ed0b02/ContainerDj2vfWT/getDoctrine_Orm_Command_EntityManagerProviderService.php",
+        "detail": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline_partial: baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-11-01T20:13:33.519Z",
+  "session_id": "session_b169bf822d795749973f1a6bd8500acb",
+  "target": ".",
+  "revision": "f57ba958d3b9123f2d4fd1f9a9bf2d5bf735938a",
+  "rules_version": "unavailable",
+  "diff_hash": "deda7ec028a0368ff1017a4b8922facaac44c3cda9d54b36638ba6cdb9b7489d",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 13,
+    "changed_files": [
+      {
+        "file": "src/Catalog/Infrastructure/Http/AdminBrandController.php",
+        "ranges": [
+          {
+            "start": 9,
+            "end": 10
+          },
+          {
+            "start": 14,
+            "end": 14
+          }
+        ],
+        "before_hash": "5b41c3a68404f1eb0a94f7c9cbcf6cbcf62a2c3ab962706329b4de29a7e85835",
+        "after_hash": "edd64569c73fe02b513ea1c229734f8770253b5dc42b7f91733f3a4bd66e340c"
+      },
+      {
+        "file": "src/Catalog/Infrastructure/Persistence/DbalCatalogSubmissionStore.php",
+        "ranges": [
+          {
+            "start": 334,
+            "end": 334
+          },
+          {
+            "start": 340,
+            "end": 345
+          }
+        ],
+        "before_hash": "22506bde4b0e14f58715c5dcc7b11da31edf16d85b68dcbb75fff1eaa595b8b6",
+        "after_hash": "d74bc22e4a739e4af9058177f811e25b77e71738d7592e6307ffd75390b95415"
+      },
+      {
+        "file": "tests/Functional/AdminBrandApprovalWorkflowTest.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 419
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "5038d16af294993e2955f4623c95ce6a942c10cce81c3c17ca3145bf2f377224"
+      },
+      {
+        "file": "tests/Functional/AdminCatalogApprovalWorkflowTest.php",
+        "ranges": [
+          {
+            "start": 157,
+            "end": 163
+          },
+          {
+            "start": 165,
+            "end": 165
+          },
+          {
+            "start": 182,
+            "end": 182
+          },
+          {
+            "start": 185,
+            "end": 185
+          },
+          {
+            "start": 351,
+            "end": 351
+          },
+          {
+            "start": 356,
+            "end": 356
+          },
+          {
+            "start": 550,
+            "end": 552
+          },
+          {
+            "start": 563,
+            "end": 563
+          },
+          {
+            "start": 568,
+            "end": 569
+          }
+        ],
+        "before_hash": "922898529cb4d6a1efeda7f0cb69fc1dd1364332cef9e15908e3ce3d9bdd8c38",
+        "after_hash": "2e1e3134196801515f497e5b2c49137baecc1ec5a42417168fcfa939be23576d"
+      },
+      {
+        "file": "tests/Functional/AdminCatalogTest.php",
+        "ranges": [
+          {
+            "start": 47,
+            "end": 48
+          },
+          {
+            "start": 420,
+            "end": 421
+          },
+          {
+            "start": 425,
+            "end": 425
+          },
+          {
+            "start": 428,
+            "end": 428
+          }
+        ],
+        "before_hash": "c88951e20377af55389fa6250813e871dea3966713962b9a8d3b09e09cb7b780",
+        "after_hash": "f1aed80929ff018e446b0985fff6816795c341b1269ad0285f1fbaf5361683fe"
+      },
+      {
+        "file": "tests/Functional/AdminCategoryManagementTest.php",
+        "ranges": [
+          {
+            "start": 95,
+            "end": 96
+          },
+          {
+            "start": 98,
+            "end": 98
+          },
+          {
+            "start": 248,
+            "end": 248
+          }
+        ],
+        "before_hash": "8481d7600480fd7a8e949838114081c7102a01de6d7a7e94b88053f73e1b4686",
+        "after_hash": "074cc76ad55605f9a8e89075a91c304e03e4822b8cdb215e96e2592c767a6ad7"
+      },
+      {
+        "file": "tests/Functional/AdminProductCategoryMoveTest.php",
+        "ranges": [
+          {
+            "start": 7,
+            "end": 8
+          },
+          {
+            "start": 194,
+            "end": 194
+          },
+          {
+            "start": 305,
+            "end": 321
+          }
+        ],
+        "before_hash": "333bc0d8990dcc9059d5abb844b70ae240685be3957bf7fd98b6a7be64d0b311",
+        "after_hash": "8b0063d3b4a50879dbb2d55bdcbebd2a2aebbbbed596343693cb48cdb16033cc"
+      },
+      {
+        "file": "tests/Integration/Catalog/BackfillCatalogApprovalCommandTest.php",
+        "ranges": [
+          {
+            "start": 58,
+            "end": 60
+          }
+        ],
+        "before_hash": "3557f4cb674c757b63a4a17d3bed2e20f5f3516e9cba621228a3a41961b8bc8d",
+        "after_hash": "d478aa12823933a42bdd0e2d15a4d791a850dbd4171541024aa65f5d78d01197"
+      },
+      {
+        "file": "tests/Integration/Catalog/CategoryManagementTest.php",
+        "ranges": [
+          {
+            "start": 130,
+            "end": 130
+          }
+        ],
+        "before_hash": "aca856c37050fefbe8a0f8688849210c21cb2f7d47ef7a10d54ffcb2dacc68fb",
+        "after_hash": "c6f2e2683972df8f8e6a0ba57783ede13e57ea843a52eabe9ef8d6144ab61c35"
+      },
+      {
+        "file": "tests/Integration/Catalog/Support/MigrationProbeDatabase.php",
+        "ranges": [
+          {
+            "start": 47,
+            "end": 49
+          }
+        ],
+        "before_hash": "77ac3d3fa6ec91e2a39bb823aca184ed81f369447646ac6b76b23eca05130f92",
+        "after_hash": "d047882d87d671d98be4aa9180bc3f7fe00eb2a7173ef07b93764c259a0833ea"
+      },
+      {
+        "file": "tests/Unit/Catalog/Application/AddCategorySubLevelHandlerTest.php",
+        "ranges": [
+          {
+            "start": 72,
+            "end": 72
+          },
+          {
+            "start": 74,
+            "end": 74
+          },
+          {
+            "start": 92,
+            "end": 92
+          }
+        ],
+        "before_hash": "9a9a9bf471d43e821a0ab7847a09a4b2450f5d8d738c4789a9a29766a7a28130",
+        "after_hash": "1871a5c2592e39d83ae7588200c96bcc33a3b0026b4fbc2943ad842eef9e144d"
+      },
+      {
+        "file": "tests/Unit/Catalog/Application/CreateCategoryHandlerTest.php",
+        "ranges": [
+          {
+            "start": 45,
+            "end": 45
+          },
+          {
+            "start": 47,
+            "end": 47
+          },
+          {
+            "start": 49,
+            "end": 49
+          },
+          {
+            "start": 53,
+            "end": 55
+          },
+          {
+            "start": 72,
+            "end": 72
+          },
+          {
+            "start": 74,
+            "end": 74
+          },
+          {
+            "start": 76,
+            "end": 76
+          }
+        ],
+        "before_hash": "d5be9300c13e616ffee61d3052343e8e223a8bc56f5013daa37517fbddb49c33",
+        "after_hash": "2fc8a38bf3c710be6a3dd640e66cf5aa9cc66b2a850f845d2b43a62ab820512f"
+      },
+      {
+        "file": "tests/Unit/Catalog/Application/ReplaceCategoryTreeHandlerTest.php",
+        "ranges": [
+          {
+            "start": 73,
+            "end": 73
+          },
+          {
+            "start": 75,
+            "end": 75
+          }
+        ],
+        "before_hash": "5b2d3b2da4f73100498b2cb6318c681682cc180f2d397c9ee3b152f8d0860d3e",
+        "after_hash": "0d4957924df1d72d5c8b6056c110c667a41f6d4f72d99b87daa34a10ca5bf4ce"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-11-01T20:13:32.587Z",
+    "completed_at": "2026-11-01T20:13:33.519Z",
+    "duration_ms": 932,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 932,
+    "peakMemoryBytes": 194183168,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 13,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_b169bf822d795749973f1a6bd8500acb-20261101T201333519Z-140804-4392f7e282dd.json",
+    "latest_report": ".mimosa/reports/task-review-session_b169bf822d795749973f1a6bd8500acb.json",
+    "history_summary": ".mimosa/history/run-20261101T201333519Z-140804-4392f7e282dd.json"
+  }
+}

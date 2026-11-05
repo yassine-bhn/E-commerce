@@ -7,11 +7,11 @@ namespace App\Catalog\Application\CommandHandler;
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\CatalogSubmissionReviewer;
+use App\Catalog\Application\Port\CategoryReader;
+use App\Catalog\Application\Port\CategoryTreeWriter;
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
-use App\Catalog\Domain\Model\Category;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ParameterType;
+use App\Catalog\Domain\Model\CategoryNotFoundException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -28,20 +28,9 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(bus: 'command.bus')]
 final class ReplaceCategoryTreeHandler
 {
-    private const LOAD = 'SELECT slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug
-         FROM storefront_category WHERE slug = :slug';
-
-    private const USED_SUB_LEVELS = "SELECT DISTINCT subcategory
-         FROM storefront_product_view
-         WHERE category_slug = :slug
-           AND subcategory IS NOT NULL
-           AND subcategory <> ''
-         ORDER BY subcategory ASC";
-
-    private const STORE = 'UPDATE storefront_category SET label = :label, quote_eligible = :quote, subcategories = :subs WHERE slug = :slug';
-
     public function __construct(
-        private readonly Connection $connection,
+        private readonly CategoryReader $categories,
+        private readonly CategoryTreeWriter $trees,
         private readonly SubmissionAccessPolicy $access,
         private readonly CatalogAuditPort $audit,
         private readonly CatalogSubmissionReviewer $submissions,
@@ -50,62 +39,34 @@ final class ReplaceCategoryTreeHandler
 
     public function __invoke(ReplaceCategoryTree $command): void
     {
-        $this->connection->transactional(function () use ($command): void {
-            $this->access->authorize(
-                CatalogSubmissionKind::Category,
-                $command->slug,
-                $command->actorId,
-                $command->actorIsSuperAdmin,
-            );
+        $this->access->authorize(
+            CatalogSubmissionKind::Category,
+            $command->slug,
+            $command->actorId,
+            $command->actorIsSuperAdmin,
+        );
 
-            $category = Category::fromStoredRow(
-                $this->connection->fetchAssociative(self::LOAD, ['slug' => $command->slug]),
-                $command->slug,
-            )->withContent($command->label, $command->subcategories, $command->quoteEligible);
-
-            $category->coversSubLevels($this->usedSubLevels($category->slug));
-
-            $this->connection->executeStatement(
-                self::STORE,
-                [
-                    'label' => $category->label,
-                    'quote' => $category->quoteEligible,
-                    'subs' => $category->subcategoriesJson(),
-                    'slug' => $category->slug,
-                ],
-                ['quote' => ParameterType::BOOLEAN],
-            );
-
-            $this->audit->record(
-                'CATALOG_CATEGORY_UPDATED',
-                CatalogSubmissionKind::Category->auditTarget(),
-                $category->slug,
-                $command->actorId ?? 'system',
-            );
-
-            $this->submissions->reviewerSave(
-                CatalogSubmissionKind::Category,
-                $category->slug,
-                $command->actorId ?? 'system',
-            );
-        });
-    }
-
-    /**
-     * The sub-level labels the products of this category currently point at.
-     *
-     * @return list<string>
-     */
-    private function usedSubLevels(string $slug): array
-    {
-        $labels = [];
-        foreach ($this->connection->fetchAllAssociative(self::USED_SUB_LEVELS, ['slug' => $slug]) as $row) {
-            $label = trim((string) ($row['subcategory'] ?? ''));
-            if ('' !== $label) {
-                $labels[] = $label;
-            }
+        $category = $this->categories->find($command->slug);
+        if (null === $category) {
+            throw CategoryNotFoundException::forSlug($command->slug);
         }
+        $category = $category->withContent($command->label, $command->subcategories, $command->quoteEligible);
 
-        return array_values(array_unique($labels));
+        $category->coversSubLevels($this->categories->usedSubLevels($category->slug));
+
+        $this->trees->replaceContent($category);
+
+        $this->audit->record(
+            'CATALOG_CATEGORY_UPDATED',
+            CatalogSubmissionKind::Category->auditTarget(),
+            $category->slug,
+            $command->actorId ?? 'system',
+        );
+
+        $this->submissions->reviewerSave(
+            CatalogSubmissionKind::Category,
+            $category->slug,
+            $command->actorId ?? 'system',
+        );
     }
 }

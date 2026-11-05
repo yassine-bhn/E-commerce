@@ -24,9 +24,14 @@ use Meilisearch\Client;
  */
 final class StorefrontProductRepository implements ProductExistencePort
 {
-    private const string SELECT = 'SELECT id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor,
-        currency, stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants
-        FROM storefront_product_view';
+    private const string COLUMNS = 'id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor,
+        currency, stock, stock_quantity, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants';
+
+    /** Storefront projection: never selects the admin-only supplier reference. */
+    private const string SELECT = 'SELECT '.self::COLUMNS.' FROM storefront_product_view';
+
+    /** Admin projection: the storefront columns plus the supplier's own reference. */
+    private const string ADMIN_SELECT = 'SELECT '.self::COLUMNS.', supplier_reference FROM storefront_product_view';
 
     private const string SEARCH_PREDICATE = " (name ILIKE :q ESCAPE '\\' OR brand ILIKE :q ESCAPE '\\'
             OR ref ILIKE :q ESCAPE '\\' OR subcategory ILIKE :q ESCAPE '\\' OR category_slug ILIKE :q ESCAPE '\\')";
@@ -88,7 +93,7 @@ final class StorefrontProductRepository implements ProductExistencePort
      */
     public function adminBySlug(string $slug): ?StorefrontProductView
     {
-        $row = $this->connection->fetchAssociative(self::SELECT.' WHERE slug = :slug', ['slug' => $slug]);
+        $row = $this->connection->fetchAssociative(self::ADMIN_SELECT.' WHERE slug = :slug', ['slug' => $slug]);
         if (false === $row) {
             return null;
         }

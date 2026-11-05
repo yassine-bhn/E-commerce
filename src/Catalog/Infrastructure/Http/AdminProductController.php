@@ -87,13 +87,13 @@ final class AdminProductController
             $this->connection->transactional(function () use ($product, $admin): void {
                 $this->connection->executeStatement(
                     'INSERT INTO storefront_product_view (
-                        id, slug, name, brand, ref, category_slug, subcategory, price_minor, old_price_minor, currency,
-                        stock, material, dims, image_path, rating, reviews, is_new, is_best, headrest, description, variants,
-                        published
+                        id, slug, name, brand, ref, supplier_reference, category_slug, subcategory, price_minor,
+                        old_price_minor, currency, stock, material, dims, image_path, rating, reviews, is_new, is_best,
+                        headrest, description, variants, published
                     ) VALUES (
-                        :id, :slug, :name, :brand, :ref, :category, :sub, :price, :old_price, \'TND\',
-                        :stock, :material, :dims, :image, 0, 0, :is_new, :is_best, :headrest, :description, :variants,
-                        false
+                        :id, :slug, :name, :brand, :ref, :supplier_reference, :category, :sub, :price,
+                        :old_price, \'TND\', :stock, :material, :dims, :image, 0, 0, :is_new, :is_best,
+                        :headrest, :description, :variants, false
                     )',
                     ['id' => Uuid::v7()->toRfc4122()] + $this->parameters($product),
                     $this->types(),
@@ -160,8 +160,9 @@ final class AdminProductController
 
                 $this->connection->executeStatement(
                     'UPDATE storefront_product_view SET
-                        name = :name, brand = :brand, ref = :ref, category_slug = :category, subcategory = :sub,
-                        price_minor = :price, old_price_minor = :old_price, stock = :stock, material = :material,
+                        name = :name, brand = :brand, ref = :ref, supplier_reference = :supplier_reference,
+                        category_slug = :category, subcategory = :sub, price_minor = :price,
+                        old_price_minor = :old_price, stock = :stock, material = :material,
                         dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
                         description = :description, variants = :variants
                       WHERE slug = :slug',
@@ -300,7 +301,7 @@ final class AdminProductController
      *
      * @param array<string, mixed> $body
      *
-     * @return array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>}|string
+     * @return array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>}|string
      */
     private function validate(array $body, ?string $fixedSlug): array|string
     {
@@ -325,6 +326,19 @@ final class AdminProductController
         $ref = $this->text($body['ref'] ?? null);
         if ('' === $ref || mb_strlen($ref) > 64) {
             return 'The reference is required (64 characters max).';
+        }
+
+        // Optional supplier reference: the same typed contract as `ref`, but blank means "unset".
+        $rawSupplierReference = $body['supplierReference'] ?? null;
+        if (null !== $rawSupplierReference && !is_string($rawSupplierReference)) {
+            return 'The supplier reference must be a string or null (64 characters max).';
+        }
+        $supplierReference = is_string($rawSupplierReference) ? trim($rawSupplierReference) : null;
+        if ('' === $supplierReference) {
+            $supplierReference = null;
+        }
+        if (null !== $supplierReference && mb_strlen($supplierReference) > 64) {
+            return 'The supplier reference must be a string or null (64 characters max).';
         }
 
         $category = $this->text($body['category'] ?? null);
@@ -395,6 +409,7 @@ final class AdminProductController
             'name' => $name,
             'brand' => $brand,
             'ref' => $ref,
+            'supplierReference' => $supplierReference,
             'category' => $category,
             'sub' => $sub,
             'price' => $price,
@@ -487,7 +502,7 @@ final class AdminProductController
     }
 
     /**
-     * @param array{slug: string, name: string, brand: string, ref: string, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>} $product
+     * @param array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>} $product
      *
      * @return array<string, mixed>
      */
@@ -498,6 +513,7 @@ final class AdminProductController
             'name' => $product['name'],
             'brand' => $product['brand'],
             'ref' => $product['ref'],
+            'supplier_reference' => $product['supplierReference'],
             'category' => $product['category'],
             'sub' => $product['sub'],
             'price' => $product['price'],

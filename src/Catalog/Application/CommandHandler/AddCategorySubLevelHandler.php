@@ -7,10 +7,11 @@ namespace App\Catalog\Application\CommandHandler;
 use App\Catalog\Application\Command\AddCategorySubLevel;
 use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\CatalogSubmissionReviewer;
+use App\Catalog\Application\Port\CategoryReader;
+use App\Catalog\Application\Port\CategoryTreeWriter;
 use App\Catalog\Application\Service\SubmissionAccessPolicy;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
-use App\Catalog\Domain\Model\Category;
-use Doctrine\DBAL\Connection;
+use App\Catalog\Domain\Model\CategoryNotFoundException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -23,13 +24,9 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(bus: 'command.bus')]
 final class AddCategorySubLevelHandler
 {
-    private const LOAD = 'SELECT slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug
-         FROM storefront_category WHERE slug = :slug';
-
-    private const STORE = 'UPDATE storefront_category SET subcategories = :subs WHERE slug = :slug';
-
     public function __construct(
-        private readonly Connection $connection,
+        private readonly CategoryReader $categories,
+        private readonly CategoryTreeWriter $trees,
         private readonly SubmissionAccessPolicy $access,
         private readonly CatalogAuditPort $audit,
         private readonly CatalogSubmissionReviewer $submissions,
@@ -38,36 +35,32 @@ final class AddCategorySubLevelHandler
 
     public function __invoke(AddCategorySubLevel $command): void
     {
-        $this->connection->transactional(function () use ($command): void {
-            $this->access->authorize(
-                CatalogSubmissionKind::Category,
-                $command->slug,
-                $command->actorId,
-                $command->actorIsSuperAdmin,
-            );
+        $this->access->authorize(
+            CatalogSubmissionKind::Category,
+            $command->slug,
+            $command->actorId,
+            $command->actorIsSuperAdmin,
+        );
 
-            $category = Category::fromStoredRow(
-                $this->connection->fetchAssociative(self::LOAD, ['slug' => $command->slug]),
-                $command->slug,
-            )->withSubLevel($command->label, $command->parentLabel);
+        $category = $this->categories->find($command->slug);
+        if (null === $category) {
+            throw CategoryNotFoundException::forSlug($command->slug);
+        }
+        $category = $category->withSubLevel($command->label, $command->parentLabel);
 
-            $this->connection->executeStatement(
-                self::STORE,
-                ['subs' => $category->subcategoriesJson(), 'slug' => $category->slug],
-            );
+        $this->trees->addSubLevel($category);
 
-            $this->audit->record(
-                'CATALOG_CATEGORY_UPDATED',
-                CatalogSubmissionKind::Category->auditTarget(),
-                $category->slug,
-                $command->actorId ?? 'system',
-            );
+        $this->audit->record(
+            'CATALOG_CATEGORY_UPDATED',
+            CatalogSubmissionKind::Category->auditTarget(),
+            $category->slug,
+            $command->actorId ?? 'system',
+        );
 
-            $this->submissions->reviewerSave(
-                CatalogSubmissionKind::Category,
-                $category->slug,
-                $command->actorId ?? 'system',
-            );
-        });
+        $this->submissions->reviewerSave(
+            CatalogSubmissionKind::Category,
+            $category->slug,
+            $command->actorId ?? 'system',
+        );
     }
 }

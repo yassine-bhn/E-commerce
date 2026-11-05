@@ -114,6 +114,47 @@ services:
     App\Shared\Application\Port\ProductExistencePort:
         alias: App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository
 
+    # solid Task 3.2 (DIP-003): the category, product and banner handlers read and write through
+    # narrow ports; one adapter per table owns the SQL.
+    App\Shared\Application\Port\ProductSearchIndexPort:
+        alias: App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer
+
+    App\Catalog\Application\Port\CategoryReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryCreator:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryTreeWriter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryVisibilityWriter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryDeletionReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryDeleter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\CategoryHierarchyReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalCategoryStore
+
+    App\Catalog\Application\Port\ProductPublicationStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
+    App\Catalog\Application\Port\ProductReviewStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
+    App\Catalog\Application\Port\ProductDeletionReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
+    App\Catalog\Application\Port\BannerSetReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
+
+    App\Catalog\Application\Port\BannerImageStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
+
     App\Identity\Application\Port\CustomerAccountReader:
         alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
 
