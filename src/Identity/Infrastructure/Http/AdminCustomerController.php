@@ -8,6 +8,7 @@ use App\Identity\Application\Command\BanCustomer;
 use App\Identity\Application\Command\ChangeCustomerRole;
 use App\Identity\Application\Command\DeleteCustomerWithAnonymization;
 use App\Identity\Application\Command\UnbanCustomer;
+use App\Identity\Application\Query\GetCustomerAuditTrail;
 use App\Identity\Application\Query\ListAdminCustomers;
 use App\Identity\Domain\Model\AdminAccessRequiredException;
 use App\Identity\Domain\Model\AdminCustomerNotFoundException;
@@ -19,7 +20,6 @@ use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +39,6 @@ final class AdminCustomerController
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
-        private Connection $connection,
     ) {
     }
 
@@ -202,13 +201,8 @@ final class AdminCustomerController
             return new JsonResponse(['error' => 'Invalid customer UUID'], Response::HTTP_BAD_REQUEST);
         }
 
-        $logs = $this->connection->fetchAllAssociative(
-            'SELECT action, actor_admin_id, reason, created_at
-             FROM identity_audit_log
-             WHERE target_user_id = :id
-             ORDER BY created_at ASC',
-            ['id' => $id],
-        );
+        /** @var list<array{action: string, actor_admin_id: string, reason: string|null, created_at: string}> $logs */
+        $logs = $this->queries->dispatch(new GetCustomerAuditTrail($id));
 
         return new JsonResponse(['customerId' => $id, 'auditTrail' => $logs]);
     }
