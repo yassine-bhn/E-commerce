@@ -179,6 +179,88 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
     }
 
     /**
+     * A product carries a brand string; when that brand was never registered, the product write
+     * registers it as an approved brand so the admin Marques screen lists it, the storefront
+     * filters offer it and a rename can follow the product (the CBM regression).
+     */
+    public function testAProductRegistersItsUnknownBrandAsApproved(): void
+    {
+        $admin = $this->createUser('ROLE_SUPER_ADMIN');
+        $client = $this->clientFor($admin);
+
+        $brand = $this->uniqueName('WfBrand');
+        $this->brandNames[] = $brand;
+
+        $slug = $this->createProductWithBrand($client, $brand);
+
+        $client->request('GET', '/api/v1/admin/catalog/brands?q='.urlencode($brand));
+        self::assertResponseIsSuccessful();
+        self::assertSame(
+            [['name' => $brand, 'productCount' => 1]],
+            $this->json($client)['items'],
+            'the brand carried by the product is registered and counted',
+        );
+
+        self::assertSame('APPROVED', $this->submissionRow($brand)['approval_status']);
+
+        $client->request('GET', '/api/v1/storefront/reference');
+        self::assertContains($brand, $this->json($client)['brands'], 'an approved brand is offered by the storefront filters');
+
+        // The rename can now follow the product, exactly like a manually created brand.
+        $renamed = $brand.'X';
+        $this->brandNames[] = $renamed;
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/brands/'.rawurlencode($brand), ['name' => $renamed]);
+        self::assertResponseIsSuccessful();
+
+        $client->request('GET', '/api/v1/admin/catalog/products/'.$slug);
+        self::assertSame($renamed, $this->json($client)['brand'], 'every product follows the rename');
+    }
+
+    /**
+     * Editing a product to a brand that was never registered registers that brand too, so a typo
+     * or a newly typed brand cannot leave the product invisible to the Marques screen.
+     */
+    public function testUpdatingAProductRegistersItsUnknownBrand(): void
+    {
+        $admin = $this->createUser('ROLE_SUPER_ADMIN');
+        $client = $this->clientFor($admin);
+
+        $firstBrand = $this->uniqueName('WfBrand');
+        $secondBrand = $this->uniqueName('WfBrand');
+        $this->brandNames[] = $firstBrand;
+        $this->brandNames[] = $secondBrand;
+
+        $slug = $this->createProductWithBrand($client, $firstBrand);
+
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/products/'.$slug, [
+            'slug' => $slug,
+            'name' => 'Produit marque',
+            'brand' => $secondBrand,
+            'ref' => 'BRD-001',
+            'category' => 'sanitaires',
+            'sub' => '',
+            'price' => 200,
+            'oldPrice' => null,
+            'stock' => 'in',
+            'material' => 'Céramique',
+            'dims' => '50 cm',
+            'image' => '/p-brand-wf.jpg',
+            'isNew' => false,
+            'best' => false,
+            'headrest' => false,
+            'description' => 'Produit créé par le test des marques.',
+            'variants' => [],
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertSame($secondBrand, $this->json($client)['brand']);
+
+        $client->request('GET', '/api/v1/admin/catalog/brands?q='.urlencode($secondBrand));
+        self::assertResponseIsSuccessful();
+        self::assertSame([['name' => $secondBrand, 'productCount' => 1]], $this->json($client)['items']);
+        self::assertSame('APPROVED', $this->submissionRow($secondBrand)['approval_status']);
+    }
+
+    /**
      * spec-run-8 R7/R8/R20/R34 — an approved brand is out of a regular Admin's reach (even its
      * owner's, until it is reopened), and deletion is the Super Admin's call alone.
      */

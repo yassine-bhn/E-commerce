@@ -200,6 +200,11 @@ def main():
             "cbm_description": (p.get("short_description") or p.get("description") or "").strip(),
             "cbm_image": (p.get("thumbnail") or (p.get("image_urls") or [""])[0]),
             "cbm_images": (p.get("image_urls") or []),
+            "cbm_folder": p.get("folder"),
+            "cbm_local_images": [
+                i.get("local_path") for i in (p.get("local_images") or []) if i.get("local_path")
+            ],
+            "cbm_thumbnail_local": p.get("thumbnail_local"),
             "cbm_attributes": (p.get("attributes") or {}),
             "cbm_colors": (p.get("colors") or []),
             "cbm_labels": (p.get("labels") or []),
@@ -257,25 +262,33 @@ def main():
             for r in rows:
                 w.writerow(r)
 
-    match_fields = ["cbm_ref","slug","cbm_name","cbm_brand","csv_ref","csv_name","score","method","category_slug","subcategory","cls_confidence","csv_price_ht","csv_price_ttc","csv_vat","csv_stock_qty","csv_ean","csv_description","cbm_description","cbm_image","cbm_images","cbm_attributes","cbm_colors","cbm_labels","multi_match"]
+    match_fields = ["cbm_ref","slug","cbm_name","cbm_brand","csv_ref","csv_name","score","method","category_slug","subcategory","cls_confidence","csv_price_ht","csv_price_ttc","csv_vat","csv_stock_qty","csv_ean","csv_description","cbm_description","cbm_image","cbm_images","cbm_folder","cbm_local_images","cbm_thumbnail_local","cbm_attributes","cbm_colors","cbm_labels","multi_match"]
     write_csv("matched.csv", matched, match_fields)
     write_csv("review.csv", review, match_fields)
     unmatched_fields = ["cbm_ref","cbm_name","cbm_brand","cbm_categories","reason"]
     write_csv("unmatched.csv", unmatched, unmatched_fields)
 
-    # Build import.json for auto-accepted
+    # Build import.json for auto-accepted. `supplier_reference` is the idempotency key,
+    # so a CBM reference scraped twice keeps its first (listing-order) occurrence.
     import_rows = []
+    seen_refs = set()
     for m in matched:
+        ref = m["cbm_ref"]
+        if ref in seen_refs:
+            continue
+        seen_refs.add(ref)
         import_rows.append(m)
     with open(os.path.join(OUT_DIR, "import.json"), "w", encoding="utf-8") as f:
         json.dump(import_rows, f, ensure_ascii=False, indent=2)
 
     # summary
-    cat_counts = Counter((m["category_slug"], m["subcategory"]) for m in matched)
+    cat_counts = Counter((m["category_slug"], m["subcategory"]) for m in import_rows)
     summary = {
         "total_cbm": len(cbm),
         "total_csv_unique": len(csv_rows),
-        "matched_auto": len(matched),
+        "matched_auto": len(import_rows),
+        "matched_rows_before_dedupe": len(matched),
+        "duplicate_cbm_refs": len(matched) - len(import_rows),
         "review_rows": len(review),
         "unmatched": len(unmatched),
         "multi_match_flags": len(multi_match_flags),

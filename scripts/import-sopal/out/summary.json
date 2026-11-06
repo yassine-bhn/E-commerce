@@ -1,0 +1,24 @@
+{
+  "sopal_products_total": 882,
+  "sopal_products_deduped": 868,
+  "sopal_duplicates_removed": 14,
+  "csv_rows_total": 4194,
+  "csv_unique_refs": 3949,
+  "matched": 239,
+  "review": 4,
+  "unmatched": 625,
+  "matched_csv_refs": 237,
+  "category_counts": {
+    "plomberie/Acessoir salle de bain": 51,
+    "plomberie/Mitigeur cuisine": 23,
+    "plomberie/Mitigeur douches et bains de douches": 81,
+    "plomberie/accessoirs": 1,
+    "plomberie/colones": 3,
+    "plomberie/lavabo et lavabo long": 30,
+    "plomberie/raccord": 36,
+    "plomberie/robinet": 14
+  },
+  "products_with_docs": 182,
+  "doc_count": 182,
+  "image_count": 239
+}
