@@ -12,10 +12,9 @@ use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Command\ShowCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\CatalogSubmissionDeleter;
-use App\Catalog\Application\Query\ListCategories;
-use App\Catalog\Application\Port\CategoryHierarchyReader;
-use App\Catalog\Application\Service\CategoryHierarchy;
 use App\Catalog\Application\Port\ProductDeletionReader;
+use App\Catalog\Application\Query\ListCategories;
+use App\Catalog\Application\Service\CategoryHierarchy;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
@@ -339,7 +338,10 @@ final class AdminCategoryController
         }
 
         try {
-            $this->productGuard->ensureCanDeleteProduct($slug);
+            $orderCount = $this->productDeletionReads->orderCount($slug);
+            if ($orderCount > 0) {
+                throw ProductHasOrdersCannotBeDeletedException::forProduct($slug, $orderCount);
+            }
         } catch (ProductHasOrdersCannotBeDeletedException $e) {
             return new JsonResponse([
                 'error' => 'Product Has Historical Orders',

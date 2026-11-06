@@ -22,6 +22,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/102r.png"
     ],
+    "cbm_folder": "8148-102r-5vsk",
+    "cbm_local_images": [
+      "images/01-102r.png"
+    ],
+    "cbm_thumbnail_local": "images/01-102r.png",
     "cbm_attributes": {
       "Marque": "FERPLAST",
       "Couleur": "Gris chrome"
@@ -57,6 +62,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/152r.png"
     ],
+    "cbm_folder": "8210-152r-vsk",
+    "cbm_local_images": [
+      "images/01-152r.png"
+    ],
+    "cbm_thumbnail_local": "images/01-152r.png",
     "cbm_attributes": {
       "Marque": "FERPLAST",
       "Couleur": "Gris chrome"
@@ -92,6 +102,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/156.png"
     ],
+    "cbm_folder": "8184-156-vsk",
+    "cbm_local_images": [
+      "images/01-156.png"
+    ],
+    "cbm_thumbnail_local": "images/01-156.png",
     "cbm_attributes": {
       "Marque": "FERPLAST",
       "Couleur": "Gris chrome"
@@ -127,6 +142,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili7.png"
     ],
+    "cbm_folder": "7482-ab87100cr",
+    "cbm_local_images": [
+      "images/01-nobili7.png"
+    ],
+    "cbm_thumbnail_local": "images/01-nobili7.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -162,6 +182,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili6.png"
     ],
+    "cbm_folder": "7480-ab87108cr",
+    "cbm_local_images": [
+      "images/01-nobili6.png"
+    ],
+    "cbm_thumbnail_local": "images/01-nobili6.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -197,6 +222,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili4.png"
     ],
+    "cbm_folder": "7476-ab87110cr",
+    "cbm_local_images": [
+      "images/01-nobili4.png"
+    ],
+    "cbm_thumbnail_local": "images/01-nobili4.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -233,6 +263,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/PRODUII1.png"
     ],
+    "cbm_folder": "7469-ab87118-1cr",
+    "cbm_local_images": [
+      "images/01-PRODUII1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PRODUII1.png",
     "cbm_attributes": {
       "Marque": "Nobili"
     },
@@ -266,6 +301,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/PRODUI2.png"
     ],
+    "cbm_folder": "7471-ab87119-1cr",
+    "cbm_local_images": [
+      "images/01-PRODUI2.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PRODUI2.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -301,6 +341,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili3.png"
     ],
+    "cbm_folder": "7474-ab87128-2cr",
+    "cbm_local_images": [
+      "images/01-nobili3.png"
+    ],
+    "cbm_thumbnail_local": "images/01-nobili3.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -336,6 +381,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm1.png"
     ],
+    "cbm_folder": "9006-ab87130-30cr",
+    "cbm_local_images": [
+      "images/01-cbm1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm1.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -371,6 +421,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/nobili5-1.png"
     ],
+    "cbm_folder": "7478-ab87130cr",
+    "cbm_local_images": [
+      "images/01-nobili5-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-nobili5-1.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -407,6 +462,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm5.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm4.png"
     ],
+    "cbm_folder": "8994-ab87133cr",
+    "cbm_local_images": [
+      "images/01-cbm5.png",
+      "images/02-cbm4.png"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm5.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -443,6 +504,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm2.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/538862-1.jpg"
     ],
+    "cbm_folder": "9002-ab87211-1cr",
+    "cbm_local_images": [
+      "images/01-cbm2.png",
+      "images/02-538862-1.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm2.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -479,6 +546,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD138-24BM-1.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9071-ad138-24bm",
+    "cbm_local_images": [
+      "images/01-AD138-24BM-1.jpg",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-AD138-24BM-1.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -515,6 +588,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD139-122BM-1.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9073-ad139-122bm",
+    "cbm_local_images": [
+      "images/01-AD139-122BM-1.jpg",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-AD139-122BM-1.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -551,6 +630,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p5.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9065-ad140-37bm",
+    "cbm_local_images": [
+      "images/01-p5.png",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-p5.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -587,6 +672,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD146-24BM-2.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9078-ad146-24bm",
+    "cbm_local_images": [
+      "images/01-AD146-24BM-2.jpg",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-AD146-24BM-2.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -623,6 +714,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p6.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9067-ad146-26bm",
+    "cbm_local_images": [
+      "images/01-p6.png",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-p6.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -659,6 +756,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/pdt19.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/pdt1919.png"
     ],
+    "cbm_folder": "9645-ad146-26cr",
+    "cbm_local_images": [
+      "images/01-pdt19.png",
+      "images/02-pdt1919.png"
+    ],
+    "cbm_thumbnail_local": "images/01-pdt19.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -695,6 +798,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD146-30BM-1.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9069-ad146-30bm",
+    "cbm_local_images": [
+      "images/01-AD146-30BM-1.jpg",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-AD146-30BM-1.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -731,6 +840,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1475CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1475CRgallery.jpg"
     ],
+    "cbm_folder": "8066-ad147-5cr",
+    "cbm_local_images": [
+      "images/01-AD1475CR.jpg",
+      "images/02-AD1475CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-AD1475CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -766,6 +881,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_120140982.png"
     ],
+    "cbm_folder": "9680-ad150-12cr",
+    "cbm_local_images": [
+      "images/01-image_2022-07-27_120140982.png"
+    ],
+    "cbm_thumbnail_local": "images/01-image_2022-07-27_120140982.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -802,6 +922,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1501CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD1501CRgallery.jpg"
     ],
+    "cbm_folder": "8063-ad150-1cr",
+    "cbm_local_images": [
+      "images/01-AD1501CR.jpg",
+      "images/02-AD1501CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-AD1501CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -838,6 +964,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD15082CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD15082CRgallery.jpg"
     ],
+    "cbm_folder": "8079-ad150-82cr",
+    "cbm_local_images": [
+      "images/01-AD15082CR.jpg",
+      "images/02-AD15082CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-AD15082CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -875,6 +1007,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AD150-9BMSCHEMA.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9075-ad150-9bm",
+    "cbm_local_images": [
+      "images/01-AD150-9BM.jpg",
+      "images/02-AD150-9BMSCHEMA.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-AD150-9BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -914,6 +1053,15 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/AT18513CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/AT18513RA.jpg"
     ],
+    "cbm_folder": "8204-at18513cr",
+    "cbm_local_images": [
+      "images/01-AT18513CR.jpg",
+      "images/02-AT18513gallery.jpg",
+      "images/03-AT18513BR.jpg",
+      "images/04-AT18513CR.jpg",
+      "images/05-AT18513RA.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-AT18513CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Bronze antique, Gris chrome, Toscane rouge"
@@ -953,6 +1101,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AT18513RA.jpg"
     ],
+    "cbm_folder": "8379-at18513ra",
+    "cbm_local_images": [
+      "images/01-AT18513RA.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-AT18513RA.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Toscane rouge"
@@ -989,6 +1142,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AV00600CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/AV00600CRgallery.jpg"
     ],
+    "cbm_folder": "8090-av00600cr",
+    "cbm_local_images": [
+      "images/01-AV00600CR.jpg",
+      "images/02-AV00600CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-AV00600CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1024,6 +1183,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE6.png"
     ],
+    "cbm_folder": "7529-bs101100cr",
+    "cbm_local_images": [
+      "images/01-BLUE6.png"
+    ],
+    "cbm_thumbnail_local": "images/01-BLUE6.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1059,6 +1223,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE5.png"
     ],
+    "cbm_folder": "7527-bs101108cr",
+    "cbm_local_images": [
+      "images/01-BLUE5.png"
+    ],
+    "cbm_thumbnail_local": "images/01-BLUE5.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1094,6 +1263,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE3.png"
     ],
+    "cbm_folder": "7515-bs101110cr",
+    "cbm_local_images": [
+      "images/01-BLUE3.png"
+    ],
+    "cbm_thumbnail_local": "images/01-BLUE3.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1129,6 +1303,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/blue1.png"
     ],
+    "cbm_folder": "7484-bs101118-1cr",
+    "cbm_local_images": [
+      "images/01-blue1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-blue1.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1164,6 +1343,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/blue2.png"
     ],
+    "cbm_folder": "7513-bs101119-1cr",
+    "cbm_local_images": [
+      "images/01-blue2.png"
+    ],
+    "cbm_thumbnail_local": "images/01-blue2.png",
     "cbm_attributes": {
       "Couleur": "Gris chrome",
       "Marque": "Nobili"
@@ -1199,6 +1383,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/BLUE4.png"
     ],
+    "cbm_folder": "7524-bs101130cr",
+    "cbm_local_images": [
+      "images/01-BLUE4.png"
+    ],
+    "cbm_thumbnail_local": "images/01-BLUE4.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1235,6 +1424,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm8.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm-7.png"
     ],
+    "cbm_folder": "9018-bs101133cr",
+    "cbm_local_images": [
+      "images/01-cbm8.png",
+      "images/02-cbm-7.png"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm8.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1274,6 +1469,15 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/diamond8.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/noir8.jpg"
     ],
+    "cbm_folder": "10879-cp230cr",
+    "cbm_local_images": [
+      "images/01-produit8.jpg",
+      "images/02-produit88-1.jpg",
+      "images/03-bronze8.jpg",
+      "images/04-diamond8.jpg",
+      "images/05-noir8.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-produit8.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Ancient bronze, Diamond smoke PVD, Gris chrome, Noir"
@@ -1319,6 +1523,15 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/diamond4.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/08/noir4.jpg"
     ],
+    "cbm_folder": "10803-cp298cr",
+    "cbm_local_images": [
+      "images/01-produit4.jpg",
+      "images/02-produit44-1.jpg",
+      "images/03-bronze4.jpg",
+      "images/04-diamond4.jpg",
+      "images/05-noir4.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-produit4.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Ancient bronze, Diamond smoke PVD, Gris chrome, Noir"
@@ -1362,6 +1575,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS001BIgallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "8380-kds001ne",
+    "cbm_local_images": [
+      "images/01-KDS001BI-1.jpg",
+      "images/02-KDS001BIgallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-KDS001BI-1.jpg",
     "cbm_attributes": {
       "Marque": "NUOVA OSMO",
       "Couleur": "Noir mat"
@@ -1398,6 +1618,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS003CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS003CRgallery.jpg"
     ],
+    "cbm_folder": "8308-kds003cr",
+    "cbm_local_images": [
+      "images/01-KDS003CR.jpg",
+      "images/02-KDS003CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-KDS003CR.jpg",
     "cbm_attributes": {
       "Marque": "NUOVA OSMO",
       "Couleur": "Gris chrome"
@@ -1434,6 +1660,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS007CR-1.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS007CRgallery.jpg"
     ],
+    "cbm_folder": "8313-kds007cr",
+    "cbm_local_images": [
+      "images/01-KDS007CR-1.jpg",
+      "images/02-KDS007CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-KDS007CR-1.jpg",
     "cbm_attributes": {
       "Marque": "NUOVA OSMO",
       "Couleur": "Gris chrome"
@@ -1470,6 +1702,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS100BI.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KDS100BIgallery.jpg"
     ],
+    "cbm_folder": "8302-kds100bi",
+    "cbm_local_images": [
+      "images/01-KDS100BI.jpg",
+      "images/02-KDS100BIgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-KDS100BI.jpg",
     "cbm_attributes": {
       "Marque": "NUOVA OSMO",
       "Couleur": "Blanc lait"
@@ -1506,6 +1744,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KFL010N.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/KFL010Ngallery.jpg"
     ],
+    "cbm_folder": "8316-kfl010n",
+    "cbm_local_images": [
+      "images/01-KFL010N.jpg",
+      "images/02-KFL010Ngallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-KFL010N.jpg",
     "cbm_attributes": {
       "Marque": "NUOVA OSMO",
       "Couleur": "Gris chrome"
@@ -1541,6 +1785,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm6.png"
     ],
+    "cbm_folder": "8973-osdrcl0120950g4",
+    "cbm_local_images": [
+      "images/01-cbm6.png"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm6.png",
     "cbm_attributes": {
       "Marque": "DL RADIATORS",
       "Couleur": "Blanc lait"
@@ -1576,6 +1825,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/Sans-titre-1.png"
     ],
+    "cbm_folder": "8155-p20-5vbtc",
+    "cbm_local_images": [
+      "images/01-Sans-titre-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Sans-titre-1.png",
     "cbm_attributes": {
       "Marque": "FERPLAST",
       "Couleur": "Gris chrome"
@@ -1611,6 +1865,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM01221.png"
     ],
+    "cbm_folder": "8036-pm01221",
+    "cbm_local_images": [
+      "images/01-PM01221.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PM01221.png",
     "cbm_attributes": {
       "Marque": "NDW",
       "Couleur": "Gris chrome"
@@ -1646,6 +1905,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM01237.png"
     ],
+    "cbm_folder": "8038-pm01237",
+    "cbm_local_images": [
+      "images/01-PM01237.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PM01237.png",
     "cbm_attributes": {
       "Marque": "NDW",
       "Couleur": "Gris chrome"
@@ -1681,6 +1945,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM06025.png"
     ],
+    "cbm_folder": "8040-pm06025-ch",
+    "cbm_local_images": [
+      "images/01-PM06025.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PM06025.png",
     "cbm_attributes": {
       "Marque": "NDW",
       "Couleur": "Gris chrome"
@@ -1716,6 +1985,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM07010.png"
     ],
+    "cbm_folder": "8035-pm07013",
+    "cbm_local_images": [
+      "images/01-PM07010.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PM07010.png",
     "cbm_attributes": {
       "Marque": "NDW",
       "Couleur": "Gris chrome"
@@ -1751,6 +2025,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM070014.png"
     ],
+    "cbm_folder": "8028-pm07016",
+    "cbm_local_images": [
+      "images/01-PM070014.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PM070014.png",
     "cbm_attributes": {
       "Marque": "NDW",
       "Couleur": "Gris chrome"
@@ -1786,6 +2065,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/PM070014.png"
     ],
+    "cbm_folder": "8030-pm07017",
+    "cbm_local_images": [
+      "images/01-PM070014.png"
+    ],
+    "cbm_thumbnail_local": "images/01-PM070014.png",
     "cbm_attributes": {
       "Marque": "NDW",
       "Couleur": "Gris chrome"
@@ -1822,6 +2106,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00100CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00100CRgallery.jpg"
     ],
+    "cbm_folder": "7763-rd00100cr",
+    "cbm_local_images": [
+      "images/01-RD00100CR.jpg",
+      "images/02-RD00100CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RD00100CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1858,6 +2148,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00110CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00110CRgallery.jpg"
     ],
+    "cbm_folder": "7739-rd00110cr",
+    "cbm_local_images": [
+      "images/01-RD00110CR.jpg",
+      "images/02-RD00110CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RD00110CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1894,6 +2190,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00130CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00130CRgallery.jpg"
     ],
+    "cbm_folder": "7745-rd00130cr",
+    "cbm_local_images": [
+      "images/01-RD00130CR.jpg",
+      "images/02-RD00130CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RD00130CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1930,6 +2232,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00133CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD00133CRgallery.jpg"
     ],
+    "cbm_folder": "7751-rd00133cr",
+    "cbm_local_images": [
+      "images/01-RD00133CR.jpg",
+      "images/02-RD00133CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RD00133CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -1966,6 +2274,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD001981CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD001981CRgallery.jpg"
     ],
+    "cbm_folder": "7781-rd00198-1cr",
+    "cbm_local_images": [
+      "images/01-RD001981CR.jpg",
+      "images/02-RD001981CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RD001981CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2002,6 +2316,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD003003CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RD003003CRgallery.jpg"
     ],
+    "cbm_folder": "7768-rd00300-3cr",
+    "cbm_local_images": [
+      "images/01-RD003003CR.jpg",
+      "images/02-RD003003CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RD003003CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2038,6 +2358,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01182CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01182CRgallery.jpg"
     ],
+    "cbm_folder": "7720-rdc0118-2cr",
+    "cbm_local_images": [
+      "images/01-RDC01182CR.jpg",
+      "images/02-RDC01182CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RDC01182CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2074,6 +2400,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01282CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDC01282CRgallery.jpg"
     ],
+    "cbm_folder": "7726-rdc0128-2cr",
+    "cbm_local_images": [
+      "images/01-RDC01282CR.jpg",
+      "images/02-RDC01282CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RDC01282CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2110,6 +2442,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDE01191CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/RDE01191CRgallery.jpg"
     ],
+    "cbm_folder": "7730-rde0119-1cr",
+    "cbm_local_images": [
+      "images/01-RDE01191CR.jpg",
+      "images/02-RDE01191CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-RDE01191CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2145,6 +2483,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand7.png"
     ],
+    "cbm_folder": "7545-sa99100cr",
+    "cbm_local_images": [
+      "images/01-sand7.png"
+    ],
+    "cbm_thumbnail_local": "images/01-sand7.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2180,6 +2523,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand6.png"
     ],
+    "cbm_folder": "7543-sa99108cr",
+    "cbm_local_images": [
+      "images/01-sand6.png"
+    ],
+    "cbm_thumbnail_local": "images/01-sand6.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2215,6 +2563,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand4.png"
     ],
+    "cbm_folder": "7537-sa99110cr",
+    "cbm_local_images": [
+      "images/01-sand4.png"
+    ],
+    "cbm_thumbnail_local": "images/01-sand4.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2250,6 +2603,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand2.png"
     ],
+    "cbm_folder": "7533-sa99119-1cr",
+    "cbm_local_images": [
+      "images/01-sand2.png"
+    ],
+    "cbm_thumbnail_local": "images/01-sand2.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2285,6 +2643,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sand5.png"
     ],
+    "cbm_folder": "7539-sa99130cr",
+    "cbm_local_images": [
+      "images/01-sand5.png"
+    ],
+    "cbm_thumbnail_local": "images/01-sand5.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2321,6 +2684,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm9.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm10-2.png"
     ],
+    "cbm_folder": "9019-sa99133cr",
+    "cbm_local_images": [
+      "images/01-cbm9.png",
+      "images/02-cbm10-2.png"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm9.png",
     "cbm_attributes": {
       "Couleur": "Gris chrome",
       "Marque": "Nobili"
@@ -2358,6 +2727,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124108BMgallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "7962-se124108bm",
+    "cbm_local_images": [
+      "images/01-SE124108BM.jpg",
+      "images/02-SE124108BMgallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124108BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -2396,6 +2772,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-douche-a-encastrer-1-voie-chrome.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-douche-a-encastrer-1-voie-noir.png"
     ],
+    "cbm_folder": "7866-se124108cr",
+    "cbm_local_images": [
+      "images/01-SE124108CR.jpg",
+      "images/02-SE124108CRgallery.jpg",
+      "images/03-Mitigeur-douche-a-encastrer-1-voie-chrome.jpg",
+      "images/04-Mitigeur-douche-a-encastrer-1-voie-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124108CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -2435,6 +2819,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124110BMgallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "7954-se124110bm",
+    "cbm_local_images": [
+      "images/01-SE124110BM.jpg",
+      "images/02-SE124110BMgallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124110BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -2473,6 +2864,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-de-douche-duplex-chrome.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-de-douche-duplex-noir.png"
     ],
+    "cbm_folder": "7860-se124110cr",
+    "cbm_local_images": [
+      "images/01-SE124110CR.jpg",
+      "images/02-SE124110CRgallery.jpg",
+      "images/03-mitigeur-bain-de-douche-duplex-chrome.jpg",
+      "images/04-mitigeur-bain-de-douche-duplex-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124110CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -2512,6 +2911,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE1241282BMgallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "7943-se124128-2bm",
+    "cbm_local_images": [
+      "images/01-SE1241282BM.jpg",
+      "images/02-SE1241282BMgallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SE1241282BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -2550,6 +2956,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-lavabo-corps-haut-chrome.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/Mitigeur-lavabo-corps-haut-noir-1.png"
     ],
+    "cbm_folder": "7855-se124128-2cr",
+    "cbm_local_images": [
+      "images/01-SE1241282CR.jpg",
+      "images/02-SE1241282CRgallery.jpg",
+      "images/03-Mitigeur-lavabo-corps-haut-chrome.jpg",
+      "images/04-Mitigeur-lavabo-corps-haut-noir-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-SE1241282CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -2589,6 +3003,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124130BMgallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "7958-se124130bm",
+    "cbm_local_images": [
+      "images/01-SE124130BM.jpg",
+      "images/02-SE124130BMgallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124130BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -2627,6 +3048,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-mural-chrome.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-mural-noir.png"
     ],
+    "cbm_folder": "7863-se124130cr",
+    "cbm_local_images": [
+      "images/01-SE124130CR.jpg",
+      "images/02-SE124130CRgallery.jpg",
+      "images/03-mitigeur-de-douche-mural-chrome.jpg",
+      "images/04-mitigeur-de-douche-mural-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124130CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -2666,6 +3095,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SE124198BMgallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "7951-se124198bm",
+    "cbm_local_images": [
+      "images/01-SE124198BM.jpg",
+      "images/02-SE124198BMgallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124198BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -2704,6 +3140,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-encastrer-chrome.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-encastrer-noir.png"
     ],
+    "cbm_folder": "7857-se124198cr",
+    "cbm_local_images": [
+      "images/01-SE124198CR.jpg",
+      "images/02-SE124198CRgallery.jpg",
+      "images/03-facade-mitigeur-lavabo-encastrer-chrome.jpg",
+      "images/04-facade-mitigeur-lavabo-encastrer-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-SE124198CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -2743,6 +3187,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241182BMgallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "7938-see124118-2bm",
+    "cbm_local_images": [
+      "images/01-SEE1241182BM.jpg",
+      "images/02-SEE1241182BMgallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SEE1241182BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -2781,6 +3232,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidage-clic-clac-chrome.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidage-clic-clac-noir.png"
     ],
+    "cbm_folder": "7834-see124118-2cr",
+    "cbm_local_images": [
+      "images/01-SEE1241182CR.jpg",
+      "images/02-SEE1241182CRgallery.jpg",
+      "images/03-mitigeur-lavabo-avec-vidage-clic-clac-chrome.jpg",
+      "images/04-mitigeur-lavabo-avec-vidage-clic-clac-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-SEE1241182CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -2819,6 +3278,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SEE1241191BM.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "8391-see124119-1bm",
+    "cbm_local_images": [
+      "images/01-SEE1241191BM.jpg",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SEE1241191BM.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -2857,6 +3322,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-avec-vidage-chrome.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-avec-vidage-noir.png"
     ],
+    "cbm_folder": "7837-see124119-1cr",
+    "cbm_local_images": [
+      "images/01-SEE1241191CR.jpg",
+      "images/02-SEE1241191CRgallery.jpg",
+      "images/03-mitigeur-bidet-avec-vidage-chrome.jpg",
+      "images/04-mitigeur-bidet-avec-vidage-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-SEE1241191CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -2895,6 +3368,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98108CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98108CRgallery.jpg"
     ],
+    "cbm_folder": "7898-si98108cr",
+    "cbm_local_images": [
+      "images/01-SI98108CR.jpg",
+      "images/02-SI98108CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SI98108CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2931,6 +3410,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98110CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98110CRgallery.jpg"
     ],
+    "cbm_folder": "7881-si98110cr",
+    "cbm_local_images": [
+      "images/01-SI98110CR.jpg",
+      "images/02-SI98110CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SI98110CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -2967,6 +3452,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98113CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98113CRgallery.jpg"
     ],
+    "cbm_folder": "7887-si98113cr",
+    "cbm_local_images": [
+      "images/01-SI98113CR.jpg",
+      "images/02-SI98113CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SI98113CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3002,6 +3493,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981181CR.jpg"
     ],
+    "cbm_folder": "8392-si98118-1cr",
+    "cbm_local_images": [
+      "images/01-SI981181CR.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SI981181CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3038,6 +3534,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981282CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI981282CRgallery.jpg"
     ],
+    "cbm_folder": "7878-si98128-2cr",
+    "cbm_local_images": [
+      "images/01-SI981282CR.jpg",
+      "images/02-SI981282CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SI981282CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3074,6 +3576,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98130CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98130CRgallery.jpg"
     ],
+    "cbm_folder": "7884-si98130cr",
+    "cbm_local_images": [
+      "images/01-SI98130CR.jpg",
+      "images/02-SI98130CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SI98130CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3110,6 +3618,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98198CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SI98198CRgallery.jpg"
     ],
+    "cbm_folder": "7911-si98198cr",
+    "cbm_local_images": [
+      "images/01-SI98198CR.jpg",
+      "images/02-SI98198CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SI98198CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3145,6 +3659,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/01-6.png"
     ],
+    "cbm_folder": "7554-sy97100cr",
+    "cbm_local_images": [
+      "images/01-01-6.png"
+    ],
+    "cbm_thumbnail_local": "images/01-01-6.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3180,6 +3699,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/02-6.png"
     ],
+    "cbm_folder": "7552-sy97108cr",
+    "cbm_local_images": [
+      "images/01-02-6.png"
+    ],
+    "cbm_thumbnail_local": "images/01-02-6.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3215,6 +3739,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/04-2.png"
     ],
+    "cbm_folder": "7549-sy97110cr",
+    "cbm_local_images": [
+      "images/01-04-2.png"
+    ],
+    "cbm_thumbnail_local": "images/01-04-2.png",
     "cbm_attributes": {
       "Couleur": "Gris chrome",
       "Marque": "Nobili"
@@ -3250,6 +3779,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/515lOShn1L._AC_SY450_.png"
     ],
+    "cbm_folder": "7551-sy97130cr",
+    "cbm_local_images": [
+      "images/01-515lOShn1L._AC_SY450_.png"
+    ],
+    "cbm_thumbnail_local": "images/01-515lOShn1L._AC_SY450_.png",
     "cbm_attributes": {
       "Couleur": "Gris chrome",
       "Marque": "Nobili"
@@ -3286,6 +3820,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm-13.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm14-1.png"
     ],
+    "cbm_folder": "9021-sy97134cr",
+    "cbm_local_images": [
+      "images/01-cbm-13.png",
+      "images/02-cbm14-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm-13.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3322,6 +3862,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm12.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/cbm11.png"
     ],
+    "cbm_folder": "9020-sye97118-1cr",
+    "cbm_local_images": [
+      "images/01-cbm12.png",
+      "images/02-cbm11.png"
+    ],
+    "cbm_thumbnail_local": "images/01-cbm12.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3357,6 +3903,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/sque-1.png"
     ],
+    "cbm_folder": "7547-sye97119-1cr",
+    "cbm_local_images": [
+      "images/01-sque-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-sque-1.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3393,6 +3944,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00010CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00010CRgallery.jpg"
     ],
+    "cbm_folder": "8240-tw00010cr",
+    "cbm_local_images": [
+      "images/01-TW00010CR.jpg",
+      "images/02-TW00010CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-TW00010CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3429,6 +3986,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00030CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW00030CRgallery.jpg"
     ],
+    "cbm_folder": "8243-tw00030cr",
+    "cbm_local_images": [
+      "images/01-TW00030CR.jpg",
+      "images/02-TW00030CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-TW00030CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3465,6 +4028,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW001181CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/TW001181CRgallery.jpg"
     ],
+    "cbm_folder": "8248-tw00118-1cr",
+    "cbm_local_images": [
+      "images/01-TW001181CR.jpg",
+      "images/02-TW001181CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-TW001181CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3505,6 +4074,16 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-london-gris.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-de-douche-noir.png"
     ],
+    "cbm_folder": "7814-vv103108cr",
+    "cbm_local_images": [
+      "images/01-VV103108CR.jpg",
+      "images/02-VV103108CRgallery.jpg",
+      "images/03-mitigeur-de-douche-polar-blanc.png",
+      "images/04-mitigeur-de-douche-chrome.png",
+      "images/05-mitigeur-de-douche-london-gris.png",
+      "images/06-mitigeur-de-douche-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-VV103108CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Blanc lait, Gris chrome, London grey, Noir"
@@ -3548,6 +4127,16 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-murale-london-grey.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-murale-noir.png"
     ],
+    "cbm_folder": "7801-vv103110cr",
+    "cbm_local_images": [
+      "images/01-VV103110CR.jpg",
+      "images/02-VV103110CRgallery.jpg",
+      "images/03-mitigeur-bain-douche-murale-blanc.png",
+      "images/04-mitigeur-bain-douche-murale-chrome.png",
+      "images/05-mitigeur-bain-douche-murale-london-grey.png",
+      "images/06-mitigeur-bain-douche-murale-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-VV103110CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Blanc lait, Gris chrome, London grey, Noir"
@@ -3587,6 +4176,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103113CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/VV103113CRgallery.jpg"
     ],
+    "cbm_folder": "7808-vv103113cr",
+    "cbm_local_images": [
+      "images/01-VV103113CR.jpg",
+      "images/02-VV103113CRgallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-VV103113CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome"
@@ -3627,6 +4222,16 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidaga-london-grey.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-avec-vidage-noir.png"
     ],
+    "cbm_folder": "7795-vv103118-2cr",
+    "cbm_local_images": [
+      "images/01-VV1031182CR.jpg",
+      "images/02-VV1031182CRgallery.jpg",
+      "images/03-mitigeur-lavabo-avec-vidaga-blanc.png",
+      "images/04-mitigeur-lavabo-avec-vidaga-chrome.png",
+      "images/05-mitigeur-lavabo-avec-vidaga-london-grey.png",
+      "images/06-mitigeur-lavabo-avec-vidage-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-VV1031182CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Blanc lait, Gris chrome, London grey, Noir"
@@ -3670,6 +4275,16 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-london-grey.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-noir-1.png"
     ],
+    "cbm_folder": "7826-vv103119-1cr",
+    "cbm_local_images": [
+      "images/01-VV1031191CR.jpg",
+      "images/02-VV1031191CRgallery.jpg",
+      "images/03-mitigeur-bidet-blanc.png",
+      "images/04-mitigeur-bidet-chrome-1.png",
+      "images/05-mitigeur-bidet-london-grey.png",
+      "images/06-mitigeur-bidet-noir-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-VV1031191CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Blanc lait, Gris chrome, London grey, Noir"
@@ -3713,6 +4328,16 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-london-grey-1.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-london-noir.png"
     ],
+    "cbm_folder": "7798-vv103128-2cr",
+    "cbm_local_images": [
+      "images/01-VV1031282CR.jpg",
+      "images/02-VV1031282CRgallery.jpg",
+      "images/03-mitigeur-lavabo-blanc.png",
+      "images/04-mitigeur-lavabo-chrome.png",
+      "images/05-mitigeur-lavabo-london-grey-1.png",
+      "images/06-mitigeur-lavabo-london-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-VV1031282CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Blanc lait, Gris chrome, London grey, Noir"
@@ -3756,6 +4381,16 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-mural-london-grey.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-mural-noir.png"
     ],
+    "cbm_folder": "7804-vv103130cr",
+    "cbm_local_images": [
+      "images/01-VV103130CR.jpg",
+      "images/02-VV103130CRgallery.jpg",
+      "images/03-mitigeur-douche-mural-blanc.png",
+      "images/04-mitigeur-douche-mural-chrome.png",
+      "images/05-mitigeur-douche-mural-london-grey.png",
+      "images/06-mitigeur-douche-mural-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-VV103130CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Blanc lait, Gris chrome, London grey, Noir"
@@ -3799,6 +4434,16 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-london-grey.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-noir.png"
     ],
+    "cbm_folder": "7821-vv103198cr",
+    "cbm_local_images": [
+      "images/01-VV103198CR.jpg",
+      "images/02-VV103198CRgallery.jpg",
+      "images/03-facade-mitigeur-blanc.png",
+      "images/04-facade-mitigeur-chrome.png",
+      "images/05-facade-mitigeur-london-grey.png",
+      "images/06-facade-mitigeur-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-VV103198CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Blanc lait, Gris chrome, London grey, Noir"
@@ -3839,6 +4484,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/70.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/15.png"
     ],
+    "cbm_folder": "10337-we00180-qcr",
+    "cbm_local_images": [
+      "images/01-15-1.png",
+      "images/02-70.png",
+      "images/03-15.png"
+    ],
+    "cbm_thumbnail_local": "images/01-15-1.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Inox, Noir"
@@ -3880,6 +4532,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/WE00198gallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "7970-we00198",
+    "cbm_local_images": [
+      "images/01-WE00198.jpg",
+      "images/02-WE00198gallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-WE00198.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -3916,6 +4575,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p4.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9063-we81100",
+    "cbm_local_images": [
+      "images/01-p4.png",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-p4.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -3953,6 +4618,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/p2.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9060-yo126100-ebm",
+    "cbm_local_images": [
+      "images/01-p3.png",
+      "images/02-p2.png",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-p3.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -3991,6 +4663,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-chrome.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-noir.png"
     ],
+    "cbm_folder": "8010-yo126100-ecr",
+    "cbm_local_images": [
+      "images/01-YO126100ECR.jpg",
+      "images/02-YO126100ECRgallery.jpg",
+      "images/03-mitigeur-douche-chrome.png",
+      "images/04-mitigeur-douche-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO126100ECR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4030,6 +4710,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod5.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9057-yo126108bm",
+    "cbm_local_images": [
+      "images/01-prod6.png",
+      "images/02-prod5.png",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-prod6.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -4068,6 +4755,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-chrome2.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-noir2.png"
     ],
+    "cbm_folder": "8006-yo126108cr",
+    "cbm_local_images": [
+      "images/01-YO126108CR.jpg",
+      "images/02-YO126108CRgallery.jpg",
+      "images/03-mitigeur-douche-chrome2.png",
+      "images/04-mitigeur-douche-noir2.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO126108CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4107,6 +4802,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod4.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9054-yo126110bm",
+    "cbm_local_images": [
+      "images/01-prod3.png",
+      "images/02-prod4.png",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-prod3.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -4145,6 +4847,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-chrome.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bain-douche-noir.png"
     ],
+    "cbm_folder": "8000-yo126110cr",
+    "cbm_local_images": [
+      "images/01-YO126110CR.jpg",
+      "images/02-YO126110CRgallery.jpg",
+      "images/03-mitigeur-bain-douche-chrome.png",
+      "images/04-mitigeur-bain-douche-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO126110CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4185,6 +4895,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-monocommande.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-lavabo-monocommande-noir.png"
     ],
+    "cbm_folder": "7985-yo126118-2cr",
+    "cbm_local_images": [
+      "images/01-YO1261182CR.jpg",
+      "images/02-YO1261182CRgallery.jpg",
+      "images/03-mitigeur-lavabo-monocommande.png",
+      "images/04-mitigeur-lavabo-monocommande-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO1261182CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4224,6 +4942,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/prod2.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "9046-yo126119-1bm",
+    "cbm_local_images": [
+      "images/01-prod1.png",
+      "images/02-prod2.png",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-prod1.png",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir mat"
@@ -4262,6 +4987,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-chrome.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-bidet-noir.png"
     ],
+    "cbm_folder": "7988-yo126119-1cr",
+    "cbm_local_images": [
+      "images/01-YO1261191CR.jpg",
+      "images/02-YO1261191CRgallery.jpg",
+      "images/03-mitigeur-bidet-chrome.png",
+      "images/04-mitigeur-bidet-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO1261191CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4302,6 +5035,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO12613030CR.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO126130noir.png"
     ],
+    "cbm_folder": "8016-yo126130-30cr",
+    "cbm_local_images": [
+      "images/01-YO12613030CR.jpg",
+      "images/02-YO12613030CRgallery.jpg",
+      "images/03-YO12613030CR.jpg",
+      "images/04-YO126130noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO12613030CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4342,6 +5083,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-monocommande-chrome.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/mitigeur-douche-monocommande-noir.png"
     ],
+    "cbm_folder": "8003-yo126130cr",
+    "cbm_local_images": [
+      "images/01-YO126130CR.jpg",
+      "images/02-YO126130CRgallery.jpg",
+      "images/03-mitigeur-douche-monocommande-chrome.png",
+      "images/04-mitigeur-douche-monocommande-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO126130CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4382,6 +5131,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-chroma.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-noir.png"
     ],
+    "cbm_folder": "7994-yo126198-1cr",
+    "cbm_local_images": [
+      "images/01-YO1261981CR.jpg",
+      "images/02-YO1261981CRgallery.jpg",
+      "images/03-facade-mitigeur-lavabo-chroma.png",
+      "images/04-facade-mitigeur-lavabo-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO1261981CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4422,6 +5179,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-chrome.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/facade-mitigeur-lavabo-noir-1.png"
     ],
+    "cbm_folder": "7991-yo126198cr",
+    "cbm_local_images": [
+      "images/01-YO126198CR.jpg",
+      "images/02-YO126198CRgallery.jpg",
+      "images/03-facade-mitigeur-lavabo-chrome.png",
+      "images/04-facade-mitigeur-lavabo-noir-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO126198CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4462,6 +5227,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO126338CHROME.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/YO126338NOIR.png"
     ],
+    "cbm_folder": "8013-yo126338-2cr",
+    "cbm_local_images": [
+      "images/01-YO1263382CR.jpg",
+      "images/02-YO1263382CRgallery.jpg",
+      "images/03-YO126338CHROME.png",
+      "images/04-YO126338NOIR.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YO1263382CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Gris chrome, Noir"
@@ -4502,6 +5275,14 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/MITIGEUR-LAVABO-CORPS-HAUT-chrome.png",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/09/MITIGEUR-LAVABO-CORPS-HAUT-noir.png"
     ],
+    "cbm_folder": "7982-yoe126128-2cr",
+    "cbm_local_images": [
+      "images/01-YOE1261282CR.jpg",
+      "images/02-YOE1261282CRgallery.jpg",
+      "images/03-MITIGEUR-LAVABO-CORPS-HAUT-chrome.png",
+      "images/04-MITIGEUR-LAVABO-CORPS-HAUT-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-YOE1261282CR.jpg",
     "cbm_attributes": {
       "Marque": "Nobili",
       "Couleur": "Noir, Gris chrome"
@@ -4539,6 +5320,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-4.png"
     ],
+    "cbm_folder": "24424-anneau-porte-serviette-rond-chrome",
+    "cbm_local_images": [
+      "images/01-Design-sans-titre-4.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Design-sans-titre-4.png",
     "cbm_attributes": {},
     "cbm_colors": [],
     "cbm_labels": [],
@@ -4567,6 +5353,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/roue.png"
     ],
+    "cbm_folder": "24467-anneau-porte-serviette-rond-noir-matt",
+    "cbm_local_images": [
+      "images/01-roue.png"
+    ],
+    "cbm_thumbnail_local": "images/01-roue.png",
     "cbm_attributes": {},
     "cbm_colors": [],
     "cbm_labels": [],
@@ -4595,6 +5386,11 @@
     "cbm_images": [
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/doigt.png"
     ],
+    "cbm_folder": "24451-porte-serviette-rond-chrome-60cm",
+    "cbm_local_images": [
+      "images/01-doigt.png"
+    ],
+    "cbm_thumbnail_local": "images/01-doigt.png",
     "cbm_attributes": {},
     "cbm_colors": [],
     "cbm_labels": [],
@@ -4625,6 +5421,13 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SK300.43gallery.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "8282-sk300-43",
+    "cbm_local_images": [
+      "images/01-SK300.43.jpg",
+      "images/02-SK300.43gallery.jpg",
+      "images/03-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SK300.43.jpg",
     "cbm_attributes": {
       "Marque": "CGS",
       "Couleur": "Noir mat"
@@ -4661,6 +5464,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SK400.43.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/06/70-100x80-1.webp"
     ],
+    "cbm_folder": "8284-sk400-43",
+    "cbm_local_images": [
+      "images/01-SK400.43.jpg",
+      "images/02-70-100x80-1.webp"
+    ],
+    "cbm_thumbnail_local": "images/01-SK400.43.jpg",
     "cbm_attributes": {
       "Marque": "CGS",
       "Couleur": "Noir mat"
@@ -4697,6 +5506,12 @@
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SKN550.01.jpg",
       "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/SKN550.01gallery.jpg"
     ],
+    "cbm_folder": "8265-skn550-01",
+    "cbm_local_images": [
+      "images/01-SKN550.01.jpg",
+      "images/02-SKN550.01gallery.jpg"
+    ],
+    "cbm_thumbnail_local": "images/01-SKN550.01.jpg",
     "cbm_attributes": {
       "Marque": "CGS",
       "Couleur": "Gris chrome"

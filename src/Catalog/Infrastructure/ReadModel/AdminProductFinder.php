@@ -37,6 +37,7 @@ final class AdminProductFinder
     private const string SELECT = 'SELECT id, slug, name, name AS label, brand, ref, supplier_reference, category_slug, subcategory,
         price_minor, old_price_minor, currency, stock, stock_quantity, material, dims, image_path, additional_images, rating, reviews,
         is_new, is_best, headrest, description, variants,
+        vat_rate, sale_price_ttc_minor,
         approval_status, published, submitted_by, submitted_at, reviewed_by, reviewed_at, rejection_reason
         FROM storefront_product_view';
 

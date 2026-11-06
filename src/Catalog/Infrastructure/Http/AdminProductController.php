@@ -83,17 +83,23 @@ final class AdminProductController
             return new JsonResponse(['error' => $product], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // A product may carry a brand the admin never registered: register it as an approved brand
+        // so the Marques screen lists it, the storefront filters offer it and renames can follow it.
+        $product['brand'] = $this->canonicalBrandName($product['brand']);
+
         try {
             $this->connection->transactional(function () use ($product, $admin): void {
+                $this->registerBrandIfMissing($product['brand'], $admin);
+
                 $this->connection->executeStatement(
                     'INSERT INTO storefront_product_view (
                         id, slug, name, brand, ref, supplier_reference, category_slug, subcategory, price_minor,
                         old_price_minor, currency, stock, material, dims, image_path, rating, reviews, is_new, is_best,
-                        headrest, description, variants, published
+                        headrest, description, variants, published, vat_rate, sale_price_ttc_minor
                     ) VALUES (
                         :id, :slug, :name, :brand, :ref, :supplier_reference, :category, :sub, :price,
                         :old_price, \'TND\', :stock, :material, :dims, :image, 0, 0, :is_new, :is_best,
-                        :headrest, :description, :variants, false
+                        :headrest, :description, :variants, false, :vat_rate, :sale_price_ttc_minor
                     )',
                     ['id' => Uuid::v7()->toRfc4122()] + $this->parameters($product),
                     $this->types(),
@@ -149,6 +155,9 @@ final class AdminProductController
             return new JsonResponse(['error' => $product], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // See create(): an unregistered brand typed while editing a product is registered too.
+        $product['brand'] = $this->canonicalBrandName($product['brand']);
+
         try {
             $this->connection->transactional(function () use ($slug, $product, $admin): void {
                 $this->access->authorize(
@@ -158,13 +167,16 @@ final class AdminProductController
                     $this->isSuperAdmin($admin),
                 );
 
+                $this->registerBrandIfMissing($product['brand'], $admin);
+
                 $this->connection->executeStatement(
                     'UPDATE storefront_product_view SET
                         name = :name, brand = :brand, ref = :ref, supplier_reference = :supplier_reference,
                         category_slug = :category, subcategory = :sub, price_minor = :price,
                         old_price_minor = :old_price, stock = :stock, material = :material,
                         dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
-                        description = :description, variants = :variants
+                        description = :description, variants = :variants,
+                        vat_rate = :vat_rate, sale_price_ttc_minor = :sale_price_ttc_minor
                       WHERE slug = :slug',
                     $this->parameters($product),
                     $this->types(),
@@ -268,6 +280,42 @@ final class AdminProductController
         return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
     }
 
+    /**
+     * Reuses an existing brand whose name differs only by case (so a product never creates a
+     * case-variant duplicate of a brand the admin already registered); otherwise returns the
+     * typed name unchanged.
+     */
+    private function canonicalBrandName(string $brand): string
+    {
+        $existing = $this->connection->fetchOne(
+            'SELECT name FROM storefront_brand WHERE lower(name) = lower(:name)',
+            ['name' => $brand],
+        );
+
+        return is_string($existing) ? $existing : $brand;
+    }
+
+    /**
+     * Registers a brand the product carries but that was never created through the Marques screen:
+     * the row, its submission and its approval are written in the same transaction as the product,
+     * so the brand is immediately usable, visible in the filters and renameable.
+     */
+    private function registerBrandIfMissing(string $brand, CustomerUser $admin): void
+    {
+        $exists = $this->connection->fetchOne(
+            'SELECT 1 FROM storefront_brand WHERE lower(name) = lower(:name)',
+            ['name' => $brand],
+        );
+        if (false !== $exists) {
+            return;
+        }
+
+        $this->connection->executeStatement('INSERT INTO storefront_brand (name) VALUES (:name)', ['name' => $brand]);
+
+        $this->submissions->create(CatalogSubmissionKind::Brand, $brand, $admin->getId());
+        $this->reviews->reviewerSave(CatalogSubmissionKind::Brand, $brand, $admin->getId());
+    }
+
     private function domainFailure(\DomainException $error): JsonResponse
     {
         if ($error instanceof CatalogSubmissionNotFoundException) {
@@ -301,7 +349,7 @@ final class AdminProductController
      *
      * @param array<string, mixed> $body
      *
-     * @return array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>}|string
+     * @return array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>, vatRate: string|null, salePriceTtc: int|null}|string
      */
     private function validate(array $body, ?string $fixedSlug): array|string
     {
@@ -404,6 +452,45 @@ final class AdminProductController
             return 'The description is limited to 5000 characters.';
         }
 
+        // vatRate — decimal percentage (up to 2 decimals), or null when blank/absent.
+        $rawVatRate = $body['vatRate'] ?? null;
+        $vatRate = null;
+        if (null !== $rawVatRate && !(is_string($rawVatRate) && '' === trim($rawVatRate))) {
+            if (is_bool($rawVatRate) || (!is_string($rawVatRate) && !is_int($rawVatRate) && !is_float($rawVatRate))) {
+                return 'The VAT rate must be a decimal percentage with up to 2 decimals, or null.';
+            }
+            if (is_float($rawVatRate) && !is_finite($rawVatRate)) {
+                return 'The VAT rate must be a decimal percentage with up to 2 decimals, or null.';
+            }
+            $vatRateString = is_string($rawVatRate) ? $rawVatRate : (string) $rawVatRate;
+            if (1 !== preg_match('/^-?\d+(\.\d{1,2})?$/', $vatRateString)) {
+                return 'The VAT rate must be a decimal percentage with up to 2 decimals, or null.';
+            }
+            $vatRate = $vatRateString;
+        }
+
+        // salePriceTtc — decimal DT amount parsed with Money::fromDecimalString, or null when blank/absent.
+        $rawSalePriceTtc = $body['salePriceTtc'] ?? null;
+        $salePriceTtc = null;
+        if (null !== $rawSalePriceTtc && !(is_string($rawSalePriceTtc) && '' === trim($rawSalePriceTtc))) {
+            if (is_bool($rawSalePriceTtc) || (!is_string($rawSalePriceTtc) && !is_int($rawSalePriceTtc) && !is_float($rawSalePriceTtc))) {
+                return 'The sale price (TTC) must be a non-negative decimal DT amount with up to 3 decimals, or null.';
+            }
+            if (is_float($rawSalePriceTtc) && !is_finite($rawSalePriceTtc)) {
+                return 'The sale price (TTC) must be a non-negative decimal DT amount with up to 3 decimals, or null.';
+            }
+            $salePriceTtcCandidate = is_string($rawSalePriceTtc) ? trim($rawSalePriceTtc) : (string) $rawSalePriceTtc;
+            if ('' === $salePriceTtcCandidate) {
+                $salePriceTtc = null;
+            } else {
+                try {
+                    $salePriceTtc = Money::fromDecimalString($salePriceTtcCandidate, Currency::TND)->minorUnits();
+                } catch (\InvalidArgumentException) {
+                    return 'The sale price (TTC) must be a non-negative decimal DT amount with up to 3 decimals, or null.';
+                }
+            }
+        }
+
         return [
             'slug' => $slug,
             'name' => $name,
@@ -424,6 +511,8 @@ final class AdminProductController
             'headrest' => true === ($body['headrest'] ?? false),
             'description' => $description,
             'variants' => $variants,
+            'vatRate' => $vatRate,
+            'salePriceTtc' => $salePriceTtc,
         ];
     }
 
@@ -502,7 +591,7 @@ final class AdminProductController
     }
 
     /**
-     * @param array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>} $product
+     * @param array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>, vatRate: string|null, salePriceTtc: int|null} $product
      *
      * @return array<string, mixed>
      */
@@ -527,6 +616,8 @@ final class AdminProductController
             'headrest' => $product['headrest'],
             'description' => $product['description'],
             'variants' => json_encode($product['variants'], JSON_THROW_ON_ERROR),
+            'vat_rate' => $product['vatRate'],
+            'sale_price_ttc_minor' => $product['salePriceTtc'],
         ];
     }
 
@@ -539,6 +630,7 @@ final class AdminProductController
             'is_new' => ParameterType::BOOLEAN,
             'is_best' => ParameterType::BOOLEAN,
             'headrest' => ParameterType::BOOLEAN,
+            'vat_rate' => ParameterType::STRING,
         ];
     }
 }

@@ -577,6 +577,7 @@ final class HttpApiContractTest extends WebTestCase
             'material' => 'string',
             'dims' => 'string',
             'image' => 'string',
+            'additionalImages' => 'array',
             'rating' => 'number',
             'reviews' => 'int',
             'isNew' => 'bool',

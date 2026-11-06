@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 $input = $argv[1] ?? getenv('IMPORT_JSON') ?: '/home/yassine/Desktop/freelance/Zidaine-groupe/E-commerce/scripts/import-cbm/out/import.json';
@@ -17,7 +18,7 @@ if (!is_array($rows)) {
 
 $host = getenv('DB_HOST') ?: 'database';
 $port = getenv('DB_PORT') ?: '5432';
-$db   = getenv('DB_NAME') ?: 'app';
+$db = getenv('DB_NAME') ?: 'app';
 $user = getenv('DB_USER') ?: 'app';
 $pass = getenv('DB_PASS') ?: 'app';
 
@@ -26,28 +27,41 @@ $pdo = new PDO("pgsql:host={$host};port={$port};dbname={$db}", $user, $pass, [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 
-function toMillimes(string $dec): ?int {
+function toMillimes(string $dec): ?int
+{
     $dec = trim($dec);
-    if ($dec === '') return null;
-    if (strpos($dec, ".") !== false) { $dec = rtrim(rtrim($dec, "0"), "."); }
-    if (!preg_match('/^\d+(\.\d{1,3})?$/', $dec)) return null;
+    if ('' === $dec) {
+        return null;
+    }
+    if (false !== strpos($dec, '.')) {
+        $dec = rtrim(rtrim($dec, '0'), '.');
+    }
+    if (!preg_match('/^\d+(\.\d{1,3})?$/', $dec)) {
+        return null;
+    }
     [$whole, $frac] = array_pad(explode('.', $dec), 2, '');
     $frac = str_pad($frac, 3, '0');
-    $digits = $whole . $frac;
+    $digits = $whole.$frac;
     $digits = ltrim($digits, '0');
-    if ($digits === '') return 0;
+    if ('' === $digits) {
+        return 0;
+    }
+
     return (int) $digits;
 }
 
-function slugUnique(PDO $pdo, string $base): string {
+function slugUnique(PDO $pdo, string $base): string
+{
     $slug = $base;
     $i = 2;
     while (true) {
         $st = $pdo->prepare('SELECT 1 FROM storefront_product_view WHERE slug = :s');
         $st->execute([':s' => $slug]);
-        if (!$st->fetch()) return $slug;
-        $slug = $base . '-' . $i;
-        $i++;
+        if (!$st->fetch()) {
+            return $slug;
+        }
+        $slug = $base.'-'.$i;
+        ++$i;
     }
 }
 
@@ -69,34 +83,31 @@ foreach ($batches as $bi => $batch) {
             $ean = trim((string) ($row['csv_ean'] ?? ''));
             $csvDesc = trim((string) ($row['csv_description'] ?? ''));
             $cbmDesc = trim((string) ($row['cbm_description'] ?? ''));
-            $cbmImage = trim((string) ($row['cbm_image'] ?? ''));
-            $cbmImages = $row['cbm_images'] ?? [];
-            $description = $csvDesc !== '' ? $csvDesc : $cbmDesc;
-            $imagePath = $cbmImage;
-            $additional = is_array($cbmImages) ? $cbmImages : [];
-            if ($imagePath !== '' && count($additional) > 0 && $additional[0] === $imagePath) {
-                array_shift($additional);
-            }
-            $additionalJson = json_encode(array_values($additional), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            if ($additionalJson === false) $additionalJson = '[]';
+            $cbmLocalImages = is_array($row['cbm_local_images'] ?? null) ? $row['cbm_local_images'] : [];
+            $cbmAttributes = is_array($row['cbm_attributes'] ?? null) ? $row['cbm_attributes'] : [];
+            $cbmColors = is_array($row['cbm_colors'] ?? null) ? $row['cbm_colors'] : [];
+            $cbmLabels = is_array($row['cbm_labels'] ?? null) ? $row['cbm_labels'] : [];
+            // The CBM product sheet is the descriptive source: the CSV description is empty on
+            // almost every matched row and, when present, is only a short label.
+            $description = '' !== $cbmDesc ? $cbmDesc : $csvDesc;
             $cat = (string) ($row['category_slug'] ?? '');
             $sub = (string) ($row['subcategory'] ?? '');
 
-            if ($cbmRef === '' || $name === '' || $cat === '' || $sub === '') {
+            if ('' === $cbmRef || '' === $name || '' === $cat || '' === $sub) {
                 throw new RuntimeException("Missing required field for {$cbmRef}");
             }
 
             $priceMinor = toMillimes($priceHt);
-            if ($priceMinor === null) {
+            if (null === $priceMinor) {
                 throw new RuntimeException("Bad price for {$cbmRef}: {$priceHt}");
             }
 
-            $stockQty = ($stockQtyRaw === '' || $stockQtyRaw === null) ? null : (int) $stockQtyRaw;
-            if ($stockQty !== null && $stockQty < 0) {
+            $stockQty = ('' === $stockQtyRaw || null === $stockQtyRaw) ? null : (int) $stockQtyRaw;
+            if (null !== $stockQty && $stockQty < 0) {
                 $stockQty = null;
             }
-            $stock = ($stockQty !== null && $stockQty > 0) ? 'in' : 'out';
-            $eanVal = $ean === '' ? null : $ean;
+            $stock = (null !== $stockQty && $stockQty > 0) ? 'in' : 'out';
+            $eanVal = '' === $ean ? null : $ean;
 
             // find existing by supplier_reference or ref
             $st = $pdo->prepare('SELECT slug FROM storefront_product_view WHERE supplier_reference = :sr LIMIT 1');
@@ -106,14 +117,62 @@ foreach ($batches as $bi => $batch) {
             if ($existingSlug) {
                 $slug = $existingSlug;
             } else {
-                $base = $slugBase !== '' ? $slugBase : preg_replace('/[^a-z0-9]+/', '-', strtolower($cbmRef));
+                $base = '' !== $slugBase ? $slugBase : preg_replace('/[^a-z0-9]+/', '-', strtolower($cbmRef));
                 $base = trim($base, '-');
-                if ($base === '') $base = 'product';
+                if ('' === $base) {
+                    $base = 'product';
+                }
                 $slug = slugUnique($pdo, $base);
             }
 
+            // Pictures are served from public/uploads/catalogue/cbm/<slug>/ (copied out of the
+            // CBM scrape folder by copy-images.py); never store the remote cbmtunisie URL.
+            $imageUrls = [];
+            foreach ($cbmLocalImages as $rel) {
+                $file = basename((string) $rel);
+                if ('' !== $file) {
+                    $imageUrls[] = '/uploads/catalogue/cbm/'.$slug.'/'.$file;
+                }
+            }
+            if ([] === $imageUrls) {
+                throw new RuntimeException("No local CBM images for {$cbmRef}");
+            }
+            $imagePath = $imageUrls[0];
+            $additional = array_slice($imageUrls, 1);
+
+            $imagesJson = json_encode($imageUrls, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $additionalJson = json_encode($additional, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $colorsJson = json_encode(array_values($cbmColors), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $attributesJson = json_encode((object) $cbmAttributes, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $characteristics = [];
+            foreach ($cbmAttributes as $label => $value) {
+                $characteristics[] = [
+                    'label' => (string) $label,
+                    'value' => is_scalar($value) ? (string) $value : (string) json_encode($value, JSON_UNESCAPED_UNICODE),
+                ];
+            }
+            $characteristicsJson = json_encode($characteristics, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $technicalDataJson = json_encode([
+                'attributes' => (object) $cbmAttributes,
+                'colors' => array_values($cbmColors),
+                'labels' => array_values($cbmLabels),
+            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            foreach ([
+                'images' => $imagesJson,
+                'additional_images' => $additionalJson,
+                'colors' => $colorsJson,
+                'attributes' => $attributesJson,
+                'characteristics' => $characteristicsJson,
+                'technical_data' => $technicalDataJson,
+            ] as $field => $json) {
+                if (false === $json) {
+                    throw new RuntimeException("Cannot encode {$field} for {$cbmRef}");
+                }
+            }
+            $technicalInfo = '' !== $cbmDesc ? $cbmDesc : null;
+
             if ($dryRun) {
-                $done++;
+                ++$done;
                 continue;
             }
 
@@ -123,11 +182,12 @@ foreach ($batches as $bi => $batch) {
                     category_slug = :cat, subcategory = :sub, price_minor = :price,
                     old_price_minor = NULL, currency = 'TND', stock = :stock,
                     material = '', dims = '', image_path = :image, description = :description,
-                    additional_images = :additional,
-                    variants = '[]'::json, stock_quantity = :sq, ean = :ean,
-                    images = '[]'::json, categories = '[]'::json, colors = '[]'::json,
-                    attributes = '{}'::json, downloads = '[]'::json, videos = '[]'::json,
-                    compatible_products = '[]'::json, characteristics = '[]'::json
+                    additional_images = :additional, images = :images, categories = '[]'::json,
+                    colors = :colors, attributes = :attributes, downloads = '[]'::json,
+                    videos = '[]'::json, compatible_products = '[]'::json,
+                    characteristics = :characteristics, technical_info = :tech_info,
+                    technical_data = :tech_data,
+                    variants = '[]'::json, stock_quantity = :sq, ean = :ean
                   WHERE slug = :slug";
                 $st = $pdo->prepare($sql);
                 $st->execute([
@@ -140,10 +200,13 @@ foreach ($batches as $bi => $batch) {
                     ':image' => $imagePath,
                     ':description' => $description,
                     ':additional' => $additionalJson,
+                    ':images' => $imagesJson,
+                    ':colors' => $colorsJson,
+                    ':attributes' => $attributesJson,
+                    ':characteristics' => $characteristicsJson,
+                    ':tech_info' => $technicalInfo,
+                    ':tech_data' => $technicalDataJson,
                     ':stock' => $stock,
-                    ':image' => $imagePath,
-                    ':description' => $description,
-                    ':additional' => $additionalJson,
                     ':sq' => $stockQty,
                     ':ean' => $eanVal,
                     ':slug' => $slug,
@@ -161,8 +224,8 @@ foreach ($batches as $bi => $batch) {
                     gen_random_uuid(), :slug, :name, 'CBM', :ref, :sr, :cat, :sub,
                     :price, NULL, 'TND', :stock, '', '', :image, 0, 0, true, false, false, :description,
                     '[]'::json, :sq, 'PENDING_APPROVAL', :actor, now(), NULL, NULL, NULL,
-                    false, '[]'::json, '[]'::json, '[]'::json, '{}'::json, :ean, NULL, NULL,
-                    '[]'::json, '[]'::json, '[]'::json, '[]'::json, NULL, NULL, :additional
+                    false, :images, '[]'::json, :colors, :attributes, :ean, NULL, NULL,
+                    '[]'::json, '[]'::json, '[]'::json, :characteristics, :tech_info, :tech_data, :additional
                 )";
                 $st = $pdo->prepare($sql);
                 $st->execute([
@@ -173,6 +236,15 @@ foreach ($batches as $bi => $batch) {
                     ':cat' => $cat,
                     ':sub' => $sub,
                     ':price' => $priceMinor,
+                    ':image' => $imagePath,
+                    ':description' => $description,
+                    ':images' => $imagesJson,
+                    ':colors' => $colorsJson,
+                    ':attributes' => $attributesJson,
+                    ':characteristics' => $characteristicsJson,
+                    ':tech_info' => $technicalInfo,
+                    ':tech_data' => $technicalDataJson,
+                    ':additional' => $additionalJson,
                     ':stock' => $stock,
                     ':sq' => $stockQty,
                     ':ean' => $eanVal,
@@ -181,10 +253,10 @@ foreach ($batches as $bi => $batch) {
             }
 
             // inventory stock
-            if ($stockQty !== null) {
-                $st = $pdo->prepare("INSERT INTO inventory_stock (product_slug, on_hand, reserved, updated_at)
+            if (null !== $stockQty) {
+                $st = $pdo->prepare('INSERT INTO inventory_stock (product_slug, on_hand, reserved, updated_at)
                     VALUES (:slug, :qty, 0, now())
-                    ON CONFLICT (product_slug) DO UPDATE SET on_hand = EXCLUDED.on_hand, updated_at = now()");
+                    ON CONFLICT (product_slug) DO UPDATE SET on_hand = EXCLUDED.on_hand, updated_at = now()');
                 $st->execute([':slug' => $slug, ':qty' => $stockQty]);
             }
 
@@ -200,13 +272,13 @@ foreach ($batches as $bi => $batch) {
                 VALUES (gen_random_uuid(), 'CBM_CATALOG_IMPORTED', 'product', :slug, :actor, :reason, now())");
             $st->execute([':slug' => $slug, ':actor' => $actor, ':reason' => "CBM ref {$cbmRef}"]);
 
-            $done++;
+            ++$done;
         }
         $pdo->commit();
-        echo "Batch " . ($bi + 1) . " done (" . count($batch) . " rows)\n";
+        echo 'Batch '.($bi + 1).' done ('.count($batch)." rows)\n";
     } catch (Throwable $e) {
         $pdo->rollBack();
-        fwrite(STDERR, "Batch failed: " . $e->getMessage() . "\n");
+        fwrite(STDERR, 'Batch failed: '.$e->getMessage()."\n");
         exit(1);
     }
 }

@@ -8,6 +8,7 @@ final readonly class StorefrontProductView
 {
     /**
      * @param list<array{label: string, price: int}> $variants
+     * @param list<string>                           $additionalImages pictures after the primary one
      */
     public function __construct(
         public string $id,
@@ -31,8 +32,11 @@ final readonly class StorefrontProductView
         public bool $headrest,
         public string $description,
         public array $variants,
+        public array $additionalImages = [],
         public ?int $stockQuantity = null,
         public ?string $supplierReference = null,
+        public ?float $vatRate = null,
+        public ?int $salePriceTtc = null,
     ) {
     }
 
@@ -61,6 +65,7 @@ final readonly class StorefrontProductView
             'material' => $this->material,
             'dims' => $this->dims,
             'image' => $this->imagePath,
+            'additionalImages' => $this->additionalImages,
             'rating' => $this->rating,
             'reviews' => $this->reviews,
             'isNew' => $this->isNew,
@@ -80,6 +85,8 @@ final readonly class StorefrontProductView
         $payload = $this->toApi();
         $payload['stockQuantity'] = $this->stockQuantity;
         $payload['supplierReference'] = $this->supplierReference;
+        $payload['vatRate'] = $this->vatRate;
+        $payload['salePriceTtc'] = $this->salePriceTtc;
 
         return $payload;
     }
@@ -89,6 +96,14 @@ final readonly class StorefrontProductView
     {
         /** @var list<array{label: string, price: int}> $variants */
         $variants = json_decode((string) $row['variants'], true, 512, JSON_THROW_ON_ERROR);
+
+        $additionalImages = [];
+        if (isset($row['additional_images']) && is_string($row['additional_images'])) {
+            $decoded = json_decode($row['additional_images'], true);
+            if (is_array($decoded)) {
+                $additionalImages = array_values(array_map(strval(...), $decoded));
+            }
+        }
 
         return new self(
             (string) $row['id'],
@@ -112,8 +127,11 @@ final readonly class StorefrontProductView
             (bool) $row['headrest'],
             (string) $row['description'],
             $variants,
+            $additionalImages,
             isset($row['stock_quantity']) ? (int) $row['stock_quantity'] : null,
             isset($row['supplier_reference']) ? (string) $row['supplier_reference'] : null,
+            isset($row['vat_rate']) ? (float) $row['vat_rate'] : null,
+            isset($row['sale_price_ttc_minor']) ? (int) $row['sale_price_ttc_minor'] : null,
         );
     }
 }
