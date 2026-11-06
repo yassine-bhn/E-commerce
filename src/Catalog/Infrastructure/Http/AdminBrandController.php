@@ -12,9 +12,9 @@ use App\Catalog\Application\Command\SetBrandImage;
 use App\Catalog\Application\Query\ListAdminBrands;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\BrandAlreadyExistsException;
-use App\Catalog\Domain\Model\BrandImageRejectedException;
 use App\Catalog\Domain\Model\BrandNotEmptyException;
 use App\Catalog\Domain\Model\BrandNotFoundException;
+use App\Catalog\Domain\Model\CatalogImageRejectedException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
 use App\Identity\Infrastructure\Security\CustomerUser;
@@ -211,7 +211,7 @@ final class AdminBrandController
             return new JsonResponse(['error' => 'Approval Transition Refused', 'message' => $error->getMessage()], Response::HTTP_CONFLICT);
         }
 
-        if ($error instanceof BrandImageRejectedException) {
+        if ($error instanceof CatalogImageRejectedException) {
             return new JsonResponse(['error' => $error->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

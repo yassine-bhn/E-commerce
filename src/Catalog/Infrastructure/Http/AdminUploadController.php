@@ -31,7 +31,7 @@ final class AdminUploadController
     ];
 
     /** Sub-folders of public/uploads the dashboard may write to (the banner only accepts /uploads/ references). */
-    private const array FOLDERS = ['products', 'banner', 'brands'];
+    private const array FOLDERS = ['products', 'banner', 'brands', 'categories'];
 
     public function __construct(
         #[Autowire('%kernel.project_dir%')]

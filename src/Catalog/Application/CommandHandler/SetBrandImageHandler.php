@@ -6,7 +6,7 @@ namespace App\Catalog\Application\CommandHandler;
 
 use App\Catalog\Application\Command\SetBrandImage;
 use App\Catalog\Application\Port\BrandImageStore;
-use App\Catalog\Domain\Model\BrandImageReference;
+use App\Catalog\Domain\Model\UploadedImageReference;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -24,7 +24,7 @@ final class SetBrandImageHandler
 
     public function __invoke(SetBrandImage $command): void
     {
-        $reference = new BrandImageReference($command->image);
+        $reference = new UploadedImageReference($command->image, UploadedImageReference::BRANDS);
 
         $this->store->setImage($command->name, $reference->path, $command->actorId, $command->actorIsSuperAdmin);
     }

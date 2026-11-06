@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Persistence;
 
+use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\CategoryCreator;
 use App\Catalog\Application\Port\CategoryDeleter;
 use App\Catalog\Application\Port\CategoryDeletionReader;
@@ -11,8 +12,13 @@ use App\Catalog\Application\Port\CategoryHierarchyReader;
 use App\Catalog\Application\Port\CategoryReader;
 use App\Catalog\Application\Port\CategoryTreeWriter;
 use App\Catalog\Application\Port\CategoryVisibilityWriter;
+use App\Catalog\Application\Port\SubcategoryImageStore;
+use App\Catalog\Application\Service\SubmissionAccessPolicy;
+use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryAlreadyExistsException;
+use App\Catalog\Domain\Model\CategoryNotFoundException;
+use App\Catalog\Domain\Model\CategorySubtree;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ParameterType;
@@ -21,7 +27,7 @@ use Doctrine\DBAL\ParameterType;
  * DIP-003 — the one DBAL adapter behind the category ports; the SQL is the handlers' and the
  * hierarchy validator's former inline statements, moved verbatim.
  */
-final class DbalCategoryStore implements CategoryReader, CategoryCreator, CategoryTreeWriter, CategoryVisibilityWriter, CategoryDeleter, CategoryDeletionReader, CategoryHierarchyReader
+final class DbalCategoryStore implements CategoryReader, CategoryCreator, CategoryTreeWriter, CategoryVisibilityWriter, CategoryDeleter, CategoryDeletionReader, CategoryHierarchyReader, SubcategoryImageStore
 {
     private const LOAD = 'SELECT slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug
          FROM storefront_category WHERE slug = :slug';
@@ -36,8 +42,11 @@ final class DbalCategoryStore implements CategoryReader, CategoryCreator, Catego
            AND subcategory <> ''
          ORDER BY subcategory ASC";
 
-    public function __construct(private Connection $connection)
-    {
+    public function __construct(
+        private Connection $connection,
+        private SubmissionAccessPolicy $access,
+        private CatalogAuditPort $audit,
+    ) {
     }
 
     public function find(string $slug): ?Category
@@ -145,5 +154,49 @@ final class DbalCategoryStore implements CategoryReader, CategoryCreator, Catego
         }
 
         return $parentMap;
+    }
+
+    public function setSubcategoryImage(string $slug, array $labelPath, string $imagePath, ?string $actorId, bool $actorIsSuperAdmin): void
+    {
+        $this->updateSubcategoryImage($slug, $labelPath, $imagePath, $actorId, $actorIsSuperAdmin, 'CATALOG_CATEGORY_SUBCATEGORY_IMAGE_SET');
+    }
+
+    public function removeSubcategoryImage(string $slug, array $labelPath, ?string $actorId, bool $actorIsSuperAdmin): void
+    {
+        // Clearing a node without a picture rewrites the same tree: the removal is idempotent.
+        $this->updateSubcategoryImage($slug, $labelPath, null, $actorId, $actorIsSuperAdmin, 'CATALOG_CATEGORY_SUBCATEGORY_IMAGE_REMOVED');
+    }
+
+    /**
+     * One node's picture changes, nothing else of the row does: the policy is the same gate as
+     * every other taxonomy write and is read before anything is written, so a refusal (or an
+     * unknown category or label path) leaves the row exactly as it was.
+     *
+     * @param list<string> $labelPath
+     */
+    private function updateSubcategoryImage(string $slug, array $labelPath, ?string $imagePath, ?string $actorId, bool $actorIsSuperAdmin, string $action): void
+    {
+        $this->access->authorize(CatalogSubmissionKind::Category, $slug, $actorId, $actorIsSuperAdmin);
+
+        $row = $this->connection->fetchAssociative('SELECT subcategories FROM storefront_category WHERE slug = :slug', ['slug' => $slug]);
+        if (false === $row) {
+            throw CategoryNotFoundException::forSlug($slug);
+        }
+
+        $stored = is_string($row['subcategories']) ? json_decode($row['subcategories'], true) : $row['subcategories'];
+        $tree = CategorySubtree::withImageAt($stored, $labelPath, $imagePath);
+
+        $this->connection->executeStatement(
+            'UPDATE storefront_category SET subcategories = :subs WHERE slug = :slug',
+            ['subs' => json_encode($tree, JSON_THROW_ON_ERROR), 'slug' => $slug],
+        );
+
+        $this->audit->record(
+            $action,
+            CatalogSubmissionKind::Category->auditTarget(),
+            $slug,
+            $actorId ?? 'system',
+            sprintf('Subcategory "%s".', implode(' > ', $labelPath)),
+        );
     }
 }
