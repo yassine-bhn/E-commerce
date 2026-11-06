@@ -127,6 +127,19 @@ final class CatalogSubmissionFake implements CatalogSubmissionCreator, CatalogSu
         return $this->submissions[$this->key($kind, $slug)] ?? CatalogSubmission::create($kind, $slug, 'system', new \DateTimeImmutable());
     }
 
+    public function renameSubject(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug, string $actorId): void
+    {
+        $this->record(__FUNCTION__, [$kind, $fromSlug, $toSlug, $actorId]);
+
+        if (null !== $this->find($kind, $fromSlug)) {
+            $this->move($kind, $fromSlug, $toSlug);
+        } else {
+            $this->create($kind, $toSlug, $actorId);
+        }
+
+        $this->reviewerSave($kind, $toSlug, $actorId);
+    }
+
     public function move(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug): ?CatalogSubmission
     {
         $this->record(__FUNCTION__, [$kind, $fromSlug, $toSlug]);

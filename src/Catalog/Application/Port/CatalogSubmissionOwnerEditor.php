@@ -22,4 +22,11 @@ interface CatalogSubmissionOwnerEditor
      * or null when no row exists at the old key.
      */
     public function move(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug): ?CatalogSubmission;
+
+    /**
+     * solid Task 4.9 — the submission half of a brand rename: the existing submission moves to
+     * the new key, or a legacy brand with no submission gets one registered, and either way the
+     * reviewer save keeps the renamed brand approved for the storefront.
+     */
+    public function renameSubject(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug, string $actorId): void;
 }

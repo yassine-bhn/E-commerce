@@ -155,6 +155,14 @@ services:
     App\Catalog\Application\Port\BannerImageStore:
         alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
 
+    # solid Task 4.9 (SRP-002): the brand commands read and write through the brand ports; the
+    # adapter owns the whole rename workflow (access policy, submission follow-up, audit).
+    App\Catalog\Application\Port\BrandReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBrandStore
+
+    App\Catalog\Application\Port\BrandStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBrandStore
+
     App\Identity\Application\Port\CustomerAccountReader:
         alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
 
