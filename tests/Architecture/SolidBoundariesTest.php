@@ -119,6 +119,10 @@ final class SolidBoundariesTest extends TestCase
             }
         }
 
+        if ([] === $cases) {
+            $cases['__none__'] = ['__none__', 'none'];
+        }
+
         return $cases;
     }
 
@@ -126,6 +130,11 @@ final class SolidBoundariesTest extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('applicationForbiddenTypeProvider')]
     public function itKeepsApplicationFreeOfForbiddenTypes(string $file, string $type): void
     {
+        if ('__none__' === $file) {
+            self::assertSame('none', $type, 'no Application class imports or type-hints a forbidden type');
+
+            return;
+        }
         self::fail(sprintf('%s uses forbidden type %s', $file, $type));
     }
 
