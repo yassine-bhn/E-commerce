@@ -6,14 +6,14 @@ namespace App\Catalog\Application\Command;
 
 /**
  * R20 — put the existing slides in a new order without changing which images are in the set.
+ *
+ * solid Task 4.4 — the raw dashboard body rides the command; BannerPayload validates its shape
+ * inside the handler.
  */
-final readonly class BannerReorderImages
+final class BannerReorderImages
 {
-    /**
-     * @param list<string> $imageIds every banner image id, exactly once, in the new order
-     */
     public function __construct(
-        public array $imageIds,
+        public mixed $body,
     ) {
     }
 }

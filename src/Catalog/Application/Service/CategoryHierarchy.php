@@ -10,11 +10,12 @@ use App\Catalog\Domain\Model\CategoryHierarchyCycleException;
  * Pure hierarchy rule (solid Task 3.2): given the parent map of the whole taxonomy, refuses a
  * parent assignment that would make a category its own ancestor. The SQL moved to
  * DbalCategoryStore; this service owns only the traversal.
- *
- * @param array<string, string|null> $parentMap
  */
 final class CategoryHierarchy
 {
+    /**
+     * @param array<string, string|null> $parentMap
+     */
     public function assertAcyclic(string $categorySlug, ?string $targetParentSlug, array $parentMap): void
     {
         if (null === $targetParentSlug || '' === $targetParentSlug) {

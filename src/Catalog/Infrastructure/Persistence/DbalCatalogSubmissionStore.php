@@ -92,6 +92,12 @@ final class DbalCatalogSubmissionStore implements CatalogSubmissionCreator, Cata
         return $submission;
     }
 
+    public function createApproved(CatalogSubmissionKind $kind, string $slug, string $actorId): void
+    {
+        $this->create($kind, $slug, $actorId);
+        $this->reviewerSave($kind, $slug, $actorId);
+    }
+
     public function import(CatalogSubmission $submission): bool
     {
         return $this->connection->transactional(function () use ($submission): bool {
@@ -276,6 +282,20 @@ final class DbalCatalogSubmissionStore implements CatalogSubmissionCreator, Cata
 
             return $submission;
         });
+    }
+
+    public function renameSubject(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug, string $actorId): void
+    {
+        // The submission follows its brand: an existing row moves with its whole state, a legacy
+        // brand with no submission gets one, and either way the reviewer save keeps the renamed
+        // record approved for the storefront.
+        if (null !== $this->find($kind, $fromSlug)) {
+            $this->move($kind, $fromSlug, $toSlug);
+        } else {
+            $this->create($kind, $toSlug, $actorId);
+        }
+
+        $this->reviewerSave($kind, $toSlug, $actorId);
     }
 
     public function ownerModified(CatalogSubmissionKind $kind, string $slug): CatalogSubmission

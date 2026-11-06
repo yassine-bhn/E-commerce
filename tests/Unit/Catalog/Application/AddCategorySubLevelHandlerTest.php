@@ -14,25 +14,23 @@ use PHPUnit\Framework\TestCase;
 final class AddCategorySubLevelHandlerTest extends TestCase
 {
     /**
-     * The guard row is pinned by its statement so the queued row stays the content row.
-     *
      * @param list<array<string, mixed>|false> $rows
      */
-    private function handler(array $rows, bool $refuseWrite = false): CategoryConnectionFake
+    private function handler(array $rows, bool $refuseWrite = false): InMemoryCategoryStore
     {
-        $connection = new CategoryConnectionFake();
-        $connection->rows = $rows;
-        $connection->submission();
+        $categories = new InMemoryCategoryStore();
+        $categories->rows = $rows;
+        $categories->submission();
         if ($refuseWrite) {
-            $connection->expectsNoWrite();
+            $categories->expectsNoWrite();
         }
 
-        return $connection;
+        return $categories;
     }
 
-    private function add(CategoryConnectionFake $connection, AddCategorySubLevel $command): void
+    private function add(InMemoryCategoryStore $categories, AddCategorySubLevel $command): void
     {
-        (new AddCategorySubLevelHandler($connection, $connection->accessPolicy(), new RecordingCatalogAudit(), $connection->submissions))($command);
+        (new AddCategorySubLevelHandler($categories, $categories, $categories->accessPolicy(), new RecordingCatalogAudit(), $categories->submissions))($command);
     }
 
     /**
@@ -55,82 +53,82 @@ final class AddCategorySubLevelHandlerTest extends TestCase
 
     public function testAppendsASubLevelToTheParentRowTreeAndKeepsItsVisibility(): void
     {
-        $connection = $this->handler([$this->row([['label' => 'Cuvette']], hidden: true)]);
+        $categories = $this->handler([$this->row([['label' => 'Cuvette']], hidden: true)]);
 
-        $this->add($connection, new AddCategorySubLevel('wc', ' Abattant '));
+        $this->add($categories, new AddCategorySubLevel('wc', ' Abattant '));
 
-        $write = $connection->lastWrite();
+        $write = $categories->lastWrite();
         self::assertNotNull($write);
-        self::assertStringContainsString('UPDATE storefront_category', $write['sql']);
-        self::assertStringNotContainsString('hidden', $write['sql'], 'adding a sub-level does not touch visibility');
-        self::assertSame('wc', $write['params']['slug']);
+        self::assertSame('addSubLevel', $write['method'], 'adding a sub-level goes through the tree writer');
+        self::assertSame('wc', $write['category']->slug);
+        self::assertTrue($write['category']->isHidden(), 'adding a sub-level keeps the stored visibility');
         self::assertSame(
             [['label' => 'Cuvette'], ['label' => 'Abattant']],
-            json_decode((string) $write['params']['subs'], true),
+            $write['category']->subcategories(),
         );
+        self::assertNotContains('setHidden', array_column($categories->writes, 'method'), 'adding a sub-level does not touch visibility');
         self::assertSame(
             ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],
-            $connection->submissions->lastCall(),
+            $categories->submissions->lastCall(),
             'the write is applied as a reviewer save so the tree stays approved',
         );
-        self::assertStringNotContainsString('approval_status', $write['sql'], 'the handler writes content only');
     }
 
     public function testNestsASubLevelBelowAnExistingNode(): void
     {
-        $connection = $this->handler([$this->row([['label' => 'Cuvette']])]);
+        $categories = $this->handler([$this->row([['label' => 'Cuvette']])]);
 
-        $this->add($connection, new AddCategorySubLevel('wc', 'Abattant', 'Cuvette'));
+        $this->add($categories, new AddCategorySubLevel('wc', 'Abattant', 'Cuvette'));
 
-        $write = $connection->lastWrite();
+        $write = $categories->lastWrite();
         self::assertNotNull($write);
         self::assertSame(
             [['label' => 'Cuvette', 'children' => [['label' => 'Abattant']]]],
-            json_decode((string) $write['params']['subs'], true),
+            $write['category']->subcategories(),
         );
         self::assertSame(
             ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],
-            $connection->submissions->lastCall(),
+            $categories->submissions->lastCall(),
         );
     }
 
     public function testASubLevelOfAnUnknownCategoryIsNotFoundAndWritesNothing(): void
     {
-        $connection = $this->handler([false], refuseWrite: true);
+        $categories = $this->handler([false], refuseWrite: true);
 
         $this->expectException(CategoryNotFoundException::class);
 
         try {
-            $this->add($connection, new AddCategorySubLevel('introuvable', 'Alpha'));
+            $this->add($categories, new AddCategorySubLevel('introuvable', 'Alpha'));
         } finally {
-            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+            self::assertSame([], $categories->submissions->calls, 'a refused write never reaches the store');
         }
     }
 
     public function testASubLevelDuplicatingASiblingIsRefusedAndTheParentIsUnchanged(): void
     {
-        $connection = $this->handler([$this->row([['label' => 'Cuvette'], ['label' => 'Abattant']])], refuseWrite: true);
+        $categories = $this->handler([$this->row([['label' => 'Cuvette'], ['label' => 'Abattant']])], refuseWrite: true);
 
         $this->expectException(CategorySublevelException::class);
         $this->expectExceptionMessage('The subcategory "Abattant" already exists at this level.');
 
         try {
-            $this->add($connection, new AddCategorySubLevel('wc', 'Abattant'));
+            $this->add($categories, new AddCategorySubLevel('wc', 'Abattant'));
         } finally {
-            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+            self::assertSame([], $categories->submissions->calls, 'a refused write never reaches the store');
         }
     }
 
     public function testASubLevelBelowAnUnknownNodeIsRefusedAndTheParentIsUnchanged(): void
     {
-        $connection = $this->handler([$this->row([['label' => 'Cuvette']])], refuseWrite: true);
+        $categories = $this->handler([$this->row([['label' => 'Cuvette']])], refuseWrite: true);
 
         $this->expectException(CategorySublevelException::class);
 
         try {
-            $this->add($connection, new AddCategorySubLevel('wc', 'Abattant', 'Introuvable'));
+            $this->add($categories, new AddCategorySubLevel('wc', 'Abattant', 'Introuvable'));
         } finally {
-            self::assertSame([], $connection->submissions->calls, 'a refused write never reaches the store');
+            self::assertSame([], $categories->submissions->calls, 'a refused write never reaches the store');
         }
     }
 }

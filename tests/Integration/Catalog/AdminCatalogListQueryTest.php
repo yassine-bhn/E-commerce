@@ -146,12 +146,12 @@ final class AdminCatalogListQueryTest extends KernelTestCase
         self::assertSame(2, $first->size);
         self::assertTrue($first->hasMore());
         self::assertSame([
-            ['name' => $alpha, 'productCount' => 0],
-            ['name' => $beta, 'productCount' => 1],
+            ['name' => $alpha, 'productCount' => 0, 'image' => null],
+            ['name' => $beta, 'productCount' => 1, 'image' => null],
         ], $first->items, 'name is the default sort and the aggregate reaches the page as an int');
 
         $second = $this->dispatch(new ListAdminBrands(new PageRequest(2, 2, ListAdminBrands::MAX_SIZE), q: $this->token));
-        self::assertSame([['name' => $gamma, 'productCount' => 2]], $second->items);
+        self::assertSame([['name' => $gamma, 'productCount' => 2, 'image' => null]], $second->items);
         self::assertFalse($second->hasMore());
 
         $byCount = $this->dispatch(new ListAdminBrands($this->maxPage(), q: $this->token, sort: 'productCount'));

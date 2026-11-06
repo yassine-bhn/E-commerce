@@ -7,9 +7,12 @@ namespace App\Catalog\Application\Port;
 /**
  * DIP-003 — the whole taxonomy's parent map, the input of the pure CategoryHierarchy rule.
  *
- * @phpstan-return array<string, string|null>
+ * @return array<string, string|null>
  */
 interface CategoryHierarchyReader
 {
+    /**
+     * @return array<string, string|null>
+     */
     public function parentMap(): array;
 }

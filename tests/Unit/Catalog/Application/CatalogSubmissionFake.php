@@ -68,6 +68,12 @@ final class CatalogSubmissionFake implements CatalogSubmissionCreator, CatalogSu
         return $submission;
     }
 
+    public function createApproved(CatalogSubmissionKind $kind, string $slug, string $actorId): void
+    {
+        $this->create($kind, $slug, $actorId);
+        $this->reviewerSave($kind, $slug, $actorId);
+    }
+
     public function import(CatalogSubmission $submission): bool
     {
         $this->record(__FUNCTION__, [$submission]);
@@ -125,6 +131,19 @@ final class CatalogSubmissionFake implements CatalogSubmissionCreator, CatalogSu
         $this->record(__FUNCTION__, [$kind, $slug]);
 
         return $this->submissions[$this->key($kind, $slug)] ?? CatalogSubmission::create($kind, $slug, 'system', new \DateTimeImmutable());
+    }
+
+    public function renameSubject(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug, string $actorId): void
+    {
+        $this->record(__FUNCTION__, [$kind, $fromSlug, $toSlug, $actorId]);
+
+        if (null !== $this->find($kind, $fromSlug)) {
+            $this->move($kind, $fromSlug, $toSlug);
+        } else {
+            $this->create($kind, $toSlug, $actorId);
+        }
+
+        $this->reviewerSave($kind, $toSlug, $actorId);
     }
 
     public function move(CatalogSubmissionKind $kind, string $fromSlug, string $toSlug): ?CatalogSubmission

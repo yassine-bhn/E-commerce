@@ -130,8 +130,8 @@ final class AdminCatalogPaginationTest extends WebTestCase
             $all['meta'],
         );
         self::assertSame([$alpha, $beta], array_column($all['items'], 'name'), 'name is the default sort');
-        self::assertSame(['name' => $alpha, 'productCount' => 0], $all['items'][0]);
-        self::assertSame(['name' => $beta, 'productCount' => 1], $all['items'][1]);
+        self::assertSame(['name' => $alpha, 'productCount' => 0, 'image' => null], $all['items'][0], 'the nullable image rides every row (spec-run-19 R4)');
+        self::assertSame(['name' => $beta, 'productCount' => 1, 'image' => null], $all['items'][1]);
 
         $byCount = $this->get('/api/v1/admin/catalog/brands?q='.$this->token.'&sort=productCount');
         self::assertSame([$beta, $alpha], array_column($byCount['items'], 'name'));

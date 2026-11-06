@@ -149,11 +149,29 @@ services:
     App\Catalog\Application\Port\ProductDeletionReader:
         alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
 
+    App\Catalog\Application\Port\AdminProductWriter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
     App\Catalog\Application\Port\BannerSetReader:
         alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
 
     App\Catalog\Application\Port\BannerImageStore:
         alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
+
+    # solid Task 4.9 (SRP-002): the brand commands read and write through the brand ports; the
+    # adapter owns the whole rename workflow (access policy, submission follow-up, audit).
+    App\Catalog\Application\Port\BrandReader:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBrandStore
+
+    App\Catalog\Application\Port\BrandStore:
+        alias: App\Catalog\Infrastructure\Persistence\DbalBrandStore
+
+    # solid Task 4.10 (SRP-002): the promo-code commands read and write through the ports.
+    App\Promotions\Application\Port\PromoCodeReader:
+        alias: App\Promotions\Infrastructure\Persistence\DbalPromoCodeStore
+
+    App\Promotions\Application\Port\PromoCodeStore:
+        alias: App\Promotions\Infrastructure\Persistence\DbalPromoCodeStore
 
     App\Identity\Application\Port\CustomerAccountReader:
         alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
@@ -312,10 +330,6 @@ services:
     App\Shared\Infrastructure\Outbox\OutboxRelay:
         arguments:
             $eventBus: '@event.bus'
-
-    App\Ordering\Application\Saga\CheckoutSaga:
-        arguments:
-            $commandBus: '@command.bus'
 
     App\Shared\Infrastructure\Http\MessengerQuery:
         arguments:

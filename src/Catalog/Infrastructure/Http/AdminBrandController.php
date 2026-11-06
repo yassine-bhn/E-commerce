@@ -4,30 +4,28 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Http;
 
-use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionCreator;
-use App\Catalog\Application\Port\CatalogSubmissionDeleter;
-use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
-use App\Catalog\Application\Port\CatalogSubmissionReviewer;
+use App\Catalog\Application\Command\CreateBrand;
+use App\Catalog\Application\Command\DeleteBrand;
+use App\Catalog\Application\Command\RemoveBrandImage;
+use App\Catalog\Application\Command\RenameBrand;
+use App\Catalog\Application\Command\SetBrandImage;
 use App\Catalog\Application\Query\ListAdminBrands;
-use App\Catalog\Application\Service\SubmissionAccessPolicy;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\BrandAlreadyExistsException;
+use App\Catalog\Domain\Model\BrandImageRejectedException;
 use App\Catalog\Domain\Model\BrandNotEmptyException;
 use App\Catalog\Domain\Model\BrandNotFoundException;
-use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
-use App\Catalog\Domain\Repository\CatalogSubmissionRepository;
-use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -35,27 +33,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * Back-office management of the brand list shown in the storefront filters.
  *
- * Brands follow the same approval workflow as categories: every write goes through the
- * submission store (one `catalog_submission` row per brand, keyed by its name), a rename is
- * authorised by {@see SubmissionAccessPolicy} — a Super Admin writes anything, a regular Admin
- * only their own pending submission — and every action lands in the audit trail. Creating is
- * approved immediately, like a category creation, so the brand can be used without a second
- * step; deleting stays a Super Admin decision and removes the submission with the row.
+ * Brands follow the same approval workflow as categories: every write is one command on
+ * `command.bus` — the handlers own the store transitions, the access policy and the audit — and
+ * every read is one query on `query.bus`. The edge only validates the name shape and maps the
+ * domain's answer to HTTP (ERR-002).
  */
 #[Route('/api/v1/admin/catalog/brands')]
 final class AdminBrandController
 {
     public function __construct(
-        private Connection $connection,
-        private StorefrontProductSearchIndexer $searchIndex,
+        private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
-        private SubmissionAccessPolicy $access,
-        private CatalogAuditPort $audit,
-        private CatalogSubmissionCreator $submissions,
-        private CatalogSubmissionReviewer $reviews,
-        private CatalogSubmissionOwnerEditor $ownerEdits,
-        private CatalogSubmissionDeleter $deletes,
-        private CatalogSubmissionRepository $submissionsRead,
     ) {
     }
 
@@ -90,18 +78,9 @@ final class AdminBrandController
         }
 
         try {
-            $this->connection->transactional(function () use ($name, $admin): void {
-                if ($this->exists($name)) {
-                    throw BrandAlreadyExistsException::forName($name);
-                }
-
-                $this->connection->executeStatement('INSERT INTO storefront_brand (name) VALUES (:name)', ['name' => $name]);
-
-                $this->submissions->create(CatalogSubmissionKind::Brand, $name, $admin->getId());
-                $this->reviews->reviewerSave(CatalogSubmissionKind::Brand, $name, $admin->getId());
-            });
-        } catch (\DomainException $error) {
-            return $this->domainFailure($error);
+            $this->commandBus->dispatch(new CreateBrand($name, $admin->getId()));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
         }
 
         return new JsonResponse(['name' => $name, 'productCount' => 0], Response::HTTP_CREATED);
@@ -126,61 +105,9 @@ final class AdminBrandController
         }
 
         try {
-            $this->connection->transactional(function () use ($name, $newName, $admin): void {
-                $this->access->authorize(
-                    CatalogSubmissionKind::Brand,
-                    $name,
-                    $admin->getId(),
-                    $this->isSuperAdmin($admin),
-                );
-
-                $clash = $this->connection->fetchOne(
-                    'SELECT 1 FROM storefront_brand WHERE lower(name) = lower(:new) AND name <> :old',
-                    ['new' => $newName, 'old' => $name],
-                );
-                if (false !== $clash) {
-                    throw BrandAlreadyExistsException::forName($newName);
-                }
-
-                $renamed = $this->connection->executeStatement(
-                    'UPDATE storefront_brand SET name = :new WHERE name = :old',
-                    ['new' => $newName, 'old' => $name],
-                );
-                if (0 === $renamed) {
-                    throw BrandNotFoundException::forName($name);
-                }
-
-                $this->connection->executeStatement(
-                    'UPDATE storefront_product_view SET brand = :new WHERE brand = :old',
-                    ['new' => $newName, 'old' => $name],
-                );
-
-                // The submission follows its brand: the row keeps its whole state under the new
-                // key, an orphan at that key (a brand deleted before the workflow existed) cannot
-                // block it, and a legacy brand with no submission gets one, approved like a create.
-                if (null !== $this->submissionsRead->find(CatalogSubmissionKind::Brand, $name)) {
-                    $this->ownerEdits->move(CatalogSubmissionKind::Brand, $name, $newName);
-                } else {
-                    $this->submissions->create(CatalogSubmissionKind::Brand, $newName, $admin->getId());
-                }
-                $this->reviews->reviewerSave(CatalogSubmissionKind::Brand, $newName, $admin->getId());
-
-                $this->audit->record(
-                    'CATALOG_BRAND_RENAMED',
-                    CatalogSubmissionKind::Brand->auditTarget(),
-                    $newName,
-                    $admin->getId(),
-                    sprintf('Renamed from "%s".', $name),
-                );
-            });
-        } catch (\DomainException $error) {
-            return $this->domainFailure($error);
-        }
-
-        // The brand travels inside every product document: re-index the renamed products (ECO-008).
-        $slugs = $this->connection->fetchFirstColumn('SELECT slug FROM storefront_product_view WHERE brand = :name', ['name' => $newName]);
-        foreach ($slugs as $slug) {
-            $this->searchIndex->sync((string) $slug);
+            $this->commandBus->dispatch(new RenameBrand($name, $newName, $admin->getId(), $this->isSuperAdmin($admin)));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
         }
 
         return new JsonResponse(['name' => $newName]);
@@ -195,34 +122,52 @@ final class AdminBrandController
     public function delete(string $name, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
         try {
-            $this->connection->transactional(function () use ($name, $admin): void {
-                $count = (int) $this->connection->fetchOne(
-                    'SELECT COUNT(*) FROM storefront_product_view WHERE brand = :name',
-                    ['name' => $name],
-                );
-                if ($count > 0) {
-                    throw BrandNotEmptyException::forBrand($name, $count);
-                }
-
-                $deleted = $this->connection->executeStatement('DELETE FROM storefront_brand WHERE name = :name', ['name' => $name]);
-                if (0 === $deleted) {
-                    throw BrandNotFoundException::forName($name);
-                }
-
-                $this->deletes->delete(CatalogSubmissionKind::Brand, $name);
-
-                $this->audit->record(
-                    'CATALOG_BRAND_DELETED',
-                    CatalogSubmissionKind::Brand->auditTarget(),
-                    $name,
-                    $admin->getId(),
-                );
-            });
-        } catch (\DomainException $error) {
-            return $this->domainFailure($error);
+            $this->commandBus->dispatch(new DeleteBrand($name, $admin->getId()));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
         }
 
         return new JsonResponse(['success' => true, 'name' => $name]);
+    }
+
+    /**
+     * spec-run-19 R3/R5/R7 — attaching or replacing the brand image is a dedicated sub-route on
+     * the same record: one command on `command.bus`, the access policy of a rename (R10), one
+     * audit entry on success (R11) and the approval status untouched.
+     */
+    #[Route('/{name}/image', name: 'admin_catalog_set_brand_image', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function setImage(string $name, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        $image = $this->imageFrom($request);
+        if (null === $image) {
+            return new JsonResponse(['error' => 'The brand image must be a "/uploads/brands/" image path (jpg, jpeg, png or webp).'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            $this->commandBus->dispatch(new SetBrandImage($name, $image, $admin->getId(), $this->isSuperAdmin($admin)));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
+        }
+
+        return new JsonResponse(['name' => $name, 'image' => $image]);
+    }
+
+    /**
+     * spec-run-19 R6/R7 — removing the brand image is the same sub-route under DELETE, and
+     * succeeds the same way when no image is set (idempotent).
+     */
+    #[Route('/{name}/image', name: 'admin_catalog_remove_brand_image', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function removeImage(string $name, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        try {
+            $this->commandBus->dispatch(new RemoveBrandImage($name, $admin->getId(), $this->isSuperAdmin($admin)));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
+        }
+
+        return new JsonResponse(['name' => $name, 'image' => null]);
     }
 
     private function isSuperAdmin(CustomerUser $admin): bool
@@ -230,10 +175,21 @@ final class AdminBrandController
         return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
     }
 
+    private function rootCause(HandlerFailedException $exception): \Throwable
+    {
+        $cause = $exception;
+
+        while ($cause instanceof HandlerFailedException && null !== $cause->getPrevious()) {
+            $cause = $cause->getPrevious();
+        }
+
+        return $cause;
+    }
+
     /**
      * ERR-002: the domain says what is wrong, the edge decides what HTTP means.
      */
-    private function domainFailure(\DomainException $error): JsonResponse
+    private function domainFailure(\Throwable $error): JsonResponse
     {
         if ($error instanceof BrandAlreadyExistsException) {
             return new JsonResponse(['error' => 'This brand already exists.'], Response::HTTP_CONFLICT);
@@ -255,15 +211,11 @@ final class AdminBrandController
             return new JsonResponse(['error' => 'Approval Transition Refused', 'message' => $error->getMessage()], Response::HTTP_CONFLICT);
         }
 
-        throw $error;
-    }
+        if ($error instanceof BrandImageRejectedException) {
+            return new JsonResponse(['error' => $error->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-    private function exists(string $name): bool
-    {
-        return false !== $this->connection->fetchOne(
-            'SELECT 1 FROM storefront_brand WHERE lower(name) = lower(:name)',
-            ['name' => $name],
-        );
+        throw $error;
     }
 
     private function nameFrom(Request $request): ?string
@@ -276,5 +228,18 @@ final class AdminBrandController
         }
 
         return $name;
+    }
+
+    /**
+     * spec-run-19 R9 — the payload shape only (present, a string, not blank); whether the string
+     * is a real `/uploads/brands/` image reference is the domain value object's rule, refused
+     * through `domainFailure` with the same 422.
+     */
+    private function imageFrom(Request $request): ?string
+    {
+        $body = json_decode($request->getContent(), true);
+        $image = is_array($body) && is_string($body['image'] ?? null) ? trim($body['image']) : '';
+
+        return '' === $image ? null : $image;
     }
 }

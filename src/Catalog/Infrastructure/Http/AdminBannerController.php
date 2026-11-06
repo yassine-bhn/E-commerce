@@ -8,7 +8,6 @@ use App\Catalog\Application\Command\BannerRemoveImage;
 use App\Catalog\Application\Command\BannerReorderImages;
 use App\Catalog\Application\Command\BannerReplaceImages;
 use App\Catalog\Application\Query\GetBannerImages;
-use App\Catalog\Application\Service\BannerPayload;
 use App\Catalog\Domain\Model\BannerImageNotFoundException;
 use App\Catalog\Domain\Model\BannerRejectedException;
 use App\Catalog\Infrastructure\ReadModel\BannerView;
@@ -38,7 +37,6 @@ final class AdminBannerController
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
-        private BannerPayload $rules,
     ) {
     }
 
@@ -51,13 +49,7 @@ final class AdminBannerController
     #[Route('/images', name: 'admin_catalog_replace_banner_images', methods: ['PUT'])]
     public function replaceImages(Request $request, #[CurrentUser] UserInterface $admin): JsonResponse
     {
-        try {
-            $paths = $this->rules->imagePathsFrom(json_decode($request->getContent(), true));
-        } catch (BannerRejectedException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if ($failure = $this->dispatch(new BannerReplaceImages($paths))) {
+        if ($failure = $this->dispatch(new BannerReplaceImages(json_decode($request->getContent(), true)))) {
             return $failure;
         }
 
@@ -67,13 +59,7 @@ final class AdminBannerController
     #[Route('/images/order', name: 'admin_catalog_reorder_banner_images', methods: ['PATCH'])]
     public function reorderImages(Request $request, #[CurrentUser] UserInterface $admin): JsonResponse
     {
-        try {
-            $ids = $this->rules->imageIdsFrom(json_decode($request->getContent(), true));
-        } catch (BannerRejectedException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if ($failure = $this->dispatch(new BannerReorderImages($ids))) {
+        if ($failure = $this->dispatch(new BannerReorderImages(json_decode($request->getContent(), true)))) {
             return $failure;
         }
 

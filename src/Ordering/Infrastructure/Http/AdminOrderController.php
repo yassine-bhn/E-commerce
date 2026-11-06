@@ -7,14 +7,15 @@ namespace App\Ordering\Infrastructure\Http;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Ordering\Application\Command\CreateAdminProxyOrder;
 use App\Ordering\Application\Command\TransitionOrderStatus;
+use App\Ordering\Application\Query\GetOrderAuditTrail;
 use App\Ordering\Domain\Model\IllegalOrderStateTransitionException;
 use App\Ordering\Domain\Model\OptimisticLockException;
 use App\Ordering\Domain\Model\OrderSource;
 use App\Ordering\Domain\Model\OrderStatus;
 use App\Shared\Domain\Inventory\InsufficientStockException;
 use App\Shared\Infrastructure\Http\LineQuantity;
+use App\Shared\Infrastructure\Http\MessengerQuery;
 use App\Shared\Infrastructure\Http\RateLimitChecker;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ final class AdminOrderController
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private Connection $connection,
+        private MessengerQuery $queries,
         #[Target('admin_actions')]
         private RateLimiterFactoryInterface $adminActionsLimiter,
         private RateLimitChecker $rateLimitChecker,
@@ -208,13 +209,8 @@ final class AdminOrderController
             return new JsonResponse(['error' => 'Invalid order UUID'], Response::HTTP_BAD_REQUEST);
         }
 
-        $logs = $this->connection->fetchAllAssociative(
-            'SELECT from_status, to_status, from_version, to_version, changed_by, reason, created_at
-             FROM ordering_order_audit_trail
-             WHERE order_id = :id
-             ORDER BY to_version ASC',
-            ['id' => $id],
-        );
+        /** @var list<array{from_status: string|null, to_status: string, from_version: int, to_version: int, changed_by: string, reason: string, created_at: string}> $logs */
+        $logs = $this->queries->dispatch(new GetOrderAuditTrail($id));
 
         return new JsonResponse(['orderId' => $id, 'auditTrail' => $logs]);
     }

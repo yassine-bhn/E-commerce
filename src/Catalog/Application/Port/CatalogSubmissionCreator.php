@@ -21,4 +21,10 @@ interface CatalogSubmissionCreator
      * the row was inserted; an already-present row is left untouched. No outbox event, no audit.
      */
     public function import(CatalogSubmission $submission): bool;
+
+    /**
+     * solid Task 4.11 — the auto-approved registration (a brand carried by a product, or a
+     * Marques create): the submission is written and approved in one transition.
+     */
+    public function createApproved(CatalogSubmissionKind $kind, string $slug, string $actorId): void;
 }

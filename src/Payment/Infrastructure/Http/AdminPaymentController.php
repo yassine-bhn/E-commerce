@@ -8,6 +8,7 @@ use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Payment\Application\Command\ConfirmOfflinePayment;
 use App\Payment\Application\Command\RefundPayment;
 use App\Payment\Application\Query\GetPaymentDetail;
+use App\Payment\Application\Query\GetPaymentState;
 use App\Payment\Domain\Model\IllegalPaymentStateTransitionException;
 use App\Payment\Domain\Model\PaymentNotFoundException;
 use App\Payment\Domain\Model\PaymentVersionConflictException;
@@ -15,7 +16,6 @@ use App\Shared\Domain\Payment\OrderNotPayableException;
 use App\Shared\Domain\Payment\OrderNotRefundableException;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use App\Shared\Infrastructure\Http\RateLimitChecker;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +34,6 @@ final class AdminPaymentController
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private Connection $connection,
         #[Target('admin_actions')]
         private RateLimiterFactoryInterface $adminActionsLimiter,
         private RateLimitChecker $rateLimitChecker,
@@ -177,24 +176,10 @@ final class AdminPaymentController
     }
 
     /** @return array{paymentId: string, status: string, version: int, orderStatus: string} */
+    /** @return array{paymentId: string, status: string, version: int, orderStatus: string} */
     private function state(string $paymentId): array
     {
-        $payment = $this->connection->fetchAssociative(
-            'SELECT p.status, p.version, o.status AS order_status
-             FROM payment p JOIN ordering_orders o ON o.id = p.order_id
-             WHERE p.id = :id',
-            ['id' => $paymentId],
-        );
-
-        if (false === $payment) {
-            return ['paymentId' => $paymentId, 'status' => 'unknown', 'version' => 0, 'orderStatus' => 'unknown'];
-        }
-
-        return [
-            'paymentId' => $paymentId,
-            'status' => (string) $payment['status'],
-            'version' => (int) $payment['version'],
-            'orderStatus' => (string) $payment['order_status'],
-        ];
+        /* @var array{paymentId: string, status: string, version: int, orderStatus: string} */
+        return $this->queries->dispatch(new GetPaymentState($paymentId));
     }
 }

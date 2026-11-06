@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Catalog\Application\CommandHandler;
 
+use App\Catalog\Application\Command\SetProductPublication;
 use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\ProductPublicationStore;
-use App\Catalog\Application\Command\SetProductPublication;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
