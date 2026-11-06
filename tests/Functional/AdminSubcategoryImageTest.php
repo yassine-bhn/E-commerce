@@ -1,0 +1,550 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Functional;
+
+use App\Identity\Infrastructure\Security\CustomerUser;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Uid\Uuid;
+
+/**
+ * The sub-category picture CRUD: one `/uploads/categories/` reference stored on the node of
+ * the row's `subcategories` JSON tree, addressed by its label path (sibling labels are unique,
+ * so a path resolves to at most one node). The writes ride the same approval policy as every
+ * other taxonomy write, write nothing on refusal and audit exactly one entry per success.
+ */
+final class AdminSubcategoryImageTest extends WebTestCase
+{
+    private const string ONE_PIXEL_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+
+    /** @var list<string> */
+    private array $categorySlugs = [];
+    /** @var list<string> */
+    private array $userIds = [];
+    /** @var list<string> */
+    private array $uploadedFiles = [];
+    /** @var list<string> */
+    private array $tempFiles = [];
+
+    private ?Connection $connection = null;
+
+    protected function tearDown(): void
+    {
+        if ([] !== $this->categorySlugs) {
+            $this->db()->executeStatement(
+                'DELETE FROM storefront_category WHERE slug IN (:v)',
+                ['v' => $this->categorySlugs],
+                ['v' => ArrayParameterType::STRING],
+            );
+            $this->db()->executeStatement(
+                "DELETE FROM catalog_submission WHERE kind = 'categories' AND slug IN (:v)",
+                ['v' => $this->categorySlugs],
+                ['v' => ArrayParameterType::STRING],
+            );
+            $this->db()->executeStatement(
+                "DELETE FROM catalog_audit_log WHERE target_type = 'category' AND target_slug IN (:v)",
+                ['v' => $this->categorySlugs],
+                ['v' => ArrayParameterType::STRING],
+            );
+        }
+        if ([] !== $this->userIds) {
+            $this->db()->executeStatement(
+                'DELETE FROM customer_profile WHERE id IN (:v)',
+                ['v' => $this->userIds],
+                ['v' => ArrayParameterType::STRING],
+            );
+        }
+        foreach ($this->uploadedFiles as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+        foreach ($this->tempFiles as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+
+        $this->connection = null;
+        $this->categorySlugs = [];
+        $this->userIds = [];
+        $this->uploadedFiles = [];
+        $this->tempFiles = [];
+
+        parent::tearDown();
+    }
+
+    /**
+     * The full CRUD cycle closes through the real endpoints: upload (folder=categories) →
+     * attach to a node by label path → read the image in the admin category list → replace →
+     * remove, the approval status untouched and exactly one audit entry per successful write.
+     */
+    public function testTheFullSubcategoryImageCrudCycleThroughRealEndpoints(): void
+    {
+        $admin = $this->createUser('ROLE_SUPER_ADMIN');
+        $client = $this->clientFor($admin);
+        $slug = $this->createCategory($client, [
+            ['label' => 'Piscine', 'children' => [
+                ['label' => 'Équipement technique'],
+                ['label' => 'Accessoires'],
+            ]],
+        ]);
+
+        // C — the file enters through the real upload endpoint, then the attach references it.
+        $first = $this->uploadCategoryImage($client);
+        $client->jsonRequest('PUT', $this->imageRoute($slug), [
+            'path' => ['Piscine', 'Équipement technique'],
+            'image' => $first,
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $node = $this->nodeFromList($client, $slug, ['Piscine', 'Équipement technique']);
+        self::assertSame($first, $node['image'], 'R — the list reads the attached image on the node');
+
+        // U — a second upload replaces the first, in the response and in the list.
+        $second = $this->uploadCategoryImage($client);
+        $client->jsonRequest('PUT', $this->imageRoute($slug), [
+            'path' => ['Piscine', 'Équipement technique'],
+            'image' => $second,
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        $node = $this->nodeFromList($client, $slug, ['Piscine', 'Équipement technique']);
+        self::assertSame($second, $node['image'], 'the stored reference equals the new one');
+        self::assertNotSame($first, $node['image'], 'the old reference is no longer returned');
+
+        // D — removing clears the node: the node and its children stay, the list reads no image.
+        $client->jsonRequest('DELETE', $this->imageRoute($slug), [
+            'path' => ['Piscine', 'Équipement technique'],
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        $node = $this->nodeFromList($client, $slug, ['Piscine', 'Équipement technique']);
+        self::assertArrayNotHasKey('image', $node, 'the removed image reads back as absent');
+        self::assertSame([], $node['children'] ?? [], 'the node itself survives the removal');
+
+        // The tree around the node is untouched.
+        $tree = $this->treeFromList($client, $slug);
+        self::assertSame('Piscine', $tree[0]['label']);
+        self::assertSame('Accessoires', $tree[0]['children'][1]['label']);
+        self::assertArrayNotHasKey('image', $tree[0], 'the untouched nodes carry no image');
+
+        // R11 — exactly one audit entry per successful write, targeting the category.
+        self::assertSame(
+            ['CATALOG_CATEGORY_SUBCATEGORY_IMAGE_SET', 'CATALOG_CATEGORY_SUBCATEGORY_IMAGE_SET', 'CATALOG_CATEGORY_SUBCATEGORY_IMAGE_REMOVED'],
+            array_column($this->imageAudit($slug), 'action'),
+        );
+        self::assertSame('APPROVED', $this->approvalStatus($slug), 'an image write never changes the approval status');
+    }
+
+    /**
+     * The policy guards the image writes exactly like every other taxonomy write: an approved
+     * category is out of a regular Admin's reach (refusals persist nothing and audit nothing)
+     * while a Super Admin writes any node.
+     */
+    public function testTheAccessPolicyGuardsSubcategoryImageWrites(): void
+    {
+        $owner = $this->createUser('ROLE_ADMIN');
+        $ownerClient = $this->clientFor($owner);
+        $slug = $this->createCategory($ownerClient, [['label' => 'Robots']], $owner);
+
+        $ownerClient->jsonRequest('PUT', $this->imageRoute($slug), [
+            'path' => ['Robots'],
+            'image' => $this->referenceShapedPath(),
+        ]);
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_FORBIDDEN,
+            'an approved category is out of its owner\'s reach',
+        );
+        self::assertNull($this->nodeImage($slug, ['Robots']), 'a refused write persists nothing');
+        self::assertSame([], $this->imageAudit($slug), 'the refusals audited nothing');
+
+        $other = $this->clientFor($this->createUser('ROLE_ADMIN'));
+        $other->jsonRequest('PUT', $this->imageRoute($slug), [
+            'path' => ['Robots'],
+            'image' => $this->referenceShapedPath(),
+        ]);
+        self::assertSame(Response::HTTP_FORBIDDEN, $other->getResponse()->getStatusCode());
+        $other->jsonRequest('DELETE', $this->imageRoute($slug), ['path' => ['Robots']]);
+        self::assertSame(Response::HTTP_FORBIDDEN, $other->getResponse()->getStatusCode(), 'removing is refused the same way');
+        self::assertSame([], $this->imageAudit($slug));
+
+        $super = $this->clientFor($this->createUser('ROLE_SUPER_ADMIN'));
+        $image = $this->referenceShapedPath();
+        $super->jsonRequest('PUT', $this->imageRoute($slug), ['path' => ['Robots'], 'image' => $image]);
+        self::assertSame(Response::HTTP_OK, $super->getResponse()->getStatusCode(), 'a Super Admin writes any node');
+        self::assertSame($image, $this->nodeImage($slug, ['Robots']));
+        self::assertSame('APPROVED', $this->approvalStatus($slug));
+    }
+
+    /**
+     * A malformed label path or a reference that is not a `/uploads/categories/` image is
+     * refused with 422 and leaves the stored tree and the audit trail exactly as they were.
+     */
+    public function testInvalidPayloadsAreRefusedWith422AndPersistNothing(): void
+    {
+        $admin = $this->createUser('ROLE_SUPER_ADMIN');
+        $client = $this->clientFor($admin);
+        $slug = $this->createCategory($client, [['label' => 'Vannes']]);
+
+        $image = $this->referenceShapedPath();
+        $client->jsonRequest('PUT', $this->imageRoute($slug), ['path' => ['Vannes'], 'image' => $image]);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $badPaths = [
+            'missing path' => ['image' => $image],
+            'empty path' => ['path' => [], 'image' => $image],
+            'not a list' => ['path' => 'Vannes', 'image' => $image],
+            'non-string label' => ['path' => ['Vannes', 42], 'image' => $image],
+            'blank label' => ['path' => ['Vannes', '   '], 'image' => $image],
+        ];
+        foreach ($badPaths as $label => $payload) {
+            $client->jsonRequest('PUT', $this->imageRoute($slug), $payload);
+            self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY, sprintf('the "%s" path must be refused', $label));
+        }
+
+        $badImages = [
+            'missing image' => ['path' => ['Vannes']],
+            'blank image' => ['path' => ['Vannes'], 'image' => ''],
+            'not a string' => ['path' => ['Vannes'], 'image' => 42],
+            'wrong folder' => ['path' => ['Vannes'], 'image' => '/uploads/brands/'.Uuid::v4()->toRfc4122().'.jpg'],
+            'missing extension' => ['path' => ['Vannes'], 'image' => '/uploads/categories/'.Uuid::v4()->toRfc4122()],
+            'wrong extension' => ['path' => ['Vannes'], 'image' => '/uploads/categories/'.Uuid::v4()->toRfc4122().'.gif'],
+            'external url' => ['path' => ['Vannes'], 'image' => 'https://cdn.example.com/categories/'.Uuid::v4()->toRfc4122().'.png'],
+            'traversal' => ['path' => ['Vannes'], 'image' => '/uploads/categories/../secrets/'.Uuid::v4()->toRfc4122().'.png'],
+        ];
+        foreach ($badImages as $label => $payload) {
+            $client->jsonRequest('PUT', $this->imageRoute($slug), $payload);
+            self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY, sprintf('the "%s" image must be refused', $label));
+        }
+
+        self::assertSame($image, $this->nodeImage($slug, ['Vannes']), 'no refused payload changed the stored tree');
+        self::assertCount(1, $this->imageAudit($slug), 'the refusals audited nothing');
+    }
+
+    /**
+     * An image write on an unknown category or an unknown label path answers the controller's
+     * 404 shapes and never creates anything.
+     */
+    public function testUnknownCategoryOrSubcategoryAnswers404(): void
+    {
+        $admin = $this->createUser('ROLE_SUPER_ADMIN');
+        $client = $this->clientFor($admin);
+        $missing = 'ghost-category-'.substr(str_replace('-', '', Uuid::v4()->toRfc4122()), 0, 10);
+
+        $client->jsonRequest('PUT', $this->imageRoute($missing), ['path' => ['Whatever'], 'image' => $this->referenceShapedPath()]);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        self::assertSame('Category not found.', $this->json($client)['error']);
+
+        $client->jsonRequest('DELETE', $this->imageRoute($missing), ['path' => ['Whatever']]);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $slug = $this->createCategory($client, [['label' => 'Eau'], ['label' => 'Chaude']]);
+        $client->jsonRequest('PUT', $this->imageRoute($slug), ['path' => ['Nexists'], 'image' => $this->referenceShapedPath()]);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, 'an unknown label path is refused');
+        self::assertSame('Subcategory not found.', $this->json($client)['error']);
+
+        $client->jsonRequest('PUT', $this->imageRoute($slug), ['path' => ['Eau', 'Tiede'], 'image' => $this->referenceShapedPath()]);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, 'a partially resolving path is refused');
+
+        self::assertSame(
+            0,
+            (int) $this->db()->fetchOne('SELECT COUNT(*) FROM storefront_category WHERE slug = :s', ['s' => $missing]),
+            'no category was created',
+        );
+        self::assertSame([], $this->imageAudit($slug), 'the failures audited nothing');
+    }
+
+    /**
+     * The label path addresses nodes, so the same label at two different depths resolves to
+     * the node the path describes — and a whole-tree save (R3) that echoes an image keeps it,
+     * while a save without it defines a tree without one.
+     */
+    public function testLabelPathsAddressNodesAndTreeSavesDefineTheImages(): void
+    {
+        $admin = $this->createUser('ROLE_SUPER_ADMIN');
+        $client = $this->clientFor($admin);
+        $slug = $this->createCategory($client, [
+            ['label' => 'Eau', 'children' => [['label' => 'Eau']]],
+        ]);
+
+        // The deep 'Eau' gets the image; the top-level one does not.
+        $deep = $this->referenceShapedPath();
+        $client->jsonRequest('PUT', $this->imageRoute($slug), ['path' => ['Eau', 'Eau'], 'image' => $deep]);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertNull($this->nodeImage($slug, ['Eau']), 'the top-level node is untouched');
+        self::assertSame($deep, $this->nodeImage($slug, ['Eau', 'Eau']), 'the path addresses the deeper node');
+
+        // A tree save that echoes the image keeps it.
+        $tree = $this->treeFromList($client, $slug);
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/categories/'.rawurlencode($slug), [
+            'label' => 'Plomberie',
+            'quoteEligible' => true,
+            'subcategories' => $tree,
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertSame($deep, $this->nodeImage($slug, ['Eau', 'Eau']), 'an echoed image survives a whole-tree save');
+        self::assertSame('Plomberie', $this->categoryLabel($slug));
+
+        // A tree save without the image defines a tree without one.
+        $stripped = [];
+        foreach ($tree as $node) {
+            unset($node['image']);
+            if (isset($node['children']) && is_array($node['children'])) {
+                $children = [];
+                foreach ($node['children'] as $child) {
+                    unset($child['image']);
+                    $children[] = $child;
+                }
+                $node['children'] = $children;
+            }
+            $stripped[] = $node;
+        }
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/categories/'.rawurlencode($slug), [
+            'label' => 'Plomberie',
+            'quoteEligible' => true,
+            'subcategories' => $stripped,
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertNull($this->nodeImage($slug, ['Eau', 'Eau']), 'a save without the image drops it');
+
+        // An image reference that is not a valid categories upload never enters through a tree save.
+        $client->jsonRequest('PUT', '/api/v1/admin/catalog/categories/'.rawurlencode($slug), [
+            'label' => 'Plomberie',
+            'quoteEligible' => true,
+            'subcategories' => [['label' => 'Eau', 'image' => 'https://evil.example.com/x.png', 'children' => [['label' => 'Eau']]]],
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertNull($this->nodeImage($slug, ['Eau']), 'an invalid reference is dropped, not stored');
+    }
+
+    private function imageRoute(string $slug): string
+    {
+        return '/api/v1/admin/catalog/categories/'.rawurlencode($slug).'/subcategories/image';
+    }
+
+    /** @param list<array<string, mixed>>|list<string> $subcategories */
+    private function createCategory(KernelBrowser $client, array $subcategories, ?CustomerUser $creator = null): string
+    {
+        $slug = 'cat-'.substr(str_replace('-', '', Uuid::v4()->toRfc4122()), 0, 10);
+        $this->categorySlugs[] = $slug;
+
+        $client->jsonRequest('POST', '/api/v1/admin/catalog/categories', [
+            'label' => 'Category '.$slug,
+            'slug' => $slug,
+            'quoteEligible' => false,
+            'subcategories' => $subcategories,
+        ]);
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_CREATED,
+            sprintf('the category fixture must be created: %s', $client->getResponse()->getContent()),
+        );
+
+        return $slug;
+    }
+
+    private function uploadCategoryImage(KernelBrowser $client): string
+    {
+        $temp = (string) tempnam(sys_get_temp_dir(), 'png');
+        file_put_contents($temp, base64_decode(self::ONE_PIXEL_PNG, true));
+        $this->tempFiles[] = $temp;
+
+        $client->request('POST', '/api/v1/admin/catalog/uploads', ['folder' => 'categories'], [
+            'file' => new UploadedFile($temp, 'sub.png', 'image/png', null, true),
+        ]);
+        self::assertSame(
+            Response::HTTP_CREATED,
+            $client->getResponse()->getStatusCode(),
+            'the categories upload must succeed for the cycle to start',
+        );
+
+        $path = (string) $this->json($client)['path'];
+        self::assertStringStartsWith('/uploads/categories/', $path);
+        $this->uploadedFiles[] = $this->publicPath($path);
+        self::assertFileExists($this->publicPath($path), 'the uploaded file must exist on disk for the attach to reference it');
+
+        return $path;
+    }
+
+    /** A path shaped exactly like the `folder=categories` upload endpoint's answer. */
+    private function referenceShapedPath(): string
+    {
+        return '/uploads/categories/'.Uuid::v4()->toRfc4122().'.png';
+    }
+
+    private function publicPath(string $path): string
+    {
+        /** @var string $projectDir */
+        $projectDir = static::getContainer()->getParameter('kernel.project_dir');
+
+        return $projectDir.'/public'.$path;
+    }
+
+    /**
+     * @param list<string> $path
+     *
+     * @return array<string, mixed>
+     */
+    private function nodeFromList(KernelBrowser $client, string $slug, array $path): array
+    {
+        $tree = $this->treeFromList($client, $slug);
+        $node = null;
+        foreach ($path as $label) {
+            $node = null;
+            foreach ($tree as $candidate) {
+                if (($candidate['label'] ?? null) === $label) {
+                    $node = $candidate;
+                    $tree = is_array($candidate['children'] ?? null) ? $candidate['children'] : [];
+                    break;
+                }
+            }
+            self::assertNotNull($node, sprintf('the node "%s" must exist in the list read', $label));
+        }
+        self::assertIsArray($node);
+
+        /* @var array<string, mixed> $node */
+        return $node;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function treeFromList(KernelBrowser $client, string $slug): array
+    {
+        $client->jsonRequest('GET', '/api/v1/admin/catalog/categories?q='.urlencode($slug));
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode(), 'the category list must answer');
+
+        $rows = array_column($this->json($client)['items'], null, 'slug');
+        self::assertArrayHasKey($slug, $rows, 'the category must appear in the admin category list');
+
+        $tree = $rows[$slug]['subcategories'] ?? [];
+        self::assertIsArray($tree);
+
+        /* @var list<array<string, mixed>> $tree */
+        return $tree;
+    }
+
+    /**
+     * @param list<string> $path
+     */
+    private function nodeImage(string $slug, array $path): ?string
+    {
+        $stored = $this->db()->fetchOne('SELECT subcategories FROM storefront_category WHERE slug = :s', ['s' => $slug]);
+        $tree = is_string($stored) ? json_decode($stored, true) : $stored;
+        if (!is_array($tree)) {
+            return null;
+        }
+
+        $nodes = $tree;
+        $node = null;
+        foreach ($path as $label) {
+            $node = null;
+            foreach ($nodes as $candidate) {
+                if (is_array($candidate) && ($candidate['label'] ?? null) === $label) {
+                    $node = $candidate;
+                    $nodes = is_array($candidate['children'] ?? null) ? $candidate['children'] : [];
+                    break;
+                }
+            }
+            if (null === $node) {
+                return null;
+            }
+        }
+
+        return is_array($node) && isset($node['image']) && is_string($node['image']) ? $node['image'] : null;
+    }
+
+    private function categoryLabel(string $slug): ?string
+    {
+        $label = $this->db()->fetchOne('SELECT label FROM storefront_category WHERE slug = :s', ['s' => $slug]);
+
+        return is_string($label) ? $label : null;
+    }
+
+    private function approvalStatus(string $slug): string
+    {
+        return (string) $this->db()->fetchOne(
+            'SELECT approval_status FROM storefront_category WHERE slug = :s',
+            ['s' => $slug],
+        );
+    }
+
+    /**
+     * One browser per actor: a fresh kernel and session, so the token of the previous user can
+     * never answer for the next one.
+     */
+    private function clientFor(CustomerUser $user): KernelBrowser
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $client->loginUser($user);
+
+        return $client;
+    }
+
+    private function createUser(string $role): CustomerUser
+    {
+        $id = Uuid::v7()->toRfc4122();
+        // The whole id, not a prefix: the provider resolves a session by e-mail, and two UUIDv7
+        // minted in the same millisecond share their first eight hex digits.
+        $email = sprintf('subcategory.image.%s@example.com', $id);
+        $this->db()->insert('customer_profile', [
+            'id' => $id,
+            'name' => 'Subcategory Image '.$role,
+            'email' => $email,
+            'password_hash' => null,
+            'role' => $role,
+            'status' => 'active',
+        ]);
+        $this->userIds[] = $id;
+
+        return new CustomerUser($id, $email, null, $role, 'active');
+    }
+
+    /** @return array<string, mixed> */
+    private function json(KernelBrowser $client): array
+    {
+        /** @var array<string, mixed> $payload */
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        return $payload;
+    }
+
+    /** Cached: the connection outlives the kernel shutdowns this test performs between actors. */
+    private function db(): Connection
+    {
+        if (null === $this->connection) {
+            /** @var Connection $connection */
+            $connection = static::getContainer()->get(Connection::class);
+            $this->connection = $connection;
+        }
+
+        return $this->connection;
+    }
+
+    /**
+     * The image-related audit entries for a category, oldest first.
+     *
+     * @return list<array{action: string, target_type: string, actor_id: string}>
+     */
+    private function imageAudit(string $slug): array
+    {
+        $rows = $this->db()->fetchAllAssociative(
+            "SELECT action, target_type, actor_id FROM catalog_audit_log
+             WHERE target_type = 'category' AND target_slug = :slug AND action LIKE 'CATALOG_CATEGORY_SUBCATEGORY_IMAGE_%'
+             ORDER BY created_at ASC, id ASC",
+            ['slug' => $slug],
+        );
+
+        return array_map(
+            static fn (array $row): array => [
+                'action' => (string) $row['action'],
+                'target_type' => (string) $row['target_type'],
+                'actor_id' => (string) $row['actor_id'],
+            ],
+            $rows,
+        );
+    }
+}
