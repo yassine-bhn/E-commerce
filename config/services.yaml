@@ -313,10 +313,6 @@ services:
         arguments:
             $eventBus: '@event.bus'
 
-    App\Ordering\Application\Saga\CheckoutSaga:
-        arguments:
-            $commandBus: '@command.bus'
-
     App\Shared\Infrastructure\Http\MessengerQuery:
         arguments:
             $queryBus: '@query.bus'

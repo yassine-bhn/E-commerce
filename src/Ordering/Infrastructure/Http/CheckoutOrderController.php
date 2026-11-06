@@ -8,7 +8,6 @@ use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Ordering\Application\Command\CancelOrderByCustomer;
 use App\Ordering\Application\Command\PlaceOrder;
 use App\Ordering\Application\Query\ListOrdersForCustomer;
-use App\Ordering\Application\Saga\CheckoutSaga;
 use App\Ordering\Domain\Model\IllegalOrderStateTransitionException;
 use App\Ordering\Domain\Model\OptimisticLockException;
 use App\Ordering\Domain\Model\OrderNotFoundException;
@@ -16,12 +15,12 @@ use App\Ordering\Domain\Model\OrderStatus;
 use App\Ordering\Domain\Model\PriceChangedException;
 use App\Shared\Application\Pagination\CursorPage;
 use App\Shared\Application\Pagination\InvalidCursorException;
+use App\Shared\Application\Query\GetPaymentMethods;
 use App\Shared\Domain\Inventory\InsufficientStockException;
 use App\Shared\Infrastructure\Http\LineQuantity;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use App\Shared\Infrastructure\Http\RateLimitChecker;
-use App\Shared\Infrastructure\ReadModel\PlatformSettingsRepository;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,12 +38,10 @@ final class CheckoutOrderController
 {
     public function __construct(
         private MessengerQuery $queries,
-        private CheckoutSaga $checkout,
         private MessageBusInterface $commandBus,
         #[Target('order_creation')]
         private RateLimiterFactoryInterface $orderCreationLimiter,
         private RateLimitChecker $rateLimitChecker,
-        private PlatformSettingsRepository $settings,
     ) {
     }
 
@@ -97,7 +94,8 @@ final class CheckoutOrderController
 
         // O-19 — checkout only accepts a method the operator enabled; a free string would let the
         // storefront promise a payment route nobody supports.
-        $allowedMethods = $this->settings->paymentMethods();
+        /** @var list<string> $allowedMethods */
+        $allowedMethods = $this->queries->dispatch(new GetPaymentMethods());
         if (!in_array($paymentMethod, $allowedMethods, true)) {
             return new JsonResponse([
                 'error' => 'payment-method-not-allowed',
@@ -122,7 +120,7 @@ final class CheckoutOrderController
         $orderNumber = 'ZG-'.random_int(100000, 999999);
 
         try {
-            $this->checkout->startCheckout(new PlaceOrder(
+            $this->commandBus->dispatch(new PlaceOrder(
                 $orderId,
                 $customerId,
                 $idempotencyKey,
