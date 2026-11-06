@@ -42,7 +42,7 @@ final class AdminOrderController
     #[Route('/proxy', name: 'admin_orders_create_proxy', methods: ['POST'])]
     public function createProxy(Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
-        if ($limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
             return $limitResponse;
         }
         /** @var array<string, mixed> $body */
@@ -141,7 +141,7 @@ final class AdminOrderController
             return new JsonResponse(['error' => 'Invalid order UUID'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
             return $limitResponse;
         }
 

@@ -69,8 +69,8 @@ final class PlaceOrderHandler
             $command->orderId,
             array_map(
                 static fn (array $line): array => [
-                    'slug' => (string) $line['slug'],
-                    'quantity' => (int) $line['quantity'],
+                    'slug' => $line['slug'],
+                    'quantity' => $line['quantity'],
                 ],
                 $quote['pricedLines'],
             ),
@@ -176,12 +176,12 @@ final class PlaceOrderHandler
         }
 
         usort($changed, static function (array $a, array $b): int {
-            $cmp = strcmp((string) $a['slug'], (string) $b['slug']);
+            $cmp = strcmp($a['slug'], $b['slug']);
             if (0 !== $cmp) {
                 return $cmp;
             }
 
-            return strcmp((string) ($a['variant'] ?? ''), (string) ($b['variant'] ?? ''));
+            return strcmp($a['variant'] ?? '', $b['variant'] ?? '');
         });
 
         return $changed;

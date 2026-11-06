@@ -44,10 +44,10 @@ final class BannerFinder
         $images = [];
         foreach ($rows as $row) {
             $images[] = new BannerImageView(
-                $withIdentities ? (string) $row['id'] : null,
-                (string) $row['image_path'],
+                $withIdentities ? $row['id'] : null,
+                $row['image_path'],
                 (int) $row['sort_order'],
-                $withIdentities ? (string) $row['created_at'] : null,
+                $withIdentities ? $row['created_at'] : null,
             );
         }
 

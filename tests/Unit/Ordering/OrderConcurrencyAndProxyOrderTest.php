@@ -30,8 +30,8 @@ final class OrderConcurrencyAndProxyOrderTest extends TestCase
 {
     public function testCreateAdminProxyOrderBuildsThePlacementFromTheQuote(): void
     {
-        $catalogPort = $this->createStub(StorefrontCatalogPort::class);
-        $pricingPort = $this->createStub(StorefrontPricingPort::class);
+        $catalogPort = self::createStub(StorefrontCatalogPort::class);
+        $pricingPort = self::createStub(StorefrontPricingPort::class);
 
         $catalogPort->method('getBySlug')
             ->willReturn(new StorefrontProductSnapshot(
@@ -51,8 +51,8 @@ final class OrderConcurrencyAndProxyOrderTest extends TestCase
         $handler = new CreateAdminProxyOrderHandler(
             $proxyOrders,
             new StorefrontQuoteService($catalogPort, $pricingPort),
-            $this->createStub(StockReservationPort::class),
-            $this->createStub(PaymentInitiationPort::class),
+            self::createStub(StockReservationPort::class),
+            self::createStub(PaymentInitiationPort::class),
         );
         $command = new CreateAdminProxyOrder(
             orderId: '01926b00-0000-7000-8000-000000000001',

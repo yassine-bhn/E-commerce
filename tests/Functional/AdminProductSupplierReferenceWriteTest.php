@@ -293,7 +293,11 @@ final class AdminProductSupplierReferenceWriteTest extends WebTestCase
         self::assertSame('SUP-SUPER', $this->storedValue($slug));
     }
 
-    /** @param array<string, mixed> $overrides */
+    /**
+     * @param array<string, mixed> $overrides
+     *
+     * @return array<string, mixed>
+     */
     private function payload(string $slug, array $overrides = []): array
     {
         return $overrides + [

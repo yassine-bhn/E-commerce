@@ -126,7 +126,7 @@ final class CrossSiteRequestGuardSubscriber implements EventSubscriberInterface
      */
     private function header(Request $request, string $name): ?string
     {
-        $value = trim((string) $request->headers->get($name, ''));
+        $value = trim($request->headers->get($name, ''));
 
         return '' === $value ? null : $value;
     }

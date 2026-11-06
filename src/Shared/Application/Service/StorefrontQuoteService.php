@@ -47,7 +47,7 @@ final class StorefrontQuoteService
                 throw new \InvalidArgumentException(sprintf('Product out of stock: %s', $line['slug']));
             }
 
-            $qty = (int) ($line['quantity'] ?? $line['qty'] ?? 1);
+            $qty = ($line['quantity'] ?? $line['qty'] ?? 1);
             if ($qty < 1) {
                 throw new \InvalidArgumentException(sprintf('Quantity must be positive for product: %s', $product->slug));
             }
@@ -95,7 +95,7 @@ final class StorefrontQuoteService
         }
         foreach ($product->variants as $v) {
             if ($v['label'] === $variant) {
-                return (int) $v['price'];
+                return $v['price'];
             }
         }
 

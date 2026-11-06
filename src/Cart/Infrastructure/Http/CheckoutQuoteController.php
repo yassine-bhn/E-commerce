@@ -29,7 +29,7 @@ final class CheckoutQuoteController
             return new JsonResponse(['error' => 'lines required'], Response::HTTP_BAD_REQUEST);
         }
 
-        /** @var list<array{slug: string, variant?: string|null, quantity: int}> $normalizedLines */
+        /** @var list<array{slug: string, variant: string|null, quantity: int<1, max>}> $normalizedLines */
         $normalizedLines = array_values(array_map(static fn (array $l): array => [
             'slug' => (string) ($l['slug'] ?? ''),
             'variant' => isset($l['variant']) && is_string($l['variant']) ? $l['variant'] : null,

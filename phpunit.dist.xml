@@ -23,6 +23,9 @@
         </testsuite>
         <testsuite name="Integration">
             <directory>tests/Integration</directory>
+            <!-- LSP-001/003 abstract contract bases: bound by the concrete subclasses in the
+                 context directories, never discovered directly (abstract classes warn). -->
+            <exclude>tests/Integration/Contract</exclude>
         </testsuite>
         <testsuite name="Projection">
             <directory>tests/Projection</directory>

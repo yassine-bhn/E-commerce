@@ -192,7 +192,7 @@ final class StockReservationReleaseTest extends KernelTestCase
             ['slug' => $this->slug],
         );
 
-        return ['on_hand' => (int) $row['on_hand'], 'reserved' => (int) $row['reserved']];
+        return ['on_hand' => $row['on_hand'], 'reserved' => $row['reserved']];
     }
 
     private function cache(Connection $connection): ?int

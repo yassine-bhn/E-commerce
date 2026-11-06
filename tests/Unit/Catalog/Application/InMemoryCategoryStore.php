@@ -159,7 +159,7 @@ final class InMemoryCategoryStore implements CategoryReader, CategoryCreator, Ca
     {
         foreach (array_reverse($this->writes) as $write) {
             if (isset($write['slug'])) {
-                return (string) $write['slug'];
+                return $write['slug'];
             }
         }
 
@@ -171,7 +171,7 @@ final class InMemoryCategoryStore implements CategoryReader, CategoryCreator, Ca
     {
         foreach (array_reverse($this->writes) as $write) {
             if (isset($write['hidden'])) {
-                return (bool) $write['hidden'];
+                return $write['hidden'];
             }
         }
 
@@ -181,7 +181,7 @@ final class InMemoryCategoryStore implements CategoryReader, CategoryCreator, Ca
     /** @return list<string> */
     public function writtenMethods(): array
     {
-        return array_map(static fn (array $write): string => (string) $write['method'], $this->writes);
+        return array_map(static fn (array $write): string => $write['method'], $this->writes);
     }
 
     private function guardWrite(string $method): void

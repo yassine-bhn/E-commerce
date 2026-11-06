@@ -55,7 +55,7 @@ final class WhatsAppChatLinkTest extends TestCase
         $url = WhatsAppChatLink::build(WhatsAppNumber::fromString(self::NUMBER), self::QUOTED_MESSAGE);
 
         self::assertSame('text=say%20%22hi%22%20it%27s%20%2Fa%5Cb', parse_url($url, PHP_URL_QUERY));
-        self::assertSame('text='.self::QUOTED_MESSAGE, rawurldecode((string) parse_url($url, PHP_URL_QUERY)));
+        self::assertSame('text='.self::QUOTED_MESSAGE, rawurldecode(parse_url($url, PHP_URL_QUERY)));
     }
 
     #[DataProvider('nonAsciiMessageProvider')]

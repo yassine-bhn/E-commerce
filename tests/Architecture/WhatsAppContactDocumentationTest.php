@@ -149,11 +149,11 @@ final class WhatsAppContactDocumentationTest extends TestCase
         );
         self::assertSame(1, $found, sprintf('R22 — README has no "%s" heading.', $topic));
 
-        $section = substr($markdown, (int) $heading[0][1]);
+        $section = substr($markdown, $heading[0][1]);
         $next = [];
         preg_match('/^## /m', $section, $next, PREG_OFFSET_CAPTURE, 1);
 
-        return isset($next[0]) ? substr($section, 0, (int) $next[0][1]) : $section;
+        return isset($next[0]) ? substr($section, 0, $next[0][1]) : $section;
     }
 
     /** @return array<array-key, mixed> */
@@ -172,14 +172,14 @@ final class WhatsAppContactDocumentationTest extends TestCase
     {
         self::assertIsArray($value, $message);
 
-        return (array) $value;
+        return $value;
     }
 
     private static function stringValue(mixed $value, string $message): string
     {
         self::assertIsString($value, $message);
 
-        return (string) $value;
+        return $value;
     }
 
     private static function read(string $relativePath): string

@@ -76,7 +76,7 @@ final class SolidBoundariesTest extends TestCase
                 return true;
             }
         }
-        if (preg_match('#^App\\\\[^\\\\]+\\\\Infrastructure\\\\#', $type)) {
+        if (1 === preg_match('#^App\\\\[^\\\\]+\\\\Infrastructure\\\\#', $type)) {
             return true;
         }
 
@@ -88,7 +88,7 @@ final class SolidBoundariesTest extends TestCase
     {
         $cases = [];
         foreach (self::tree()->classes() as $class) {
-            if (!preg_match('#^[^/]+/Application/#', $class['file'])) {
+            if (1 !== preg_match('#^[^/]+/Application/#', $class['file'])) {
                 continue;
             }
             $found = null;
@@ -143,7 +143,7 @@ final class SolidBoundariesTest extends TestCase
     {
         $cases = [];
         foreach (self::tree()->classes() as $class) {
-            if (!preg_match('#^[^/]+/Infrastructure/Http/#', $class['file'])) {
+            if (1 !== preg_match('#^[^/]+/Infrastructure/Http/#', $class['file'])) {
                 continue;
             }
             if (!str_ends_with($class['name'], 'Controller')) {
@@ -224,7 +224,7 @@ final class SolidBoundariesTest extends TestCase
     {
         $cases = [];
         foreach (self::tree()->interfaces() as $iface) {
-            if (!preg_match('#^[^/]+/(Domain|Application)/#', $iface['file'])) {
+            if (1 !== preg_match('#^[^/]+/(Domain|Application)/#', $iface['file'])) {
                 continue;
             }
             if (count($iface['methods']) > 3) {
@@ -305,34 +305,34 @@ final class SolidBoundariesTest extends TestCase
         }
         $cases = [];
         foreach ($classes as $class) {
-            if (!preg_match('#^[^/]+/Application/#', $class['file'])) {
+            if (1 !== preg_match('#^[^/]+/Application/#', $class['file'])) {
                 continue;
             }
             foreach ($class['imports'] as $import) {
                 if (isset($interfacesByFqcn[$import])) {
                     $iface = $interfacesByFqcn[$import];
-                    if (preg_match('#^[^/]+/Infrastructure/#', $iface['file'])) {
+                    if (1 === preg_match('#^[^/]+/Infrastructure/#', $iface['file'])) {
                         $cases[$class['file'].'::'.$import] = [$class['file'], $import];
                     }
                 }
             }
         }
         foreach ($classes as $class) {
-            if (!preg_match('#^[^/]+/(Domain|Application)/#', $class['file'])) {
+            if (1 !== preg_match('#^[^/]+/(Domain|Application)/#', $class['file'])) {
                 continue;
             }
             foreach ($class['node']->implements ?? [] as $impl) {
                 $implName = $impl instanceof \PhpParser\Node\Name ? $impl->toString() : (string) $impl;
                 foreach ($interfacesByFqcn as $fqcn => $iface) {
                     if (str_ends_with($fqcn, '\\'.$implName) || $fqcn === $implName) {
-                        if (preg_match('#^[^/]+/(Domain|Application)/#', $iface['file'])) {
+                        if (1 === preg_match('#^[^/]+/(Domain|Application)/#', $iface['file'])) {
                             $cases[$class['file'].'::implements '.$fqcn] = [$class['file'], $fqcn];
                         }
                     }
                 }
             }
         }
-        if (empty($cases)) {
+        if ([] === $cases) {
             $cases['__none__'] = [null, null];
         }
 
@@ -368,14 +368,14 @@ final class SolidBoundariesTest extends TestCase
                 $reason = 'ContainerInterface';
             } elseif (str_contains($code, 'static::getContainer()')) {
                 $reason = 'static::getContainer()';
-            } elseif (preg_match('/[Cc]ontainer[^;]{0,40}->get\s*\(/', $code)) {
+            } elseif (1 === preg_match('/[Cc]ontainer[^;]{0,40}->get\s*\(/', $code)) {
                 $reason = 'container->get(';
             }
             if (null !== $reason) {
                 $cases[$file] = [$file, $reason];
             }
         }
-        if (empty($cases)) {
+        if ([] === $cases) {
             $cases['__none__'] = [null, null];
         }
 
@@ -399,7 +399,7 @@ final class SolidBoundariesTest extends TestCase
     {
         $cases = [];
         foreach (self::tree()->files() as $file) {
-            if (!preg_match('#^[^/]+/(Domain|Application)/#', $file)) {
+            if (1 !== preg_match('#^[^/]+/(Domain|Application)/#', $file)) {
                 continue;
             }
             $code = self::tree()->read($file);
@@ -431,7 +431,7 @@ final class SolidBoundariesTest extends TestCase
     {
         $cases = [];
         foreach (self::tree()->files() as $file) {
-            if (!preg_match('#^[^/]+/Infrastructure/Http/#', $file)) {
+            if (1 !== preg_match('#^[^/]+/Infrastructure/Http/#', $file)) {
                 continue;
             }
             if (self::tree()->hasSqlCall($file)) {

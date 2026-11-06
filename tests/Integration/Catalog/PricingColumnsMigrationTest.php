@@ -131,6 +131,9 @@ final class PricingColumnsMigrationTest extends KernelTestCase
         $dependencyFactory->getMigrator()->migrate($plan, new MigratorConfiguration());
     }
 
+    /**
+     * @return list<string>
+     */
     private static function productColumns(Connection $connection): array
     {
         $columns = $connection->fetchFirstColumn("SELECT column_name FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'storefront_product_view' ORDER BY ordinal_position");

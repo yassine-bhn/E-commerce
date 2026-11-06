@@ -119,7 +119,7 @@ final class RememberMeTest extends WebTestCase
         $cookie = $client->getCookieJar()->get(self::COOKIE_NAME);
         self::assertNotNull($cookie, 'The remember-me cookie must be stored by the browser.');
 
-        $value = (string) $cookie->getValue();
+        $value = $cookie->getValue();
         self::assertNotSame('', $value, 'The remember-me cookie must not be a clearing cookie.');
 
         return $value;

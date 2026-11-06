@@ -46,7 +46,7 @@ final class StorefrontProductController
     #[Route('/search', name: 'storefront_products_search', methods: ['GET'])]
     public function search(Request $request): JsonResponse
     {
-        if ($limitResponse = $this->rateLimitChecker->check($this->searchLimiter, $request)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->searchLimiter, $request)) {
             return $limitResponse;
         }
 
