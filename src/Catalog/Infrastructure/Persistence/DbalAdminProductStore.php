@@ -16,7 +16,8 @@ use Doctrine\DBAL\ParameterType;
  */
 final class DbalAdminProductStore implements ProductPublicationStore, ProductReviewStore, ProductDeletionReader
 {
-    public function __construct(private Connection $connection) {
+    public function __construct(private Connection $connection)
+    {
     }
 
     public function setPublished(string $slug, bool $published): void

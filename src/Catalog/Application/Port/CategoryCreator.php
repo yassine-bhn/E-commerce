@@ -12,7 +12,5 @@ use App\Catalog\Domain\Model\Category;
  */
 interface CategoryCreator
 {
-    public function nextSortOrder(): int;
-
     public function create(Category $category): void;
 }

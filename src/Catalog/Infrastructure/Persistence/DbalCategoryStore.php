@@ -21,8 +21,7 @@ use Doctrine\DBAL\ParameterType;
  * DIP-003 — the one DBAL adapter behind the category ports; the SQL is the handlers' and the
  * hierarchy validator's former inline statements, moved verbatim.
  */
-final class DbalCategoryStore implements CategoryReader, CategoryCreator, CategoryTreeWriter,
-    CategoryVisibilityWriter, CategoryDeleter, CategoryDeletionReader, CategoryHierarchyReader
+final class DbalCategoryStore implements CategoryReader, CategoryCreator, CategoryTreeWriter, CategoryVisibilityWriter, CategoryDeleter, CategoryDeletionReader, CategoryHierarchyReader
 {
     private const LOAD = 'SELECT slug, label, subcategories, quote_eligible, hidden, sort_order, parent_slug
          FROM storefront_category WHERE slug = :slug';
@@ -37,7 +36,8 @@ final class DbalCategoryStore implements CategoryReader, CategoryCreator, Catego
            AND subcategory <> ''
          ORDER BY subcategory ASC";
 
-    public function __construct(private Connection $connection) {
+    public function __construct(private Connection $connection)
+    {
     }
 
     public function find(string $slug): ?Category
@@ -60,7 +60,7 @@ final class DbalCategoryStore implements CategoryReader, CategoryCreator, Catego
         return array_values(array_unique($labels));
     }
 
-    public function nextSortOrder(): int
+    private function nextSortOrder(): int
     {
         return (int) $this->connection->fetchOne('SELECT COALESCE(MAX(sort_order), 0) FROM storefront_category') + 1;
     }

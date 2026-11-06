@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Search;
 
-use App\Shared\Application\Port\ProductSearchIndexPort;
 use App\Catalog\Infrastructure\ReadModel\CatalogVisibility;
+use App\Shared\Application\Port\ProductSearchIndexPort;
 use Doctrine\DBAL\Connection;
 use Meilisearch\Client;
 

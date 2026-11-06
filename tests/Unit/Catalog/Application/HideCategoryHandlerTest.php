@@ -14,23 +14,23 @@ use PHPUnit\Framework\TestCase;
 final class HideCategoryHandlerTest extends TestCase
 {
     /** @param array<string, mixed>|false $row */
-    private function connection(array|false $row): CategoryConnectionFake
+    private function categories(array|false $row): InMemoryCategoryStore
     {
-        $connection = new CategoryConnectionFake();
-        $connection->rows = [$row];
-        $connection->submission();
+        $store = new InMemoryCategoryStore();
+        $store->rows = [$row];
+        $store->submission();
 
-        return $connection;
+        return $store;
     }
 
-    private function hide(CategoryConnectionFake $connection, HideCategory $command): void
+    private function hide(InMemoryCategoryStore $categories, HideCategory $command): void
     {
-        (new HideCategoryHandler($connection, $connection->accessPolicy()))($command);
+        (new HideCategoryHandler($categories, $categories, $categories->accessPolicy()))($command);
     }
 
-    private function show(CategoryConnectionFake $connection, ShowCategory $command): void
+    private function show(InMemoryCategoryStore $categories, ShowCategory $command): void
     {
-        (new ShowCategoryHandler($connection, $connection->accessPolicy()))($command);
+        (new ShowCategoryHandler($categories, $categories, $categories->accessPolicy()))($command);
     }
 
     /** @return array<string, mixed> */
@@ -49,62 +49,60 @@ final class HideCategoryHandlerTest extends TestCase
 
     public function testHidingPersistsTheFlagAndLeavesTheRestOfTheRowAlone(): void
     {
-        $connection = $this->connection($this->row(hidden: false));
+        $categories = $this->categories($this->row(hidden: false));
 
-        $this->hide($connection, new HideCategory('sanitaires'));
+        $this->hide($categories, new HideCategory('sanitaires'));
 
-        $write = $connection->lastWrite();
+        self::assertCount(1, $categories->writes, 'hiding is one port call');
+        $write = $categories->lastWrite();
         self::assertNotNull($write);
-        self::assertSame(1, count($connection->writes), 'hiding is one statement');
-        self::assertStringContainsString('UPDATE storefront_category', $write['sql']);
-        self::assertStringContainsString('hidden', $write['sql']);
-        self::assertStringNotContainsString('subcategories', $write['sql'], 'hiding does not rewrite the tree');
-        self::assertStringNotContainsString('DELETE', $write['sql']);
-        self::assertTrue($write['params']['hidden']);
-        self::assertSame('sanitaires', $write['params']['slug']);
+        self::assertSame('setHidden', $write['method']);
+        self::assertTrue($write['hidden']);
+        self::assertSame('sanitaires', $write['slug']);
+        self::assertNotContains('replaceContent', array_column($categories->writes, 'method'), 'hiding does not rewrite the tree');
     }
 
     public function testHidingATwiceHiddenCategoryStillWritesAHiddenRow(): void
     {
-        $connection = $this->connection($this->row(hidden: true));
+        $categories = $this->categories($this->row(hidden: true));
 
-        $this->hide($connection, new HideCategory('sanitaires'));
+        $this->hide($categories, new HideCategory('sanitaires'));
 
-        $write = $connection->lastWrite();
+        $write = $categories->lastWrite();
         self::assertNotNull($write);
-        self::assertTrue($write['params']['hidden']);
+        self::assertTrue($write['hidden']);
     }
 
     public function testHidingAnUnknownCategoryIsNotFound(): void
     {
-        $connection = $this->connection(false);
-        $connection->expectsNoWrite();
+        $categories = $this->categories(false);
+        $categories->expectsNoWrite();
 
         $this->expectException(CategoryNotFoundException::class);
 
-        $this->hide($connection, new HideCategory('introuvable'));
+        $this->hide($categories, new HideCategory('introuvable'));
     }
 
     public function testUnHidingPersistsTheVisibleFlagWithoutTouchingTheTree(): void
     {
-        $connection = $this->connection($this->row(hidden: true));
+        $categories = $this->categories($this->row(hidden: true));
 
-        $this->show($connection, new ShowCategory('sanitaires'));
+        $this->show($categories, new ShowCategory('sanitaires'));
 
-        $write = $connection->lastWrite();
+        $write = $categories->lastWrite();
         self::assertNotNull($write);
-        self::assertStringNotContainsString('subcategories', $write['sql']);
-        self::assertFalse($write['params']['hidden']);
-        self::assertSame('sanitaires', $write['params']['slug']);
+        self::assertSame('setHidden', $write['method']);
+        self::assertFalse($write['hidden']);
+        self::assertSame('sanitaires', $write['slug']);
     }
 
     public function testUnHidingAnUnknownCategoryIsNotFound(): void
     {
-        $connection = $this->connection(false);
-        $connection->expectsNoWrite();
+        $categories = $this->categories(false);
+        $categories->expectsNoWrite();
 
         $this->expectException(CategoryNotFoundException::class);
 
-        $this->show($connection, new ShowCategory('introuvable'));
+        $this->show($categories, new ShowCategory('introuvable'));
     }
 }

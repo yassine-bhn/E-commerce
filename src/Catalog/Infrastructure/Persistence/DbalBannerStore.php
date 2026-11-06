@@ -17,7 +17,8 @@ use Symfony\Component\Uid\Uuid;
  */
 final class DbalBannerStore implements BannerSetReader, BannerImageStore
 {
-    public function __construct(private Connection $connection) {
+    public function __construct(private Connection $connection)
+    {
     }
 
     public function current(): BannerSet

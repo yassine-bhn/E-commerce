@@ -12,6 +12,7 @@ use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Command\ShowCategory;
 use App\Catalog\Application\Port\CatalogAuditPort;
 use App\Catalog\Application\Port\CatalogSubmissionDeleter;
+use App\Catalog\Application\Port\CategoryHierarchyReader;
 use App\Catalog\Application\Port\ProductDeletionReader;
 use App\Catalog\Application\Query\ListCategories;
 use App\Catalog\Application\Service\CategoryHierarchy;
@@ -62,6 +63,7 @@ final class AdminCategoryController
 
     public function __construct(
         private CategoryHierarchy $categoryHierarchy,
+        private CategoryHierarchyReader $hierarchy,
         private ProductDeletionReader $productDeletionReads,
         private Connection $connection,
         private MessageBusInterface $commandBus,
@@ -89,7 +91,7 @@ final class AdminCategoryController
         }
 
         try {
-            $this->categoryValidator->validateParentAssignment($categorySlug, $parentSlug);
+            $this->categoryHierarchy->assertAcyclic($categorySlug, $parentSlug, $this->hierarchy->parentMap());
         } catch (CategoryHierarchyCycleException $e) {
             return new JsonResponse([
                 'valid' => false,
