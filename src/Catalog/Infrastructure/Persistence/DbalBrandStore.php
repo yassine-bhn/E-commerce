@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Persistence;
 
+use App\Catalog\Application\Port\BrandImageStore;
 use App\Catalog\Application\Port\BrandReader;
 use App\Catalog\Application\Port\BrandStore;
 use App\Catalog\Application\Port\CatalogAuditPort;
@@ -22,7 +23,7 @@ use Doctrine\DBAL\Connection;
  * follows through the submission store (the one owner of that table), and the audit entry lands
  * in the same transaction the command-bus middleware opened.
  */
-final class DbalBrandStore implements BrandReader, BrandStore
+final class DbalBrandStore implements BrandReader, BrandStore, BrandImageStore
 {
     public function __construct(
         private Connection $connection,
@@ -118,6 +119,49 @@ final class DbalBrandStore implements BrandReader, BrandStore
 
         $this->audit->record(
             'CATALOG_BRAND_DELETED',
+            CatalogSubmissionKind::Brand->auditTarget(),
+            $name,
+            $actorId,
+        );
+    }
+
+    public function setImage(string $name, string $imagePath, string $actorId, bool $actorIsSuperAdmin): void
+    {
+        // The same gate as a rename (R10): Super Admin any brand, a regular Admin only their own
+        // still-editable submission. A refusal lands here, before anything is written.
+        $this->access->authorize(CatalogSubmissionKind::Brand, $name, $actorId, $actorIsSuperAdmin);
+
+        $updated = $this->connection->executeStatement(
+            'UPDATE storefront_brand SET image_path = :image WHERE name = :name',
+            ['image' => $imagePath, 'name' => $name],
+        );
+        if (0 === $updated) {
+            throw BrandNotFoundException::forName($name);
+        }
+
+        $this->audit->record(
+            'CATALOG_BRAND_IMAGE_SET',
+            CatalogSubmissionKind::Brand->auditTarget(),
+            $name,
+            $actorId,
+        );
+    }
+
+    public function removeImage(string $name, string $actorId, bool $actorIsSuperAdmin): void
+    {
+        $this->access->authorize(CatalogSubmissionKind::Brand, $name, $actorId, $actorIsSuperAdmin);
+
+        // Nulling an already-null reference still matches the row: the removal is idempotent (R6).
+        $updated = $this->connection->executeStatement(
+            'UPDATE storefront_brand SET image_path = NULL WHERE name = :name',
+            ['name' => $name],
+        );
+        if (0 === $updated) {
+            throw BrandNotFoundException::forName($name);
+        }
+
+        $this->audit->record(
+            'CATALOG_BRAND_IMAGE_REMOVED',
             CatalogSubmissionKind::Brand->auditTarget(),
             $name,
             $actorId,

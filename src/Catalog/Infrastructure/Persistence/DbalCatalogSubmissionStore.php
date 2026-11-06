@@ -92,6 +92,12 @@ final class DbalCatalogSubmissionStore implements CatalogSubmissionCreator, Cata
         return $submission;
     }
 
+    public function createApproved(CatalogSubmissionKind $kind, string $slug, string $actorId): void
+    {
+        $this->create($kind, $slug, $actorId);
+        $this->reviewerSave($kind, $slug, $actorId);
+    }
+
     public function import(CatalogSubmission $submission): bool
     {
         return $this->connection->transactional(function () use ($submission): bool {

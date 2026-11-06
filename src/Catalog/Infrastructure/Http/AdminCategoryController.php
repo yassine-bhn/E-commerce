@@ -7,17 +7,13 @@ namespace App\Catalog\Infrastructure\Http;
 use App\Catalog\Application\Command\AddCategorySubLevel;
 use App\Catalog\Application\Command\CreateCategory;
 use App\Catalog\Application\Command\DeleteCategory;
+use App\Catalog\Application\Command\DeleteProduct;
 use App\Catalog\Application\Command\HideCategory;
 use App\Catalog\Application\Command\ReplaceCategoryTree;
 use App\Catalog\Application\Command\ShowCategory;
-use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionDeleter;
-use App\Catalog\Application\Port\CategoryHierarchyReader;
-use App\Catalog\Application\Port\ProductDeletionReader;
 use App\Catalog\Application\Query\ListCategories;
-use App\Catalog\Application\Service\CategoryHierarchy;
+use App\Catalog\Application\Query\ValidateCategoryParent;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
-use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
 use App\Catalog\Domain\Model\Category;
@@ -27,15 +23,13 @@ use App\Catalog\Domain\Model\CategoryNotEmptyException;
 use App\Catalog\Domain\Model\CategoryNotFoundException;
 use App\Catalog\Domain\Model\CategorySublevelInUseException;
 use App\Catalog\Domain\Model\ProductHasOrdersCannotBeDeletedException;
+use App\Catalog\Domain\Model\ProductNotFoundException;
 use App\Catalog\Infrastructure\ReadModel\CategoryView;
-use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Application\Pagination\PageRequest;
-use App\Shared\Application\Port\InventoryStockPort;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,16 +56,8 @@ final class AdminCategoryController
     private const ADMIN_ROLES = ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
 
     public function __construct(
-        private CategoryHierarchy $categoryHierarchy,
-        private CategoryHierarchyReader $hierarchy,
-        private ProductDeletionReader $productDeletionReads,
-        private Connection $connection,
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
-        private StorefrontProductSearchIndexer $searchIndex,
-        private CatalogAuditPort $audit,
-        private InventoryStockPort $stock,
-        private CatalogSubmissionDeleter $submissions,
     ) {
     }
 
@@ -91,12 +77,17 @@ final class AdminCategoryController
         }
 
         try {
-            $this->categoryHierarchy->assertAcyclic($categorySlug, $parentSlug, $this->hierarchy->parentMap());
-        } catch (CategoryHierarchyCycleException $e) {
+            $this->queries->dispatch(new ValidateCategoryParent($categorySlug, $parentSlug));
+        } catch (HandlerFailedException $exception) {
+            $cause = $exception->getPrevious();
+            if (!$cause instanceof CategoryHierarchyCycleException) {
+                throw $exception;
+            }
+
             return new JsonResponse([
                 'valid' => false,
                 'error' => 'Cycle Detected',
-                'message' => $e->getMessage(),
+                'message' => $cause->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -332,48 +323,27 @@ final class AdminCategoryController
     #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteProduct(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
-        if (false === $this->connection->fetchOne(
-            'SELECT 1 FROM storefront_product_view WHERE slug = :slug',
-            ['slug' => $slug],
-        )) {
-            return new JsonResponse(['error' => 'Product not found.'], Response::HTTP_NOT_FOUND);
-        }
-
         try {
-            $orderCount = $this->productDeletionReads->orderCount($slug);
-            if ($orderCount > 0) {
-                throw ProductHasOrdersCannotBeDeletedException::forProduct($slug, $orderCount);
+            $this->commandBus->dispatch(new DeleteProduct($slug, $admin->getId()));
+        } catch (HandlerFailedException $exception) {
+            $cause = $exception;
+            while ($cause instanceof HandlerFailedException && null !== $cause->getPrevious()) {
+                $cause = $cause->getPrevious();
             }
-        } catch (ProductHasOrdersCannotBeDeletedException $e) {
-            return new JsonResponse([
-                'error' => 'Product Has Historical Orders',
-                'message' => $e->getMessage(),
-                'advice' => 'Unpublish or hide the product instead of deleting it to preserve order history and accounting integrity.',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+
+            if ($cause instanceof ProductNotFoundException) {
+                return new JsonResponse(['error' => 'Product not found.'], Response::HTTP_NOT_FOUND);
+            }
+            if ($cause instanceof ProductHasOrdersCannotBeDeletedException) {
+                return new JsonResponse([
+                    'error' => 'Product Has Historical Orders',
+                    'message' => $cause->getMessage(),
+                    'advice' => 'Unpublish or hide the product instead of deleting it to preserve order history and accounting integrity.',
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            throw $exception;
         }
-
-        $this->connection->transactional(function () use ($slug, $admin): void {
-            // The balance row and the view row are one record: neither may outlive the other.
-            $this->stock->remove($slug);
-
-            $this->connection->executeStatement(
-                'DELETE FROM storefront_product_view WHERE slug = :slug',
-                ['slug' => $slug],
-            );
-
-            // Slug reuse must not inherit a previous approval (R11).
-            $this->submissions->delete(CatalogSubmissionKind::Product, $slug);
-
-            $this->audit->record(
-                'CATALOG_PRODUCT_DELETED',
-                CatalogSubmissionKind::Product->auditTarget(),
-                $slug,
-                $admin->getId(),
-            );
-        });
-
-        // Best-effort: the read model stays authoritative if Meilisearch is down (ECO-008).
-        $this->searchIndex->forget($slug);
 
         return new JsonResponse(['success' => true, 'slug' => $slug, 'message' => 'Product deleted successfully']);
     }

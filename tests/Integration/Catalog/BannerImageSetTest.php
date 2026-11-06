@@ -38,11 +38,11 @@ final class BannerImageSetTest extends KernelTestCase
 
     public function testReplacingTheSetWithThreeImagesStoresThreeOrderedSlides(): void
     {
-        $this->commands()->dispatch(new BannerReplaceImages([
+        $this->commands()->dispatch(new BannerReplaceImages(['images' => [
             '/uploads/products/cccc.png',
             '/uploads/products/aaaa.png',
             '/uploads/products/bbbb.png',
-        ]));
+        ]]));
 
         /** @var list<array{image_path: string, sort_order: string|int}> $rows */
         $rows = $this->db()->fetchAllAssociative(
@@ -59,10 +59,10 @@ final class BannerImageSetTest extends KernelTestCase
 
     public function testTheAdminReadReturnsEveryStoredSlideWithItsIdentity(): void
     {
-        $this->commands()->dispatch(new BannerReplaceImages([
+        $this->commands()->dispatch(new BannerReplaceImages(['images' => [
             '/uploads/products/first.png',
             '/uploads/products/second.png',
-        ]));
+        ]]));
 
         $view = $this->adminView();
 
@@ -79,7 +79,7 @@ final class BannerImageSetTest extends KernelTestCase
                 $paths[] = sprintf('/uploads/products/slide-%02d.png', $index);
             }
 
-            $this->commands()->dispatch(new BannerReplaceImages($paths));
+            $this->commands()->dispatch(new BannerReplaceImages(['images' => $paths]));
 
             self::assertSame($selected, $this->storedCount(), sprintf('%d images selected', $selected));
             self::assertSame($paths, $this->adminView()->paths());
@@ -88,11 +88,11 @@ final class BannerImageSetTest extends KernelTestCase
 
     public function testReorderingMovesTheStoredSequenceAndEveryReadFollowsIt(): void
     {
-        $this->commands()->dispatch(new BannerReplaceImages([
+        $this->commands()->dispatch(new BannerReplaceImages(['images' => [
             '/uploads/products/a.png',
             '/uploads/products/b.png',
             '/uploads/products/c.png',
-        ]));
+        ]]));
 
         /** @var list<string> $ids */
         $ids = array_map(
@@ -101,7 +101,7 @@ final class BannerImageSetTest extends KernelTestCase
         );
         self::assertCount(3, $ids);
 
-        $this->commands()->dispatch(new BannerReorderImages([$ids[2], $ids[0], $ids[1]]));
+        $this->commands()->dispatch(new BannerReorderImages(['imageIds' => [$ids[2], $ids[0], $ids[1]]]));
 
         self::assertSame(
             ['/uploads/products/c.png', '/uploads/products/a.png', '/uploads/products/b.png'],
@@ -123,7 +123,7 @@ final class BannerImageSetTest extends KernelTestCase
             array_unshift($paths, '/uploads/products/'.$uploaded);
         }
 
-        $this->commands()->dispatch(new BannerReplaceImages($paths));
+        $this->commands()->dispatch(new BannerReplaceImages(['images' => $paths]));
 
         $view = $this->adminView();
         $this->commands()->dispatch(new BannerRemoveImage((string) $view->images[0]->id));
@@ -142,7 +142,7 @@ final class BannerImageSetTest extends KernelTestCase
 
     public function testRemovingAnUnknownSlideFailsAndWritesNothing(): void
     {
-        $this->commands()->dispatch(new BannerReplaceImages(['/uploads/products/only.png']));
+        $this->commands()->dispatch(new BannerReplaceImages(['images' => ['/uploads/products/only.png']]));
 
         try {
             $this->commands()->dispatch(new BannerRemoveImage('00000000-0000-0000-0000-000000000000'));
@@ -156,10 +156,10 @@ final class BannerImageSetTest extends KernelTestCase
 
     public function testARefusedWriteLeavesTheStoredSetExactlyAsItWas(): void
     {
-        $this->commands()->dispatch(new BannerReplaceImages([
+        $this->commands()->dispatch(new BannerReplaceImages(['images' => [
             '/uploads/products/keep-one.png',
             '/uploads/products/keep-two.png',
-        ]));
+        ]]));
 
         $tooMany = [];
         for ($index = 1; $index <= 11; ++$index) {
@@ -177,7 +177,7 @@ final class BannerImageSetTest extends KernelTestCase
 
         foreach ($refusals as $reason => $paths) {
             try {
-                $this->commands()->dispatch(new BannerReplaceImages($paths));
+                $this->commands()->dispatch(new BannerReplaceImages(['images' => $paths]));
                 self::fail(sprintf('Expected the %s write to be refused.', $reason));
             } catch (HandlerFailedException $exception) {
                 self::assertInstanceOf(BannerRejectedException::class, $exception->getPrevious(), $reason);
@@ -222,10 +222,10 @@ final class BannerImageSetTest extends KernelTestCase
 
     public function testAPublicRequesterSeesTheOrderButNotTheSlideIdentities(): void
     {
-        $this->commands()->dispatch(new BannerReplaceImages([
+        $this->commands()->dispatch(new BannerReplaceImages(['images' => [
             '/uploads/products/public-a.png',
             '/uploads/products/public-b.png',
-        ]));
+        ]]));
 
         $view = $this->read([]);
 

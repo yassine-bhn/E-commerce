@@ -14,6 +14,9 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * R11 — DBAL-only brand list (QRY-001/QRY-003): a filtered `COUNT` plus one bounded
  * `LIMIT/OFFSET` read sharing the same predicate, and the per-brand product aggregate
  * computed in SQL rather than in PHP (PRF-001).
+ *
+ * R4 — each row also carries the brand's image reference (`storefront_brand.image_path`),
+ * nullable: an imageless brand reads back as `image: null`.
  */
 #[AsMessageHandler(bus: 'query.bus')]
 final class AdminBrandFinder
@@ -46,7 +49,7 @@ final class AdminBrandFinder
         );
 
         $rows = $this->connection->fetchAllAssociative(
-            'SELECT b.name, COUNT(p.id) AS product_count
+            'SELECT b.name, b.image_path, COUNT(p.id) AS product_count
              FROM storefront_brand b
              LEFT JOIN storefront_product_view p ON p.brand = b.name
              '.$where.'
@@ -64,6 +67,7 @@ final class AdminBrandFinder
             array_map(static fn (array $row): array => [
                 'name' => (string) $row['name'],
                 'productCount' => (int) $row['product_count'],
+                'image' => null === $row['image_path'] ? null : (string) $row['image_path'],
             ], $rows),
             $query->page->effectivePage(),
             $query->page->effectiveSize(),

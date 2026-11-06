@@ -149,6 +149,9 @@ services:
     App\Catalog\Application\Port\ProductDeletionReader:
         alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
 
+    App\Catalog\Application\Port\AdminProductWriter:
+        alias: App\Catalog\Infrastructure\Persistence\DbalAdminProductStore
+
     App\Catalog\Application\Port\BannerSetReader:
         alias: App\Catalog\Infrastructure\Persistence\DbalBannerStore
 

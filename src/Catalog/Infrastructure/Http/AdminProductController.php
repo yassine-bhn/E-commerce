@@ -4,28 +4,22 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Http;
 
+use App\Catalog\Application\Command\CreateProduct;
 use App\Catalog\Application\Command\SetProductPublication;
-use App\Catalog\Application\Port\CatalogAuditPort;
-use App\Catalog\Application\Port\CatalogSubmissionCreator;
-use App\Catalog\Application\Port\CatalogSubmissionOwnerEditor;
-use App\Catalog\Application\Port\CatalogSubmissionReviewer;
-use App\Catalog\Application\Query\GetCatalogSubmission;
-use App\Catalog\Application\Service\SubcategoryTree;
-use App\Catalog\Application\Service\SubmissionAccessPolicy;
+use App\Catalog\Application\Command\UpdateProduct;
+use App\Catalog\Application\Dto\ProductDraft;
+use App\Catalog\Application\Query\GetAdminProduct;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
-use App\Catalog\Domain\Model\CatalogSubmissionKind;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
-use App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository;
-use App\Catalog\Infrastructure\Search\StorefrontProductSearchIndexer;
+use App\Catalog\Domain\Model\InvalidProductTaxonomyException;
+use App\Catalog\Domain\Model\ProductAlreadyExistsException;
+use App\Catalog\Domain\Model\ProductHasOrdersCannotBeDeletedException;
+use App\Catalog\Domain\Model\ProductNotFoundException;
 use App\Identity\Infrastructure\Security\CustomerUser;
-use App\Shared\Application\Port\InventoryStockPort;
 use App\Shared\Domain\Currency;
 use App\Shared\Domain\Money;
 use App\Shared\Infrastructure\Http\MessengerQuery;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\DBAL\ParameterType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,38 +29,21 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\Uid\Uuid;
 
 /**
- * Admin product management (create / update / read / publication). Deletion lives in
- * {@see AdminCategoryController::deleteProduct()} (it protects order history).
- *
- * Prices are decimal DT on input (up to three decimals, e.g. `15.3` or `153894.32`) and integer
- * millimes in storage and in this API's responses; TND's smallest unit is the millime.
- *
- * spec-run-8 R1/R10/R15/R17/R35 — every writer may create a product, but a creation is always a
- * `PENDING_APPROVAL` submission owned by its creator; only the Super Admin reads or rewrites
- * another Admin's record, and only the Super Admin decides approval or publication. A Super Admin
- * rewrites as the reviewer, so his own save is the approval instead of a new submission.
+ * R15/R17/R25 — the admin product surface. The edge owns the request shape (JSON, field types,
+ * decimal parsing, variants, slug format, stock enum) and builds the ProductDraft; every write
+ * is one command on `command.bus` and every read one query on `query.bus` — nothing here touches
+ * the database, and the taxonomy, duplicate and authorization checks live in the handlers.
  */
 #[Route('/api/v1/admin/catalog/products')]
-#[IsGranted('ROLE_ADMIN')]
 final class AdminProductController
 {
     private const array STOCKS = ['in', 'order', 'pickup', 'out'];
 
     public function __construct(
-        private Connection $connection,
-        private StorefrontProductRepository $products,
-        private StorefrontProductSearchIndexer $searchIndex,
-        private SubmissionAccessPolicy $access,
         private MessengerQuery $queries,
         private MessageBusInterface $commandBus,
-        private CatalogAuditPort $audit,
-        private InventoryStockPort $stock,
-        private CatalogSubmissionCreator $submissions,
-        private CatalogSubmissionReviewer $reviews,
-        private CatalogSubmissionOwnerEditor $ownerEdits,
     ) {
     }
 
@@ -78,60 +55,20 @@ final class AdminProductController
             return new JsonResponse(['error' => 'Invalid JSON payload.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $product = $this->validate($body, null);
-        if (is_string($product)) {
-            return new JsonResponse(['error' => $product], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $draft = $this->draft($body, null);
+        if (is_string($draft)) {
+            return new JsonResponse(['error' => $draft], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        // A product may carry a brand the admin never registered: register it as an approved brand
-        // so the Marques screen lists it, the storefront filters offer it and renames can follow it.
-        $product['brand'] = $this->canonicalBrandName($product['brand']);
 
         try {
-            $this->connection->transactional(function () use ($product, $admin): void {
-                $this->registerBrandIfMissing($product['brand'], $admin);
-
-                $this->connection->executeStatement(
-                    'INSERT INTO storefront_product_view (
-                        id, slug, name, brand, ref, supplier_reference, category_slug, subcategory, price_minor,
-                        old_price_minor, currency, stock, material, dims, image_path, rating, reviews, is_new, is_best,
-                        headrest, description, variants, published, vat_rate, sale_price_ttc_minor
-                    ) VALUES (
-                        :id, :slug, :name, :brand, :ref, :supplier_reference, :category, :sub, :price,
-                        :old_price, \'TND\', :stock, :material, :dims, :image, 0, 0, :is_new, :is_best,
-                        :headrest, :description, :variants, false, :vat_rate, :sale_price_ttc_minor
-                    )',
-                    ['id' => Uuid::v7()->toRfc4122()] + $this->parameters($product),
-                    $this->types(),
-                );
-
-                // The view row exists first, so the cache refresh finds it; `stockQuantity` is the
-                // available quantity and the Inventory port derives on_hand from it (R17).
-                if (null !== $product['stockQuantity']) {
-                    $this->stock->setAvailable($product['slug'], $product['stockQuantity']);
-                }
-
-                // The store owns the audit and the create event of the approval record (R2).
-                $this->submissions->create(
-                    CatalogSubmissionKind::Product,
-                    $product['slug'],
-                    $admin->getId(),
-                );
-            });
-        } catch (UniqueConstraintViolationException) {
-            return new JsonResponse(['error' => 'A product with this slug already exists.'], Response::HTTP_CONFLICT);
+            $this->commandBus->dispatch(new CreateProduct($draft, $admin->getId()));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
         }
 
-        // Best-effort: a pending submission is not public, so this removes any stale document.
-        $this->searchIndex->sync($product['slug']);
-
-        return new JsonResponse($this->adminPayload($product['slug']), Response::HTTP_CREATED);
+        return new JsonResponse($this->adminPayload($draft->slug), Response::HTTP_CREATED);
     }
 
-    /**
-     * R15/R17/R25 — the Super Admin reads one product whatever its state, with its approval
-     * metadata; a regular Admin reads their own submission and nobody else's.
-     */
     #[Route('/{slug}', name: 'admin_catalog_show_product', methods: ['GET'])]
     public function show(string $slug, #[CurrentUser] CustomerUser $admin): JsonResponse
     {
@@ -150,63 +87,16 @@ final class AdminProductController
             return new JsonResponse(['error' => 'Invalid JSON payload.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $product = $this->validate($body, $slug);
-        if (is_string($product)) {
-            return new JsonResponse(['error' => $product], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $draft = $this->draft($body, $slug);
+        if (is_string($draft)) {
+            return new JsonResponse(['error' => $draft], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        // See create(): an unregistered brand typed while editing a product is registered too.
-        $product['brand'] = $this->canonicalBrandName($product['brand']);
 
         try {
-            $this->connection->transactional(function () use ($slug, $product, $admin): void {
-                $this->access->authorize(
-                    CatalogSubmissionKind::Product,
-                    $slug,
-                    $admin->getId(),
-                    $this->isSuperAdmin($admin),
-                );
-
-                $this->registerBrandIfMissing($product['brand'], $admin);
-
-                $this->connection->executeStatement(
-                    'UPDATE storefront_product_view SET
-                        name = :name, brand = :brand, ref = :ref, supplier_reference = :supplier_reference,
-                        category_slug = :category, subcategory = :sub, price_minor = :price,
-                        old_price_minor = :old_price, stock = :stock, material = :material,
-                        dims = :dims, image_path = :image, is_new = :is_new, is_best = :is_best, headrest = :headrest,
-                        description = :description, variants = :variants,
-                        vat_rate = :vat_rate, sale_price_ttc_minor = :sale_price_ttc_minor
-                      WHERE slug = :slug',
-                    $this->parameters($product),
-                    $this->types(),
-                );
-
-                if (null !== $product['stockQuantity']) {
-                    // The entered quantity is available, so an existing reservation is preserved.
-                    $this->stock->setAvailable($slug, $product['stockQuantity']);
-                }
-
-                $this->audit->record(
-                    'CATALOG_PRODUCT_UPDATED',
-                    CatalogSubmissionKind::Product->auditTarget(),
-                    $slug,
-                    $admin->getId(),
-                );
-
-                // The reviewer validates by writing: his own save is never queued for himself (R7).
-                if ($this->isSuperAdmin($admin)) {
-                    $this->reviews->reviewerSave(CatalogSubmissionKind::Product, $slug, $admin->getId());
-                } else {
-                    $this->ownerEdits->ownerModified(CatalogSubmissionKind::Product, $slug);
-                }
-            });
-        } catch (\DomainException $error) {
-            return $this->domainFailure($error);
+            $this->commandBus->dispatch(new UpdateProduct($slug, $draft, $admin->getId(), $this->isSuperAdmin($admin)));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
         }
-
-        // Best-effort: the index follows what the save left publicly readable (ECO-008).
-        $this->searchIndex->sync($slug);
 
         return new JsonResponse($this->adminPayload($slug, $admin));
     }
@@ -225,54 +115,22 @@ final class AdminProductController
 
         try {
             $this->commandBus->dispatch(new SetProductPublication($slug, $body['published'], $admin->getId()));
-        } catch (HandlerFailedException $e) {
-            $previous = $e->getPrevious();
-
-            return $previous instanceof \DomainException
-                ? $this->domainFailure($previous)
-                : throw $e;
-        } catch (\DomainException $error) {
-            return $this->domainFailure($error);
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
         }
-
-        $this->searchIndex->sync($slug);
 
         return new JsonResponse($this->adminPayload($slug, $admin));
     }
 
-    /**
-     * The record as the admin surface sees it: the content plus its approval metadata, or null
-     * when the caller may not read it (missing and foreign are the same answer, R5).
-     *
-     * @return array<string, mixed>|null
-     */
+    /** @return array<string, mixed>|null */
     private function adminPayload(string $slug, ?CustomerUser $admin = null): ?array
     {
-        $content = $this->products->adminBySlug($slug);
-        if (null === $content) {
-            return null;
-        }
-
-        $payload = $content->toAdminApi();
-        if (null === $admin) {
-            return $payload;
-        }
-
-        /** @var \App\Catalog\Infrastructure\ReadModel\CatalogSubmissionView|null $submission */
-        $submission = $this->queries->dispatch(new GetCatalogSubmission(
-            CatalogSubmissionKind::Product,
+        /* @var array<string, mixed>|null */
+        return $this->queries->dispatch(new GetAdminProduct(
             $slug,
-            $admin->getId(),
-            $this->isSuperAdmin($admin),
+            $admin?->getId(),
+            null !== $admin && $this->isSuperAdmin($admin),
         ));
-
-        if (null === $submission) {
-            return null;
-        }
-
-        $payload['approval'] = $submission->toApi();
-
-        return $payload;
     }
 
     private function isSuperAdmin(CustomerUser $admin): bool
@@ -280,46 +138,37 @@ final class AdminProductController
         return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
     }
 
-    /**
-     * Reuses an existing brand whose name differs only by case (so a product never creates a
-     * case-variant duplicate of a brand the admin already registered); otherwise returns the
-     * typed name unchanged.
-     */
-    private function canonicalBrandName(string $brand): string
+    private function rootCause(HandlerFailedException $exception): \Throwable
     {
-        $existing = $this->connection->fetchOne(
-            'SELECT name FROM storefront_brand WHERE lower(name) = lower(:name)',
-            ['name' => $brand],
-        );
+        $cause = $exception;
 
-        return is_string($existing) ? $existing : $brand;
-    }
-
-    /**
-     * Registers a brand the product carries but that was never created through the Marques screen:
-     * the row, its submission and its approval are written in the same transaction as the product,
-     * so the brand is immediately usable, visible in the filters and renameable.
-     */
-    private function registerBrandIfMissing(string $brand, CustomerUser $admin): void
-    {
-        $exists = $this->connection->fetchOne(
-            'SELECT 1 FROM storefront_brand WHERE lower(name) = lower(:name)',
-            ['name' => $brand],
-        );
-        if (false !== $exists) {
-            return;
+        while ($cause instanceof HandlerFailedException && null !== $cause->getPrevious()) {
+            $cause = $cause->getPrevious();
         }
 
-        $this->connection->executeStatement('INSERT INTO storefront_brand (name) VALUES (:name)', ['name' => $brand]);
-
-        $this->submissions->create(CatalogSubmissionKind::Brand, $brand, $admin->getId());
-        $this->reviews->reviewerSave(CatalogSubmissionKind::Brand, $brand, $admin->getId());
+        return $cause;
     }
 
-    private function domainFailure(\DomainException $error): JsonResponse
+    private function domainFailure(\Throwable $error): JsonResponse
     {
-        if ($error instanceof CatalogSubmissionNotFoundException) {
+        if ($error instanceof ProductAlreadyExistsException) {
+            return new JsonResponse(['error' => 'A product with this slug already exists.'], Response::HTTP_CONFLICT);
+        }
+
+        if ($error instanceof InvalidProductTaxonomyException) {
+            return new JsonResponse(['error' => $error->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($error instanceof CatalogSubmissionNotFoundException || $error instanceof ProductNotFoundException) {
             return new JsonResponse(['error' => 'Product not found.', 'message' => $error->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($error instanceof ProductHasOrdersCannotBeDeletedException) {
+            return new JsonResponse([
+                'error' => 'Product Has Historical Orders',
+                'message' => $error->getMessage(),
+                'advice' => 'Unpublish or hide the product instead of deleting it to preserve order history and accounting integrity.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if ($error instanceof CatalogSubmissionNotOwnedException) {
@@ -345,13 +194,11 @@ final class AdminProductController
     }
 
     /**
-     * Validates the payload and returns the clean product, or a message describing the first problem.
+     * Validates the payload and returns the draft, or a message describing the first problem.
      *
      * @param array<string, mixed> $body
-     *
-     * @return array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>, vatRate: string|null, salePriceTtc: int|null}|string
      */
-    private function validate(array $body, ?string $fixedSlug): array|string
+    private function draft(array $body, ?string $fixedSlug): ProductDraft|string
     {
         $name = $this->text($body['name'] ?? null);
         if ('' === $name || mb_strlen($name) > 255) {
@@ -393,10 +240,6 @@ final class AdminProductController
         $sub = $this->text($body['sub'] ?? null);
         if (mb_strlen($sub) > 128) {
             return 'The subcategory is too long (128 characters max).';
-        }
-        $taxonomyError = $this->checkTaxonomy($category, $sub);
-        if (null !== $taxonomyError) {
-            return $taxonomyError;
         }
 
         $variants = $this->variants($body['variants'] ?? []);
@@ -491,47 +334,29 @@ final class AdminProductController
             }
         }
 
-        return [
-            'slug' => $slug,
-            'name' => $name,
-            'brand' => $brand,
-            'ref' => $ref,
-            'supplierReference' => $supplierReference,
-            'category' => $category,
-            'sub' => $sub,
-            'price' => $price,
-            'oldPrice' => $oldPrice,
-            'stock' => $stock,
-            'stockQuantity' => $stockQuantity,
-            'material' => $material,
-            'dims' => $dims,
-            'image' => $image,
-            'isNew' => true === ($body['isNew'] ?? false),
-            'best' => true === ($body['best'] ?? false),
-            'headrest' => true === ($body['headrest'] ?? false),
-            'description' => $description,
-            'variants' => $variants,
-            'vatRate' => $vatRate,
-            'salePriceTtc' => $salePriceTtc,
-        ];
-    }
-
-    private function checkTaxonomy(string $category, string $sub): ?string
-    {
-        $raw = $this->connection->fetchOne(
-            'SELECT subcategories FROM storefront_category WHERE slug = :slug',
-            ['slug' => $category],
+        return new ProductDraft(
+            slug: $slug,
+            name: $name,
+            brand: $brand,
+            ref: $ref,
+            supplierReference: $supplierReference,
+            category: $category,
+            sub: $sub,
+            priceMinor: $price,
+            oldPriceMinor: $oldPrice,
+            stock: $stock,
+            stockQuantity: $stockQuantity,
+            material: $material,
+            dims: $dims,
+            image: $image,
+            isNew: true === ($body['isNew'] ?? false),
+            best: true === ($body['best'] ?? false),
+            headrest: true === ($body['headrest'] ?? false),
+            description: $description,
+            variants: $variants,
+            vatRate: $vatRate,
+            salePriceTtcMinor: $salePriceTtc,
         );
-        if (false === $raw) {
-            return sprintf('Unknown category "%s".', $category);
-        }
-
-        $labels = SubcategoryTree::labels(json_decode((string) $raw, true));
-        if ('' !== $sub && [] !== $labels && !in_array($sub, $labels, true)) {
-            return sprintf('Unknown subcategory "%s" for category "%s".', $sub, $category);
-        }
-
-        return null;
     }
 
     /** @return list<array{label: string, price: int}>|string */
@@ -588,49 +413,5 @@ final class AdminProductController
         } catch (\InvalidArgumentException) {
             return null;
         }
-    }
-
-    /**
-     * @param array{slug: string, name: string, brand: string, ref: string, supplierReference: string|null, category: string, sub: string, price: int, oldPrice: int|null, stock: string, stockQuantity: int|null, material: string, dims: string, image: string, isNew: bool, best: bool, headrest: bool, description: string, variants: list<array{label: string, price: int}>, vatRate: string|null, salePriceTtc: int|null} $product
-     *
-     * @return array<string, mixed>
-     */
-    private function parameters(array $product): array
-    {
-        return [
-            'slug' => $product['slug'],
-            'name' => $product['name'],
-            'brand' => $product['brand'],
-            'ref' => $product['ref'],
-            'supplier_reference' => $product['supplierReference'],
-            'category' => $product['category'],
-            'sub' => $product['sub'],
-            'price' => $product['price'],
-            'old_price' => $product['oldPrice'],
-            'stock' => $product['stock'],
-            'material' => $product['material'],
-            'dims' => $product['dims'],
-            'image' => $product['image'],
-            'is_new' => $product['isNew'],
-            'is_best' => $product['best'],
-            'headrest' => $product['headrest'],
-            'description' => $product['description'],
-            'variants' => json_encode($product['variants'], JSON_THROW_ON_ERROR),
-            'vat_rate' => $product['vatRate'],
-            'sale_price_ttc_minor' => $product['salePriceTtc'],
-        ];
-    }
-
-    /** @return array<string, ParameterType> */
-    private function types(): array
-    {
-        return [
-            'price' => ParameterType::INTEGER,
-            'old_price' => ParameterType::INTEGER,
-            'is_new' => ParameterType::BOOLEAN,
-            'is_best' => ParameterType::BOOLEAN,
-            'headrest' => ParameterType::BOOLEAN,
-            'vat_rate' => ParameterType::STRING,
-        ];
     }
 }

@@ -196,7 +196,7 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
         $client->request('GET', '/api/v1/admin/catalog/brands?q='.urlencode($brand));
         self::assertResponseIsSuccessful();
         self::assertSame(
-            [['name' => $brand, 'productCount' => 1]],
+            [['name' => $brand, 'productCount' => 1, 'image' => null]],
             $this->json($client)['items'],
             'the brand carried by the product is registered and counted',
         );
@@ -256,7 +256,7 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
 
         $client->request('GET', '/api/v1/admin/catalog/brands?q='.urlencode($secondBrand));
         self::assertResponseIsSuccessful();
-        self::assertSame([['name' => $secondBrand, 'productCount' => 1]], $this->json($client)['items']);
+        self::assertSame([['name' => $secondBrand, 'productCount' => 1, 'image' => null]], $this->json($client)['items']);
         self::assertSame('APPROVED', $this->submissionRow($secondBrand)['approval_status']);
     }
 

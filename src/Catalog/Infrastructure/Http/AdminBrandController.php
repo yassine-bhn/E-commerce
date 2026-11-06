@@ -6,10 +6,13 @@ namespace App\Catalog\Infrastructure\Http;
 
 use App\Catalog\Application\Command\CreateBrand;
 use App\Catalog\Application\Command\DeleteBrand;
+use App\Catalog\Application\Command\RemoveBrandImage;
 use App\Catalog\Application\Command\RenameBrand;
+use App\Catalog\Application\Command\SetBrandImage;
 use App\Catalog\Application\Query\ListAdminBrands;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
 use App\Catalog\Domain\Model\BrandAlreadyExistsException;
+use App\Catalog\Domain\Model\BrandImageRejectedException;
 use App\Catalog\Domain\Model\BrandNotEmptyException;
 use App\Catalog\Domain\Model\BrandNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
@@ -127,6 +130,46 @@ final class AdminBrandController
         return new JsonResponse(['success' => true, 'name' => $name]);
     }
 
+    /**
+     * spec-run-19 R3/R5/R7 — attaching or replacing the brand image is a dedicated sub-route on
+     * the same record: one command on `command.bus`, the access policy of a rename (R10), one
+     * audit entry on success (R11) and the approval status untouched.
+     */
+    #[Route('/{name}/image', name: 'admin_catalog_set_brand_image', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function setImage(string $name, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        $image = $this->imageFrom($request);
+        if (null === $image) {
+            return new JsonResponse(['error' => 'The brand image must be a "/uploads/brands/" image path (jpg, jpeg, png or webp).'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            $this->commandBus->dispatch(new SetBrandImage($name, $image, $admin->getId(), $this->isSuperAdmin($admin)));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
+        }
+
+        return new JsonResponse(['name' => $name, 'image' => $image]);
+    }
+
+    /**
+     * spec-run-19 R6/R7 — removing the brand image is the same sub-route under DELETE, and
+     * succeeds the same way when no image is set (idempotent).
+     */
+    #[Route('/{name}/image', name: 'admin_catalog_remove_brand_image', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function removeImage(string $name, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        try {
+            $this->commandBus->dispatch(new RemoveBrandImage($name, $admin->getId(), $this->isSuperAdmin($admin)));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
+        }
+
+        return new JsonResponse(['name' => $name, 'image' => null]);
+    }
+
     private function isSuperAdmin(CustomerUser $admin): bool
     {
         return in_array('ROLE_SUPER_ADMIN', $admin->getRoles(), true);
@@ -168,6 +211,10 @@ final class AdminBrandController
             return new JsonResponse(['error' => 'Approval Transition Refused', 'message' => $error->getMessage()], Response::HTTP_CONFLICT);
         }
 
+        if ($error instanceof BrandImageRejectedException) {
+            return new JsonResponse(['error' => $error->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         throw $error;
     }
 
@@ -181,5 +228,18 @@ final class AdminBrandController
         }
 
         return $name;
+    }
+
+    /**
+     * spec-run-19 R9 — the payload shape only (present, a string, not blank); whether the string
+     * is a real `/uploads/brands/` image reference is the domain value object's rule, refused
+     * through `domainFailure` with the same 422.
+     */
+    private function imageFrom(Request $request): ?string
+    {
+        $body = json_decode($request->getContent(), true);
+        $image = is_array($body) && is_string($body['image'] ?? null) ? trim($body['image']) : '';
+
+        return '' === $image ? null : $image;
     }
 }
