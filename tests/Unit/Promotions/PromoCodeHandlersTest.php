@@ -83,6 +83,9 @@ final class PromoCodeHandlersTest extends TestCase
 
 final class FakePromoCodeReader implements PromoCodeReader
 {
+    /**
+     * @param array{code: string, discount_basis_points: int, active: bool}|null $row
+     */
     public function __construct(
         private readonly bool $exists = false,
         private readonly ?array $row = null,
@@ -102,8 +105,10 @@ final class FakePromoCodeReader implements PromoCodeReader
 
 final class FakePromoCodeStore implements PromoCodeStore
 {
+    /** @var array{code: string, discountBasisPoints: int, active: bool}|null */
     public ?array $created = null;
 
+    /** @var array{code: string, discountBasisPoints: int, active: bool}|null */
     public ?array $updated = null;
 
     public ?string $deleted = null;

@@ -19,12 +19,7 @@ final class GetPaymentMethodsHandlerTest extends TestCase
 {
     public function testAnswersTheOperatorEnabledPaymentMethods(): void
     {
-        $repository = new PlatformSettingsRepository(new class extends Connection {
-            public function __construct()
-            {
-                parent::__construct([], new PgSqlDriver());
-            }
-
+        $repository = new PlatformSettingsRepository(new class([], new PgSqlDriver()) extends Connection {
             public function fetchAssociative(string $query, array $params = [], array $types = []): array|false
             {
                 return false;

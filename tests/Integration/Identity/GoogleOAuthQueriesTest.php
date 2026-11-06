@@ -41,11 +41,10 @@ final class GoogleOAuthQueriesTest extends KernelTestCase
         /** @var string|null $url */
         $url = $bus->dispatch(new GetGoogleAuthorizationUrl('state-123'))->last(HandledStamp::class)?->getResult();
 
-        if (null === $url) {
-            self::assertNull($url, 'an unconfigured environment answers null — the controller maps that to 503');
-        } else {
-            self::assertStringContainsString('state=state-123', $url, 'the state rides the authorization url');
-        }
+        self::assertTrue(
+            null === $url || str_contains($url, 'state=state-123'),
+            'an unconfigured environment answers null (503); a configured one carries the state',
+        );
     }
 
     public function testTheLoginQueryLoadsTheAccountBehindTheAddress(): void

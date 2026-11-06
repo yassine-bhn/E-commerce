@@ -9,11 +9,14 @@ use App\Catalog\Application\Command\CreateCategory;
 use App\Catalog\Application\Command\DeleteCategory;
 use App\Catalog\Application\Command\DeleteProduct;
 use App\Catalog\Application\Command\HideCategory;
+use App\Catalog\Application\Command\RemoveSubcategoryImage;
 use App\Catalog\Application\Command\ReplaceCategoryTree;
+use App\Catalog\Application\Command\SetSubcategoryImage;
 use App\Catalog\Application\Command\ShowCategory;
 use App\Catalog\Application\Query\ListCategories;
 use App\Catalog\Application\Query\ValidateCategoryParent;
 use App\Catalog\Domain\Model\ApprovalTransitionRefusedException;
+use App\Catalog\Domain\Model\CatalogImageRejectedException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotFoundException;
 use App\Catalog\Domain\Model\CatalogSubmissionNotOwnedException;
 use App\Catalog\Domain\Model\Category;
@@ -24,6 +27,7 @@ use App\Catalog\Domain\Model\CategoryNotFoundException;
 use App\Catalog\Domain\Model\CategorySublevelInUseException;
 use App\Catalog\Domain\Model\ProductHasOrdersCannotBeDeletedException;
 use App\Catalog\Domain\Model\ProductNotFoundException;
+use App\Catalog\Domain\Model\SubcategoryNotFoundException;
 use App\Catalog\Infrastructure\ReadModel\CategoryView;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
@@ -253,6 +257,88 @@ final class AdminCategoryController
     }
 
     /**
+     * The sub-category picture (CRUD of the `image` key of one `subcategories` node): the node
+     * is addressed by its label path, the reference is validated by the domain value object,
+     * the write rides the same approval policy as every other taxonomy write and the response
+     * is the category as the dashboard read sees it — node image included.
+     */
+    #[Route('/categories/{slug}/subcategories/image', name: 'admin_catalog_set_subcategory_image', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function setSubcategoryImage(string $slug, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        $error = $this->checkSlug($slug);
+        if (null !== $error) {
+            return $error;
+        }
+
+        $body = $this->decode($request);
+        if (null === $body) {
+            return new JsonResponse(['error' => 'Invalid JSON payload.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $labelPath = $this->labelPath($body['path'] ?? null);
+        $image = $this->text($body['image'] ?? null);
+        if (null === $labelPath || '' === $image) {
+            return new JsonResponse(
+                ['error' => 'The subcategory picture needs a "path" of labels and an "image" upload reference under "/uploads/categories/".'],
+                Response::HTTP_UNPROCESSABLE_ENTITY,
+            );
+        }
+
+        $failure = $this->dispatch(new SetSubcategoryImage(
+            $slug,
+            $labelPath,
+            $image,
+            $admin->getId(),
+            $this->isSuperAdmin($admin),
+        ));
+        if (null !== $failure) {
+            return $failure;
+        }
+
+        return $this->respond($slug, $admin);
+    }
+
+    /**
+     * Clearing a node's picture is idempotent: the node must exist, clearing it twice
+     * succeeds the same way.
+     */
+    #[Route('/categories/{slug}/subcategories/image', name: 'admin_catalog_remove_subcategory_image', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function removeSubcategoryImage(string $slug, Request $request, #[CurrentUser] CustomerUser $admin): JsonResponse
+    {
+        $error = $this->checkSlug($slug);
+        if (null !== $error) {
+            return $error;
+        }
+
+        $body = $this->decode($request);
+        if (null === $body) {
+            return new JsonResponse(['error' => 'Invalid JSON payload.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $labelPath = $this->labelPath($body['path'] ?? null);
+        if (null === $labelPath) {
+            return new JsonResponse(
+                ['error' => 'The "path" of labels addressing the subcategory is required.'],
+                Response::HTTP_UNPROCESSABLE_ENTITY,
+            );
+        }
+
+        $failure = $this->dispatch(new RemoveSubcategoryImage(
+            $slug,
+            $labelPath,
+            $admin->getId(),
+            $this->isSuperAdmin($admin),
+        ));
+        if (null !== $failure) {
+            return $failure;
+        }
+
+        return $this->respond($slug, $admin);
+    }
+
+    /**
      * R5: hide or un-hide a category. Only the visibility flag is persisted, the call is
      * idempotent and the resulting flag is what comes back.
      */
@@ -387,6 +473,14 @@ final class AdminCategoryController
             return new JsonResponse(['error' => 'Category not found.', 'message' => $error->getMessage()], Response::HTTP_NOT_FOUND);
         }
 
+        if ($error instanceof SubcategoryNotFoundException) {
+            return new JsonResponse(['error' => 'Subcategory not found.', 'message' => $error->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($error instanceof CatalogImageRejectedException) {
+            return new JsonResponse(['error' => $error->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         if ($error instanceof CatalogSubmissionNotOwnedException) {
             return new JsonResponse(['error' => 'Forbidden', 'message' => $error->getMessage()], Response::HTTP_FORBIDDEN);
         }
@@ -464,6 +558,34 @@ final class AdminCategoryController
     private function flag(mixed $value): ?bool
     {
         return is_bool($value) ? $value : null;
+    }
+
+    /**
+     * The label path addressing one sub-category node: a non-empty list of non-empty strings.
+     * Sibling labels are unique, so a path resolves to at most one node — the domain answers
+     * the paths that resolve to none.
+     *
+     * @return list<string>|null
+     */
+    private function labelPath(mixed $value): ?array
+    {
+        if (!is_array($value) || [] === $value || !array_is_list($value)) {
+            return null;
+        }
+
+        $path = [];
+        foreach ($value as $label) {
+            if (!is_string($label)) {
+                return null;
+            }
+            $label = trim($label);
+            if ('' === $label) {
+                return null;
+            }
+            $path[] = $label;
+        }
+
+        return $path;
     }
 
     /**

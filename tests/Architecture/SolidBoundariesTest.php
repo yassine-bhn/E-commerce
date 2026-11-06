@@ -165,6 +165,9 @@ final class SolidBoundariesTest extends TestCase
                 $cases[$class['file']] = [$class['file'], $bad];
             }
         }
+        if ([] === $cases) {
+            $cases['__none__'] = ['__none__', 'none'];
+        }
 
         return $cases;
     }
@@ -173,6 +176,11 @@ final class SolidBoundariesTest extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('thinControllerProvider')]
     public function itKeepsControllersThin(string $file, string $type): void
     {
+        if ('__none__' === $file) {
+            self::assertSame('none', $type, 'every controller constructs with the allowed dependencies only');
+
+            return;
+        }
         self::fail(sprintf('%s constructs with disallowed dependency %s', $file, $type));
     }
 
@@ -267,6 +275,9 @@ final class SolidBoundariesTest extends TestCase
                 $cases[$class['file'].'#'.$class['name']] = [$class['file'], $classTyped];
             }
         }
+        if ([] === $cases) {
+            $cases['__none__'] = ['__none__', 0];
+        }
 
         return $cases;
     }
@@ -275,6 +286,11 @@ final class SolidBoundariesTest extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('constructorDependencyProvider')]
     public function itLimitsConstructorDependencies(string $file, int $count): void
     {
+        if ('__none__' === $file) {
+            self::assertSame(0, $count, 'no service exceeds 5 constructor dependencies');
+
+            return;
+        }
         self::fail(sprintf('%s has %d class-typed constructor params', $file, $count));
     }
 
@@ -410,7 +426,7 @@ final class SolidBoundariesTest extends TestCase
         self::fail(sprintf('%s uses match (true)', $file));
     }
 
-    /** @return array<string, array{0:string}> */
+    /** @return array<string, array{0:string,1:int}> */
     public static function sqlInHttpProvider(): array
     {
         $cases = [];
@@ -419,8 +435,11 @@ final class SolidBoundariesTest extends TestCase
                 continue;
             }
             if (self::tree()->hasSqlCall($file)) {
-                $cases[$file] = [$file];
+                $cases[$file] = [$file, 1];
             }
+        }
+        if ([] === $cases) {
+            $cases['__none__'] = ['__none__', 0];
         }
 
         return $cases;
@@ -428,8 +447,13 @@ final class SolidBoundariesTest extends TestCase
 
     #[\PHPUnit\Framework\Attributes\Test]
     #[\PHPUnit\Framework\Attributes\DataProvider('sqlInHttpProvider')]
-    public function itForbidsSqlInHttp(string $file): void
+    public function itForbidsSqlInHttp(string $file, int $violations): void
     {
+        if ('__none__' === $file) {
+            self::assertSame(0, $violations, 'no SQL call lives in an HTTP controller');
+
+            return;
+        }
         self::fail(sprintf('%s contains SQL calls in HTTP layer', $file));
     }
 }

@@ -153,8 +153,10 @@ final class InMemoryOrderState implements OrderStateReader, OrderTransitionStore
 
     public bool $transitionOk = true;
 
+    /** @var array{orderId: string, expectedVersion: int, target: OrderStatus, newVersion: int}|null */
     public ?array $lastTransition = null;
 
+    /** @var array{orderId: string, from: OrderStatus, to: OrderStatus, changedBy: string, reason: string}|null */
     public ?array $lastAudit = null;
 
     public function find(string $orderId): ?OrderState

@@ -111,7 +111,9 @@ final class CatalogStoreAdaptersTest extends KernelTestCase
         self::assertNull($store->find('introuvable'));
 
         $store->setHidden('adapter-read', false);
-        self::assertFalse((bool) $this->categoryRow('adapter-read')['hidden'], 'the visibility flag is written alone');
+        $row = $this->categoryRow('adapter-read');
+        self::assertIsArray($row);
+        self::assertFalse((bool) $row['hidden'], 'the visibility flag is written alone');
 
         $counts = $store->counts('adapter-read');
         self::assertSame(0, $counts['children']);
@@ -128,6 +130,7 @@ final class CatalogStoreAdaptersTest extends KernelTestCase
         $store->replaceContent($category->withContent('Nouveau Nom', [['label' => 'Robinet']], false));
 
         $row = $this->categoryRow('adapter-tree');
+        self::assertIsArray($row);
         self::assertSame('Nouveau Nom', $row['label']);
         self::assertSame([['label' => 'Robinet']], json_decode((string) $row['subcategories'], true));
         self::assertFalse((bool) $row['quote_eligible']);
@@ -137,6 +140,7 @@ final class CatalogStoreAdaptersTest extends KernelTestCase
         $store->addSubLevel($category->withSubLevel('Siphon'));
 
         $row = $this->categoryRow('adapter-tree');
+        self::assertIsArray($row);
         self::assertSame(
             [['label' => 'Robinet'], ['label' => 'Siphon']],
             json_decode((string) $row['subcategories'], true),
@@ -186,10 +190,14 @@ final class CatalogStoreAdaptersTest extends KernelTestCase
         $slug = $this->seedProduct();
 
         $store->setPublished($slug, true);
-        self::assertTrue((bool) $this->productRow($slug)['published']);
+        $row = $this->productRow($slug);
+        self::assertIsArray($row);
+        self::assertTrue((bool) $row['published']);
 
         $store->setPublished($slug, false);
-        self::assertFalse((bool) $this->productRow($slug)['published'], 'unpublish writes the flag alone');
+        $row = $this->productRow($slug);
+        self::assertIsArray($row);
+        self::assertFalse((bool) $row['published'], 'unpublish writes the flag alone');
 
         $reviews = static::getContainer()->get(ProductReviewStore::class);
         self::assertInstanceOf(DbalAdminProductStore::class, $reviews);

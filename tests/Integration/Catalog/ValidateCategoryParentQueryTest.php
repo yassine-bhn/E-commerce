@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 final class ValidateCategoryParentQueryTest extends KernelTestCase
 {
-    public function testACycleThrowsAndASiblingPasses(): void
+    public function testACycleThrows(): void
     {
         $bus = $this->queryBus();
 
@@ -26,9 +26,15 @@ final class ValidateCategoryParentQueryTest extends KernelTestCase
         } catch (HandlerFailedException $exception) {
             self::assertInstanceOf(CategoryHierarchyCycleException::class, $exception->getPrevious());
         }
+    }
+
+    public function testANullParentPassesWithoutACycleCheck(): void
+    {
+        $bus = $this->queryBus();
 
         $bus->dispatch(new ValidateCategoryParent('piscine', null));
-        self::assertTrue(true, 'a null parent needs no cycle check');
+
+        self::expectNotToPerformAssertions(); // reaching this line means the null parent passed
     }
 
     private function queryBus(): MessageBusInterface

@@ -48,7 +48,7 @@ final class CategoryHierarchyTest extends TestCase
             'piscine' => null,
         ]);
 
-        self::assertTrue(true, 'a sibling assignment traverses nothing and is accepted');
+        self::expectNotToPerformAssertions(); // reaching this line means the sibling assignment passed
     }
 
     public function testACorruptParentLoopIsSafeguardedNotSpunOn(): void
@@ -62,7 +62,7 @@ final class CategoryHierarchyTest extends TestCase
             'piscine' => null,
         ]);
 
-        self::assertTrue(true, 'the corrupt chain is walked once per node and never cycles forever');
+        self::expectNotToPerformAssertions(); // reaching this line means the corrupt chain never cycled
     }
 
     public function testANullParentIsAcceptedWithoutTraversal(): void
@@ -71,6 +71,6 @@ final class CategoryHierarchyTest extends TestCase
 
         $hierarchy->assertAcyclic('piscine', null, []);
 
-        self::assertTrue(true, 'detaching a category needs no cycle check');
+        self::expectNotToPerformAssertions(); // reaching this line means detaching passed
     }
 }

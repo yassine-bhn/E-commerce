@@ -162,12 +162,16 @@ final class IdentityAdapterStoresTest extends KernelTestCase
 
         $ownerId = $this->newCustomer('google.owner@example.com');
         self::assertTrue($linker->linkByEmail('GOOGLE.OWNER@example.com', $googleId), 'an existing account is linked');
-        self::assertSame($googleId, $this->profileRow($ownerId)['google_id']);
+        $ownerRow = $this->profileRow($ownerId);
+        self::assertIsArray($ownerRow);
+        self::assertSame($googleId, $ownerRow['google_id']);
 
         $newId = Uuid::v7()->toRfc4122();
         $this->createdCustomerIds[] = $newId;
         $linker->register($newId, 'Nouveau Visiteur', 'google.new@example.com', $googleId.'-new');
-        self::assertSame('google.new@example.com', $this->profileRow($newId)['email'], 'a new account is created');
+        $newRow = $this->profileRow($newId);
+        self::assertIsArray($newRow);
+        self::assertSame('google.new@example.com', $newRow['email'], 'a new account is created');
 
         // The raced registration: the address is taken, the adapter treats it as "already there".
         $lostId = Uuid::v7()->toRfc4122();
@@ -290,6 +294,14 @@ final class IdentityAdapterStoresTest extends KernelTestCase
         self::assertSame('admin-1', $row['actor_admin_id']);
     }
 
+    /**
+     * @template T of object
+     *
+     * @phpstan-param class-string $port
+     * @phpstan-param class-string<T> $concrete
+     *
+     * @phpstan-return T
+     */
     private function getStore(string $port, string $concrete): object
     {
         self::bootKernel();
