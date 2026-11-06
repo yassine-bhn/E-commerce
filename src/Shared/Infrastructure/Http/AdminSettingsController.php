@@ -6,8 +6,8 @@ namespace App\Shared\Infrastructure\Http;
 
 use App\Shared\Application\Command\UpdatePlatformSettings;
 use App\Shared\Application\Command\UpdateShippingPolicy;
+use App\Shared\Application\Query\GetPaymentMethods;
 use App\Shared\Application\Query\GetPlatformSettings;
-use App\Shared\Infrastructure\ReadModel\PlatformSettingsRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +28,6 @@ final class AdminSettingsController
     public function __construct(
         private MessengerQuery $queries,
         private MessageBusInterface $commandBus,
-        private PlatformSettingsRepository $settingsRepository,
     ) {
     }
 
@@ -76,7 +75,8 @@ final class AdminSettingsController
 
         // O-19 — the allow-list is optional on update so an older client that does not know about
         // it keeps the configured list instead of silently resetting checkout to the defaults.
-        $paymentMethods = $this->settingsRepository->paymentMethods();
+        /** @var list<string> $paymentMethods */
+        $paymentMethods = $this->queries->dispatch(new GetPaymentMethods());
         if (array_key_exists('paymentMethods', $body)) {
             $validated = $this->validatePaymentMethods($body['paymentMethods']);
             if (null === $validated) {

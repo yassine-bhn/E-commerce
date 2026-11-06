@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Identity\Infrastructure\Http;
 
-use App\Catalog\Infrastructure\ReadModel\StorefrontProductRepository;
+use App\Catalog\Domain\Model\ProductNotFoundException;
 use App\Identity\Application\Command\AddWishlistItem;
 use App\Identity\Application\Command\RemoveWishlistItem;
 use App\Identity\Application\Query\ListWishlistItems;
@@ -15,6 +15,7 @@ use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -25,7 +26,6 @@ final class WishlistController
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
-        private StorefrontProductRepository $products,
     ) {
     }
 
@@ -55,11 +55,17 @@ final class WishlistController
         }
         $slug = trim($slug);
 
-        if (null === $this->products->bySlug($slug)) {
-            return new JsonResponse(['error' => 'Product not found'], Response::HTTP_NOT_FOUND);
-        }
+        try {
+            $this->commandBus->dispatch(new AddWishlistItem($user->getId(), $slug));
+        } catch (HandlerFailedException $exception) {
+            // The handler refuses unknown products through ProductExistencePort — the same
+            // visibility the storefront reads, so the answer stays 404.
+            if ($exception->getPrevious() instanceof ProductNotFoundException) {
+                return new JsonResponse(['error' => 'Product not found'], Response::HTTP_NOT_FOUND);
+            }
 
-        $this->commandBus->dispatch(new AddWishlistItem($user->getId(), $slug));
+            throw $exception;
+        }
 
         return new JsonResponse(['status' => 'added', 'slug' => $slug], Response::HTTP_CREATED);
     }
