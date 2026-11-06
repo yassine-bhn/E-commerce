@@ -4,28 +4,37 @@ declare(strict_types=1);
 
 namespace App\Promotions\Infrastructure\Http;
 
+use App\Promotions\Application\Command\CreatePromoCode;
+use App\Promotions\Application\Command\DeletePromoCode;
+use App\Promotions\Application\Command\UpdatePromoCode;
+use App\Promotions\Application\Query\GetPromoCode;
 use App\Promotions\Application\Query\ListAdminPromoCodes;
+use App\Promotions\Domain\Model\PromoCodeAlreadyExistsException;
+use App\Promotions\Domain\Model\PromoCodeNotFoundException;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ParameterType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Back-office management of promo codes. Discounts are integer basis points
  * (1000 = 10 %), never floats.
+ *
+ * solid Task 4.10 — every write is one command on `command.bus`; the edge keeps the request-shape
+ * validation (JSON, code format, basis-point range) and maps the domain's answer to HTTP.
  */
 #[Route('/api/v1/admin/promotions/promo-codes')]
 #[IsGranted('ROLE_ADMIN')]
 final class AdminPromoCodeController
 {
     public function __construct(
-        private Connection $connection,
+        private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
     ) {
     }
@@ -64,17 +73,13 @@ final class AdminPromoCodeController
             return new JsonResponse(['error' => 'discountBasisPoints must be an integer between 1 and 10000.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (false !== $this->connection->fetchOne('SELECT 1 FROM storefront_promo_code WHERE code = :code', ['code' => $code])) {
-            return new JsonResponse(['error' => 'This promo code already exists.'], Response::HTTP_CONFLICT);
-        }
-
         $active = !array_key_exists('active', $body) || true === $body['active'];
 
-        $this->connection->executeStatement(
-            'INSERT INTO storefront_promo_code (code, discount_basis_points, active) VALUES (:code, :bp, :active)',
-            ['code' => $code, 'bp' => $basisPoints, 'active' => $active],
-            ['bp' => ParameterType::INTEGER, 'active' => ParameterType::BOOLEAN],
-        );
+        try {
+            $this->commandBus->dispatch(new CreatePromoCode($code, $basisPoints, $active));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
+        }
 
         return new JsonResponse(['code' => $code, 'discountBasisPoints' => $basisPoints, 'active' => $active], Response::HTTP_CREATED);
     }
@@ -88,24 +93,16 @@ final class AdminPromoCodeController
         }
 
         $code = strtoupper($code);
-        $row = $this->connection->fetchAssociative(
-            'SELECT discount_basis_points, active FROM storefront_promo_code WHERE code = :code',
-            ['code' => $code],
-        );
-        if (false === $row) {
-            return new JsonResponse(['error' => 'Promo code not found.'], Response::HTTP_NOT_FOUND);
-        }
 
-        $basisPoints = (int) $row['discount_basis_points'];
+        $basisPoints = null;
         if (array_key_exists('discountBasisPoints', $body)) {
-            $parsed = $this->basisPoints($body['discountBasisPoints']);
-            if (null === $parsed) {
+            $basisPoints = $this->basisPoints($body['discountBasisPoints']);
+            if (null === $basisPoints) {
                 return new JsonResponse(['error' => 'discountBasisPoints must be an integer between 1 and 10000.'], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-            $basisPoints = $parsed;
         }
 
-        $active = (bool) $row['active'];
+        $active = null;
         if (array_key_exists('active', $body)) {
             if (!is_bool($body['active'])) {
                 return new JsonResponse(['error' => 'active must be a boolean.'], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -113,25 +110,63 @@ final class AdminPromoCodeController
             $active = $body['active'];
         }
 
-        $this->connection->executeStatement(
-            'UPDATE storefront_promo_code SET discount_basis_points = :bp, active = :active WHERE code = :code',
-            ['bp' => $basisPoints, 'active' => $active, 'code' => $code],
-            ['bp' => ParameterType::INTEGER, 'active' => ParameterType::BOOLEAN],
-        );
+        try {
+            $this->commandBus->dispatch(new UpdatePromoCode($code, $basisPoints, $active));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
+        }
 
-        return new JsonResponse(['code' => $code, 'discountBasisPoints' => $basisPoints, 'active' => $active]);
+        $row = $this->promoCode($code);
+        if (null === $row) {
+            return new JsonResponse(['error' => 'Promo code not found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse(['code' => $code, 'discountBasisPoints' => $row['discountBasisPoints'], 'active' => $row['active']]);
     }
 
     #[Route('/{code}', name: 'admin_promo_codes_delete', methods: ['DELETE'])]
     public function delete(string $code): JsonResponse
     {
         $code = strtoupper($code);
-        $deleted = $this->connection->executeStatement('DELETE FROM storefront_promo_code WHERE code = :code', ['code' => $code]);
-        if (0 === $deleted) {
-            return new JsonResponse(['error' => 'Promo code not found.'], Response::HTTP_NOT_FOUND);
+
+        try {
+            $this->commandBus->dispatch(new DeletePromoCode($code));
+        } catch (HandlerFailedException $exception) {
+            return $this->domainFailure($this->rootCause($exception));
         }
 
         return new JsonResponse(['success' => true, 'code' => $code]);
+    }
+
+    /** @return array{code: string, discountBasisPoints: int, active: bool}|null */
+    private function promoCode(string $code): ?array
+    {
+        /* @var array{code: string, discountBasisPoints: int, active: bool}|null */
+        return $this->queries->dispatch(new GetPromoCode($code));
+    }
+
+    private function rootCause(HandlerFailedException $exception): \Throwable
+    {
+        $cause = $exception;
+
+        while ($cause instanceof HandlerFailedException && null !== $cause->getPrevious()) {
+            $cause = $cause->getPrevious();
+        }
+
+        return $cause;
+    }
+
+    private function domainFailure(\Throwable $error): JsonResponse
+    {
+        if ($error instanceof PromoCodeAlreadyExistsException) {
+            return new JsonResponse(['error' => 'This promo code already exists.'], Response::HTTP_CONFLICT);
+        }
+
+        if ($error instanceof PromoCodeNotFoundException) {
+            return new JsonResponse(['error' => 'Promo code not found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        throw $error;
     }
 
     /** @return array<string, mixed>|null */

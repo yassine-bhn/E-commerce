@@ -163,6 +163,13 @@ services:
     App\Catalog\Application\Port\BrandStore:
         alias: App\Catalog\Infrastructure\Persistence\DbalBrandStore
 
+    # solid Task 4.10 (SRP-002): the promo-code commands read and write through the ports.
+    App\Promotions\Application\Port\PromoCodeReader:
+        alias: App\Promotions\Infrastructure\Persistence\DbalPromoCodeStore
+
+    App\Promotions\Application\Port\PromoCodeStore:
+        alias: App\Promotions\Infrastructure\Persistence\DbalPromoCodeStore
+
     App\Identity\Application\Port\CustomerAccountReader:
         alias: App\Identity\Infrastructure\Persistence\DbalCustomerAccountAdapter
 
