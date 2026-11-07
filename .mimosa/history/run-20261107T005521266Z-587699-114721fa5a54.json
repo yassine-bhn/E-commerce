@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20261107T005521266Z-587699-114721fa5a54",
+  "runStatus": "inconclusive",
+  "errors": [
+    "bash-discovery:var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php: bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files",
+    "candidate-select:tests/Functional/CheckoutOrderWiringTest.php: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "baseline:var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php: baseline_partial: baseline exceeded 5000 candidate files"
+  ],
+  "target": ".",
+  "revision": "b69119e22c7f514c60cd9ce33b84a4a2561abb01",
+  "diffHash": "052b4cd89af7807cb17a15cdb511ccfd150e1a829d2744adb8613172b668a8d9",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-11-07T00:55:21.266Z",
+  "timing": {
+    "startedAt": "2026-11-07T00:55:20.015Z",
+    "completedAt": "2026-11-07T00:55:21.266Z",
+    "durationMs": 1251
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 1,
+    "bySeverity": {
+      "high": 1
+    },
+    "byStatus": {
+      "blocked": 1
+    }
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "bash_discovery_incomplete": 1,
+      "changed_file_unreadable": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 3
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-session_bbe6552decfadaa8d52ddb9a48cd04cb-20261107T005521266Z-587699-114721fa5a54.json"
+}

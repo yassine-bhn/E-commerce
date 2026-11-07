@@ -72,7 +72,7 @@ final readonly class BannerImage
             throw BannerRejectedException::outsideUploadsArea($candidate);
         }
 
-        $format = strtolower((string) pathinfo($candidate, PATHINFO_EXTENSION));
+        $format = strtolower(pathinfo($candidate, PATHINFO_EXTENSION));
         if (!in_array($format, self::FORMATS, true)) {
             throw BannerRejectedException::notAnUploadedImage($candidate);
         }

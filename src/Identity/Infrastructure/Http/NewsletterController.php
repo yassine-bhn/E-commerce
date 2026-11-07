@@ -29,14 +29,14 @@ final class NewsletterController
     #[Route('', name: 'storefront_newsletter_subscribe', methods: ['POST'])]
     public function subscribe(Request $request): JsonResponse
     {
-        if ($limitResponse = $this->rateLimitChecker->check($this->contactLimiter, $request)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->contactLimiter, $request)) {
             return $limitResponse;
         }
         /** @var array<string, mixed> $body */
         $body = json_decode($request->getContent(), true) ?? [];
         $email = is_string($body['email'] ?? null) ? trim($body['email']) : '';
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (false === filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return new JsonResponse(['error' => 'Invalid email address'], Response::HTTP_BAD_REQUEST);
         }
 

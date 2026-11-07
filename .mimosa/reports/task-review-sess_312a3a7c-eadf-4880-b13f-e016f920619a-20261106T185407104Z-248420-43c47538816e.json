@@ -1,0 +1,527 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261106T185407104Z-248420-43c47538816e",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "bash-discovery",
+      "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSession_Handler_NativeService.php",
+      "reason": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files"
+    },
+    {
+      "stage": "baseline",
+      "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getStorefrontCartControllerupdateItemService.php",
+      "reason": "baseline_partial: baseline exceeded 5000 candidate files"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": false,
+      "captured_files": 5015,
+      "candidate_limit": 5000,
+      "truncated": true,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 19
+    },
+    "change_tracking": {
+      "touched_observed": 15,
+      "touched_retained": 15,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 4,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 19,
+      "selected_files": 19,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 19,
+      "scanned_files": 19,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "bash_discovery_incomplete": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 2
+    },
+    "reasons": [
+      {
+        "code": "bash_discovery_incomplete",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSession_Handler_NativeService.php",
+        "detail": "project enumeration exceeded 5000 reviewable files",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getStorefrontCartControllerupdateItemService.php",
+        "detail": "baseline exceeded 5000 candidate files",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSession_Handler_NativeService.php",
+        "detail": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getStorefrontCartControllerupdateItemService.php",
+        "detail": "baseline_partial: baseline exceeded 5000 candidate files",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-11-06T18:54:07.104Z",
+  "session_id": "sess_312a3a7c-eadf-4880-b13f-e016f920619a",
+  "target": ".",
+  "revision": "a47e1a5a0e104b7511ab589c3bbc4b8786022583",
+  "rules_version": "unavailable",
+  "diff_hash": "b85745524308973d0dc56822b068f4d95caf131e8674cb7e52724475a088fb87",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 19,
+    "changed_files": [
+      {
+        "file": "src/Catalog/Application/Command/RemoveSubcategoryImage.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 23
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "e75b971c03e417df9455b3a9d299ad5651d4617469ebb9bfda817b4073f6745e"
+      },
+      {
+        "file": "src/Catalog/Application/Command/SetSubcategoryImage.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 26
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "38261ed0b2d6b822772aaf843b840946fa5ae32141e56fb7671123cdb62be55f"
+      },
+      {
+        "file": "src/Catalog/Application/CommandHandler/RemoveSubcategoryImageHandler.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 32
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "4fb955bb10d1271c81886c0b7d389c9d875da96ff7024b9a9550f3e6d0b0ebbc"
+      },
+      {
+        "file": "src/Catalog/Application/CommandHandler/SetBrandImageHandler.php",
+        "ranges": [
+          {
+            "start": 9,
+            "end": 9
+          },
+          {
+            "start": 27,
+            "end": 27
+          }
+        ],
+        "before_hash": "d142717d3a4a9aaaaf514c586fdb8c918d3f74d29d5030734e57f1574d06f911",
+        "after_hash": "c5c6f6330fc158e2e2d320d896eed7c6028cb0a499ab7fa027451c5a57a2b096"
+      },
+      {
+        "file": "src/Catalog/Application/CommandHandler/SetSubcategoryImageHandler.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 37
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "2b6a673bc0acba2f80377ca276e7bd47f3f26284a27a0a4b07a9696b694461b0"
+      },
+      {
+        "file": "src/Catalog/Application/Port/SubcategoryImageStore.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 25
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "3448f197cb644e6e9f24cba55fc5831637cf2b66bb021ee8179a5ab32578ba2a"
+      },
+      {
+        "file": "src/Catalog/Domain/Model/CatalogImageRejectedException.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 43
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "48e84a641452edfc8859f3f70f978fdc82e1f7d6b035a1d7b82500add4752010"
+      },
+      {
+        "file": "src/Catalog/Domain/Model/CategorySubtree.php",
+        "ranges": [
+          {
+            "start": 51,
+            "end": 54
+          },
+          {
+            "start": 78,
+            "end": 85
+          },
+          {
+            "start": 127,
+            "end": 128
+          },
+          {
+            "start": 150,
+            "end": 152
+          },
+          {
+            "start": 164,
+            "end": 217
+          }
+        ],
+        "before_hash": "9d0074854cecb784ad8775b73dc26a57c3f7d572c6821d93efc681e56cea2898",
+        "after_hash": "50cb4221b5a15f3f98b0750cd5e27b59f52ef122ace20fdc6ec2143bd107eada"
+      },
+      {
+        "file": "src/Catalog/Domain/Model/SubcategoryNotFoundException.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 23
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "f65cd28f8852d2c6970be8f328fdbc384838bbfcea56c4dbe70d7bfb0846577b"
+      },
+      {
+        "file": "src/Catalog/Domain/Model/UploadedImageReference.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 63
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "eb7690f8b396daa08cd9885311f234488ae1f1f422cefb7feea7606b480f895b"
+      },
+      {
+        "file": "src/Catalog/Infrastructure/Http/AdminBrandController.php",
+        "ranges": [
+          {
+            "start": 17,
+            "end": 17
+          },
+          {
+            "start": 214,
+            "end": 214
+          }
+        ],
+        "before_hash": "1eafafab1b69647212116b6af942280f39cf2d9d98fb775e575bd4263e826faa",
+        "after_hash": "85351ed175ea91c03d340885064fb6356179ff4f15e25032e21391ed5da403a8"
+      },
+      {
+        "file": "src/Catalog/Infrastructure/Http/AdminCategoryController.php",
+        "ranges": [
+          {
+            "start": 12,
+            "end": 12
+          },
+          {
+            "start": 14,
+            "end": 14
+          },
+          {
+            "start": 19,
+            "end": 19
+          },
+          {
+            "start": 30,
+            "end": 30
+          },
+          {
+            "start": 259,
+            "end": 340
+          },
+          {
+            "start": 476,
+            "end": 483
+          },
+          {
+            "start": 563,
+            "end": 590
+          }
+        ],
+        "before_hash": "a8948b7cf4532ac108c07063c6665113a19d603ac4a23873b67607fc1f5417ab",
+        "after_hash": "d4c42a1b4b794c89b02170757c7941477e1ec4a3f010adab19350ba982b0c339"
+      },
+      {
+        "file": "src/Catalog/Infrastructure/Http/AdminUploadController.php",
+        "ranges": [
+          {
+            "start": 34,
+            "end": 34
+          }
+        ],
+        "before_hash": "f3c5535d793b1248ea568e5e984021ed840affe423f72ad075f777eec22639d8",
+        "after_hash": "40b7ec1e07ee957d141f7f41b794773659552777d0c09fd0de006d341be9fdd4"
+      },
+      {
+        "file": "src/Catalog/Infrastructure/Persistence/DbalCategoryStore.php",
+        "ranges": [
+          {
+            "start": 7,
+            "end": 7
+          },
+          {
+            "start": 15,
+            "end": 17
+          },
+          {
+            "start": 20,
+            "end": 21
+          },
+          {
+            "start": 30,
+            "end": 30
+          },
+          {
+            "start": 45,
+            "end": 49
+          },
+          {
+            "start": 158,
+            "end": 201
+          }
+        ],
+        "before_hash": "cefa55402fd642ff35fd7dfca7fc1f95fa4d7d3d0f71b6a1c1869caee0a950b5",
+        "after_hash": "7282a5ac02d8f257b80f0aa13a784591cbcc95e9b388c16e04ab8ef30505fc81"
+      },
+      {
+        "file": "tests/Functional/AdminSubcategoryImageTest.php",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 550
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "077746df00f333b8f7798d74d117506221869df6c53422a8e719e5f5f9a09b47"
+      },
+      {
+        "file": "var/cache/test/App_KernelTestDebugContainer.php",
+        "ranges": [
+          {
+            "start": 5,
+            "end": 5
+          },
+          {
+            "start": 7,
+            "end": 8
+          },
+          {
+            "start": 14,
+            "end": 14
+          },
+          {
+            "start": 17,
+            "end": 20
+          },
+          {
+            "start": 22,
+            "end": 22
+          }
+        ],
+        "before_hash": "dd5a6949f59987ec66be98eefe3e305a90ad28b785036eb7d0d3350d5a9efd98",
+        "after_hash": "966a1b3032aa24600cea11d627068b158bd78030da37f37e0c229b07bc6aa4c6"
+      },
+      {
+        "file": "var/cache/test/App_KernelTestDebugContainer.preload.php",
+        "ranges": [
+          {
+            "start": 13,
+            "end": 821
+          },
+          {
+            "start": 881,
+            "end": 881
+          },
+          {
+            "start": 886,
+            "end": 886
+          }
+        ],
+        "before_hash": "9740e0e48fc786c1e0e4df232b0145d867ba85c06124e02e41fc97a9eed8e1d9",
+        "after_hash": "20e7d9af883c09364439ba18bb3c09a41b6cde9649e7257178192df2553b4cc0"
+      },
+      {
+        "file": "var/cache/test/url_generating_routes.php",
+        "ranges": [
+          {
+            "start": 38,
+            "end": 39
+          },
+          {
+            "start": 132,
+            "end": 133
+          }
+        ],
+        "before_hash": "95416ea4a90af6088cf17616b37cc9bfe719648f59381cda3d74e287ec6e9874",
+        "after_hash": "b2c1736baf645d5ffb599c1e63d96fb4c05620c36e1fe888d1776e23735c6aa0"
+      },
+      {
+        "file": "var/cache/test/url_matching_routes.php",
+        "ranges": [
+          {
+            "start": 132,
+            "end": 138
+          },
+          {
+            "start": 140,
+            "end": 140
+          },
+          {
+            "start": 143,
+            "end": 144
+          },
+          {
+            "start": 149,
+            "end": 153
+          },
+          {
+            "start": 155,
+            "end": 155
+          },
+          {
+            "start": 159,
+            "end": 160
+          },
+          {
+            "start": 165,
+            "end": 165
+          },
+          {
+            "start": 167,
+            "end": 167
+          },
+          {
+            "start": 172,
+            "end": 172
+          },
+          {
+            "start": 174,
+            "end": 174
+          },
+          {
+            "start": 177,
+            "end": 179
+          },
+          {
+            "start": 181,
+            "end": 181
+          },
+          {
+            "start": 209,
+            "end": 215
+          },
+          {
+            "start": 219,
+            "end": 219
+          },
+          {
+            "start": 224,
+            "end": 234
+          },
+          {
+            "start": 238,
+            "end": 238
+          },
+          {
+            "start": 242,
+            "end": 246
+          }
+        ],
+        "before_hash": "658c418613059922a88f7dad10fc71d74f7e7925bc33ca74b362c8843e2c8255",
+        "after_hash": "263b498c30ca5e67458b0edd5075ee82487d0d930587b9eba78b9b509827f768"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-11-06T18:54:06.146Z",
+    "completed_at": "2026-11-06T18:54:07.104Z",
+    "duration_ms": 958,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 958,
+    "peakMemoryBytes": 189878272,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 19,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-sess_312a3a7c-eadf-4880-b13f-e016f920619a-20261106T185407104Z-248420-43c47538816e.json",
+    "latest_report": ".mimosa/reports/task-review-sess_312a3a7c-eadf-4880-b13f-e016f920619a.json",
+    "history_summary": ".mimosa/history/run-20261106T185407104Z-248420-43c47538816e.json"
+  }
+}

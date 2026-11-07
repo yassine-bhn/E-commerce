@@ -29,7 +29,7 @@ final class ContactController
     #[Route('', name: 'storefront_contact_submit', methods: ['POST'])]
     public function submit(Request $request): JsonResponse
     {
-        if ($limitResponse = $this->rateLimitChecker->check($this->contactLimiter, $request)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->contactLimiter, $request)) {
             return $limitResponse;
         }
         /** @var array<string, mixed> $body */
@@ -41,19 +41,19 @@ final class ContactController
             }
         }
 
-        $email = trim((string) $body['email']);
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $email = trim($body['email']);
+        if (false === filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return new JsonResponse(['error' => 'Invalid email address'], Response::HTTP_BAD_REQUEST);
         }
 
         $id = Uuid::v7()->toRfc4122();
         $this->commandBus->dispatch(new SubmitContactMessage(
             $id,
-            trim((string) $body['name']),
+            trim($body['name']),
             $email,
-            is_string($body['phone'] ?? null) && '' !== trim((string) $body['phone']) ? trim((string) $body['phone']) : null,
-            is_string($body['subject'] ?? null) && '' !== trim((string) $body['subject']) ? trim((string) $body['subject']) : null,
-            trim((string) $body['message']),
+            is_string($body['phone'] ?? null) && '' !== trim($body['phone']) ? trim($body['phone']) : null,
+            is_string($body['subject'] ?? null) && '' !== trim($body['subject']) ? trim($body['subject']) : null,
+            trim($body['message']),
         ));
 
         return new JsonResponse(['id' => $id, 'status' => 'received'], Response::HTTP_CREATED);

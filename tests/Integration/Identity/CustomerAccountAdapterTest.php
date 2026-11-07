@@ -103,6 +103,7 @@ final class CustomerAccountAdapterTest extends KernelTestCase
         $adapter->ban($id, 'Comportement abusif', 'admin-1');
 
         $row = $this->profileRow($id);
+        self::assertIsArray($row);
         self::assertSame('banned', $row['status']);
         self::assertSame('Comportement abusif', $row['ban_reason']);
         self::assertSame('admin-1', $row['banned_by']);
@@ -111,6 +112,7 @@ final class CustomerAccountAdapterTest extends KernelTestCase
         $adapter->unban($id);
 
         $row = $this->profileRow($id);
+        self::assertIsArray($row);
         self::assertSame('active', $row['status']);
         self::assertNull($row['ban_reason']);
         self::assertNull($row['banned_by']);
@@ -124,7 +126,9 @@ final class CustomerAccountAdapterTest extends KernelTestCase
 
         $adapter->changeRole($id, 'ROLE_ADMIN');
 
-        self::assertSame('ROLE_ADMIN', $this->profileRow($id)['role']);
+        $row = $this->profileRow($id);
+        self::assertIsArray($row);
+        self::assertSame('ROLE_ADMIN', $row['role']);
     }
 
     public function testAnonymizeRewritesTheProfileAndRemovesTheAddresses(): void
@@ -136,6 +140,7 @@ final class CustomerAccountAdapterTest extends KernelTestCase
         $adapter->anonymize($id, 'anonymized-deadbeef@system.local');
 
         $row = $this->profileRow($id);
+        self::assertIsArray($row);
         self::assertSame('Utilisateur anonymisé', $row['name']);
         self::assertSame('anonymized-deadbeef@system.local', $row['email']);
         self::assertSame('anonymized', $row['status']);
@@ -228,6 +233,7 @@ final class CustomerAccountAdapterTest extends KernelTestCase
         ));
 
         $row = $this->profileRow($id);
+        self::assertIsArray($row);
         self::assertSame('Hana Ben Salah', $row['name']);
         self::assertSame('professionnel', $row['account_type']);
         self::assertSame('7654321B', $row['mf']);

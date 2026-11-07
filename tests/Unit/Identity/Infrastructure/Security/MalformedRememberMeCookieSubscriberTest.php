@@ -30,7 +30,7 @@ final class MalformedRememberMeCookieSubscriberTest extends TestCase
         array $expectedCookies,
     ): void {
         $request = new Request(cookies: $initialCookies);
-        $event = new RequestEvent($this->createStub(HttpKernelInterface::class), $request, $requestType);
+        $event = new RequestEvent(self::createStub(HttpKernelInterface::class), $request, $requestType);
 
         (new MalformedRememberMeCookieSubscriber(self::COOKIE_NAME))->onKernelRequest($event);
 

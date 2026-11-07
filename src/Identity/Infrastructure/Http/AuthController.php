@@ -30,7 +30,7 @@ final class AuthController
     #[Route('/register', name: 'identity_register', methods: ['POST'])]
     public function register(Request $request): JsonResponse
     {
-        $payload = json_decode((string) $request->getContent(), true);
+        $payload = json_decode($request->getContent(), true);
 
         if (!is_array($payload)) {
             return new JsonResponse(['error' => 'Invalid JSON payload.'], Response::HTTP_BAD_REQUEST);
@@ -98,7 +98,7 @@ final class AuthController
     #[Route('/forgot-password', name: 'identity_forgot_password', methods: ['POST'])]
     public function forgotPassword(Request $request): JsonResponse
     {
-        $payload = json_decode((string) $request->getContent(), true);
+        $payload = json_decode($request->getContent(), true);
 
         if (!is_array($payload)) {
             return new JsonResponse(['error' => 'Invalid JSON payload.'], Response::HTTP_BAD_REQUEST);
@@ -119,7 +119,7 @@ final class AuthController
     #[Route('/reset-password', name: 'identity_reset_password', methods: ['POST'])]
     public function resetPassword(Request $request): JsonResponse
     {
-        $payload = json_decode((string) $request->getContent(), true);
+        $payload = json_decode($request->getContent(), true);
 
         if (!is_array($payload)) {
             return new JsonResponse(['error' => 'Invalid JSON payload.'], Response::HTTP_BAD_REQUEST);

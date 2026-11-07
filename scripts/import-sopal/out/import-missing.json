@@ -1,0 +1,1910 @@
+[
+  {
+    "sopal_ref": "13AEA03",
+    "slug": "13aea03",
+    "sopal_name": "RACCORD DROIT TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000019",
+    "csv_name": "RACC DROIT SOP13AEA03 A SERTIR PEX 20",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "10.88300000",
+    "csv_price_ttc": "12.95077000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "5",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1399A03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1399A03.jpg"
+    ],
+    "sopal_folder": "627-raccord-droit-tt",
+    "sopal_local_images": [
+      "627-raccord-droit-tt/images/1399A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à sertir",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "1399A03"
+          ],
+          [
+            "20",
+            "13AEA03"
+          ],
+          [
+            "26",
+            "13BJA03"
+          ],
+          [
+            "32",
+            "13BKA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13FTA03",
+    "slug": "13fta03",
+    "sopal_name": "RACCORD EN TE REDUIT CENTRAL",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000023",
+    "csv_name": "REDUCTION EN TE SOP13FTA03 A SERTIR PEX26-20-26",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "19.85401600",
+    "csv_price_ttc": "23.62627904",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "-1",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13FQA03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13FQA03.jpg"
+    ],
+    "sopal_folder": "641-raccord-en-te-reduit-central",
+    "sopal_local_images": [
+      "641-raccord-en-te-reduit-central/images/13FQA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à sertir",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "20 * 16 * 20",
+            "13FQA03"
+          ],
+          [
+            "26 * 16 * 26",
+            "13FSA03"
+          ],
+          [
+            "26 * 20 * 26",
+            "13FTA03"
+          ],
+          [
+            "26 * 32 * 26",
+            "13JKA03"
+          ],
+          [
+            "32 * 16 * 32",
+            "13JLA03"
+          ],
+          [
+            "32 * 20 * 32",
+            "13FUA03"
+          ],
+          [
+            "32 * 26 * 32",
+            "13FVA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13CCA03",
+    "slug": "13cca03",
+    "sopal_name": "RACCORD COUDE TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000025",
+    "csv_name": "RACC COUDE SOP13CCA03 A SERTIR PEX 26",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "15.49184000",
+    "csv_price_ttc": "18.43528960",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "-4",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13A3A03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13A3A03.jpg"
+    ],
+    "sopal_folder": "631-raccord-coude-tt",
+    "sopal_local_images": [
+      "631-raccord-coude-tt/images/13A3A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à sertir",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "13A3A03"
+          ],
+          [
+            "20",
+            "13A9A03"
+          ],
+          [
+            "26",
+            "13CCA03"
+          ],
+          [
+            "32",
+            "13CDA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "01CRA03",
+    "slug": "01cra03",
+    "sopal_name": "VANNE A BS MM AVEC LEVIER",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000027",
+    "csv_name": "VANNE MM 3/4PEX20 A VISSER SOP01CRA03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "22.38100000",
+    "csv_price_ttc": "26.63339000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "4",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612170312_01cua03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612170312_01cua03.jpg"
+    ],
+    "sopal_folder": "542-vanne-a-bs-mm-avec-levier",
+    "sopal_local_images": [
+      "542-vanne-a-bs-mm-avec-levier/images/01CUA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "01CUA03"
+          ],
+          [
+            "3/4\"",
+            "01CRA03"
+          ],
+          [
+            "1\"",
+            "01FZA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "0133A03",
+    "slug": "0133a03",
+    "sopal_name": "VANNE BS FF A PASSAGE NORMAL AVEC LEVIER",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000028",
+    "csv_name": "VANNE SPHERIQUE 1 FF SOP0133A03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "21.79300000",
+    "csv_price_ttc": "25.93367000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "4",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg"
+    ],
+    "sopal_folder": "541-vanne-bs-ff-a-passage-normal-avec-levier",
+    "sopal_local_images": [
+      "541-vanne-bs-ff-a-passage-normal-avec-levier/images/0130A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "0130A03"
+          ],
+          [
+            "3/4\"",
+            "0132A03"
+          ],
+          [
+            "1\"",
+            "0133A03"
+          ],
+          [
+            "1\"1/4",
+            "0134A03"
+          ],
+          [
+            "1\"1/2",
+            "0135A03"
+          ],
+          [
+            "2\"",
+            "0136A03"
+          ],
+          [
+            "2\"1/2",
+            "0137A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "01C5A03",
+    "slug": "01c5a03",
+    "sopal_name": "VANNE A BS EQUERRE ECROU + BUSE POUR TUBE MULTICOUCHES",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000031",
+    "csv_name": "VANNE BS EQUR ECR+BUS 1 PEX26 VISS SOP01C5A03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "49.72500000",
+    "csv_price_ttc": "59.17275000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612172004_01c3a03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612172004_01c3a03.jpg"
+    ],
+    "sopal_folder": "558-vanne-a-bs-equerre-ecrou--buse-pour-tube-multicouches",
+    "sopal_local_images": [
+      "558-vanne-a-bs-equerre-ecrou--buse-pour-tube-multicouches/images/01C3A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "3/4\" * 20",
+            "01C3A03"
+          ],
+          [
+            "1\" * 26",
+            "01C5A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "0132A03",
+    "slug": "0132a03",
+    "sopal_name": "VANNE BS FF A PASSAGE NORMAL AVEC LEVIER",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000056",
+    "csv_name": "VANNE SPHERIQUE 3/4 FF SOP0132A03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "15.34300000",
+    "csv_price_ttc": "18.25817000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "5",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg"
+    ],
+    "sopal_folder": "541-vanne-bs-ff-a-passage-normal-avec-levier",
+    "sopal_local_images": [
+      "541-vanne-bs-ff-a-passage-normal-avec-levier/images/0130A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "0130A03"
+          ],
+          [
+            "3/4\"",
+            "0132A03"
+          ],
+          [
+            "1\"",
+            "0133A03"
+          ],
+          [
+            "1\"1/4",
+            "0134A03"
+          ],
+          [
+            "1\"1/2",
+            "0135A03"
+          ],
+          [
+            "2\"",
+            "0136A03"
+          ],
+          [
+            "2\"1/2",
+            "0137A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "14CHA01",
+    "slug": "14cha01",
+    "sopal_name": "RACCORD EN TE FFF",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000108",
+    "csv_name": "RACC EN TE 3/4 FFF JAUNE SOP14CHA01",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "8.98300000",
+    "csv_price_ttc": "10.68977000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "15",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "raccord pour tube en cuivre",
+    "sopal_image": "https://www.sopal.com/uploads/produits/14HVA01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/14HVA01.jpg"
+    ],
+    "sopal_folder": "689-raccord-en-te-fff",
+    "sopal_local_images": [
+      "689-raccord-en-te-fff/images/14HVA01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "14HVA01"
+          ],
+          [
+            "3/4\"",
+            "14CHA01"
+          ],
+          [
+            "1\"",
+            "14CJA01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1033A04",
+    "slug": "1033a04",
+    "sopal_name": "Barre de douche Bizerte",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000154",
+    "csv_name": "BARRE DE DOUCHE FLEX 1.5M BIZERTE SOP 1033A04",
+    "score": 1.0,
+    "method": "ref-exact",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.85,
+    "csv_price_ht": "160.05200000",
+    "csv_price_ttc": "190.46188000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "Finition chromée éclatante et durable NF EN ISO 1456 Tube en laiton Ø18 Support douchette réglable Brillant et facile à nettoyer Confort d’utilisation\nFinition chromée éclatante et durable NF EN ISO 1456\nTube en laiton Ø18\nSupport douchette réglable\nBrillant et facile à nettoyer\nConfort d’utilisation",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1033A04.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1033A04.jpg"
+    ],
+    "sopal_folder": "24-barre-de-douche-bizerte-",
+    "sopal_local_images": [
+      "24-barre-de-douche-bizerte-/images/1033A04_1.jpg"
+    ],
+    "sopal_local_docs": [
+      "24-barre-de-douche-bizerte-/documents/1033A04.pdf"
+    ],
+    "sopal_doc_labels": [
+      "Fiche technique"
+    ],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "BIZERTE",
+    "sopal_variants": [],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "14CJA01",
+    "slug": "14cja01",
+    "sopal_name": "RACCORD EN TE FFF",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000670",
+    "csv_name": "TE EGAL 1/0 BLEU /SOPAL 14CJA01",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "15.64201681",
+    "csv_price_ttc": "18.61400000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "10",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "raccord pour tube en cuivre",
+    "sopal_image": "https://www.sopal.com/uploads/produits/14HVA01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/14HVA01.jpg"
+    ],
+    "sopal_folder": "689-raccord-en-te-fff",
+    "sopal_local_images": [
+      "689-raccord-en-te-fff/images/14HVA01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "14HVA01"
+          ],
+          [
+            "3/4\"",
+            "14CHA01"
+          ],
+          [
+            "1\"",
+            "14CJA01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1448A01",
+    "slug": "1448a01",
+    "sopal_name": "RACCORD COUDE FF",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000769",
+    "csv_name": "RACC COUDE 1 FF JAUNE SOP1448A01",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "13.48600000",
+    "csv_price_ttc": "16.04834000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "9",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "raccord pour tube en cuivre",
+    "sopal_image": "https://www.sopal.com/uploads/produits/14D7A01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/14D7A01.jpg"
+    ],
+    "sopal_folder": "687-raccord-coude-ff",
+    "sopal_local_images": [
+      "687-raccord-coude-ff/images/14D7A01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "14D7A01"
+          ],
+          [
+            "3/4\"",
+            "14CGA01"
+          ],
+          [
+            "1\"",
+            "1448A01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13BJA03",
+    "slug": "13bja03",
+    "sopal_name": "RACCORD DROIT TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "000963",
+    "csv_name": "RACC DROIT SOP13BJA03 A SERTIR PEX26",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "12.75300000",
+    "csv_price_ttc": "15.17607000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "8",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1399A03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1399A03.jpg"
+    ],
+    "sopal_folder": "627-raccord-droit-tt",
+    "sopal_local_images": [
+      "627-raccord-droit-tt/images/1399A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à sertir",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "1399A03"
+          ],
+          [
+            "20",
+            "13AEA03"
+          ],
+          [
+            "26",
+            "13BJA03"
+          ],
+          [
+            "32",
+            "13BKA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "0134A03",
+    "slug": "0134a03",
+    "sopal_name": "VANNE BS FF A PASSAGE NORMAL AVEC LEVIER",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001078",
+    "csv_name": "VANNE SPHERIQUE 1 1/4 FF SOP0134A03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "30.44900000",
+    "csv_price_ttc": "36.23431000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "3",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg"
+    ],
+    "sopal_folder": "541-vanne-bs-ff-a-passage-normal-avec-levier",
+    "sopal_local_images": [
+      "541-vanne-bs-ff-a-passage-normal-avec-levier/images/0130A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "0130A03"
+          ],
+          [
+            "3/4\"",
+            "0132A03"
+          ],
+          [
+            "1\"",
+            "0133A03"
+          ],
+          [
+            "1\"1/4",
+            "0134A03"
+          ],
+          [
+            "1\"1/2",
+            "0135A03"
+          ],
+          [
+            "2\"",
+            "0136A03"
+          ],
+          [
+            "2\"1/2",
+            "0137A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "0135A03",
+    "slug": "0135a03",
+    "sopal_name": "VANNE BS FF A PASSAGE NORMAL AVEC LEVIER",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001079",
+    "csv_name": "VANNE SPHERIQUE 1 1/2 FF SOP0135A03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "49.78500000",
+    "csv_price_ttc": "59.24415000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "1",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg"
+    ],
+    "sopal_folder": "541-vanne-bs-ff-a-passage-normal-avec-levier",
+    "sopal_local_images": [
+      "541-vanne-bs-ff-a-passage-normal-avec-levier/images/0130A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "0130A03"
+          ],
+          [
+            "3/4\"",
+            "0132A03"
+          ],
+          [
+            "1\"",
+            "0133A03"
+          ],
+          [
+            "1\"1/4",
+            "0134A03"
+          ],
+          [
+            "1\"1/2",
+            "0135A03"
+          ],
+          [
+            "2\"",
+            "0136A03"
+          ],
+          [
+            "2\"1/2",
+            "0137A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "0136A03",
+    "slug": "0136a03",
+    "sopal_name": "VANNE BS FF A PASSAGE NORMAL AVEC LEVIER",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001092",
+    "csv_name": "VANNE SPHERIQUE 2 FF SOP0136A03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "74.81100000",
+    "csv_price_ttc": "89.02509000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg"
+    ],
+    "sopal_folder": "541-vanne-bs-ff-a-passage-normal-avec-levier",
+    "sopal_local_images": [
+      "541-vanne-bs-ff-a-passage-normal-avec-levier/images/0130A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "0130A03"
+          ],
+          [
+            "3/4\"",
+            "0132A03"
+          ],
+          [
+            "1\"",
+            "0133A03"
+          ],
+          [
+            "1\"1/4",
+            "0134A03"
+          ],
+          [
+            "1\"1/2",
+            "0135A03"
+          ],
+          [
+            "2\"",
+            "0136A03"
+          ],
+          [
+            "2\"1/2",
+            "0137A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "0137A03",
+    "slug": "0137a03",
+    "sopal_name": "VANNE BS FF A PASSAGE NORMAL AVEC LEVIER",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001093",
+    "csv_name": "VANNE SPHERIQUE 2 1/2 FF SOP0137A03",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "133.15600000",
+    "csv_price_ttc": "158.45564000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612170239_0130a03.jpg"
+    ],
+    "sopal_folder": "541-vanne-bs-ff-a-passage-normal-avec-levier",
+    "sopal_local_images": [
+      "541-vanne-bs-ff-a-passage-normal-avec-levier/images/0130A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Vannes pour l'eau",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "0130A03"
+          ],
+          [
+            "3/4\"",
+            "0132A03"
+          ],
+          [
+            "1\"",
+            "0133A03"
+          ],
+          [
+            "1\"1/4",
+            "0134A03"
+          ],
+          [
+            "1\"1/2",
+            "0135A03"
+          ],
+          [
+            "2\"",
+            "0136A03"
+          ],
+          [
+            "2\"1/2",
+            "0137A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1363A01",
+    "slug": "1363a01",
+    "sopal_name": "RACCORD COUDE T FEMELLE APPLIQUE",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001099",
+    "csv_name": "RACC COUDE APPLIQUE FEM SOP1363A01 SOPAFLO 25X3/4",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "12.50700000",
+    "csv_price_ttc": "14.88333000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1611221227_13rma01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1611221227_13rma01.jpg"
+    ],
+    "sopal_folder": "449-raccord-coude-t-femelle-applique",
+    "sopal_local_images": [
+      "449-raccord-coude-t-femelle-applique/images/13PTA01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2' * 25",
+            "13PTA01"
+          ],
+          [
+            "3/4' * 25",
+            "1363A01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1335A01",
+    "slug": "1335a01",
+    "sopal_name": "RACCORD DROIT T FEMELLE",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001101",
+    "csv_name": "RACC DROIT FEM SOP1335A01 SOPAFLO 32X1",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "14.25700000",
+    "csv_price_ttc": "16.96583000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1611222278_1344a01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1611222278_1344a01.jpg"
+    ],
+    "sopal_folder": "441-raccord-droit-t-femelle-",
+    "sopal_local_images": [
+      "441-raccord-droit-t-femelle-/images/1334A01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "3/4\" * 25",
+            "1334A01"
+          ],
+          [
+            "1\" * 32",
+            "1335A01"
+          ],
+          [
+            "32\" * 1/2",
+            "13PWA01"
+          ],
+          [
+            "1\"1/2 * 50",
+            "1336A01"
+          ],
+          [
+            "2\" * 63",
+            "1337A01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1388A01",
+    "slug": "1388a01",
+    "sopal_name": "RACCORD DROIT TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001110",
+    "csv_name": "RACC DROIT TT SOP1388A01 ASTAFLO 32X32",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "22.20600000",
+    "csv_price_ttc": "26.42514000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "raccord pour tube en polythylene",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612187717_1338a01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612187717_1338a01.jpg"
+    ],
+    "sopal_folder": "709-raccord-droit-tt",
+    "sopal_local_images": [
+      "709-raccord-droit-tt/images/1338A01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Largeur",
+          "Code"
+        ],
+        "rows": [
+          [
+            "25",
+            "1338A01"
+          ],
+          [
+            "32",
+            "1388A01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1356A01",
+    "slug": "1356a01",
+    "sopal_name": "RACCORD COUDE TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001111",
+    "csv_name": "RACC COUDE TT SOP1356A01 ASTAFLO 32",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "23.69800000",
+    "csv_price_ttc": "28.20062000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "raccord pour tube en polythylene",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612188101_1340a01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612188101_1340a01.jpg"
+    ],
+    "sopal_folder": "713-raccord-coude-tt",
+    "sopal_local_images": [
+      "713-raccord-coude-tt/images/1340A01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "25",
+            "1340A01"
+          ],
+          [
+            "32",
+            "1356A01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1389A01",
+    "slug": "1389a01",
+    "sopal_name": "RACCORD EN TE TTT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001114",
+    "csv_name": "RACCORD EN TE TTT SOP1389A01 ASTAFLO 32",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "31.71900000",
+    "csv_price_ttc": "37.74561000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "raccord pour tube en polythylene",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1612188312_1339a01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1612188312_1339a01.jpg"
+    ],
+    "sopal_folder": "716-raccord-en-te-ttt",
+    "sopal_local_images": [
+      "716-raccord-en-te-ttt/images/1339A01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "25",
+            "1339A01"
+          ],
+          [
+            "32",
+            "1389A01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "14CGA01",
+    "slug": "14cga01",
+    "sopal_name": "RACCORD COUDE FF",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001151",
+    "csv_name": "RACC COUDE 3/4 FF JAUNE SOP14CGA01",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "8.72300000",
+    "csv_price_ttc": "10.38037000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "18",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "raccord pour tube en cuivre",
+    "sopal_image": "https://www.sopal.com/uploads/produits/14D7A01.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/14D7A01.jpg"
+    ],
+    "sopal_folder": "687-raccord-coude-ff",
+    "sopal_local_images": [
+      "687-raccord-coude-ff/images/14D7A01_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "1/2\"",
+            "14D7A01"
+          ],
+          [
+            "3/4\"",
+            "14CGA01"
+          ],
+          [
+            "1\"",
+            "1448A01"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13A9A03",
+    "slug": "13a9a03",
+    "sopal_name": "RACCORD COUDE TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001236",
+    "csv_name": "RACC COUDE SOP13A9A03 A SERTIR PEX20",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "11.86300000",
+    "csv_price_ttc": "14.11697000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13A3A03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13A3A03.jpg"
+    ],
+    "sopal_folder": "631-raccord-coude-tt",
+    "sopal_local_images": [
+      "631-raccord-coude-tt/images/13A3A03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à sertir",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "13A3A03"
+          ],
+          [
+            "20",
+            "13A9A03"
+          ],
+          [
+            "26",
+            "13CCA03"
+          ],
+          [
+            "32",
+            "13CDA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13EYA03",
+    "slug": "13eya03",
+    "sopal_name": "RACCORD DROIT REDUIT TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001248",
+    "csv_name": "REDUCTION DROIT SOP13EYA03 A SERTIR 26PEX16",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "11.32300000",
+    "csv_price_ttc": "13.47437000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13EWA03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13EWA03.jpg"
+    ],
+    "sopal_folder": "640-raccord-droit-reduit-tt",
+    "sopal_local_images": [
+      "640-raccord-droit-reduit-tt/images/13EWA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à sertir",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "20 * 16",
+            "13EWA03"
+          ],
+          [
+            "26 * 16",
+            "13EYA03"
+          ],
+          [
+            "26 * 20",
+            "13EZA03"
+          ],
+          [
+            "32 * 20",
+            "13F0A03"
+          ],
+          [
+            "32 * 26",
+            "13F1A03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13FSA03",
+    "slug": "13fsa03",
+    "sopal_name": "RACCORD EN TE REDUIT CENTRAL",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001257",
+    "csv_name": "REDUCTION EN TE SOP13FSA03 A SERTIR PEX26-16-26",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "18.96700000",
+    "csv_price_ttc": "22.57073000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13FQA03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13FQA03.jpg"
+    ],
+    "sopal_folder": "641-raccord-en-te-reduit-central",
+    "sopal_local_images": [
+      "641-raccord-en-te-reduit-central/images/13FQA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à sertir",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "20 * 16 * 20",
+            "13FQA03"
+          ],
+          [
+            "26 * 16 * 26",
+            "13FSA03"
+          ],
+          [
+            "26 * 20 * 26",
+            "13FTA03"
+          ],
+          [
+            "26 * 32 * 26",
+            "13JKA03"
+          ],
+          [
+            "32 * 16 * 32",
+            "13JLA03"
+          ],
+          [
+            "32 * 20 * 32",
+            "13FUA03"
+          ],
+          [
+            "32 * 26 * 32",
+            "13FVA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13EMA03",
+    "slug": "13ema03",
+    "sopal_name": "RACCORD COUDE TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001279",
+    "csv_name": "RACC COUDE TT SOP13EMA03 A VISS PEX20",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "14.39900000",
+    "csv_price_ttc": "17.13481000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13AJA03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13AJA03.jpg"
+    ],
+    "sopal_folder": "610-raccord-coude-tt",
+    "sopal_local_images": [
+      "610-raccord-coude-tt/images/13AJA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à visser",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "13AJA03"
+          ],
+          [
+            "20",
+            "13EMA03"
+          ],
+          [
+            "26",
+            "13ENA03"
+          ],
+          [
+            "32",
+            "13EPA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13ENA03",
+    "slug": "13ena03",
+    "sopal_name": "RACCORD COUDE TT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001280",
+    "csv_name": "RACC COUDE TT SOP13ENA03 A VISS PEX26",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "28.31500000",
+    "csv_price_ttc": "33.69485000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13AJA03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13AJA03.jpg"
+    ],
+    "sopal_folder": "610-raccord-coude-tt",
+    "sopal_local_images": [
+      "610-raccord-coude-tt/images/13AJA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à visser",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "13AJA03"
+          ],
+          [
+            "20",
+            "13EMA03"
+          ],
+          [
+            "26",
+            "13ENA03"
+          ],
+          [
+            "32",
+            "13EPA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13ESA03",
+    "slug": "13esa03",
+    "sopal_name": "RACCORD EN TE TTT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001282",
+    "csv_name": "RACC EN TE TTT SOP13ESA03 A VISS PEX20",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "24.05400000",
+    "csv_price_ttc": "28.62426000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "11",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13AHA03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13AHA03.jpg"
+    ],
+    "sopal_folder": "619-raccord-en-te-ttt",
+    "sopal_local_images": [
+      "619-raccord-en-te-ttt/images/13AHA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à visser",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "13AHA03"
+          ],
+          [
+            "20",
+            "13ESA03"
+          ],
+          [
+            "26",
+            "13ETA03"
+          ],
+          [
+            "32",
+            "13EUA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "13ETA03",
+    "slug": "13eta03",
+    "sopal_name": "RACCORD EN TE TTT",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001283",
+    "csv_name": "RACC EN TE TTT SOP13ETA03 A VISS PEX26",
+    "score": 1.0,
+    "method": "ref-family-code",
+    "category_slug": "plomberie",
+    "subcategory": "raccord",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "41.10500000",
+    "csv_price_ttc": "48.91495000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "4",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "",
+    "sopal_image": "https://www.sopal.com/uploads/produits/13AHA03.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/13AHA03.jpg"
+    ],
+    "sopal_folder": "619-raccord-en-te-ttt",
+    "sopal_local_images": [
+      "619-raccord-en-te-ttt/images/13AHA03_1.jpg"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Raccords à visser",
+    "sopal_variants": [
+      {
+        "headers": [
+          "Dimension",
+          "Code"
+        ],
+        "rows": [
+          [
+            "16",
+            "13AHA03"
+          ],
+          [
+            "20",
+            "13ESA03"
+          ],
+          [
+            "26",
+            "13ETA03"
+          ],
+          [
+            "32",
+            "13EUA03"
+          ]
+        ]
+      }
+    ],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "04D0A04",
+    "slug": "04d0a04",
+    "sopal_name": "Robinet de lavabo Salakta",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "001901",
+    "csv_name": "ROBINET DE LAVABO SALAKTA SOP 04D0A04",
+    "score": 1.0,
+    "method": "ref-exact",
+    "category_slug": "plomberie",
+    "subcategory": "lavabo et lavabo long",
+    "cls_confidence": 0.85,
+    "csv_price_ht": "38.10200000",
+    "csv_price_ttc": "45.34138000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "3",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "Finition chromée éclatante et durable NF EN ISO 1456 Tête en céramique Brillant et facile à nettoyer Confort d’utilisation Flexibles de raccordement souples\nFinition chromée éclatante et durable NF EN ISO 1456\nTête en céramique\nBrillant et facile à nettoyer\nConfort d’utilisation\nFlexibles de raccordement souples",
+    "sopal_image": "https://www.sopal.com/uploads/produits/04D0A04.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/04D0A04.jpg"
+    ],
+    "sopal_folder": "64-robinet-de-lavabo-salakta",
+    "sopal_local_images": [
+      "64-robinet-de-lavabo-salakta/images/04D0A04_1.jpg"
+    ],
+    "sopal_local_docs": [
+      "64-robinet-de-lavabo-salakta/documents/04D0A04.pdf"
+    ],
+    "sopal_doc_labels": [
+      "Fiche technique"
+    ],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "SALAKTA",
+    "sopal_variants": [],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "1051A04",
+    "slug": "1051a04",
+    "sopal_name": "Bras de douche mural carré",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "002900",
+    "csv_name": "BRAS DE DOUCHE CARRE SOP 1051A04",
+    "score": 1.0,
+    "method": "ref-exact",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.85,
+    "csv_price_ht": "0.00000000",
+    "csv_price_ttc": "0.00000000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "sopal_description": "Finition chromée éclatante et durable NF EN ISO 1456 Bras de douche en laiton 25 Brillant et facile à nettoyer Confort d’utilisation Adapté pour les douches de tête\nFinition chromée éclatante et durable NF EN ISO 1456\nBras de douche en laiton 25\nBrillant et facile à nettoyer\nConfort d’utilisation\nAdapté pour les douches de tête",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1051A04.jpg",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1051A04.jpg"
+    ],
+    "sopal_folder": "66-bras-de-douche-mural-carre",
+    "sopal_local_images": [
+      "66-bras-de-douche-mural-carre/images/1051A04_1.jpg"
+    ],
+    "sopal_local_docs": [
+      "66-bras-de-douche-mural-carre/documents/1051A04.pdf"
+    ],
+    "sopal_doc_labels": [
+      "Fiche technique"
+    ],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "Bras de douche",
+    "sopal_variants": [],
+    "multi_match": false
+  },
+  {
+    "sopal_ref": "06ERA04",
+    "slug": "06era04",
+    "sopal_name": "Mitigeur de toilette ZEMBRA",
+    "sopal_brand": "SOPAL",
+    "csv_ref": "003878",
+    "csv_name": "MITIGEUR DE TOILETTE ZEMBRA SOPAL",
+    "score": 0.94,
+    "method": "name-fuzzy",
+    "category_slug": "plomberie",
+    "subcategory": "Mitigeur douches et bains de douches",
+    "cls_confidence": 0.85,
+    "csv_price_ht": "156.97900000",
+    "csv_price_ttc": "186.80501000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "EN000000038",
+    "csv_description": "",
+    "sopal_description": "Finition chromée éclatante et durable NF EN ISO 1456 Brillant et facile à nettoyer Confort d’utilisation Cartouche en céramique Ø35mm avec économie d’eau Flexibles de raccordement souples Finition chromée éclatante et durable NF EN ISO 1456 Brillant et facile à nettoyer Confort d’utilisation Cartouche en céramique Ø35mm avec économie d’eau Flexibles de raccordement souples\nFinition chromée éclatante et durable NF EN ISO 1456 Brillant et facile à nettoyer Confort d’utilisation Cartouche en céramique Ø35mm avec économie d’eau Flexibles de raccordement souples\nFinition chromée éclatante et durable NF EN ISO 1456\nBrillant et facile à nettoyer\nConfort d’utilisation\nCartouche en céramique Ø35mm avec économie d’eau\nFlexibles de raccordement souples",
+    "sopal_image": "https://www.sopal.com/uploads/produits/1744621511_mitigeur.de.toilette.zembra.png",
+    "sopal_images": [
+      "https://www.sopal.com/uploads/produits/1744621511_mitigeur.de.toilette.zembra.png"
+    ],
+    "sopal_folder": "870-mitigeur-de-toilette-zembra",
+    "sopal_local_images": [
+      "870-mitigeur-de-toilette-zembra/images/06ERA04_1.png"
+    ],
+    "sopal_local_docs": [],
+    "sopal_doc_labels": [],
+    "sopal_attributes": {},
+    "sopal_colors": [],
+    "sopal_labels": [],
+    "sopal_collection": "",
+    "sopal_variants": [],
+    "multi_match": false
+  }
+]

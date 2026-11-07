@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261107T005521266Z-587699-114721fa5a54",
+  "runId": "20261107T005521266Z-587699-114721fa5a54",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "bash_discovery_incomplete",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php",
+        "detail": "project enumeration exceeded 5000 reviewable files",
+        "affectsCompletion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "tests/Functional/CheckoutOrderWiringTest.php",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affectsCompletion": true
+      },
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php",
+        "detail": "baseline exceeded 5000 candidate files",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php",
+        "detail": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "tests/Functional/CheckoutOrderWiringTest.php",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php",
+        "detail": "baseline_partial: baseline exceeded 5000 candidate files",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "b69119e22c7f514c60cd9ce33b84a4a2561abb01",
+  "diffHash": "052b4cd89af7807cb17a15cdb511ccfd150e1a829d2744adb8613172b668a8d9",
+  "rulesVersion": "unavailable",
+  "sessionHash": "f9466902424ada20da92d5070d95831118549f4cb2e1cfa6f1b7dd5023040128",
+  "reportRef": ".mimosa/reports/task-review-session_bbe6552decfadaa8d52ddb9a48cd04cb-20261107T005521266Z-587699-114721fa5a54.json",
+  "events": [
+    {
+      "eventId": "hook-927eefe31af9cc703ab1d622c2ca1b09",
+      "findingId": "mimosa-fd10a6dedf794fa14661ed10",
+      "type": "finding_observed",
+      "at": "2026-11-07T00:55:21.266Z",
+      "identity": {
+        "projectRelativeFile": "AGENTS.md",
+        "ruleId": "mimosa.agent.security-bypass",
+        "codeEvidenceHash": "0489db21d544ee8d95412d15cb4cd69a328c78881b8a129db6728b4d6a76f906",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 119,
+      "endLine": 119,
+      "reasonCode": "observe",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "0489db21d544ee8d95412d15cb4cd69a328c78881b8a129db6728b4d6a76f906"
+      },
+      "sequence": 0
+    }
+  ],
+  "observedFindingIds": [],
+  "verifiedFiles": [
+    {
+      "file": "tests/Unit/Catalog/Application/InMemoryCategoryStore.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "tests/Functional/AdminSubcategoryImageTest.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "tests/Integration/Catalog/PricingColumnsMigrationTest.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/Shared/Domain/Storefront/ProductNotFoundException.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "var/cache/test/App_KernelTestDebugContainer.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "var/cache/test/App_KernelTestDebugContainer.preload.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-11-07T00:55:21.552Z"
+}

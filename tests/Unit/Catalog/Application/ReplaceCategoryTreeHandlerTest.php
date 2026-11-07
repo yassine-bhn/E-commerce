@@ -15,7 +15,11 @@ use PHPUnit\Framework\TestCase;
 
 final class ReplaceCategoryTreeHandlerTest extends TestCase
 {
-    private function handler(array|false $row, array $usedSubLevels = [], bool $refuseWrite = false): InMemoryCategoryStore
+    /**
+     * @param array<string, mixed>|false $row
+     * @param list<string>               $usedSubLevels
+     */
+    private function handler(bool|array $row, array $usedSubLevels = [], bool $refuseWrite = false): InMemoryCategoryStore
     {
         $categories = new InMemoryCategoryStore();
         $categories->rows = [$row];
@@ -55,12 +59,14 @@ final class ReplaceCategoryTreeHandlerTest extends TestCase
         $write = $categories->lastWrite();
         self::assertNotNull($write);
         self::assertSame('replaceContent', $write['method'], 'the rewrite goes through the tree writer');
-        self::assertSame('Sanitaires', $write['category']->label);
-        self::assertTrue($write['category']->quoteEligible);
-        self::assertTrue($write['category']->isHidden(), 'editing the content keeps the stored visibility');
+        $category = $categories->lastWrittenCategory();
+        self::assertNotNull($category);
+        self::assertSame('Sanitaires', $category->label);
+        self::assertTrue($category->quoteEligible);
+        self::assertTrue($category->isHidden(), 'editing the content keeps the stored visibility');
         self::assertSame(
             [['label' => 'Cuvette'], ['label' => 'Baignoire']],
-            $write['category']->subcategories(),
+            $category->subcategories(),
         );
         self::assertSame(
             ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],

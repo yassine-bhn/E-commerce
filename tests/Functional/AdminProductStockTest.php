@@ -165,7 +165,7 @@ final class AdminProductStockTest extends WebTestCase
         );
         self::assertIsArray($row, 'the product has an authoritative inventory_stock row');
 
-        return ['on_hand' => (int) $row['on_hand'], 'reserved' => (int) $row['reserved']];
+        return ['on_hand' => $row['on_hand'], 'reserved' => $row['reserved']];
     }
 
     private function balanceRow(): bool

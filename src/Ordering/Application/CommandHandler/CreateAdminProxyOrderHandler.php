@@ -32,8 +32,8 @@ final class CreateAdminProxyOrderHandler
             $command->orderId,
             array_map(
                 static fn (array $line): array => [
-                    'slug' => (string) $line['slug'],
-                    'quantity' => (int) $line['quantity'],
+                    'slug' => $line['slug'],
+                    'quantity' => $line['quantity'],
                 ],
                 $quote['pricedLines'],
             ),

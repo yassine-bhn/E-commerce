@@ -57,9 +57,9 @@ final class HideCategoryHandlerTest extends TestCase
         $write = $categories->lastWrite();
         self::assertNotNull($write);
         self::assertSame('setHidden', $write['method']);
-        self::assertTrue($write['hidden']);
-        self::assertSame('sanitaires', $write['slug']);
-        self::assertNotContains('replaceContent', array_column($categories->writes, 'method'), 'hiding does not rewrite the tree');
+        self::assertTrue($categories->lastWrittenHidden());
+        self::assertSame('sanitaires', $categories->lastWrittenSlug());
+        self::assertNotContains('replaceContent', $categories->writtenMethods(), 'hiding does not rewrite the tree');
     }
 
     public function testHidingATwiceHiddenCategoryStillWritesAHiddenRow(): void
@@ -70,7 +70,7 @@ final class HideCategoryHandlerTest extends TestCase
 
         $write = $categories->lastWrite();
         self::assertNotNull($write);
-        self::assertTrue($write['hidden']);
+        self::assertTrue($categories->lastWrittenHidden());
     }
 
     public function testHidingAnUnknownCategoryIsNotFound(): void
@@ -92,8 +92,8 @@ final class HideCategoryHandlerTest extends TestCase
         $write = $categories->lastWrite();
         self::assertNotNull($write);
         self::assertSame('setHidden', $write['method']);
-        self::assertFalse($write['hidden']);
-        self::assertSame('sanitaires', $write['slug']);
+        self::assertFalse($categories->lastWrittenHidden());
+        self::assertSame('sanitaires', $categories->lastWrittenSlug());
     }
 
     public function testUnHidingAnUnknownCategoryIsNotFound(): void

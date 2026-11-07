@@ -423,7 +423,7 @@ final class AdminSubcategoryImageTest extends WebTestCase
         self::assertIsArray($tree);
 
         /* @var list<array<string, mixed>> $tree */
-        return $tree;
+        return array_values($tree);
     }
 
     /**

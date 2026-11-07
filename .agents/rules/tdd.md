@@ -10,7 +10,7 @@ Rule: An edit under `src/**` MUST be preceded by a RED entry (failing test file 
 Rationale: The TDD law is the harness's core; unrecorded REDs are indistinguishable from no RED.
 BAD:  implementer writes `Money::multiply` before any test exists
 GOOD: state file has `RED: tests/Unit/Shared/Domain/MoneyTest.php — "Failed asserting 5997 equals null"` before the method exists.
-Enforced by: `tdd-gate.sh` hook (blocks src/** edits without RED entry) — see §6.
+Enforced by: `tdd-gate.sh` hook (blocks src/** edits without RED entry) + `bin/tdd-check` (repo-level attribution gate: commit-msg hook + CI `tdd` job; behavior mode for `feat:`, refactor mode for `refactor:` subjects) — see §6.
 
 ### TDD-002 — RED must fail for the right reason
 Scope: `tests/**`

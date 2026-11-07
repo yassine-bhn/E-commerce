@@ -36,8 +36,8 @@ final class DbalStockReservationAdapter implements StockReservationPort
         /** @var array<string, int> $quantities */
         $quantities = [];
         foreach ($lines as $line) {
-            $slug = (string) $line['slug'];
-            $quantity = (int) $line['quantity'];
+            $slug = $line['slug'];
+            $quantity = $line['quantity'];
             if ($quantity < 1) {
                 throw new InsufficientStockException($slug);
             }

@@ -44,7 +44,7 @@ final class MigrationReadModelGuardTest extends TestCase
             }
 
             $contents = (string) file_get_contents($file->getPathname());
-            if (preg_match($pattern, $contents)) {
+            if (1 === preg_match($pattern, $contents)) {
                 $violations[] = $basename;
             }
         }

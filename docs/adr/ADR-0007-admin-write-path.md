@@ -1,6 +1,6 @@
 # ADR-0007 — Admin write path and the delete-user boundary
 
-Status: accepted. Relies on: AGENTS.md 2/4/6, CMD-001..CMD-006, QRY-001..QRY-004, SEC-002, LAY-004,
+Status: **Superseded by ADR-0018** (the SOLID remediation migrated the four legacy controllers — CheckoutOrder, GoogleOAuth, Wishlist, Google callback — behind the bus and added the enforcement gates; the CQRS-path decision below remains the standing rule). Original: accepted. Relies on: AGENTS.md 2/4/6, CMD-001..CMD-006, QRY-001..QRY-004, SEC-002, LAY-004,
 spec R9/R10/R14/R16/R25/R28 (Q2 and Q4, locked 2026-10-20).
 
 ## Decision

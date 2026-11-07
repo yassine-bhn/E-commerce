@@ -140,9 +140,7 @@ final class AdminCustomerOrderFinderTest extends KernelTestCase
         $config->setMiddlewares([new LoggingMiddleware($logger)]);
 
         $connection = $this->connection();
-        /** @var array<string, mixed> $params */
         $params = $connection->getParams();
-        unset($params['url'], $params['dbname_suffix']);
         $params['dbname'] = (string) $connection->fetchOne('SELECT current_database()');
 
         $finder = new AdminCustomerOrderFinder(DriverManager::getConnection($params, $config));

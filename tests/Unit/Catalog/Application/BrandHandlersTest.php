@@ -130,9 +130,10 @@ final class FakeBrandStore implements BrandStore
 
     public ?string $deleted = null;
 
-    /** @var list<string>|null */
-    public ?array $renamedSlugs;
+    /** @var list<string> */
+    public array $renamedSlugs;
 
+    /** @param list<string> $renamedSlugs */
     public function __construct(array $renamedSlugs = [])
     {
         $this->renamedSlugs = $renamedSlugs;
@@ -147,7 +148,7 @@ final class FakeBrandStore implements BrandStore
     {
         $this->renamedTo = $new;
 
-        return $this->renamedSlugs ?? [];
+        return $this->renamedSlugs;
     }
 
     public function delete(string $name, string $actorId): void

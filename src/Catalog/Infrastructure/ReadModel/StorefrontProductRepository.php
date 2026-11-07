@@ -158,7 +158,7 @@ final class StorefrontProductRepository implements ProductExistencePort
         foreach (StorefrontProductSearchQuery::FACETS as $attribute) {
             $values = [];
             foreach ($distribution[$attribute] ?? [] as $label => $count) {
-                $values[(string) $label] = (int) $count;
+                $values[$label] = $count;
             }
             $facets[$attribute] = $values;
         }
@@ -195,6 +195,9 @@ final class StorefrontProductRepository implements ProductExistencePort
     /**
      * @return array{0: string, 1: array<string, mixed>, 2: array<string, int|string|ArrayParameterType>}
      */
+    /**
+     * @return array{string, array<string, mixed>, array<string, ArrayParameterType|\Doctrine\DBAL\ParameterType|\Doctrine\DBAL\Types\Type|string>}
+     */
     private function sqlConditions(StorefrontProductFilters $filters): array
     {
         $conditions = [CatalogVisibility::PRODUCT_PUBLIC];
@@ -217,16 +220,13 @@ final class StorefrontProductRepository implements ProductExistencePort
 
         if (null !== $filters->subcategory) {
             $leaves = $this->resolveSubcategoryLeaves($filters->categorySlug, $filters->subcategory);
-            if (null !== $leaves && count($leaves) > 1) {
+            if (count($leaves) > 1) {
                 $conditions[] = 'subcategory IN (:sub_leaves)';
                 $params['sub_leaves'] = $leaves;
                 $types['sub_leaves'] = ArrayParameterType::STRING;
-            } elseif (null !== $leaves && 1 === count($leaves)) {
-                $conditions[] = 'subcategory = :sub';
-                $params['sub'] = $leaves[0];
             } else {
                 $conditions[] = 'subcategory = :sub';
-                $params['sub'] = $filters->subcategory;
+                $params['sub'] = $leaves[0];
             }
         }
 
@@ -275,9 +275,9 @@ final class StorefrontProductRepository implements ProductExistencePort
     }
 
     /**
-     * @return list<string>|null
+     * @return list<string>
      */
-    private function resolveSubcategoryLeaves(?string $categorySlug, string $subcategory): ?array
+    private function resolveSubcategoryLeaves(?string $categorySlug, string $subcategory): array
     {
         if (null === $categorySlug || '' === trim($categorySlug)) {
             return [$subcategory];
@@ -292,7 +292,7 @@ final class StorefrontProductRepository implements ProductExistencePort
         }
 
         try {
-            /** @var list<mixed> $tree */
+            /** @var array<mixed, mixed> $tree */
             $tree = json_decode((string) $raw, true, 512, JSON_THROW_ON_ERROR);
         } catch (\Throwable) {
             return [$subcategory];
@@ -313,7 +313,7 @@ final class StorefrontProductRepository implements ProductExistencePort
     }
 
     /**
-     * @param list<mixed> $nodes
+     * @param array<mixed, mixed> $nodes
      *
      * @return array<string, mixed>|null
      */
@@ -338,7 +338,7 @@ final class StorefrontProductRepository implements ProductExistencePort
     }
 
     /**
-     * @param list<mixed> $nodes
+     * @param array<mixed, mixed> $nodes
      *
      * @return list<string>
      */

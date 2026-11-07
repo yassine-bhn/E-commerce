@@ -7,7 +7,6 @@ namespace App\Tests\Integration\Inventory;
 use App\Inventory\Infrastructure\Persistence\DbalStockReservationAdapter;
 use App\Shared\Domain\Inventory\InsufficientStockException;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\DriverException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Uid\Uuid;
@@ -48,8 +47,12 @@ final class StockReservationConcurrencyTest extends KernelTestCase
             $contenders[] = $this->newConnection($connection);
         }
 
+        $winner = array_shift($contenders);
+        if (null === $winner) {
+            self::fail('at least one contender connection is required');
+        }
+
         try {
-            $winner = array_shift($contenders);
             $winner->beginTransaction();
             new DbalStockReservationAdapter($winner)->reserve(
                 Uuid::v7()->toRfc4122(),
@@ -129,12 +132,11 @@ final class StockReservationConcurrencyTest extends KernelTestCase
      */
     private function newConnection(Connection $connection): Connection
     {
-        /** @var array<string, mixed> $params */
+        // The same database over a second backend: same params, own transaction and row locks.
         $params = $connection->getParams();
-        unset($params['url'], $params['dbname_suffix']);
         $params['dbname'] = (string) $connection->fetchOne('SELECT current_database()');
 
-        return DriverManager::getConnection($params);
+        return new Connection($params, $connection->getDriver());
     }
 
     private function seed(Connection $connection, string $slug): void
@@ -170,6 +172,6 @@ final class StockReservationConcurrencyTest extends KernelTestCase
             ['slug' => $slug],
         );
 
-        return ['on_hand' => (int) $row['on_hand'], 'reserved' => (int) $row['reserved']];
+        return ['on_hand' => $row['on_hand'], 'reserved' => $row['reserved']];
     }
 }

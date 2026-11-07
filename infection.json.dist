@@ -2,7 +2,7 @@
     "$schema": "vendor/infection/infection/resources/schema.json",
     "source": {
         "directories": ["src"],
-        "excludes": ["Kernel.php"]
+        "excludes": ["Kernel.php", "*/Infrastructure/*"]
     },
     "logs": {
         "text": "var/infection.log"

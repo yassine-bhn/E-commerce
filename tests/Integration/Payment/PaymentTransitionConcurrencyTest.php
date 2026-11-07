@@ -10,7 +10,6 @@ use App\Payment\Domain\Model\PaymentVersionConflictException;
 use App\Payment\Infrastructure\Persistence\DbalPaymentInitiationAdapter;
 use App\Payment\Infrastructure\Persistence\DbalPaymentLedger;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\DriverException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Uid\Uuid;
@@ -127,11 +126,10 @@ final class PaymentTransitionConcurrencyTest extends KernelTestCase
      */
     private function rivalConnection(Connection $connection): Connection
     {
-        /** @var array<string, mixed> $params */
+        // The same database over a second backend: same params, own transaction and row locks.
         $params = $connection->getParams();
-        unset($params['url'], $params['dbname_suffix']);
         $params['dbname'] = (string) $connection->fetchOne('SELECT current_database()');
 
-        return DriverManager::getConnection($params);
+        return new Connection($params, $connection->getDriver());
     }
 }

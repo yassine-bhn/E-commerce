@@ -60,13 +60,15 @@ final class AddCategorySubLevelHandlerTest extends TestCase
         $write = $categories->lastWrite();
         self::assertNotNull($write);
         self::assertSame('addSubLevel', $write['method'], 'adding a sub-level goes through the tree writer');
-        self::assertSame('wc', $write['category']->slug);
-        self::assertTrue($write['category']->isHidden(), 'adding a sub-level keeps the stored visibility');
+        $category = $categories->lastWrittenCategory();
+        self::assertNotNull($category);
+        self::assertSame('wc', $category->slug);
+        self::assertTrue($category->isHidden(), 'adding a sub-level keeps the stored visibility');
         self::assertSame(
             [['label' => 'Cuvette'], ['label' => 'Abattant']],
-            $write['category']->subcategories(),
+            $category->subcategories(),
         );
-        self::assertNotContains('setHidden', array_column($categories->writes, 'method'), 'adding a sub-level does not touch visibility');
+        self::assertNotContains('setHidden', $categories->writtenMethods(), 'adding a sub-level does not touch visibility');
         self::assertSame(
             ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],
             $categories->submissions->lastCall(),
@@ -80,11 +82,11 @@ final class AddCategorySubLevelHandlerTest extends TestCase
 
         $this->add($categories, new AddCategorySubLevel('wc', 'Abattant', 'Cuvette'));
 
-        $write = $categories->lastWrite();
-        self::assertNotNull($write);
+        $category = $categories->lastWrittenCategory();
+        self::assertNotNull($category);
         self::assertSame(
             [['label' => 'Cuvette', 'children' => [['label' => 'Abattant']]]],
-            $write['category']->subcategories(),
+            $category->subcategories(),
         );
         self::assertSame(
             ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'wc', 'system']],

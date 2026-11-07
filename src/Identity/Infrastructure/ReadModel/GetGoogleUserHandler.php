@@ -30,9 +30,9 @@ final class GetGoogleUserHandler
         $user = $this->client->fetchUser($query->code);
 
         return new GoogleUser(
-            googleId: (string) $user['googleId'],
-            email: (string) $user['email'],
-            name: (string) $user['name'],
+            googleId: $user['googleId'],
+            email: $user['email'],
+            name: $user['name'],
         );
     }
 }

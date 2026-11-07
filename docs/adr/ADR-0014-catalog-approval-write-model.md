@@ -1,6 +1,6 @@
 # ADR-0014 — Catalog approval write model
 
-Status: accepted. Relies on: AGENTS.md 2/4/5/8, CMD-002, LAY-003, EVT-002, MIG-002, spec R1/R2/R3/R12/R31 (`spec-run-15/spec.md`), H1 (`spec-run-15/context.md`), ADR-0012, ADR-0017.
+Status: accepted; **amended by ADR-0018 (solid Task 2.5)** — the single store remains the only `catalog_submission` writer, exposed as six narrow per-transition ports (Creator/Submitter/Decider/Reviewer/OwnerEditor/Deleter) plus the read repository, all over the one `DbalCatalogSubmissionStore` adapter, which keeps its `Connection::transactional()` carve-out. Relies on: AGENTS.md 2/4/5/8, CMD-002, LAY-003, EVT-002, MIG-002, spec R1/R2/R3/R12/R31 (`spec-run-15/spec.md`), H1 (`spec-run-15/context.md`), ADR-0012, ADR-0017.
 
 ## Context
 

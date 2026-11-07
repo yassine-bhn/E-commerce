@@ -72,7 +72,7 @@ final class CorsSubscriber implements EventSubscriberInterface
 
     private function applyHeaders(Response $response, Request $request): void
     {
-        $origin = trim((string) $request->headers->get('Origin', ''));
+        $origin = trim($request->headers->get('Origin', ''));
 
         $response->headers->set('Vary', 'Origin');
 
