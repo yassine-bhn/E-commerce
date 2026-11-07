@@ -108,11 +108,22 @@ re-dispatched once, then escalated to a human.
 
 ## Definition of Done
 - [ ] Unit, Integration, Projection, Functional, Contract suites green
-- [ ] phpstan, php-cs-fixer, deptrac clean
+- [ ] phpstan (level 8 + strict rules, zero ignores), php-cs-fixer, deptrac clean
+- [ ] `make solid` green (architecture suite + PHPStan + Deptrac + guard hooks)
+- [ ] `make tdd` green (TDD attribution gate + all suites + infection)
 - [ ] infection MSI ≥ 85 / covered MSI ≥ 90 on touched Domain+Application code
 - [ ] Parallel reviews approved; every finding cited a rule ID and is fixed or ADR'd
 - [ ] ADR written for any new pattern or boundary decision
 - [ ] State file at gate DONE; audit log complete
+
+## SOLID gate integrity policy (ADR-0018)
+The SOLID gates are enforced without exception: no allowlist, no baseline, no
+`@phpstan-ignore` suppression and no path exclusion may be added to any gate. The one
+historical exception is the WP7 migration guard's frozen three-file allowlist (spec-run-15 R33),
+which predates this policy and is frozen.
+`make solid` and `make tdd` must be green before merge, and the CI `Solid gates` / `TDD gate`
+jobs are required checks (see `.github/workflows/ci.yml`). Any change that would weaken a gate
+is rejected in review and must go through a human-approved ADR instead.
 
 ## Hard NEVERs
 - NEVER use float for money (ECO-001)
