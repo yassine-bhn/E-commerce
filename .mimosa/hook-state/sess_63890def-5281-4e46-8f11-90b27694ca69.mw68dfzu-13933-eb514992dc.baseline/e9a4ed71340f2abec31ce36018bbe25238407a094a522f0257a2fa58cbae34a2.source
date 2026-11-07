@@ -1,0 +1,1794 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\MacroNamespace;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTestError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* @WebProfiler/Collector/logger.html.twig */
+class __TwigTemplate_2b7a56009433fd7edbb760628f2c620b extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, MacroNamespace>
+     */
+    private array $macros = [];
+    private \Twig\Runtime\EscaperRuntime $escaper;
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->escaper = $env->getRuntime('Twig\Runtime\EscaperRuntime');
+
+        $this->blocks = [
+            'stylesheets' => [$this, 'block_stylesheets'],
+            'javascripts' => [$this, 'block_javascripts'],
+            'toolbar' => [$this, 'block_toolbar'],
+            'menu' => [$this, 'block_menu'],
+            'panel' => [$this, 'block_panel'],
+        ];
+    }
+
+    protected function doGetParent(array $context): bool|string|Template|TemplateWrapper
+    {
+        // line 1
+        return $this->parent ??= $this->load("@WebProfiler/Profiler/layout.html.twig", 1);
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Collector/logger.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "@WebProfiler/Collector/logger.html.twig"));
+
+        $this->parent = $this->load("@WebProfiler/Profiler/layout.html.twig", 1);
+        yield from $this->parent->unwrap()->yield($context, array_merge($this->blocks, $blocks));
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+    }
+
+    // line 3
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_stylesheets(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        // line 4
+        yield "    ";
+        yield from $this->yieldParentBlock("stylesheets", $context, $blocks);
+        yield "
+
+    <style>
+        :root {
+            --log-filter-active-num-color: #2563EB;
+            --log-timestamp-color: #555;
+            --log-silenced-bg: #EDE9FE;
+            --log-silenced-color: #6D28D9;
+            --log-silenced-border: #a78bfa;
+        }
+        .theme-dark {
+            --log-filter-active-num-color: #2563EB;
+            --log-timestamp-color: #ccc;
+            --log-silenced-bg: #5B21B6;
+            --log-silenced-color: #EDE9FE;
+            --log-silenced-border: #a78bfa;
+        }
+
+        .log-filters {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .log-filters .log-filter {
+            flex-shrink: 0;
+            margin-right: 15px;
+            position: relative;
+        }
+        .log-filters .log-filter summary {
+            align-items: center;
+            background: var(--button-background);
+            border-radius: 6px;
+            border: 1px solid var(--button-border-color);
+            box-shadow: var(--button-box-shadow);
+            color: var(--button-color);
+            cursor: pointer;
+            display: flex;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 4px 8px;
+            white-space: nowrap;
+        }
+        .log-filters .log-filter summary:active {
+            box-shadow: none;
+            transform: translateY(1px);
+        }
+        .log-filters .log-filter summary .icon {
+            height: 18px;
+            width: 18px;
+            margin: 0 7px 0 0;
+        }
+        .log-filters .log-filter summary svg {
+            height: 18px;
+            width: 18px;
+            opacity: 0.7;
+        }
+        .log-filters .log-filter summary svg {
+            stroke-width: 2;
+        }
+        .log-filters .log-filter summary .filter-active-num {
+            color: var(--log-filter-active-num-color);
+            font-weight: bold;
+            padding: 0 1px;
+        }
+        .log-filter .tab-navigation {
+            position: relative;
+        }
+        .log-filter .tab-navigation input[type=\"radio\"] {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .tab-navigation input[type=\"radio\"]:checked + .tab-control {
+            background-color: var(--tab-active-background);
+            border-radius: 6px;
+            box-shadow: inset 0 0 0 1.5px var(--tab-active-border-color);
+            color: var(--tab-active-color);
+            position: relative;
+            z-index: 1;
+        }
+        .theme-dark .tab-navigation input[type=\"radio\"]:checked + .tab-control {
+            box-shadow: inset 0 0 0 1px var(--tab-border-color);
+        }
+        .tab-navigation input[type=\"radio\"]:focus-visible + .tab-control {
+            outline: 1px solid var(--color-link);
+        }
+        .tab-navigation input[type=\"radio\"]:checked + .tab-control + input[type=\"radio\"] + .tab-control:before{
+            width: 0;
+        }
+
+        .log-filters .log-filter .log-filter-content {
+            background: var(--base-0);
+            border: 1px solid var(--table-border-color);
+            border-radius: 6px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            position: absolute;
+            left: 0;
+            top: 32px;
+            max-width: 400px;
+            min-width: 200px;
+            z-index: 9999;
+        }
+        .log-filters .log-filter .log-filter-content .log-filter-option {
+            align-items: center;
+            display: flex;
+        }
+        .log-filter .filter-select-all-or-none {
+            margin-bottom: 10px;
+        }
+        .log-filter .filter-select-all-or-none button + button {
+            margin-left: 15px;
+        }
+        .log-filters .log-filter .log-filter-content .log-filter-option + .log-filter-option {
+            margin: 7px 0 0;
+        }
+        .log-filters .log-filter .log-filter-content .log-filter-option label {
+            cursor: pointer;
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        table.logs {
+            border-bottom-width: 0;
+            border-collapse: collapse;
+        }
+        table.logs tr + tr td {
+            border-width: 1px 0 0;
+        }
+        table.logs .metadata {
+            display: block;
+            font-size: 12px;
+        }
+        .theme-dark tr.status-error td,
+        .theme-dark tr.status-warning td { border-bottom: unset; border-top: unset; }
+
+        table.logs .log-timestamp {
+            color: var(--log-timestamp-color);
+        }
+        table.logs .log-metadata {
+            margin: 8px 0 0;
+        }
+        table.logs .log-metadata > span {
+            display: inline-block;
+        }
+        table.logs .log-metadata > span + span {
+            margin-left: 10px;
+        }
+        table.logs .log-metadata .log-channel {
+            color: var(--base-1);
+            font-size: 13px;
+            font-weight: bold;
+        }
+        table.logs .log-metadata .badge {
+            background: var(--badge-light-background);
+            color: var(--badge-light-color);
+        }
+        table.logs .log-metadata .log-num-occurrences {
+            color: var(--color-muted);
+            font-size: 13px;
+        }
+        table.logs .log-metadata .context {
+            background: var(--code-block-background);
+            border-radius: 4px;
+            padding: 5px;
+        }
+        table.logs .log-metadata .context + .context {
+            margin-top: 10px;
+        }
+        .log-type-badge {
+            background: var(--badge-light-background);
+            box-shadow: none;
+            color: var(--badge-light-color);
+            display: inline-block;
+            font-family: var(--font-family-system);
+            margin-top: 5px;
+        }
+        .log-type-badge.badge-deprecation,
+        .log-type-badge.badge-warning {
+            background: var(--badge-warning-background);
+            color: var(--badge-warning-color);
+        }
+        .log-type-badge.badge-error {
+            background: var(--badge-danger-background);
+            color: var(--badge-danger-color);
+        }
+        .log-type-badge.badge-silenced {
+            background: var(--log-silenced-bg);
+            color: var(--log-silenced-color);
+        }
+
+        tr.log-status-warning > td:first-child,
+        tr.log-status-error > td:first-child,
+        tr.log-status-silenced > td:first-child {
+            position: relative;
+        }
+        tr.log-status-warning > td:first-child:before,
+        tr.log-status-error > td:first-child:before,
+        tr.log-status-silenced > td:first-child:before {
+            background: transparent;
+            border-radius: 0;
+            content: \x27\x27;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        tr.log-status-warning > td:first-child:before {
+            background: var(--yellow-400);
+        }
+        tr.log-status-error > td:first-child:before {
+            background: var(--red-400);
+        }
+        tr.log-status-silenced > td:first-child:before {
+            background: var(--log-silenced-border);
+        }
+
+        .sf-profiler-log-col-time {
+            width: 140px;
+        }
+
+        .container-compilation-logs {
+            background: var(--table-background);
+            border: 1px solid var(--base-2);
+            border-radius: 6px;
+            margin-top: 30px;
+            padding: 15px;
+        }
+        .container-compilation-logs summary {
+            cursor: pointer;
+        }
+        .container-compilation-logs summary h4 {
+            margin: 0 0 5px;
+        }
+        .container-compilation-logs summary p {
+            margin: 0;
+        }
+    </style>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 244
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_javascripts(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
+
+        // line 245
+        yield "    <script>
+        window.addEventListener(\x27DOMContentLoaded\x27, () => {
+            new SymfonyProfilerLoggerPanel();
+        });
+
+        class SymfonyProfilerLoggerPanel {
+            constructor() {
+                this.#initializeLogsTable();
+            }
+
+            #initializeLogsTable() {
+                this.#updateLogsTable();
+
+                document.querySelectorAll(\x27.log-filter input\x27).forEach((input) => {
+                    input.addEventListener(\x27change\x27, () => { this.#updateLogsTable(); });
+                });
+
+                document.querySelectorAll(\x27.filter-select-all-or-none button\x27).forEach((link) => {
+                    link.addEventListener(\x27click\x27, () => {
+                        const selectAll = link.classList.contains(\x27select-all\x27);
+                        link.closest(\x27.log-filter-content\x27).querySelectorAll(\x27input\x27).forEach((input) => {
+                            input.checked = selectAll;
+                        });
+
+                        this.#updateLogsTable();
+                    });
+                });
+
+                document.body.addEventListener(\x27click\x27, (event) => {
+                    document.querySelectorAll(\x27details.log-filter\x27).forEach((filterElement) => {
+                        if (!filterElement.contains(event.target) && filterElement.open) {
+                            filterElement.open = false;
+                        }
+                    });
+                });
+            }
+
+            #updateLogsTable() {
+                const logs = document.querySelector(\x27table.logs\x27);
+                if (null === logs) {
+                    return;
+                }
+
+                const selectedType = document.querySelector(\x27#log-filter-type input:checked\x27).value;
+                const priorities = document.querySelectorAll(\x27#log-filter-priority input\x27);
+                const allPriorities = Array.from(priorities).map((input) => input.value);
+                const selectedPriorities = Array.from(priorities).filter((input) => input.checked).map((input) => input.value);
+                const channels = document.querySelectorAll(\x27#log-filter-channel input\x27);
+                const selectedChannels = Array.from(channels).filter((input) => input.checked).map((input) => input.value);
+
+                /* hide rows that don\x27t match the current filters */
+                let numVisibleRows = 0;
+                logs.querySelectorAll(\x27tbody tr\x27).forEach((row) => {
+                    if (\x27all\x27 !== selectedType && selectedType !== row.getAttribute(\x27data-type\x27)) {
+                        row.style.display = \x27none\x27;
+                        return;
+                    }
+
+                    const priority = row.getAttribute(\x27data-priority\x27);
+                    if (false === selectedPriorities.includes(priority) && true === allPriorities.includes(priority)) {
+                        row.style.display = \x27none\x27;
+                        return;
+                    }
+
+                    if (\x27\x27 !== row.getAttribute(\x27data-channel\x27) && false === selectedChannels.includes(row.getAttribute(\x27data-channel\x27))) {
+                        row.style.display = \x27none\x27;
+                        return;
+                    }
+
+                    row.style.display = \x27table-row\x27;
+                    numVisibleRows++;
+                });
+
+                document.querySelector(\x27table.logs\x27).style.display = 0 === numVisibleRows ? \x27none\x27 : \x27table\x27;
+                document.querySelector(\x27.no-logs-message\x27).style.display = 0 === numVisibleRows ? \x27block\x27 : \x27none\x27;
+
+                /* update the selected totals of all filters */
+                document.querySelector(\x27#log-filter-priority .filter-active-num\x27).innerText = (priorities.length === selectedPriorities.length) ? \x27All\x27 : selectedPriorities.length;
+                document.querySelector(\x27#log-filter-channel .filter-active-num\x27).innerText = (channels.length === selectedChannels.length) ? \x27All\x27 : selectedChannels.length;
+            }
+        }
+    </script>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 329
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_toolbar(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "toolbar"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "toolbar"));
+
+        // line 330
+        yield "    ";
+        if ((((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 330, $this->source); })()), "counterrors", [], "any", false, false, false, 330)) && $tmp instanceof Markup ? (string) $tmp : $tmp) || (($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 330, $this->source); })()), "countdeprecations", [], "any", false, false, false, 330)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) || (($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 330, $this->source); })()), "countwarnings", [], "any", false, false, false, 330)) && $tmp instanceof Markup ? (string) $tmp : $tmp))) {
+            // line 331
+            yield "        ";
+            $context["icon"] = ('' === $tmp = \Twig\Extension\CoreExtension::captureOutput((function () use (&$context, $macros, $blocks) {
+                // line 332
+                yield "            ";
+                $context["status_color"] = (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 332, $this->source); })()), "counterrors", [], "any", false, false, false, 332)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("red") : ((((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 332, $this->source); })()), "countwarnings", [], "any", false, false, false, 332)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("yellow") : ("none"))));
+                // line 333
+                yield "            ";
+                yield (string) Twig\Extension\CoreExtension::source($this->env, "@WebProfiler/Icon/logger.svg");
+                yield "
+            <span class=\"sf-toolbar-value\">";
+                // line 334
+                yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 334, $this->source); })()), "counterrors", [], "any", false, false, false, 334)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ($this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 334, $this->source); })()), "counterrors", [], "any", false, false, false, 334), "html", null, true)) : ($this->escaper->escape((CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 334, $this->source); })()), "countdeprecations", [], "any", false, false, false, 334) + CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 334, $this->source); })()), "countwarnings", [], "any", false, false, false, 334)), "html", null, true)));
+                yield "</span>
+        ";
+                return; yield;
+            })())) ? '' : new Markup($tmp, $this->env->getCharset());
+            // line 336
+            yield "
+        ";
+            // line 337
+            $context["text"] = ('' === $tmp = \Twig\Extension\CoreExtension::captureOutput((function () use (&$context, $macros, $blocks) {
+                // line 338
+                yield "            <div class=\"sf-toolbar-info-piece\">
+                <b>Errors</b>
+                <span class=\"sf-toolbar-status sf-toolbar-status-";
+                // line 340
+                yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 340, $this->source); })()), "counterrors", [], "any", false, false, false, 340)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("red") : (""));
+                yield "\">";
+                yield (string) $this->escaper->escape(((CoreExtension::getAttribute($this->env, $this->source, ($context["collector"] ?? null), "counterrors", [], "any", true, true, false, 340)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 340, $this->source); })()), "counterrors", [], "any", false, false, false, 340), 0)) : (0)), "html", null, true);
+                yield "</span>
+            </div>
+
+            <div class=\"sf-toolbar-info-piece\">
+                <b>Warnings</b>
+                <span class=\"sf-toolbar-status sf-toolbar-status-";
+                // line 345
+                yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 345, $this->source); })()), "countwarnings", [], "any", false, false, false, 345)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("yellow") : (""));
+                yield "\">";
+                yield (string) $this->escaper->escape(((CoreExtension::getAttribute($this->env, $this->source, ($context["collector"] ?? null), "countwarnings", [], "any", true, true, false, 345)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 345, $this->source); })()), "countwarnings", [], "any", false, false, false, 345), 0)) : (0)), "html", null, true);
+                yield "</span>
+            </div>
+
+            <div class=\"sf-toolbar-info-piece\">
+                <b>Deprecations</b>
+                <span class=\"sf-toolbar-status sf-toolbar-status-";
+                // line 350
+                yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 350, $this->source); })()), "countdeprecations", [], "any", false, false, false, 350)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("none") : (""));
+                yield "\">";
+                yield (string) $this->escaper->escape(((CoreExtension::getAttribute($this->env, $this->source, ($context["collector"] ?? null), "countdeprecations", [], "any", true, true, false, 350)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 350, $this->source); })()), "countdeprecations", [], "any", false, false, false, 350), 0)) : (0)), "html", null, true);
+                yield "</span>
+            </div>
+        ";
+                return; yield;
+            })())) ? '' : new Markup($tmp, $this->env->getCharset());
+            // line 353
+            yield "
+        ";
+            // line 354
+            yield (string) Twig\Extension\CoreExtension::include($this->env, $context, "@WebProfiler/Profiler/toolbar_item.html.twig", ["link" => (isset($context["profiler_url"]) || array_key_exists("profiler_url", $context) ? $context["profiler_url"] : (function () { throw new RuntimeError('Variable "profiler_url" does not exist.', 354, $this->source); })()), "status" => (isset($context["status_color"]) || array_key_exists("status_color", $context) ? $context["status_color"] : (function () { throw new RuntimeError('Variable "status_color" does not exist.', 354, $this->source); })())]);
+            yield "
+    ";
+        }
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 358
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_menu(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "menu"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "menu"));
+
+        // line 359
+        yield "    <span class=\"label label-status-";
+        yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 359, $this->source); })()), "counterrors", [], "any", false, false, false, 359)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("error") : ((((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 359, $this->source); })()), "countwarnings", [], "any", false, false, false, 359)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("warning") : ("none"))));
+        yield " ";
+        yield (string) ((Twig\Extension\CoreExtension::testEmpty(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 359, $this->source); })()), "logs", [], "any", false, false, false, 359))) ? ("disabled") : (""));
+        yield "\">
+        <span class=\"icon\" aria-hidden=\"true\">";
+        // line 360
+        yield (string) Twig\Extension\CoreExtension::source($this->env, "@WebProfiler/Icon/logger.svg");
+        yield "</span>
+        <strong>Logs</strong>
+        ";
+        // line 362
+        if ((((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 362, $this->source); })()), "counterrors", [], "any", false, false, false, 362)) && $tmp instanceof Markup ? (string) $tmp : $tmp) || (($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 362, $this->source); })()), "countdeprecations", [], "any", false, false, false, 362)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) || (($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 362, $this->source); })()), "countwarnings", [], "any", false, false, false, 362)) && $tmp instanceof Markup ? (string) $tmp : $tmp))) {
+            // line 363
+            yield "            <span class=\"count\">
+                <span>";
+            // line 364
+            yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 364, $this->source); })()), "counterrors", [], "any", false, false, false, 364)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ($this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 364, $this->source); })()), "counterrors", [], "any", false, false, false, 364), "html", null, true)) : ($this->escaper->escape((CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 364, $this->source); })()), "countdeprecations", [], "any", false, false, false, 364) + CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 364, $this->source); })()), "countwarnings", [], "any", false, false, false, 364)), "html", null, true)));
+            yield "</span>
+            </span>
+        ";
+        }
+        // line 367
+        yield "    </span>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    // line 370
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_panel(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "panel"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "panel"));
+
+        // line 371
+        yield "    <h2>Log Messages</h2>
+
+    ";
+        // line 373
+        if (Twig\Extension\CoreExtension::testEmpty(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 373, $this->source); })()), "processedLogs", [], "any", false, false, false, 373))) {
+            // line 374
+            yield "        <div class=\"empty empty-panel\">
+            <p>No log messages available.</p>
+        </div>
+    ";
+        } else {
+            // line 378
+            yield "        ";
+            $context["has_error_logs"] = (Twig\Extension\CoreExtension::length($this->env->getCharset(), Twig\Extension\CoreExtension::filter($this->env, $this->env->hasExtension(\Twig\Extension\SandboxExtension::class) && $this->env->getExtension(\Twig\Extension\SandboxExtension::class)->getChecker()->isSandboxed($this->source), Twig\Extension\CoreExtension::column($this->env, $this->env->hasExtension(\Twig\Extension\SandboxExtension::class) && $this->env->getExtension(\Twig\Extension\SandboxExtension::class)->getChecker()->isSandboxed($this->source), CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 378, $this->source); })()), "processedLogs", [], "any", false, false, false, 378), "type"), function ($__type__) use ($context, $macros) { $context["type"] = $__type__; return ("error" == (isset($context["type"]) || array_key_exists("type", $context) ? $context["type"] : (function () { throw new RuntimeError('Variable "type" does not exist.', 378, $this->source); })())); })) > 0);
+            // line 379
+            yield "        ";
+            $context["has_deprecation_logs"] = (Twig\Extension\CoreExtension::length($this->env->getCharset(), Twig\Extension\CoreExtension::filter($this->env, $this->env->hasExtension(\Twig\Extension\SandboxExtension::class) && $this->env->getExtension(\Twig\Extension\SandboxExtension::class)->getChecker()->isSandboxed($this->source), Twig\Extension\CoreExtension::column($this->env, $this->env->hasExtension(\Twig\Extension\SandboxExtension::class) && $this->env->getExtension(\Twig\Extension\SandboxExtension::class)->getChecker()->isSandboxed($this->source), CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 379, $this->source); })()), "processedLogs", [], "any", false, false, false, 379), "type"), function ($__type__) use ($context, $macros) { $context["type"] = $__type__; return ("deprecation" == (isset($context["type"]) || array_key_exists("type", $context) ? $context["type"] : (function () { throw new RuntimeError('Variable "type" does not exist.', 379, $this->source); })())); })) > 0);
+            // line 380
+            yield "
+        ";
+            // line 381
+            $context["filters"] = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 381, $this->source); })()), "filters", [], "any", false, false, false, 381);
+            // line 382
+            yield "        <div class=\"log-filters\">
+            <div id=\"log-filter-type\" class=\"log-filter\">
+                <div class=\"tab-navigation\">
+                    ";
+            // line 385
+            $context["initially_active_tab"] = (((($tmp = (isset($context["has_error_logs"]) || array_key_exists("has_error_logs", $context) ? $context["has_error_logs"] : (function () { throw new RuntimeError('Variable "has_error_logs" does not exist.', 385, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("error") : ((((($tmp = (isset($context["has_deprecation_logs"]) || array_key_exists("has_deprecation_logs", $context) ? $context["has_deprecation_logs"] : (function () { throw new RuntimeError('Variable "has_deprecation_logs" does not exist.', 385, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("deprecation") : ("all"))));
+            // line 386
+            yield "                    <input type=\"radio\" id=\"filter-log-type-all\" name=\"filter-log-type\" value=\"all\" ";
+            yield (string) ((("all" == (isset($context["initially_active_tab"]) || array_key_exists("initially_active_tab", $context) ? $context["initially_active_tab"] : (function () { throw new RuntimeError('Variable "initially_active_tab" does not exist.', 386, $this->source); })()))) ? ("checked") : (""));
+            yield ">
+                    <label for=\"filter-log-type-all\" class=\"tab-control\">
+                        All messages
+                    </label>
+
+                    <input type=\"radio\" id=\"filter-log-type-error\" name=\"filter-log-type\" value=\"error\" ";
+            // line 391
+            yield (string) ((("error" == (isset($context["initially_active_tab"]) || array_key_exists("initially_active_tab", $context) ? $context["initially_active_tab"] : (function () { throw new RuntimeError('Variable "initially_active_tab" does not exist.', 391, $this->source); })()))) ? ("checked") : (""));
+            yield ">
+                    <label for=\"filter-log-type-error\" class=\"tab-control\">
+                        Errors
+                        <span class=\"badge status-";
+            // line 394
+            yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 394, $this->source); })()), "counterrors", [], "any", false, false, false, 394)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("error") : (""));
+            yield "\">";
+            yield (string) $this->escaper->escape(((CoreExtension::getAttribute($this->env, $this->source, ($context["collector"] ?? null), "counterrors", [], "any", true, true, false, 394)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 394, $this->source); })()), "counterrors", [], "any", false, false, false, 394), 0)) : (0)), "html", null, true);
+            yield "</span>
+                    </label>
+
+                    <input type=\"radio\" id=\"filter-log-type-deprecation\" name=\"filter-log-type\" value=\"deprecation\" ";
+            // line 397
+            yield (string) ((("deprecation" == (isset($context["initially_active_tab"]) || array_key_exists("initially_active_tab", $context) ? $context["initially_active_tab"] : (function () { throw new RuntimeError('Variable "initially_active_tab" does not exist.', 397, $this->source); })()))) ? ("checked") : (""));
+            yield ">
+                    <label for=\"filter-log-type-deprecation\" class=\"tab-control\">
+                        Deprecations
+                        <span class=\"badge status-";
+            // line 400
+            yield (string) (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 400, $this->source); })()), "countdeprecations", [], "any", false, false, false, 400)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ("warning") : (""));
+            yield "\">";
+            yield (string) $this->escaper->escape(((CoreExtension::getAttribute($this->env, $this->source, ($context["collector"] ?? null), "countdeprecations", [], "any", true, true, false, 400)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 400, $this->source); })()), "countdeprecations", [], "any", false, false, false, 400), 0)) : (0)), "html", null, true);
+            yield "</span>
+                    </label>
+                </div>
+            </div>
+
+            <details id=\"log-filter-priority\" class=\"log-filter\">
+                <summary>
+                    <span class=\"icon\">";
+            // line 407
+            yield (string) Twig\Extension\CoreExtension::source($this->env, "@WebProfiler/Icon/filter.svg");
+            yield "</span>
+                    Level (<span class=\"filter-active-num\">";
+            // line 408
+            yield (string) $this->escaper->escape((Twig\Extension\CoreExtension::length($this->env->getCharset(), CoreExtension::getAttribute($this->env, $this->source, (isset($context["filters"]) || array_key_exists("filters", $context) ? $context["filters"] : (function () { throw new RuntimeError('Variable "filters" does not exist.', 408, $this->source); })()), "priority", [], "any", false, false, false, 408)) - 1), "html", null, true);
+            yield "</span>)
+                </summary>
+
+                <div class=\"log-filter-content\">
+                    <div class=\"filter-select-all-or-none\">
+                        <button type=\"button\" class=\"btn btn-link select-all\">Select All</button>
+                        <button type=\"button\" class=\"btn btn-link select-none\">Select None</button>
+                    </div>
+
+                    ";
+            // line 417
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["filters"]) || array_key_exists("filters", $context) ? $context["filters"] : (function () { throw new RuntimeError('Variable "filters" does not exist.', 417, $this->source); })()), "priority", [], "any", false, false, false, 417));
+            foreach ($context['_seq'] as $context["label"] => $context["value"]) {
+                // line 418
+                yield "                        <div class=\"log-filter-option\">
+                            <input ";
+                // line 419
+                yield (string) ((("debug" != $context["value"])) ? ("checked") : (""));
+                yield " type=\"checkbox\" id=\"filter-log-level-";
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\" name=\"filter-log-level-";
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\" value=\"";
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\">
+                            <label for=\"filter-log-level-";
+                // line 420
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\">";
+                yield (string) $this->escaper->escape($context["label"], "html", null, true);
+                yield "</label>
+                        </div>
+                    ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['label'], $context['value'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent);
+            $context += $_parent;
+            // line 423
+            yield "                </div>
+            </details>
+
+            <details id=\"log-filter-channel\" class=\"log-filter\">
+                <summary>
+                    <span class=\"icon\">";
+            // line 428
+            yield (string) Twig\Extension\CoreExtension::source($this->env, "@WebProfiler/Icon/filter.svg");
+            yield "</span>
+                    Channel (<span class=\"filter-active-num\">";
+            // line 429
+            yield (string) $this->escaper->escape((Twig\Extension\CoreExtension::length($this->env->getCharset(), CoreExtension::getAttribute($this->env, $this->source, (isset($context["filters"]) || array_key_exists("filters", $context) ? $context["filters"] : (function () { throw new RuntimeError('Variable "filters" does not exist.', 429, $this->source); })()), "channel", [], "any", false, false, false, 429)) - 1), "html", null, true);
+            yield "</span>)
+                </summary>
+
+                <div class=\"log-filter-content\">
+                    <div class=\"filter-select-all-or-none\">
+                        <button type=\"button\" class=\"btn btn-link select-all\">Select All</button>
+                        <button type=\"button\" class=\"btn btn-link select-none\">Select None</button>
+                    </div>
+
+                    ";
+            // line 438
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["filters"]) || array_key_exists("filters", $context) ? $context["filters"] : (function () { throw new RuntimeError('Variable "filters" does not exist.', 438, $this->source); })()), "channel", [], "any", false, false, false, 438));
+            foreach ($context['_seq'] as $context["_key"] => $context["value"]) {
+                // line 439
+                yield "                        <div class=\"log-filter-option\">
+                            <input ";
+                // line 440
+                yield (string) ((("event" != $context["value"])) ? ("checked") : (""));
+                yield " type=\"checkbox\" id=\"filter-log-channel-";
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\" name=\"filter-log-channel-";
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\" value=\"";
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\">
+                            <label for=\"filter-log-channel-";
+                // line 441
+                yield (string) $this->escaper->escape($context["value"], "html", null, true);
+                yield "\">";
+                yield (string) $this->escaper->escape(Twig\Extension\CoreExtension::titleCase($this->env->getCharset(), $context["value"]), "html", null, true);
+                yield "</label>
+                        </div>
+                    ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['value'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent);
+            $context += $_parent;
+            // line 444
+            yield "                </div>
+            </details>
+        </div>
+
+        <div>
+            <table class=\"logs\">
+                <colgroup>
+                    <col class=\"sf-profiler-log-col-time\">
+                    <col>
+                </colgroup>
+
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ";
+            // line 463
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 463, $this->source); })()), "processedLogs", [], "any", false, false, false, 463));
+            $context['loop'] = [
+              'parent' => $context['_parent'],
+              'index0' => 0,
+              'index'  => 1,
+              'first'  => true,
+            ];
+            if (is_array($context['_seq']) || (is_object($context['_seq']) && $context['_seq'] instanceof \Countable)) {
+                $length = count($context['_seq']);
+                $context['loop']['revindex0'] = $length - 1;
+                $context['loop']['revindex'] = $length;
+                $context['loop']['length'] = $length;
+                $context['loop']['last'] = 1 === $length;
+            }
+            foreach ($context['_seq'] as $context["_key"] => $context["log"]) {
+                // line 464
+                yield "                        ";
+                $context["css_class"] = ((("error" == CoreExtension::getAttribute($this->env, $this->source, $context["log"], "type", [], "any", false, false, false, 464))) ? ("error") : ((((CoreExtension::inFilter(CoreExtension::getAttribute($this->env, $this->source,                 // line 465
+$context["log"], "priorityName", [], "any", false, false, false, 465), ["WARNING", "warning"]) || ("deprecation" == CoreExtension::getAttribute($this->env, $this->source, $context["log"], "type", [], "any", false, false, false, 465)))) ? ("warning") : (((("silenced" == CoreExtension::getAttribute($this->env, $this->source,                 // line 466
+$context["log"], "type", [], "any", false, false, false, 466))) ? ("silenced") : (""))))));
+                // line 468
+                yield "                        <tr class=\"log-status-";
+                yield (string) $this->escaper->escape((isset($context["css_class"]) || array_key_exists("css_class", $context) ? $context["css_class"] : (function () { throw new RuntimeError('Variable "css_class" does not exist.', 468, $this->source); })()), "html", null, true);
+                yield "\" data-type=\"";
+                yield (string) $this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "type", [], "any", false, false, false, 468), "html", null, true);
+                yield "\" data-priority=\"";
+                yield (string) $this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "priority", [], "any", false, false, false, 468), "html", null, true);
+                yield "\" data-channel=\"";
+                yield (string) $this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "channel", [], "any", false, false, false, 468), "html", null, true);
+                yield "\" style=\"";
+                yield (string) (((("event" == CoreExtension::getAttribute($this->env, $this->source, $context["log"], "channel", [], "any", false, false, false, 468)) || ("DEBUG" == CoreExtension::getAttribute($this->env, $this->source, $context["log"], "priorityName", [], "any", false, false, false, 468)))) ? ("display: none") : (""));
+                yield "\">
+                            <td class=\"log-timestamp\">
+                                <time class=\"newline\" title=\"";
+                // line 470
+                yield (string) $this->escaper->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "timestamp", [], "any", false, false, false, 470), "r"), "html", null, true);
+                yield "\" datetime=\"";
+                yield (string) $this->escaper->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "timestamp", [], "any", false, false, false, 470), Twig\Extension\CoreExtension::constant("DateTimeInterface::RFC3339_EXTENDED")), "html", null, true);
+                yield "\" data-convert-to-user-timezone data-render-as-time data-render-with-millisecond-precision>
+                                    ";
+                // line 471
+                yield (string) $this->escaper->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "timestamp", [], "any", false, false, false, 471), "H:i:s.v"), "html", null, true);
+                yield "
+                                </time>
+
+                                ";
+                // line 474
+                if ((CoreExtension::inFilter(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "type", [], "any", false, false, false, 474), ["error", "deprecation", "silenced"]) || CoreExtension::inFilter(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "priorityName", [], "any", false, false, false, 474), ["WARNING", "warning"]))) {
+                    // line 475
+                    yield "                                    <span class=\"log-type-badge badge badge-";
+                    yield (string) $this->escaper->escape((isset($context["css_class"]) || array_key_exists("css_class", $context) ? $context["css_class"] : (function () { throw new RuntimeError('Variable "css_class" does not exist.', 475, $this->source); })()), "html", null, true);
+                    yield "\">
+                                        ";
+                    // line 476
+                    if ((("error" == CoreExtension::getAttribute($this->env, $this->source, $context["log"], "type", [], "any", false, false, false, 476)) || CoreExtension::inFilter(CoreExtension::getAttribute($this->env, $this->source, $context["log"], "priorityName", [], "any", false, false, false, 476), ["WARNING", "warning"]))) {
+                        // line 477
+                        yield "                                            ";
+                        yield (string) $this->escaper->escape(Twig\Extension\CoreExtension::lower($this->env->getCharset(), CoreExtension::getAttribute($this->env, $this->source, $context["log"], "priorityName", [], "any", false, false, false, 477)), "html", null, true);
+                        yield "
+                                        ";
+                    } else {
+                        // line 479
+                        yield "                                            ";
+                        yield (string) $this->escaper->escape(Twig\Extension\CoreExtension::lower($this->env->getCharset(), CoreExtension::getAttribute($this->env, $this->source, $context["log"], "type", [], "any", false, false, false, 479)), "html", null, true);
+                        yield "
+                                        ";
+                    }
+                    // line 481
+                    yield "                                    </span>
+                                ";
+                } else {
+                    // line 483
+                    yield "                                    <span class=\"log-type-badge badge badge-";
+                    yield (string) $this->escaper->escape((isset($context["css_class"]) || array_key_exists("css_class", $context) ? $context["css_class"] : (function () { throw new RuntimeError('Variable "css_class" does not exist.', 483, $this->source); })()), "html", null, true);
+                    yield "\">
+                                        ";
+                    // line 484
+                    yield (string) $this->escaper->escape(Twig\Extension\CoreExtension::lower($this->env->getCharset(), CoreExtension::getAttribute($this->env, $this->source, $context["log"], "priorityName", [], "any", false, false, false, 484)), "html", null, true);
+                    yield "
+                                    </span>
+                                ";
+                }
+                // line 487
+                yield "                            </td>
+
+                            <td class=\"font-normal\">
+                                ";
+                // line 490
+                yield (string) $this->getMacroNamespace()->call("render_log_message", ["debug", CoreExtension::getAttribute($this->env, $this->source, $context["loop"], "index", [], "any", false, false, false, 490), $context["log"]], $context, 490, $this->source);
+                yield "
+                            </td>
+                        </tr>
+                    ";
+                ++$context['loop']['index0'];
+                ++$context['loop']['index'];
+                $context['loop']['first'] = false;
+                if (isset($context['loop']['revindex0'], $context['loop']['revindex'])) {
+                    --$context['loop']['revindex0'];
+                    --$context['loop']['revindex'];
+                    $context['loop']['last'] = 0 === $context['loop']['revindex0'];
+                }
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['log'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent);
+            $context += $_parent;
+            // line 494
+            yield "                </tbody>
+            </table>
+
+            <div class=\"no-logs-message empty\">
+                <p>There are no log messages.</p>
+            </div>
+        </div>
+    ";
+        }
+        // line 502
+        yield "
+    ";
+        // line 503
+        $context["compilerLogTotal"] = Twig\Extension\CoreExtension::reduce($this->env, $this->env->hasExtension(\Twig\Extension\SandboxExtension::class) && $this->env->getExtension(\Twig\Extension\SandboxExtension::class)->getChecker()->isSandboxed($this->source), CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 503, $this->source); })()), "compilerLogs", [], "any", false, false, false, 503), function ($__total__, $__logs__) use ($context, $macros) { $context["total"] = $__total__; $context["logs"] = $__logs__; return ((isset($context["total"]) || array_key_exists("total", $context) ? $context["total"] : (function () { throw new RuntimeError('Variable "total" does not exist.', 503, $this->source); })()) + Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["logs"]) || array_key_exists("logs", $context) ? $context["logs"] : (function () { throw new RuntimeError('Variable "logs" does not exist.', 503, $this->source); })()))); }, 0);
+        // line 504
+        yield "    <details class=\"container-compilation-logs\">
+        <summary>
+            <h4>Container Compilation Logs <span class=\"text-muted\">(";
+        // line 506
+        yield (string) $this->escaper->escape((isset($context["compilerLogTotal"]) || array_key_exists("compilerLogTotal", $context) ? $context["compilerLogTotal"] : (function () { throw new RuntimeError('Variable "compilerLogTotal" does not exist.', 506, $this->source); })()), "html", null, true);
+        yield ")</span></h4>
+            <span class=\"text-muted\">Log messages generated during the compilation of the service container.</span>
+        </summary>
+
+        ";
+        // line 510
+        if (Twig\Extension\CoreExtension::testEmpty(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 510, $this->source); })()), "compilerLogs", [], "any", false, false, false, 510))) {
+            // line 511
+            yield "            <div class=\"empty\">
+                <p>There are no compiler log messages.</p>
+            </div>
+        ";
+        } else {
+            // line 515
+            yield "            <table class=\"container-logs\">
+                <thead>
+                <tr>
+                    <th>Messages</th>
+                    <th class=\"full-width\">Class</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                ";
+            // line 524
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["collector"]) || array_key_exists("collector", $context) ? $context["collector"] : (function () { throw new RuntimeError('Variable "collector" does not exist.', 524, $this->source); })()), "compilerLogs", [], "any", false, false, false, 524));
+            $context['loop'] = [
+              'parent' => $context['_parent'],
+              'index0' => 0,
+              'index'  => 1,
+              'first'  => true,
+            ];
+            if (is_array($context['_seq']) || (is_object($context['_seq']) && $context['_seq'] instanceof \Countable)) {
+                $length = count($context['_seq']);
+                $context['loop']['revindex0'] = $length - 1;
+                $context['loop']['revindex'] = $length;
+                $context['loop']['length'] = $length;
+                $context['loop']['last'] = 1 === $length;
+            }
+            foreach ($context['_seq'] as $context["class"] => $context["logs"]) {
+                // line 525
+                yield "                    <tr>
+                        <td class=\"font-normal text-right\">";
+                // line 526
+                yield (string) $this->escaper->escape(Twig\Extension\CoreExtension::length($this->env->getCharset(), $context["logs"]), "html", null, true);
+                yield "</td>
+                        <td class=\"font-normal\">
+                            ";
+                // line 528
+                $context["context_id"] = ("context-compiler-" . CoreExtension::getAttribute($this->env, $this->source, $context["loop"], "index", [], "any", false, false, false, 528));
+                // line 529
+                yield "
+                            <button type=\"button\" class=\"btn btn-link sf-toggle\" data-toggle-selector=\"#";
+                // line 530
+                yield (string) $this->escaper->escape((isset($context["context_id"]) || array_key_exists("context_id", $context) ? $context["context_id"] : (function () { throw new RuntimeError('Variable "context_id" does not exist.', 530, $this->source); })()), "html", null, true);
+                yield "\" data-toggle-alt-content=\"";
+                yield (string) $this->escaper->escape($context["class"], "html", null, true);
+                yield "\">";
+                yield (string) $this->escaper->escape($context["class"], "html", null, true);
+                yield "</button>
+
+                            <div id=\"";
+                // line 532
+                yield (string) $this->escaper->escape((isset($context["context_id"]) || array_key_exists("context_id", $context) ? $context["context_id"] : (function () { throw new RuntimeError('Variable "context_id" does not exist.', 532, $this->source); })()), "html", null, true);
+                yield "\" class=\"context sf-toggle-content sf-toggle-hidden\">
+                                <ul class=\"break-long-words\">
+                                    ";
+                // line 534
+                $context['_parent'] = $context;
+                $context['_seq'] = CoreExtension::ensureTraversable($context["logs"]);
+                foreach ($context['_seq'] as $context["_key"] => $context["log"]) {
+                    // line 535
+                    yield "                                        <li>";
+                    yield (string) $this->extensions['Symfony\Bundle\WebProfilerBundle\Twig\WebProfilerExtension']->dumpLog($this->env, CoreExtension::getAttribute($this->env, $this->source, $context["log"], "message", [], "any", false, false, false, 535));
+                    yield "</li>
+                                    ";
+                }
+                $_parent = $context['_parent'];
+                unset($context['_seq'], $context['_key'], $context['log'], $context['_parent']);
+                $context = array_intersect_key($context, $_parent);
+                $context += $_parent;
+                // line 537
+                yield "                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                ";
+                ++$context['loop']['index0'];
+                ++$context['loop']['index'];
+                $context['loop']['first'] = false;
+                if (isset($context['loop']['revindex0'], $context['loop']['revindex'])) {
+                    --$context['loop']['revindex0'];
+                    --$context['loop']['revindex'];
+                    $context['loop']['last'] = 0 === $context['loop']['revindex0'];
+                }
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['class'], $context['logs'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent);
+            $context += $_parent;
+            // line 542
+            yield "                </tbody>
+            </table>
+        ";
+        }
+        // line 545
+        yield "    </details>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        return; yield;
+    }
+
+    protected function loadDeclaredMacros(): array
+    {
+        return [
+            "render_log_message" => new \Twig\TwigMacro("render_log_message", function ($category = null, $log_index = null, $log = null, ...$varargs): string|Markup {
+                // line 548
+                $macros = $this->macros;
+                $context = [
+                    "category" => $category,
+                    "log_index" => $log_index,
+                    "log" => $log,
+                    "varargs" => $varargs,
+                ] + $this->env->getGlobals();
+
+                $blocks = [];
+
+                return ('' === $tmp = \Twig\Extension\CoreExtension::captureOutput((function () use (&$context, $macros, $blocks) {
+                    $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+                    $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "macro", "render_log_message"));
+
+                    $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+                    $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "macro", "render_log_message"));
+
+                    // line 549
+                    yield "    ";
+                    $context["has_context"] = (CoreExtension::getAttribute($this->env, $this->source, ($context["log"] ?? null), "context", [], "any", true, true, false, 549) &&  !Twig\Extension\CoreExtension::testEmpty(CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 549, $this->source); })()), "context", [], "any", false, false, false, 549)));
+                    // line 550
+                    yield "    ";
+                    $context["has_trace"] = CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, ($context["log"] ?? null), "context", [], "any", false, true, false, 550), "exception", [], "any", false, true, false, 550), "trace", [], "any", true, true, false, 550);
+                    // line 551
+                    yield "
+    ";
+                    // line 552
+                    if ( !(($tmp = (isset($context["has_context"]) || array_key_exists("has_context", $context) ? $context["has_context"] : (function () { throw new RuntimeError('Variable "has_context" does not exist.', 552, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                        // line 553
+                        yield "        ";
+                        yield (string) $this->extensions['Symfony\Bundle\WebProfilerBundle\Twig\WebProfilerExtension']->dumpLog($this->env, CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 553, $this->source); })()), "message", [], "any", false, false, false, 553));
+                        yield "
+    ";
+                    } else {
+                        // line 555
+                        yield "        ";
+                        yield (string) $this->extensions['Symfony\Bundle\WebProfilerBundle\Twig\WebProfilerExtension']->dumpLog($this->env, CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 555, $this->source); })()), "message", [], "any", false, false, false, 555), CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 555, $this->source); })()), "context", [], "any", false, false, false, 555));
+                        yield "
+    ";
+                    }
+                    // line 557
+                    yield "
+    <div class=\"log-metadata\">
+        ";
+                    // line 559
+                    if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 559, $this->source); })()), "channel", [], "any", false, false, false, 559)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                        // line 560
+                        yield "            <span class=\"badge\">";
+                        yield (string) $this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 560, $this->source); })()), "channel", [], "any", false, false, false, 560), "html", null, true);
+                        yield "</span>
+        ";
+                    }
+                    // line 562
+                    yield "
+        ";
+                    // line 563
+                    if ((CoreExtension::getAttribute($this->env, $this->source, ($context["log"] ?? null), "errorCount", [], "any", true, true, false, 563) && (CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 563, $this->source); })()), "errorCount", [], "any", false, false, false, 563) > 1))) {
+                        // line 564
+                        yield "            <span class=\"log-num-occurrences\">";
+                        yield (string) $this->escaper->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 564, $this->source); })()), "errorCount", [], "any", false, false, false, 564), "html", null, true);
+                        yield " times</span>
+        ";
+                    }
+                    // line 566
+                    yield "
+        ";
+                    // line 567
+                    if ((($tmp = (isset($context["has_context"]) || array_key_exists("has_context", $context) ? $context["has_context"] : (function () { throw new RuntimeError('Variable "has_context" does not exist.', 567, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                        // line 568
+                        yield "            ";
+                        $context["context_id"] = ((("context-" . (isset($context["category"]) || array_key_exists("category", $context) ? $context["category"] : (function () { throw new RuntimeError('Variable "category" does not exist.', 568, $this->source); })())) . "-") . (isset($context["log_index"]) || array_key_exists("log_index", $context) ? $context["log_index"] : (function () { throw new RuntimeError('Variable "log_index" does not exist.', 568, $this->source); })()));
+                        // line 569
+                        yield "            <span><button type=\"button\" class=\"btn btn-link text-small sf-toggle\" data-toggle-selector=\"#";
+                        yield (string) $this->escaper->escape((isset($context["context_id"]) || array_key_exists("context_id", $context) ? $context["context_id"] : (function () { throw new RuntimeError('Variable "context_id" does not exist.', 569, $this->source); })()), "html", null, true);
+                        yield "\" data-toggle-alt-content=\"Hide context\">Show context</button></span>
+        ";
+                    }
+                    // line 571
+                    yield "
+        ";
+                    // line 572
+                    if ((($tmp = (isset($context["has_trace"]) || array_key_exists("has_trace", $context) ? $context["has_trace"] : (function () { throw new RuntimeError('Variable "has_trace" does not exist.', 572, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                        // line 573
+                        yield "            ";
+                        $context["trace_id"] = ((("trace-" . (isset($context["category"]) || array_key_exists("category", $context) ? $context["category"] : (function () { throw new RuntimeError('Variable "category" does not exist.', 573, $this->source); })())) . "-") . (isset($context["log_index"]) || array_key_exists("log_index", $context) ? $context["log_index"] : (function () { throw new RuntimeError('Variable "log_index" does not exist.', 573, $this->source); })()));
+                        // line 574
+                        yield "            <span><button type=\"button\" class=\"btn btn-link text-small sf-toggle\" data-toggle-selector=\"#";
+                        yield (string) $this->escaper->escape((isset($context["trace_id"]) || array_key_exists("trace_id", $context) ? $context["trace_id"] : (function () { throw new RuntimeError('Variable "trace_id" does not exist.', 574, $this->source); })()), "html", null, true);
+                        yield "\" data-toggle-alt-content=\"Hide trace\">Show trace</button></span>
+        ";
+                    }
+                    // line 576
+                    yield "
+        ";
+                    // line 577
+                    if ((($tmp = (isset($context["has_context"]) || array_key_exists("has_context", $context) ? $context["has_context"] : (function () { throw new RuntimeError('Variable "has_context" does not exist.', 577, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                        // line 578
+                        yield "            <div id=\"";
+                        yield (string) $this->escaper->escape((isset($context["context_id"]) || array_key_exists("context_id", $context) ? $context["context_id"] : (function () { throw new RuntimeError('Variable "context_id" does not exist.', 578, $this->source); })()), "html", null, true);
+                        yield "\" class=\"context sf-toggle-content sf-toggle-hidden\">
+                ";
+                        // line 579
+                        yield (string) $this->extensions['Symfony\Bundle\WebProfilerBundle\Twig\WebProfilerExtension']->dumpData($this->env, CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 579, $this->source); })()), "context", [], "any", false, false, false, 579), 1);
+                        yield "
+            </div>
+        ";
+                    }
+                    // line 582
+                    yield "
+        ";
+                    // line 583
+                    if ((($tmp = (isset($context["has_trace"]) || array_key_exists("has_trace", $context) ? $context["has_trace"] : (function () { throw new RuntimeError('Variable "has_trace" does not exist.', 583, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                        // line 584
+                        yield "            <div id=\"";
+                        yield (string) $this->escaper->escape((isset($context["trace_id"]) || array_key_exists("trace_id", $context) ? $context["trace_id"] : (function () { throw new RuntimeError('Variable "trace_id" does not exist.', 584, $this->source); })()), "html", null, true);
+                        yield "\" class=\"context sf-toggle-content sf-toggle-hidden\">
+                ";
+                        // line 585
+                        yield (string) $this->extensions['Symfony\Bundle\WebProfilerBundle\Twig\WebProfilerExtension']->dumpData($this->env, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["log"]) || array_key_exists("log", $context) ? $context["log"] : (function () { throw new RuntimeError('Variable "log" does not exist.', 585, $this->source); })()), "context", [], "any", false, false, false, 585), "exception", [], "any", false, false, false, 585), "trace", [], "any", false, false, false, 585), 1);
+                        yield "
+            </div>
+        ";
+                    }
+                    // line 588
+                    yield "    </div>
+";
+                    
+                    $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+                    
+                    $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+                    return; yield;
+                })())) ? '' : new Markup($tmp, $this->env->getCharset());
+            }, ["category" => false, "log_index" => false, "log" => false], false),
+        ];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "@WebProfiler/Collector/logger.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDefaultEscapeStrategy(): string|false
+    {
+        return "html";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  1155 => 588,  1149 => 585,  1144 => 584,  1142 => 583,  1139 => 582,  1133 => 579,  1128 => 578,  1126 => 577,  1123 => 576,  1117 => 574,  1114 => 573,  1112 => 572,  1109 => 571,  1103 => 569,  1100 => 568,  1098 => 567,  1095 => 566,  1089 => 564,  1087 => 563,  1084 => 562,  1078 => 560,  1076 => 559,  1072 => 557,  1066 => 555,  1060 => 553,  1058 => 552,  1055 => 551,  1052 => 550,  1049 => 549,  1031 => 548,  1015 => 545,  1010 => 542,  991 => 537,  981 => 535,  977 => 534,  972 => 532,  963 => 530,  960 => 529,  958 => 528,  953 => 526,  950 => 525,  933 => 524,  922 => 515,  916 => 511,  914 => 510,  907 => 506,  903 => 504,  901 => 503,  898 => 502,  888 => 494,  869 => 490,  864 => 487,  858 => 484,  853 => 483,  849 => 481,  843 => 479,  837 => 477,  835 => 476,  830 => 475,  828 => 474,  822 => 471,  816 => 470,  802 => 468,  800 => 466,  799 => 465,  797 => 464,  780 => 463,  759 => 444,  747 => 441,  737 => 440,  734 => 439,  730 => 438,  718 => 429,  714 => 428,  707 => 423,  695 => 420,  685 => 419,  682 => 418,  678 => 417,  666 => 408,  662 => 407,  650 => 400,  644 => 397,  636 => 394,  630 => 391,  621 => 386,  619 => 385,  614 => 382,  612 => 381,  609 => 380,  606 => 379,  603 => 378,  597 => 374,  595 => 373,  591 => 371,  578 => 370,  566 => 367,  560 => 364,  557 => 363,  555 => 362,  550 => 360,  543 => 359,  530 => 358,  516 => 354,  513 => 353,  504 => 350,  494 => 345,  484 => 340,  480 => 338,  478 => 337,  475 => 336,  469 => 334,  464 => 333,  461 => 332,  458 => 331,  455 => 330,  442 => 329,  349 => 245,  336 => 244,  85 => 4,  72 => 3,  49 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("{% extends \x27@WebProfiler/Profiler/layout.html.twig\x27 %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <style>
+        :root {
+            --log-filter-active-num-color: #2563EB;
+            --log-timestamp-color: #555;
+            --log-silenced-bg: #EDE9FE;
+            --log-silenced-color: #6D28D9;
+            --log-silenced-border: #a78bfa;
+        }
+        .theme-dark {
+            --log-filter-active-num-color: #2563EB;
+            --log-timestamp-color: #ccc;
+            --log-silenced-bg: #5B21B6;
+            --log-silenced-color: #EDE9FE;
+            --log-silenced-border: #a78bfa;
+        }
+
+        .log-filters {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .log-filters .log-filter {
+            flex-shrink: 0;
+            margin-right: 15px;
+            position: relative;
+        }
+        .log-filters .log-filter summary {
+            align-items: center;
+            background: var(--button-background);
+            border-radius: 6px;
+            border: 1px solid var(--button-border-color);
+            box-shadow: var(--button-box-shadow);
+            color: var(--button-color);
+            cursor: pointer;
+            display: flex;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 4px 8px;
+            white-space: nowrap;
+        }
+        .log-filters .log-filter summary:active {
+            box-shadow: none;
+            transform: translateY(1px);
+        }
+        .log-filters .log-filter summary .icon {
+            height: 18px;
+            width: 18px;
+            margin: 0 7px 0 0;
+        }
+        .log-filters .log-filter summary svg {
+            height: 18px;
+            width: 18px;
+            opacity: 0.7;
+        }
+        .log-filters .log-filter summary svg {
+            stroke-width: 2;
+        }
+        .log-filters .log-filter summary .filter-active-num {
+            color: var(--log-filter-active-num-color);
+            font-weight: bold;
+            padding: 0 1px;
+        }
+        .log-filter .tab-navigation {
+            position: relative;
+        }
+        .log-filter .tab-navigation input[type=\"radio\"] {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .tab-navigation input[type=\"radio\"]:checked + .tab-control {
+            background-color: var(--tab-active-background);
+            border-radius: 6px;
+            box-shadow: inset 0 0 0 1.5px var(--tab-active-border-color);
+            color: var(--tab-active-color);
+            position: relative;
+            z-index: 1;
+        }
+        .theme-dark .tab-navigation input[type=\"radio\"]:checked + .tab-control {
+            box-shadow: inset 0 0 0 1px var(--tab-border-color);
+        }
+        .tab-navigation input[type=\"radio\"]:focus-visible + .tab-control {
+            outline: 1px solid var(--color-link);
+        }
+        .tab-navigation input[type=\"radio\"]:checked + .tab-control + input[type=\"radio\"] + .tab-control:before{
+            width: 0;
+        }
+
+        .log-filters .log-filter .log-filter-content {
+            background: var(--base-0);
+            border: 1px solid var(--table-border-color);
+            border-radius: 6px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            position: absolute;
+            left: 0;
+            top: 32px;
+            max-width: 400px;
+            min-width: 200px;
+            z-index: 9999;
+        }
+        .log-filters .log-filter .log-filter-content .log-filter-option {
+            align-items: center;
+            display: flex;
+        }
+        .log-filter .filter-select-all-or-none {
+            margin-bottom: 10px;
+        }
+        .log-filter .filter-select-all-or-none button + button {
+            margin-left: 15px;
+        }
+        .log-filters .log-filter .log-filter-content .log-filter-option + .log-filter-option {
+            margin: 7px 0 0;
+        }
+        .log-filters .log-filter .log-filter-content .log-filter-option label {
+            cursor: pointer;
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        table.logs {
+            border-bottom-width: 0;
+            border-collapse: collapse;
+        }
+        table.logs tr + tr td {
+            border-width: 1px 0 0;
+        }
+        table.logs .metadata {
+            display: block;
+            font-size: 12px;
+        }
+        .theme-dark tr.status-error td,
+        .theme-dark tr.status-warning td { border-bottom: unset; border-top: unset; }
+
+        table.logs .log-timestamp {
+            color: var(--log-timestamp-color);
+        }
+        table.logs .log-metadata {
+            margin: 8px 0 0;
+        }
+        table.logs .log-metadata > span {
+            display: inline-block;
+        }
+        table.logs .log-metadata > span + span {
+            margin-left: 10px;
+        }
+        table.logs .log-metadata .log-channel {
+            color: var(--base-1);
+            font-size: 13px;
+            font-weight: bold;
+        }
+        table.logs .log-metadata .badge {
+            background: var(--badge-light-background);
+            color: var(--badge-light-color);
+        }
+        table.logs .log-metadata .log-num-occurrences {
+            color: var(--color-muted);
+            font-size: 13px;
+        }
+        table.logs .log-metadata .context {
+            background: var(--code-block-background);
+            border-radius: 4px;
+            padding: 5px;
+        }
+        table.logs .log-metadata .context + .context {
+            margin-top: 10px;
+        }
+        .log-type-badge {
+            background: var(--badge-light-background);
+            box-shadow: none;
+            color: var(--badge-light-color);
+            display: inline-block;
+            font-family: var(--font-family-system);
+            margin-top: 5px;
+        }
+        .log-type-badge.badge-deprecation,
+        .log-type-badge.badge-warning {
+            background: var(--badge-warning-background);
+            color: var(--badge-warning-color);
+        }
+        .log-type-badge.badge-error {
+            background: var(--badge-danger-background);
+            color: var(--badge-danger-color);
+        }
+        .log-type-badge.badge-silenced {
+            background: var(--log-silenced-bg);
+            color: var(--log-silenced-color);
+        }
+
+        tr.log-status-warning > td:first-child,
+        tr.log-status-error > td:first-child,
+        tr.log-status-silenced > td:first-child {
+            position: relative;
+        }
+        tr.log-status-warning > td:first-child:before,
+        tr.log-status-error > td:first-child:before,
+        tr.log-status-silenced > td:first-child:before {
+            background: transparent;
+            border-radius: 0;
+            content: \x27\x27;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        tr.log-status-warning > td:first-child:before {
+            background: var(--yellow-400);
+        }
+        tr.log-status-error > td:first-child:before {
+            background: var(--red-400);
+        }
+        tr.log-status-silenced > td:first-child:before {
+            background: var(--log-silenced-border);
+        }
+
+        .sf-profiler-log-col-time {
+            width: 140px;
+        }
+
+        .container-compilation-logs {
+            background: var(--table-background);
+            border: 1px solid var(--base-2);
+            border-radius: 6px;
+            margin-top: 30px;
+            padding: 15px;
+        }
+        .container-compilation-logs summary {
+            cursor: pointer;
+        }
+        .container-compilation-logs summary h4 {
+            margin: 0 0 5px;
+        }
+        .container-compilation-logs summary p {
+            margin: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        window.addEventListener(\x27DOMContentLoaded\x27, () => {
+            new SymfonyProfilerLoggerPanel();
+        });
+
+        class SymfonyProfilerLoggerPanel {
+            constructor() {
+                this.#initializeLogsTable();
+            }
+
+            #initializeLogsTable() {
+                this.#updateLogsTable();
+
+                document.querySelectorAll(\x27.log-filter input\x27).forEach((input) => {
+                    input.addEventListener(\x27change\x27, () => { this.#updateLogsTable(); });
+                });
+
+                document.querySelectorAll(\x27.filter-select-all-or-none button\x27).forEach((link) => {
+                    link.addEventListener(\x27click\x27, () => {
+                        const selectAll = link.classList.contains(\x27select-all\x27);
+                        link.closest(\x27.log-filter-content\x27).querySelectorAll(\x27input\x27).forEach((input) => {
+                            input.checked = selectAll;
+                        });
+
+                        this.#updateLogsTable();
+                    });
+                });
+
+                document.body.addEventListener(\x27click\x27, (event) => {
+                    document.querySelectorAll(\x27details.log-filter\x27).forEach((filterElement) => {
+                        if (!filterElement.contains(event.target) && filterElement.open) {
+                            filterElement.open = false;
+                        }
+                    });
+                });
+            }
+
+            #updateLogsTable() {
+                const logs = document.querySelector(\x27table.logs\x27);
+                if (null === logs) {
+                    return;
+                }
+
+                const selectedType = document.querySelector(\x27#log-filter-type input:checked\x27).value;
+                const priorities = document.querySelectorAll(\x27#log-filter-priority input\x27);
+                const allPriorities = Array.from(priorities).map((input) => input.value);
+                const selectedPriorities = Array.from(priorities).filter((input) => input.checked).map((input) => input.value);
+                const channels = document.querySelectorAll(\x27#log-filter-channel input\x27);
+                const selectedChannels = Array.from(channels).filter((input) => input.checked).map((input) => input.value);
+
+                /* hide rows that don\x27t match the current filters */
+                let numVisibleRows = 0;
+                logs.querySelectorAll(\x27tbody tr\x27).forEach((row) => {
+                    if (\x27all\x27 !== selectedType && selectedType !== row.getAttribute(\x27data-type\x27)) {
+                        row.style.display = \x27none\x27;
+                        return;
+                    }
+
+                    const priority = row.getAttribute(\x27data-priority\x27);
+                    if (false === selectedPriorities.includes(priority) && true === allPriorities.includes(priority)) {
+                        row.style.display = \x27none\x27;
+                        return;
+                    }
+
+                    if (\x27\x27 !== row.getAttribute(\x27data-channel\x27) && false === selectedChannels.includes(row.getAttribute(\x27data-channel\x27))) {
+                        row.style.display = \x27none\x27;
+                        return;
+                    }
+
+                    row.style.display = \x27table-row\x27;
+                    numVisibleRows++;
+                });
+
+                document.querySelector(\x27table.logs\x27).style.display = 0 === numVisibleRows ? \x27none\x27 : \x27table\x27;
+                document.querySelector(\x27.no-logs-message\x27).style.display = 0 === numVisibleRows ? \x27block\x27 : \x27none\x27;
+
+                /* update the selected totals of all filters */
+                document.querySelector(\x27#log-filter-priority .filter-active-num\x27).innerText = (priorities.length === selectedPriorities.length) ? \x27All\x27 : selectedPriorities.length;
+                document.querySelector(\x27#log-filter-channel .filter-active-num\x27).innerText = (channels.length === selectedChannels.length) ? \x27All\x27 : selectedChannels.length;
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block toolbar %}
+    {% if collector.counterrors or collector.countdeprecations or collector.countwarnings %}
+        {% set icon %}
+            {% set status_color = collector.counterrors ? \x27red\x27 : collector.countwarnings ? \x27yellow\x27 : \x27none\x27 %}
+            {{ source(\x27@WebProfiler/Icon/logger.svg\x27) }}
+            <span class=\"sf-toolbar-value\">{{ collector.counterrors ?: (collector.countdeprecations + collector.countwarnings) }}</span>
+        {% endset %}
+
+        {% set text %}
+            <div class=\"sf-toolbar-info-piece\">
+                <b>Errors</b>
+                <span class=\"sf-toolbar-status sf-toolbar-status-{{ collector.counterrors ? \x27red\x27 }}\">{{ collector.counterrors|default(0) }}</span>
+            </div>
+
+            <div class=\"sf-toolbar-info-piece\">
+                <b>Warnings</b>
+                <span class=\"sf-toolbar-status sf-toolbar-status-{{ collector.countwarnings ? \x27yellow\x27 }}\">{{ collector.countwarnings|default(0) }}</span>
+            </div>
+
+            <div class=\"sf-toolbar-info-piece\">
+                <b>Deprecations</b>
+                <span class=\"sf-toolbar-status sf-toolbar-status-{{ collector.countdeprecations ? \x27none\x27 }}\">{{ collector.countdeprecations|default(0) }}</span>
+            </div>
+        {% endset %}
+
+        {{ include(\x27@WebProfiler/Profiler/toolbar_item.html.twig\x27, {link: profiler_url, status: status_color}) }}
+    {% endif %}
+{% endblock %}
+
+{% block menu %}
+    <span class=\"label label-status-{{ collector.counterrors ? \x27error\x27 : collector.countwarnings ? \x27warning\x27 : \x27none\x27 }} {{ collector.logs is empty ? \x27disabled\x27 }}\">
+        <span class=\"icon\" aria-hidden=\"true\">{{ source(\x27@WebProfiler/Icon/logger.svg\x27) }}</span>
+        <strong>Logs</strong>
+        {% if collector.counterrors or collector.countdeprecations or collector.countwarnings %}
+            <span class=\"count\">
+                <span>{{ collector.counterrors ?: (collector.countdeprecations + collector.countwarnings) }}</span>
+            </span>
+        {% endif %}
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>Log Messages</h2>
+
+    {% if collector.processedLogs is empty %}
+        <div class=\"empty empty-panel\">
+            <p>No log messages available.</p>
+        </div>
+    {% else %}
+        {% set has_error_logs = collector.processedLogs|column(\x27type\x27)|filter(type => \x27error\x27 == type)|length > 0 %}
+        {% set has_deprecation_logs = collector.processedLogs|column(\x27type\x27)|filter(type => \x27deprecation\x27 == type)|length > 0 %}
+
+        {% set filters = collector.filters %}
+        <div class=\"log-filters\">
+            <div id=\"log-filter-type\" class=\"log-filter\">
+                <div class=\"tab-navigation\">
+                    {% set initially_active_tab = has_error_logs ? \x27error\x27 : has_deprecation_logs ? \x27deprecation\x27 : \x27all\x27 %}
+                    <input type=\"radio\" id=\"filter-log-type-all\" name=\"filter-log-type\" value=\"all\" {{ \x27all\x27 == initially_active_tab ? \x27checked\x27 }}>
+                    <label for=\"filter-log-type-all\" class=\"tab-control\">
+                        All messages
+                    </label>
+
+                    <input type=\"radio\" id=\"filter-log-type-error\" name=\"filter-log-type\" value=\"error\" {{ \x27error\x27 == initially_active_tab ? \x27checked\x27 }}>
+                    <label for=\"filter-log-type-error\" class=\"tab-control\">
+                        Errors
+                        <span class=\"badge status-{{ collector.counterrors ? \x27error\x27 }}\">{{ collector.counterrors|default(0) }}</span>
+                    </label>
+
+                    <input type=\"radio\" id=\"filter-log-type-deprecation\" name=\"filter-log-type\" value=\"deprecation\" {{ \x27deprecation\x27 == initially_active_tab ? \x27checked\x27 }}>
+                    <label for=\"filter-log-type-deprecation\" class=\"tab-control\">
+                        Deprecations
+                        <span class=\"badge status-{{ collector.countdeprecations ? \x27warning\x27 }}\">{{ collector.countdeprecations|default(0) }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <details id=\"log-filter-priority\" class=\"log-filter\">
+                <summary>
+                    <span class=\"icon\">{{ source(\x27@WebProfiler/Icon/filter.svg\x27) }}</span>
+                    Level (<span class=\"filter-active-num\">{{ filters.priority|length - 1 }}</span>)
+                </summary>
+
+                <div class=\"log-filter-content\">
+                    <div class=\"filter-select-all-or-none\">
+                        <button type=\"button\" class=\"btn btn-link select-all\">Select All</button>
+                        <button type=\"button\" class=\"btn btn-link select-none\">Select None</button>
+                    </div>
+
+                    {% for label, value in filters.priority %}
+                        <div class=\"log-filter-option\">
+                            <input {{ \x27debug\x27 != value ? \x27checked\x27 }} type=\"checkbox\" id=\"filter-log-level-{{ value }}\" name=\"filter-log-level-{{ value }}\" value=\"{{ value }}\">
+                            <label for=\"filter-log-level-{{ value }}\">{{ label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </details>
+
+            <details id=\"log-filter-channel\" class=\"log-filter\">
+                <summary>
+                    <span class=\"icon\">{{ source(\x27@WebProfiler/Icon/filter.svg\x27) }}</span>
+                    Channel (<span class=\"filter-active-num\">{{ filters.channel|length - 1 }}</span>)
+                </summary>
+
+                <div class=\"log-filter-content\">
+                    <div class=\"filter-select-all-or-none\">
+                        <button type=\"button\" class=\"btn btn-link select-all\">Select All</button>
+                        <button type=\"button\" class=\"btn btn-link select-none\">Select None</button>
+                    </div>
+
+                    {% for value in filters.channel %}
+                        <div class=\"log-filter-option\">
+                            <input {{ \x27event\x27 != value ? \x27checked\x27 }} type=\"checkbox\" id=\"filter-log-channel-{{ value }}\" name=\"filter-log-channel-{{ value }}\" value=\"{{ value }}\">
+                            <label for=\"filter-log-channel-{{ value }}\">{{ value|title }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </details>
+        </div>
+
+        <div>
+            <table class=\"logs\">
+                <colgroup>
+                    <col class=\"sf-profiler-log-col-time\">
+                    <col>
+                </colgroup>
+
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for log in collector.processedLogs %}
+                        {% set css_class = \x27error\x27 == log.type ? \x27error\x27
+                            : (log.priorityName in [\x27WARNING\x27, \x27warning\x27] or \x27deprecation\x27 == log.type) ? \x27warning\x27
+                            : \x27silenced\x27 == log.type ? \x27silenced\x27
+                        %}
+                        <tr class=\"log-status-{{ css_class }}\" data-type=\"{{ log.type }}\" data-priority=\"{{ log.priority }}\" data-channel=\"{{ log.channel }}\" style=\"{{ \x27event\x27 == log.channel or \x27DEBUG\x27 == log.priorityName ? \x27display: none\x27 }}\">
+                            <td class=\"log-timestamp\">
+                                <time class=\"newline\" title=\"{{ log.timestamp|date(\x27r\x27) }}\" datetime=\"{{ log.timestamp|date(constant(\x27DateTimeInterface::RFC3339_EXTENDED\x27)) }}\" data-convert-to-user-timezone data-render-as-time data-render-with-millisecond-precision>
+                                    {{ log.timestamp|date(\x27H:i:s.v\x27) }}
+                                </time>
+
+                                {% if log.type in [\x27error\x27, \x27deprecation\x27, \x27silenced\x27] or log.priorityName in [\x27WARNING\x27, \x27warning\x27] %}
+                                    <span class=\"log-type-badge badge badge-{{ css_class }}\">
+                                        {% if \x27error\x27 == log.type or log.priorityName in [\x27WARNING\x27, \x27warning\x27] %}
+                                            {{ log.priorityName|lower }}
+                                        {% else %}
+                                            {{ log.type|lower }}
+                                        {% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class=\"log-type-badge badge badge-{{ css_class }}\">
+                                        {{ log.priorityName|lower }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class=\"font-normal\">
+                                {{ _self.render_log_message(\x27debug\x27, loop.index, log) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class=\"no-logs-message empty\">
+                <p>There are no log messages.</p>
+            </div>
+        </div>
+    {% endif %}
+
+    {% set compilerLogTotal = collector.compilerLogs|reduce((total, logs) => total + logs|length, 0) %}
+    <details class=\"container-compilation-logs\">
+        <summary>
+            <h4>Container Compilation Logs <span class=\"text-muted\">({{ compilerLogTotal }})</span></h4>
+            <span class=\"text-muted\">Log messages generated during the compilation of the service container.</span>
+        </summary>
+
+        {% if collector.compilerLogs is empty %}
+            <div class=\"empty\">
+                <p>There are no compiler log messages.</p>
+            </div>
+        {% else %}
+            <table class=\"container-logs\">
+                <thead>
+                <tr>
+                    <th>Messages</th>
+                    <th class=\"full-width\">Class</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for class, logs in collector.compilerLogs %}
+                    <tr>
+                        <td class=\"font-normal text-right\">{{ logs|length }}</td>
+                        <td class=\"font-normal\">
+                            {% set context_id = \x27context-compiler-\x27 ~ loop.index %}
+
+                            <button type=\"button\" class=\"btn btn-link sf-toggle\" data-toggle-selector=\"#{{ context_id }}\" data-toggle-alt-content=\"{{ class }}\">{{ class }}</button>
+
+                            <div id=\"{{ context_id }}\" class=\"context sf-toggle-content sf-toggle-hidden\">
+                                <ul class=\"break-long-words\">
+                                    {% for log in logs %}
+                                        <li>{{ profiler_dump_log(log.message) }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </details>
+{% endblock %}
+
+{% macro render_log_message(category, log_index, log) %}
+    {% set has_context = log.context is defined and log.context is not empty %}
+    {% set has_trace = log.context.exception.trace is defined %}
+
+    {% if not has_context %}
+        {{ profiler_dump_log(log.message) }}
+    {% else %}
+        {{ profiler_dump_log(log.message, log.context) }}
+    {% endif %}
+
+    <div class=\"log-metadata\">
+        {% if log.channel %}
+            <span class=\"badge\">{{ log.channel }}</span>
+        {% endif %}
+
+        {% if log.errorCount is defined and log.errorCount > 1 %}
+            <span class=\"log-num-occurrences\">{{ log.errorCount }} times</span>
+        {% endif %}
+
+        {% if has_context %}
+            {% set context_id = \x27context-\x27 ~ category ~ \x27-\x27 ~ log_index %}
+            <span><button type=\"button\" class=\"btn btn-link text-small sf-toggle\" data-toggle-selector=\"#{{ context_id }}\" data-toggle-alt-content=\"Hide context\">Show context</button></span>
+        {% endif %}
+
+        {% if has_trace %}
+            {% set trace_id = \x27trace-\x27 ~ category ~ \x27-\x27 ~ log_index %}
+            <span><button type=\"button\" class=\"btn btn-link text-small sf-toggle\" data-toggle-selector=\"#{{ trace_id }}\" data-toggle-alt-content=\"Hide trace\">Show trace</button></span>
+        {% endif %}
+
+        {% if has_context %}
+            <div id=\"{{ context_id }}\" class=\"context sf-toggle-content sf-toggle-hidden\">
+                {{ profiler_dump(log.context, maxDepth: 1) }}
+            </div>
+        {% endif %}
+
+        {% if has_trace %}
+            <div id=\"{{ trace_id }}\" class=\"context sf-toggle-content sf-toggle-hidden\">
+                {{ profiler_dump(log.context.exception.trace, maxDepth: 1) }}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+", "@WebProfiler/Collector/logger.html.twig", "/app/vendor/symfony/web-profiler-bundle/Resources/views/Collector/logger.html.twig");
+    }
+}
