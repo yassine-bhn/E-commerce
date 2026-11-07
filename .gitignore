@@ -39,3 +39,8 @@ __pycache__/
 # Uploaded media (served from /uploads, stored under public/uploads)
 /uploads/
 /public/uploads/
+
+###> mimosa security-scanner local state ###
+/.mimosa/
+**/.mimosa/
+###< mimosa security-scanner local state ###
