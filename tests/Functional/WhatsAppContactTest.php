@@ -74,7 +74,7 @@ final class WhatsAppContactTest extends WebTestCase
         );
 
         // R13 — the destination is always the official WhatsApp host over HTTPS.
-        $chatUrlParts = parse_url((string) $body['chatUrl']);
+        $chatUrlParts = parse_url($body['chatUrl']);
         self::assertIsArray($chatUrlParts);
         self::assertSame('https', $chatUrlParts['scheme'] ?? null);
         self::assertSame('wa.me', $chatUrlParts['host'] ?? null);

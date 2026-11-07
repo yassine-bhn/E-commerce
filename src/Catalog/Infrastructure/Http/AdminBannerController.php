@@ -49,7 +49,7 @@ final class AdminBannerController
     #[Route('/images', name: 'admin_catalog_replace_banner_images', methods: ['PUT'])]
     public function replaceImages(Request $request, #[CurrentUser] UserInterface $admin): JsonResponse
     {
-        if ($failure = $this->dispatch(new BannerReplaceImages(json_decode($request->getContent(), true)))) {
+        if (null !== $failure = $this->dispatch(new BannerReplaceImages(json_decode($request->getContent(), true)))) {
             return $failure;
         }
 
@@ -59,7 +59,7 @@ final class AdminBannerController
     #[Route('/images/order', name: 'admin_catalog_reorder_banner_images', methods: ['PATCH'])]
     public function reorderImages(Request $request, #[CurrentUser] UserInterface $admin): JsonResponse
     {
-        if ($failure = $this->dispatch(new BannerReorderImages(json_decode($request->getContent(), true)))) {
+        if (null !== $failure = $this->dispatch(new BannerReorderImages(json_decode($request->getContent(), true)))) {
             return $failure;
         }
 
@@ -73,7 +73,7 @@ final class AdminBannerController
             return new JsonResponse(['error' => 'Invalid banner image UUID'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($failure = $this->dispatch(new BannerRemoveImage($imageId))) {
+        if (null !== $failure = $this->dispatch(new BannerRemoveImage($imageId))) {
             return $failure;
         }
 

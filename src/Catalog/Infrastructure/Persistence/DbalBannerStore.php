@@ -33,7 +33,7 @@ final class DbalBannerStore implements BannerSetReader, BannerImageStore
 
         $images = [];
         foreach ($rows as $row) {
-            $images[] = BannerImage::restore((string) $row['id'], (string) $row['image_path'], (int) $row['sort_order']);
+            $images[] = BannerImage::restore($row['id'], $row['image_path'], (int) $row['sort_order']);
         }
 
         return BannerSet::reconstitute($images);

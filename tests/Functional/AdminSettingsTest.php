@@ -83,7 +83,7 @@ final class AdminSettingsTest extends WebTestCase
         $row = $connection->fetchAssociative('SELECT contact_phone, contact_whatsapp, auto_cancel_minutes FROM platform_setting WHERE id = 1');
         self::assertSame('+212600112233', $row['contact_phone']);
         self::assertSame('+212611223344', $row['contact_whatsapp']);
-        self::assertSame(45, (int) $row['auto_cancel_minutes']);
+        self::assertSame(45, $row['auto_cancel_minutes']);
     }
 
     public function testUpdateRejectsInvalidAutoCancelMinutes(): void

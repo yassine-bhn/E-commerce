@@ -1,0 +1,485 @@
+[
+  {
+    "cbm_ref": "WE00102/QCR",
+    "slug": "we00102-qcr",
+    "cbm_name": "WE00102/QCR",
+    "cbm_brand": "Nobili",
+    "csv_ref": "002353",
+    "csv_name": "CORPS MITIGEUR ENCASTRE 2 VOIES THERMOSTATIQUE CARLOS WE00102",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Mitigeur douches et bains de douches",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "665.15900000",
+    "csv_price_ttc": "791.53921000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "THERMOSTATIQUE À ENCASTRER, FAÇADE POUR THERMOSTATIQUE 2 SORTIES\nBlocage de sécurité à 38° C\nMontage vertical ou horizontal",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_125849486.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_125849486.png"
+    ],
+    "cbm_folder": "9759-we00102-qcr",
+    "cbm_local_images": [
+      "images/01-image_2022-07-27_125849486.png"
+    ],
+    "cbm_thumbnail_local": "images/01-image_2022-07-27_125849486.png",
+    "cbm_attributes": {
+      "Marque": "Nobili",
+      "Couleur": "Gris chrome"
+    },
+    "cbm_colors": [
+      "Gris chrome"
+    ],
+    "cbm_labels": [
+      "Gris chrome"
+    ],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "WE00101/QCR",
+    "slug": "we00101-qcr",
+    "cbm_name": "WE00101/QCR",
+    "cbm_brand": "Nobili",
+    "csv_ref": "002354",
+    "csv_name": "CORPS MITIGEUR ENCASTRE 1 VOIE THERMOSTATIQUE CARLOS WE00101",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Mitigeur douches et bains de douches",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "538.23400000",
+    "csv_price_ttc": "640.49846000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "THERMOSTATIQUE À ENCASTRER, FAÇADE POUR THERMOSTATIQUE 1 SORTIE\nBlocage de sécurité à 38° C\nMontage vertical ou horizontal",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_125849486.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_125849486.png"
+    ],
+    "cbm_folder": "9757-we00101-qcr",
+    "cbm_local_images": [
+      "images/01-image_2022-07-27_125849486.png"
+    ],
+    "cbm_thumbnail_local": "images/01-image_2022-07-27_125849486.png",
+    "cbm_attributes": {
+      "Marque": "Nobili",
+      "Couleur": "Gris chrome"
+    },
+    "cbm_colors": [
+      "Gris chrome"
+    ],
+    "cbm_labels": [
+      "Gris chrome"
+    ],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "AV00158/36CR",
+    "slug": "av00158-36cr",
+    "cbm_name": "AV00158/36CR",
+    "cbm_brand": "Nobili",
+    "csv_ref": "002379",
+    "csv_name": "BEC EROGATION 24INT.200MM CHROME AV00158/36CR",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "robinet",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "250.25000000",
+    "csv_price_ttc": "297.79750000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "0",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "BEC MURAL, BEC MURAL\nMousseur anticalcaire M 22 x 1\nLongueur 200 mm",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_112106174.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2022/07/image_2022-07-27_112106174.png"
+    ],
+    "cbm_folder": "9628-av00158-36cr",
+    "cbm_local_images": [
+      "images/01-image_2022-07-27_112106174.png"
+    ],
+    "cbm_thumbnail_local": "images/01-image_2022-07-27_112106174.png",
+    "cbm_attributes": {
+      "Marque": "Nobili",
+      "Couleur": "Gris chrome"
+    },
+    "cbm_colors": [
+      "Gris chrome"
+    ],
+    "cbm_labels": [
+      "Gris chrome"
+    ],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC01",
+    "slug": "mc01",
+    "cbm_name": "PORTE VERRE ROND CHROME",
+    "cbm_brand": null,
+    "csv_ref": "003604",
+    "csv_name": "PORTE VERRE EN VERRE ROND CHROME",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "75.11000000",
+    "csv_price_ttc": "89.38090000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE VERRE ROND CHROME",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/09/Design-sans-titre-7.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/09/Design-sans-titre-7.png"
+    ],
+    "cbm_folder": "24395-porte-verre-rond-chrome",
+    "cbm_local_images": [
+      "images/01-Design-sans-titre-7.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Design-sans-titre-7.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC02",
+    "slug": "mc02",
+    "cbm_name": "PORTE SAVON ROND CHROME",
+    "cbm_brand": null,
+    "csv_ref": "003605",
+    "csv_name": "PORTE SAVON ROND CHROME",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "78.15500000",
+    "csv_price_ttc": "93.00445000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE SAVON ROND CHROME",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-1.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-1.png"
+    ],
+    "cbm_folder": "24421-porte-savon-rond-chrome",
+    "cbm_local_images": [
+      "images/01-Design-sans-titre-1.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Design-sans-titre-1.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC03",
+    "slug": "mc03",
+    "cbm_name": "DISTRIBUTEUR DE SAVON LIQUIDE CHROME",
+    "cbm_brand": null,
+    "csv_ref": "003606",
+    "csv_name": "DISTRIBUTEUR DE SAVON LIQUIDE CHROME",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "82.21500000",
+    "csv_price_ttc": "97.83585000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "DISTRIBUTEUR DE SAVON LIQUIDE CHROME",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-2.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-2.png"
+    ],
+    "cbm_folder": "24413-distributeur-de-savon-liquide-chrome",
+    "cbm_local_images": [
+      "images/01-Design-sans-titre-2.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Design-sans-titre-2.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC05",
+    "slug": "mc05",
+    "cbm_name": "PORTE PEIGNOIRE DOUBLE ROND CHROME",
+    "cbm_brand": null,
+    "csv_ref": "003608",
+    "csv_name": "PORTE PEIGNOIRE DOUBLE ROND CHROME",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "68.00500000",
+    "csv_price_ttc": "80.92595000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE PEIGNOIRE DOUBLE ROND CHROME",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-5.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-5.png"
+    ],
+    "cbm_folder": "24433-porte-peignoire-double-rond-chrome",
+    "cbm_local_images": [
+      "images/01-Design-sans-titre-5.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Design-sans-titre-5.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC06",
+    "slug": "mc06",
+    "cbm_name": "PORTE PAPIER ROND CHROME",
+    "cbm_brand": null,
+    "csv_ref": "003609",
+    "csv_name": "PORTE PAPIER ROND CHROME",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "88.30500000",
+    "csv_price_ttc": "105.08295000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE PAPIER ROND CHROME",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-7.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-7.png"
+    ],
+    "cbm_folder": "24439-porte-papier-rond-chrome",
+    "cbm_local_images": [
+      "images/01-Design-sans-titre-7.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Design-sans-titre-7.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC06C",
+    "slug": "mc06c",
+    "cbm_name": "PORTE PAPIER AVEC COUVERCLE ROND CHROME",
+    "cbm_brand": null,
+    "csv_ref": "003610",
+    "csv_name": "PORTE PAPIER AVEC COUVERCLE ROND CHROME",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "95.41000000",
+    "csv_price_ttc": "113.53790000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE PAPIER AVEC COUVERCLE ROND CHROME",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-miro.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/Design-sans-titre-miro.png"
+    ],
+    "cbm_folder": "24445-porte-papier-avec-couvercle-rond-chrome",
+    "cbm_local_images": [
+      "images/01-Design-sans-titre-miro.png"
+    ],
+    "cbm_thumbnail_local": "images/01-Design-sans-titre-miro.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC01-MB",
+    "slug": "mc01-mb",
+    "cbm_name": "PORTE VERRE EN VERRE ROND NOIR MATT",
+    "cbm_brand": null,
+    "csv_ref": "003612",
+    "csv_name": "PORTE VERRE EN VERRE ROND NOIR MATT",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "139.75500000",
+    "csv_price_ttc": "166.30845000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE VERRE EN VERRE ROND NOIR MATT",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/mb-c01.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/mb-c01.png"
+    ],
+    "cbm_folder": "24455-porte-verre-en-verre-rond-noir-matt",
+    "cbm_local_images": [
+      "images/01-mb-c01.png"
+    ],
+    "cbm_thumbnail_local": "images/01-mb-c01.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC02-MB",
+    "slug": "mc02-mb",
+    "cbm_name": "PORTE SAVON ROND NOIR MATT",
+    "cbm_brand": null,
+    "csv_ref": "003613",
+    "csv_name": "PORTE SAVON ROND NOIR MATT",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "139.75500000",
+    "csv_price_ttc": "166.30845000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE SAVON ROND NOIR MATT",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/porte-savon.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/porte-savon.png"
+    ],
+    "cbm_folder": "24461-porte-savon-rond-noir-matt",
+    "cbm_local_images": [
+      "images/01-porte-savon.png"
+    ],
+    "cbm_thumbnail_local": "images/01-porte-savon.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC05-MB",
+    "slug": "mc05-mb",
+    "cbm_name": "PORTE PEIGNOIRE ROND NOIR MATT",
+    "cbm_brand": null,
+    "csv_ref": "003615",
+    "csv_name": "PORTE PEIGNOIRE ROND NOIR MATT",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "112.03500000",
+    "csv_price_ttc": "133.32165000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE PEIGNOIRE ROND NOIR MATT",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/peignoire.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/peignoire.png"
+    ],
+    "cbm_folder": "24492-porte-peignoire-rond-noir-matt",
+    "cbm_local_images": [
+      "images/01-peignoire.png"
+    ],
+    "cbm_thumbnail_local": "images/01-peignoire.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC06-MB",
+    "slug": "mc06-mb",
+    "cbm_name": "PORTE PAPIER ROND NOIR MATT",
+    "cbm_brand": null,
+    "csv_ref": "003616",
+    "csv_name": "PORTE PAPIER ROND NOIR MATT",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "139.75500000",
+    "csv_price_ttc": "166.30845000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE PAPIER ROND NOIR MATT",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/porte-papier-noir.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/porte-papier-noir.png"
+    ],
+    "cbm_folder": "24502-porte-papier-rond-noir-matt",
+    "cbm_local_images": [
+      "images/01-porte-papier-noir.png"
+    ],
+    "cbm_thumbnail_local": "images/01-porte-papier-noir.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  },
+  {
+    "cbm_ref": "MC06C-MB",
+    "slug": "mc06c-mb",
+    "cbm_name": "PORTE PAPIER AVEC COUVERCLE ROND NOIR MATT",
+    "cbm_brand": null,
+    "csv_ref": "003617",
+    "csv_name": "PORTE PAPIER AVEC COUVERCLE ROND NOIR MATT",
+    "score": 1.0,
+    "method": "manual_review",
+    "category_slug": "plomberie",
+    "subcategory": "Acessoir salle de bain",
+    "cls_confidence": 0.9,
+    "csv_price_ht": "132.96500000",
+    "csv_price_ttc": "158.22835000",
+    "csv_vat": "19.0000",
+    "csv_stock_qty": "",
+    "csv_ean": "",
+    "csv_description": "",
+    "cbm_description": "PORTE PAPIER AVEC COUVERCLE ROND NOIR MATT",
+    "cbm_image": "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/MC06C-MB.png",
+    "cbm_images": [
+      "https://www.cbmtunisie.com.tn/wp-content/uploads/2025/10/MC06C-MB.png"
+    ],
+    "cbm_folder": "24507-porte-papier-avec-couvercle-rond-noir-matt",
+    "cbm_local_images": [
+      "images/01-MC06C-MB.png"
+    ],
+    "cbm_thumbnail_local": "images/01-MC06C-MB.png",
+    "cbm_attributes": {},
+    "cbm_colors": [],
+    "cbm_labels": [],
+    "multi_match": false
+  }
+]

@@ -50,7 +50,7 @@ final class CheckoutOrderController
     {
         $customerId = $user->getId();
 
-        if ($limitResponse = $this->rateLimitChecker->check($this->orderCreationLimiter, $request, $customerId)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->orderCreationLimiter, $request, $customerId)) {
             return $limitResponse;
         }
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Identity\Application\CommandHandler;
 
-use App\Catalog\Domain\Model\ProductNotFoundException;
 use App\Identity\Application\Command\AddWishlistItem;
 use App\Identity\Application\Port\WishlistStore;
 use App\Shared\Application\Port\ProductExistencePort;
+use App\Shared\Domain\Storefront\ProductNotFoundException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
 

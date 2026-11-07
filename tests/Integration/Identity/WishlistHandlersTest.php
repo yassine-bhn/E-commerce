@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Identity;
 
-use App\Catalog\Domain\Model\ProductNotFoundException;
 use App\Identity\Application\Command\AddWishlistItem;
 use App\Identity\Application\Command\RemoveWishlistItem;
+use App\Shared\Domain\Storefront\ProductNotFoundException;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

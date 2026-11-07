@@ -46,6 +46,24 @@ positives.
    `RuleTestCase::gatherAnalyserErrors()`, because the phar's `analyse()` comparison renders
    only message/line/tip.
 
+## Phase records (amended 2026-11-06/07)
+
+The gates shipped in phases — each recorded in `.agents/state/G-solid-remediation.md` and
+`.superpowers/sdd/2026-10-29-solid-remediation/progress.md`:
+
+- **Phase 1** (660fb06): SolidBoundariesTest RED (68 failures), six PHPStan rules,
+  bin/solid-check, bin/tdd-check + self-test, hooks, CI solid/tdd jobs.
+- **Phase 2** (0f5bb01..6ead0da): SRP-001 one-handler-per-message, ISP-001 six submission
+  ports, OCP-002 match(true) removed, OrderPlacementStore, guard-hook corrections.
+- **Phase 3** (dbe16a5, bbc5a1b, 539a041, 4f9423b): zero Application DBAL imports —
+  Identity/Ordering/Payment/Shared/Catalog behind narrow ports + DBAL adapters.
+- **Phase 4** (5321ac1..7b49af9): all 12 controllers thin; SQL-in-HTTP and ctor-dep rules green.
+- **Phase 5** (3f37337): LSP-001/003 contract tests, phpstan-strict-rules with zero ignores,
+  infection excludes Infrastructure.
+
+The WP7 migration guard (spec-run-15 R33's frozen three-file allowlist) is a historical
+spec-run-15 guard, not a SOLID exemption — see `ADR-0014` and the plan's correction #4.
+
 ## Consequences
 
 `guard-domain-imports.sh` over `src/**` reports only the Application DBAL/HTTP imports that

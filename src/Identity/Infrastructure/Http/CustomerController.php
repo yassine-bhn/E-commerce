@@ -54,7 +54,7 @@ final class CustomerController
         $name = is_string($body['name'] ?? null) ? trim($body['name']) : '';
         $email = is_string($body['email'] ?? null) ? trim($body['email']) : $user->getUserIdentifier();
         $phone = is_string($body['phone'] ?? null) ? trim($body['phone']) : '';
-        $type = in_array($body['type'] ?? '', ['particulier', 'pro'], true) ? (string) $body['type'] : 'particulier';
+        $type = in_array($body['type'] ?? '', ['particulier', 'pro'], true) ? $body['type'] : 'particulier';
         $company = is_string($body['company'] ?? null) && '' !== trim($body['company']) ? trim($body['company']) : null;
         $mf = is_string($body['mf'] ?? null) && '' !== trim($body['mf']) ? trim($body['mf']) : null;
 

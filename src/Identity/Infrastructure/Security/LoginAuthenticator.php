@@ -26,7 +26,7 @@ final class LoginAuthenticator extends AbstractAuthenticator implements Authenti
 
     public function authenticate(Request $request): Passport
     {
-        $payload = json_decode((string) $request->getContent(), true);
+        $payload = json_decode($request->getContent(), true);
 
         if (!is_array($payload)) {
             throw new BadRequestHttpException('Invalid JSON payload.');

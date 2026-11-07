@@ -23,7 +23,7 @@ hooks:
     match: ["src/**", "tests/**"]
     env: [TASK_ID]
     blocking: true
-    description: "Require a task state file with a recorded RED before touching src/**."
+    description: "Require a task state file with a recorded RED before touching src/**; bin/tdd-check is the repo-level attribution gate (commit-msg hook + CI)."
   post-edit:
     script: post-edit.sh
     phase: [after_write]
@@ -41,9 +41,9 @@ hooks:
   guard-cqrs:
     script: guard-cqrs.sh
     phase: [before_commit, before_finish]
-    rules: [CMD-002, CMD-003, QRY-001, QRY-003, ECO-001, ECO-004, DIP-002, OCP-002, ERR-003, TDD-005, TDD-006, TDD-008]
+    rules: [CMD-002, CMD-003, QRY-001, QRY-003, ECO-001, ECO-004, DIP-002, ERR-003, TDD-005, TDD-006, TDD-008]
     blocking: true
-    description: "CQRS/DDD anti-pattern gate for commands, handlers, read models, and tests."
+    description: "CQRS/DDD anti-pattern gate for commands, handlers, read models, and tests. OCP-002 is owned by the architecture test (solid Task 2.8)."
   guard-secrets:
     script: guard-secrets.sh
     phase: [before_commit, before_finish]

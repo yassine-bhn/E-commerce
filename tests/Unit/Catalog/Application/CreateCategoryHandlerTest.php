@@ -28,13 +28,15 @@ final class CreateCategoryHandlerTest extends TestCase
         self::assertNotNull($write, 'the category is handed to the store once');
         self::assertCount(1, $categories->writes);
         self::assertSame('create', $write['method']);
-        self::assertSame('test-cat', $write['category']->slug);
-        self::assertSame('Test cat', $write['category']->label);
-        self::assertTrue($write['category']->quoteEligible);
-        self::assertFalse($write['category']->isHidden(), 'a new category is visible (R5 default)');
+        $category = $categories->lastWrittenCategory();
+        self::assertNotNull($category);
+        self::assertSame('test-cat', $category->slug);
+        self::assertSame('Test cat', $category->label);
+        self::assertTrue($category->quoteEligible);
+        self::assertFalse($category->isHidden(), 'a new category is visible (R5 default)');
         self::assertSame(
             [['label' => 'Alpha', 'children' => [['label' => 'Alpha un']]]],
-            $write['category']->subcategories(),
+            $category->subcategories(),
         );
         self::assertSame(
             ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'test-cat', 'admin-1']],
@@ -59,9 +61,9 @@ final class CreateCategoryHandlerTest extends TestCase
             actorId: 'admin-1',
         ));
 
-        $write = $categories->lastWrite();
-        self::assertNotNull($write);
-        self::assertSame('pompes', $write['category']->slug);
+        $category = $categories->lastWrittenCategory();
+        self::assertNotNull($category);
+        self::assertSame('pompes', $category->slug);
         self::assertSame(
             ['method' => 'reviewerSave', 'args' => [CatalogSubmissionKind::Category, 'pompes', 'admin-1']],
             $categories->submissions->lastCall(),

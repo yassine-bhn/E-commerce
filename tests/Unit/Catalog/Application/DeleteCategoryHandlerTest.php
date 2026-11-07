@@ -57,7 +57,7 @@ final class DeleteCategoryHandlerTest extends TestCase
         $write = $categories->lastWrite();
         self::assertNotNull($write);
         self::assertSame('delete', $write['method']);
-        self::assertSame('wc', $write['slug']);
+        self::assertSame('wc', $categories->lastWrittenSlug());
         self::assertSame(
             ['action' => 'CATALOG_CATEGORY_DELETED', 'target' => 'category', 'slug' => 'wc', 'actor' => 'super-admin', 'reason' => null],
             $audit->last(),

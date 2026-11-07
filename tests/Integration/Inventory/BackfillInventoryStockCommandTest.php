@@ -164,9 +164,9 @@ final class BackfillInventoryStockCommandTest extends KernelTestCase
         self::assertIsArray($row);
 
         return [
-            'on_hand' => (int) $row['on_hand'],
-            'reserved' => (int) $row['reserved'],
-            'available' => (int) $row['on_hand'] - (int) $row['reserved'],
+            'on_hand' => $row['on_hand'],
+            'reserved' => $row['reserved'],
+            'available' => $row['on_hand'] - $row['reserved'],
         ];
     }
 

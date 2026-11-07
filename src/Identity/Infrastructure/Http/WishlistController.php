@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Identity\Infrastructure\Http;
 
-use App\Catalog\Domain\Model\ProductNotFoundException;
 use App\Identity\Application\Command\AddWishlistItem;
 use App\Identity\Application\Command\RemoveWishlistItem;
 use App\Identity\Application\Query\ListWishlistItems;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
+use App\Shared\Domain\Storefront\ProductNotFoundException;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;

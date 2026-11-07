@@ -55,7 +55,7 @@ final class CustomerProfileEmailConflictTest extends WebTestCase
             json_encode([
                 'name' => 'Nom jamais enregistré',
                 // Same address, other case: the constraint is on lower(email), so this is a claim.
-                'email' => strtoupper((string) $other->getUserIdentifier()),
+                'email' => strtoupper($other->getUserIdentifier()),
                 'phone' => '+21622334455',
                 'type' => 'particulier',
             ], JSON_THROW_ON_ERROR),
@@ -64,7 +64,7 @@ final class CustomerProfileEmailConflictTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_CONFLICT, 'a duplicate address answers the conflict registration answers');
 
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertStringContainsStringIgnoringCase((string) $other->getUserIdentifier(), (string) $payload['error']);
+        self::assertStringContainsStringIgnoringCase($other->getUserIdentifier(), $payload['error']);
 
         $persisted = self::connection()->fetchAssociative(
             'SELECT name, email FROM customer_profile WHERE id = :id',

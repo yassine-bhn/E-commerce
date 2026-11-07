@@ -71,7 +71,7 @@ final class InMemoryCategoryStore implements CategoryReader, CategoryCreator, Ca
 
     public function nextSortOrder(): int
     {
-        return $this->nextSortOrder;
+        return 1;
     }
 
     public function create(Category $category): void
@@ -140,6 +140,48 @@ final class InMemoryCategoryStore implements CategoryReader, CategoryCreator, Ca
     public function lastWrite(): ?array
     {
         return [] === $this->writes ? null : $this->writes[count($this->writes) - 1];
+    }
+
+    /** The category the last tree/creation write carried, or null when none did. */
+    public function lastWrittenCategory(): ?Category
+    {
+        foreach (array_reverse($this->writes) as $write) {
+            if (isset($write['category'])) {
+                return $write['category'];
+            }
+        }
+
+        return null;
+    }
+
+    /** The slug the last slug-carrying write named, or null. */
+    public function lastWrittenSlug(): ?string
+    {
+        foreach (array_reverse($this->writes) as $write) {
+            if (isset($write['slug'])) {
+                return $write['slug'];
+            }
+        }
+
+        return null;
+    }
+
+    /** The flag the last visibility write set, or null. */
+    public function lastWrittenHidden(): ?bool
+    {
+        foreach (array_reverse($this->writes) as $write) {
+            if (isset($write['hidden'])) {
+                return $write['hidden'];
+            }
+        }
+
+        return null;
+    }
+
+    /** @return list<string> */
+    public function writtenMethods(): array
+    {
+        return array_map(static fn (array $write): string => $write['method'], $this->writes);
     }
 
     private function guardWrite(string $method): void

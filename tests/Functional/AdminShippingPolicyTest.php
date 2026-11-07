@@ -72,8 +72,8 @@ final class AdminShippingPolicyTest extends WebTestCase
         $connection = static::getContainer()->get(Connection::class);
         /** @var array{delivery_fee_minor: int, free_delivery_threshold_minor: int} $row */
         $row = $connection->fetchAssociative('SELECT delivery_fee_minor, free_delivery_threshold_minor FROM storefront_shipping_policy WHERE id = 1');
-        self::assertSame(25000, (int) $row['delivery_fee_minor']);
-        self::assertSame(500000, (int) $row['free_delivery_threshold_minor']);
+        self::assertSame(25000, $row['delivery_fee_minor']);
+        self::assertSame(500000, $row['free_delivery_threshold_minor']);
 
         $client->jsonRequest('GET', '/api/v1/storefront/reference');
         self::assertResponseStatusCodeSame(Response::HTTP_OK);

@@ -72,7 +72,7 @@ final class AdminPaymentController
             return new JsonResponse(['error' => 'Invalid payment UUID'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
             return $limitResponse;
         }
 
@@ -129,7 +129,7 @@ final class AdminPaymentController
             return new JsonResponse(['error' => 'Invalid payment UUID'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
+        if (null !== $limitResponse = $this->rateLimitChecker->check($this->adminActionsLimiter, $request)) {
             return $limitResponse;
         }
 
