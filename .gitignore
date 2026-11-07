@@ -42,4 +42,5 @@ __pycache__/
 
 ###> mimosa security-scanner local state ###
 /.mimosa/
+**/.mimosa/
 ###< mimosa security-scanner local state ###
