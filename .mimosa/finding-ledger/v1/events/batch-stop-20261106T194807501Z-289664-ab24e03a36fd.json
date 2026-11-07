@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261106T194807501Z-289664-ab24e03a36fd",
+  "runId": "20261106T194807501Z-289664-ab24e03a36fd",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "bash_discovery_incomplete",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php",
+        "detail": "project enumeration exceeded 5000 reviewable files",
+        "affectsCompletion": true
+      },
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSession_Handler_NativeService.php",
+        "detail": "baseline exceeded 5000 candidate files",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "bash-discovery",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSecurity_UserValueResolverService.php",
+        "detail": "bash_discovery_incomplete: project enumeration exceeded 5000 reviewable files",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": "var/cache/remember-me-policy/prod-d6d3fe6b63d6b6b22530366997b23c85/ContainerIB9xxxh/getSession_Handler_NativeService.php",
+        "detail": "baseline_partial: baseline exceeded 5000 candidate files",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "a47e1a5a0e104b7511ab589c3bbc4b8786022583",
+  "diffHash": "a9bb3483d004e6546583165bca4eb1ca3c894de28ab026c6f4ee2b1dbdbdb9c6",
+  "rulesVersion": "unavailable",
+  "sessionHash": "b867ee3b07f2929c5bf205e20c3d09f52fb05c0efa985034011cba6a7bba3060",
+  "reportRef": ".mimosa/reports/task-review-sess_312a3a7c-eadf-4880-b13f-e016f920619a-20261106T194807501Z-289664-ab24e03a36fd.json",
+  "events": [],
+  "observedFindingIds": [],
+  "verifiedFiles": [
+    {
+      "file": "var/cache/test/App_KernelTestDebugContainer.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "var/cache/test/App_KernelTestDebugContainer.preload.php",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-11-06T19:48:07.784Z"
+}
