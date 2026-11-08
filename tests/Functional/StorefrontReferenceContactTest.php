@@ -14,13 +14,40 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class StorefrontReferenceContactTest extends WebTestCase
 {
+    private const BRAND_NAME = 'ReferenceLogoTestBrand';
+
     protected function tearDown(): void
     {
         /** @var Connection $connection */
         $connection = static::getContainer()->get(Connection::class);
         $connection->executeStatement("UPDATE platform_setting SET contact_phone = '', contact_whatsapp = '' WHERE id = 1");
+        $connection->executeStatement('DELETE FROM storefront_brand WHERE name = :name', ['name' => self::BRAND_NAME]);
 
         parent::tearDown();
+    }
+
+    public function testReferenceExposesApprovedBrandLogoReferences(): void
+    {
+        $client = static::createClient();
+
+        /** @var Connection $connection */
+        $connection = static::getContainer()->get(Connection::class);
+        $connection->executeStatement(
+            "INSERT INTO storefront_brand (name, image_path, approval_status) VALUES (:name, :image, 'APPROVED')",
+            ['name' => self::BRAND_NAME, 'image' => '/uploads/brands/reference-logo.webp'],
+        );
+
+        $client->request('GET', '/api/v1/storefront/reference');
+        self::assertResponseIsSuccessful();
+
+        /** @var array{brands: list<array{name: string, image: string|null}>} $body */
+        $body = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $brand = array_values(array_filter($body['brands'], static fn (array $item): bool => self::BRAND_NAME === $item['name']))[0] ?? null;
+
+        self::assertSame(
+            ['name' => self::BRAND_NAME, 'image' => '/uploads/brands/reference-logo.webp'],
+            $brand,
+        );
     }
 
     public function testReferenceExposesTheConfiguredContactChannels(): void

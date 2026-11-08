@@ -133,7 +133,7 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
         self::assertSame([], $this->json($other)['items']);
 
         $client->request('GET', '/api/v1/storefront/reference');
-        self::assertContains($brand, $this->json($client)['brands'], 'an approved brand is offered by the storefront filters');
+        self::assertContains($brand, array_column($this->json($client)['brands'], 'name'), 'an approved brand is offered by the storefront filters');
     }
 
     /**
@@ -204,7 +204,7 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
         self::assertSame('APPROVED', $this->submissionRow($brand)['approval_status']);
 
         $client->request('GET', '/api/v1/storefront/reference');
-        self::assertContains($brand, $this->json($client)['brands'], 'an approved brand is offered by the storefront filters');
+        self::assertContains($brand, array_column($this->json($client)['brands'], 'name'), 'an approved brand is offered by the storefront filters');
 
         // The rename can now follow the product, exactly like a manually created brand.
         $renamed = $brand.'X';
@@ -337,7 +337,7 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
         self::assertSame([$brand], array_column($this->json($ownerClient)['items'], 'slug'), 'the author sees the pending brand in the queue');
 
         $ownerClient->request('GET', '/api/v1/storefront/reference');
-        self::assertNotContains($brand, $this->json($ownerClient)['brands'], 'a pending brand is not offered by the storefront filters');
+        self::assertNotContains($brand, array_column($this->json($ownerClient)['brands'], 'name'), 'a pending brand is not offered by the storefront filters');
 
         $superClient = $this->clientFor($super);
         $superClient->jsonRequest('POST', '/api/v1/admin/catalog/submissions/brands/'.urlencode($brand).'/reject', ['reason' => 'Nom non conforme.']);
@@ -353,7 +353,7 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
         self::assertSame($super->getId(), (string) $row['reviewed_by']);
 
         $ownerClient->request('GET', '/api/v1/storefront/reference');
-        self::assertNotContains($brand, $this->json($ownerClient)['brands'], 'a rejected brand is not offered by the storefront filters');
+        self::assertNotContains($brand, array_column($this->json($ownerClient)['brands'], 'name'), 'a rejected brand is not offered by the storefront filters');
 
         $ownerClient->jsonRequest('POST', '/api/v1/admin/catalog/submissions/brands/'.urlencode($brand).'/resubmit');
         self::assertResponseIsSuccessful();
@@ -370,7 +370,7 @@ final class AdminBrandApprovalWorkflowTest extends WebTestCase
         ));
 
         $ownerClient->request('GET', '/api/v1/storefront/reference');
-        self::assertContains($brand, $this->json($ownerClient)['brands'], 'the approved brand is offered again');
+        self::assertContains($brand, array_column($this->json($ownerClient)['brands'], 'name'), 'the approved brand is offered again');
     }
 
     private function uniqueName(string $prefix): string
