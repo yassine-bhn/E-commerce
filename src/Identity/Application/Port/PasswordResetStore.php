@@ -13,4 +13,6 @@ interface PasswordResetStore
     public function customerByEmail(string $email): ?array;
 
     public function updatePassword(string $customerId, string $passwordHash): void;
+
+    public function passwordHashForCustomer(string $customerId): ?string;
 }

@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace App\Identity\Infrastructure\Http;
 
+use App\Identity\Application\Command\ChangeCustomerPassword;
 use App\Identity\Application\Command\DeleteCustomerAddress;
 use App\Identity\Application\Command\SaveCustomerAddress;
 use App\Identity\Application\Command\UpdateCustomerProfile;
 use App\Identity\Application\Query\GetCustomerProfile;
 use App\Identity\Application\Query\ListCustomerAddresses;
 use App\Identity\Domain\Model\EmailAlreadyUsedException;
+use App\Identity\Infrastructure\Security\CustomerProfileUserProvider;
 use App\Identity\Infrastructure\Security\CustomerUser;
 use App\Shared\Application\Pagination\Page;
 use App\Shared\Infrastructure\Http\ListQueryParams;
 use App\Shared\Infrastructure\Http\MessengerQuery;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +32,8 @@ final class CustomerController
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessengerQuery $queries,
+        private CustomerProfileUserProvider $userProvider,
+        private Security $security,
     ) {
     }
 
@@ -79,6 +84,38 @@ final class CustomerController
 
             throw $exception;
         }
+
+        return new JsonResponse(['status' => 'updated']);
+    }
+
+    #[Route('/password', name: 'storefront_customer_password_change', methods: ['PUT'])]
+    public function changePassword(Request $request, #[CurrentUser] CustomerUser $user): JsonResponse
+    {
+        /** @var array<string, mixed> $body */
+        $body = json_decode($request->getContent(), true) ?? [];
+        $currentPassword = is_string($body['currentPassword'] ?? null) ? $body['currentPassword'] : '';
+        $newPassword = is_string($body['newPassword'] ?? null) ? $body['newPassword'] : '';
+
+        if ('' === $currentPassword || strlen($newPassword) < 8) {
+            return new JsonResponse(['error' => 'The current password is required and the new password must be at least 8 characters long.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $this->commandBus->dispatch(new ChangeCustomerPassword($user->getId(), $currentPassword, $newPassword));
+        } catch (HandlerFailedException $exception) {
+            $invalidPassword = $exception->getWrappedExceptions(\InvalidArgumentException::class, true);
+            if ([] !== $invalidPassword) {
+                return new JsonResponse(['error' => reset($invalidPassword)->getMessage()], Response::HTTP_UNAUTHORIZED);
+            }
+
+            throw $exception;
+        }
+
+        $this->security->login(
+            $this->userProvider->loadUserByIdentifier($user->getUserIdentifier()),
+            null,
+            'main',
+        );
 
         return new JsonResponse(['status' => 'updated']);
     }
