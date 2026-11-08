@@ -182,13 +182,16 @@ final class StorefrontReferenceRepository
         return $nodes;
     }
 
-    /** @return list<string> */
+    /** @return list<array{name: string, image: string|null}> */
     public function brands(): array
     {
         return array_map(
-            static fn (array $row): string => (string) $row['name'],
+            static fn (array $row): array => [
+                'name' => (string) $row['name'],
+                'image' => null === $row['image_path'] ? null : (string) $row['image_path'],
+            ],
             $this->connection->fetchAllAssociative(
-                "SELECT name FROM storefront_brand WHERE approval_status = 'APPROVED' ORDER BY name ASC",
+                "SELECT name, image_path FROM storefront_brand WHERE approval_status = 'APPROVED' ORDER BY name ASC",
             ),
         );
     }
