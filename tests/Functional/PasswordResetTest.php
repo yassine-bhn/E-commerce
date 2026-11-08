@@ -9,6 +9,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Uid\Uuid;
+use App\Identity\Infrastructure\Security\CustomerUser;
 
 final class PasswordResetTest extends WebTestCase
 {
@@ -108,6 +109,54 @@ final class PasswordResetTest extends WebTestCase
             ['id' => $customer['id']],
         );
         self::assertSame($countBefore + 1, $countAfter);
+    }
+
+    public function testAuthenticatedCustomerCanChangePasswordWithCurrentPassword(): void
+    {
+        $client = static::createClient();
+
+        /** @var Connection $connection */
+        $connection = static::getContainer()->get(Connection::class);
+        $customer = $this->createCustomer($connection, 'OldPassword123!');
+        $client->loginUser(new CustomerUser($customer['id'], $customer['email'], null, 'ROLE_USER', 'active'));
+
+        $client->jsonRequest('PUT', '/api/v1/storefront/customer/password', [
+            'currentPassword' => 'OldPassword123!',
+            'newPassword' => 'NewPassword456!',
+        ]);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSame(
+            'NewPassword456!',
+            password_verify('NewPassword456!', (string) $connection->fetchOne(
+                'SELECT password_hash FROM customer_profile WHERE id = :id',
+                ['id' => $customer['id']],
+            )) ? 'NewPassword456!' : null,
+        );
+
+        $client->request('GET', '/api/v1/storefront/customer/profile');
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testAuthenticatedCustomerCannotChangePasswordWithWrongCurrentPassword(): void
+    {
+        $client = static::createClient();
+
+        /** @var Connection $connection */
+        $connection = static::getContainer()->get(Connection::class);
+        $customer = $this->createCustomer($connection, 'OldPassword123!');
+        $client->loginUser(new CustomerUser($customer['id'], $customer['email'], null, 'ROLE_USER', 'active'));
+
+        $client->jsonRequest('PUT', '/api/v1/storefront/customer/password', [
+            'currentPassword' => 'WrongPassword123!',
+            'newPassword' => 'NewPassword456!',
+        ]);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        self::assertTrue(password_verify(
+            'OldPassword123!',
+            (string) $connection->fetchOne('SELECT password_hash FROM customer_profile WHERE id = :id', ['id' => $customer['id']]),
+        ));
     }
 
     public function testForgotPasswordWithUnknownEmailCreatesNoTokenAndStaysNeutral(): void

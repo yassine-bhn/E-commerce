@@ -45,6 +45,16 @@ final class DbalPasswordResetStore implements PasswordResetStore, PasswordResetT
         );
     }
 
+    public function passwordHashForCustomer(string $customerId): ?string
+    {
+        $hash = $this->connection->fetchOne(
+            'SELECT password_hash FROM customer_profile WHERE id = :id',
+            ['id' => $customerId],
+        );
+
+        return false === $hash || null === $hash ? null : (string) $hash;
+    }
+
     public function invalidateActive(string $customerId): void
     {
         $this->connection->executeStatement(
